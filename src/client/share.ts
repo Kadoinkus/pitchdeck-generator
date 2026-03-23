@@ -1,3 +1,5 @@
+import './styles/slides.css';
+import './styles/share.css';
 import { renderSlide } from './slide-renderers.ts';
 
 interface SlideEntry {

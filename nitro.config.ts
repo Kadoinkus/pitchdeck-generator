@@ -1,7 +1,7 @@
 import { defineNitroConfig } from 'nitro/config';
 
 export default defineNitroConfig({
-	serverDir: true,
+	serverDir: './server',
 	commands: {
 		preview: '',
 		deploy: '',
@@ -10,5 +10,7 @@ export default defineNitroConfig({
 		'$server': `${import.meta.dirname}/server`,
 		'$client': `${import.meta.dirname}/src`,
 	},
-	routes: [{ 'src': '/share/:token', 'dest': '/share.html' }],
+	routeRules: {
+		'/share/**': { proxy: '/share.html' },
+	},
 });

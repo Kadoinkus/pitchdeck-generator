@@ -1,3 +1,4 @@
+import './styles.css';
 import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette, type ThemeColors } from './color-palette.ts';
 import { showViewer, updateViewerData } from './viewer.ts';
 

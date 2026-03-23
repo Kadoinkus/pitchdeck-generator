@@ -32,7 +32,7 @@ body {
 		rgba(125, 42, 232, 0.14),
 		transparent 26%
 	) fixed,
-		linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+		linear-gradient(180deg, var(--bg-top), var(--bg-bottom)) fixed;
 	background-repeat: no-repeat;
 }
 
