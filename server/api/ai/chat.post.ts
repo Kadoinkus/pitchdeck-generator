@@ -6,11 +6,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export default defineHandler(async (event) => {
-	const body = await event.req.json();
-	const payload = isRecord(body.payload) ? body.payload : {};
+	const raw = await event.req.json();
+	if (!isRecord(raw)) {
+		return Response.json(
+			{ success: false, message: 'Invalid request body.' },
+			{ status: 400 },
+		);
+	}
+	const payload = isRecord(raw.payload) ? raw.payload : {};
 	const chatRequest: ChatRequest = {
-		targetField: body.targetField,
-		message: body.message,
+		targetField: raw.targetField,
+		message: raw.message,
 	};
 	const output: ChatResult = await runChatAssistant(payload, chatRequest);
 	return { success: true, ...output };

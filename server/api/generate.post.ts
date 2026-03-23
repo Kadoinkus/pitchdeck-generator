@@ -7,6 +7,10 @@ import { buildSlideData } from '../../src/slide-data.ts';
 import { safeText, sanitizeFilename } from '../../src/utils.ts';
 import { getOutputDir } from '../utils/storage.ts';
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 interface ShareablePayload extends Record<string, unknown> {
 	aiTextApiKey?: string;
 	aiImageApiKey?: string;
@@ -26,14 +30,20 @@ function sanitizePayloadForShare(
 
 export default defineHandler(async (event) => {
 	const outputDir = getOutputDir();
-	const payload = await event.req.json();
+	const raw = await event.req.json();
+	if (!isRecord(raw)) {
+		return Response.json(
+			{ success: false, message: 'Invalid request body.' },
+			{ status: 400 },
+		);
+	}
 
 	await fs.mkdir(outputDir, { recursive: true });
 
-	const deck = buildDeck(payload);
-	const clientName = safeText(payload.clientName, 'client');
-	const projectTitle = safeText(payload.projectTitle, 'proposal');
-	const deckVersion = safeText(payload.deckVersion, 'v1').replace(
+	const deck = buildDeck(raw);
+	const clientName = safeText(raw.clientName, 'client');
+	const projectTitle = safeText(raw.projectTitle, 'proposal');
+	const deckVersion = safeText(raw.deckVersion, 'v1').replace(
 		/[^a-z0-9.-]/gi,
 		'-',
 	);
@@ -47,9 +57,9 @@ export default defineHandler(async (event) => {
 	const pptxBytes = await fs.readFile(filePath);
 	await fs.unlink(filePath);
 
-	const slideData = buildSlideData(payload);
+	const slideData = buildSlideData(raw);
 	const shareToken = await saveShare(outputDir, {
-		payload: sanitizePayloadForShare(payload),
+		payload: sanitizePayloadForShare(raw),
 		slideData,
 		fileName,
 		pptxBase64: pptxBytes.toString('base64'),
