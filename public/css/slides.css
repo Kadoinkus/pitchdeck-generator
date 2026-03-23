@@ -94,6 +94,10 @@
   color: var(--deck-accent, #30d89e);
 }
 
+.mode-dark .accent-text {
+  color: var(--deck-accent-on-dark, var(--deck-accent, #30d89e));
+}
+
 .deck-icon {
   --icon-size: 22px;
   width: var(--icon-size);
