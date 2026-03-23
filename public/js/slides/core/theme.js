@@ -10,8 +10,8 @@ export function themeVars(theme) {
   const body = safeFont(theme?.bodyFont, 'Inter');
 
   return [
-    `--deck-primary:${primary}`,
-    `--deck-accent:${accent}`,
+    `--deck-primary:${accent}`,
+    `--deck-accent:${primary}`,
     `--deck-secondary:${secondary}`,
     `--deck-bg:${bg}`,
     `--deck-text:${text}`,
