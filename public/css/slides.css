@@ -505,7 +505,7 @@
 }
 
 .mode-dark .chat-bubble.is-assistant {
-  background: color-mix(in srgb, var(--deck-accent, #30d89e) 30%, rgba(255, 255, 255, 0.1));
+  background: color-mix(in srgb, var(--deck-accent-on-dark, var(--deck-accent, #30d89e)) 30%, rgba(255, 255, 255, 0.1));
 }
 
 .chat-bubble strong {
@@ -680,7 +680,7 @@
 
 .mode-dark {
   --icon-primary: rgba(236, 255, 249, 0.9);
-  --icon-accent: color-mix(in srgb, var(--deck-accent, #30d89e) 86%, #fff);
+  --icon-accent: color-mix(in srgb, var(--deck-accent-on-dark, var(--deck-accent, #30d89e)) 86%, #fff);
   --icon-muted: rgba(232, 248, 241, 0.8);
 }
 
