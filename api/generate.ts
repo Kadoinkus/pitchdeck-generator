@@ -5,13 +5,7 @@ import { buildDeck } from '../src/deck-builder.ts';
 import { saveShare } from '../src/share-store.ts';
 import { buildSlideData } from '../src/slide-data.ts';
 import { safeText, sanitizeFilename } from '../src/utils.ts';
-import {
-	handleOptions,
-	isMethod,
-	type JsonObject,
-	readJsonBody,
-	sendJson,
-} from './_lib/http.ts';
+import { handleOptions, isMethod, type JsonObject, readJsonBody, sendJson } from './_lib/http.ts';
 import { getOutputDir } from './_lib/storage.ts';
 
 interface ShareablePayload extends Record<string, unknown> {

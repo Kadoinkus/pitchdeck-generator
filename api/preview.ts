@@ -1,12 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { buildSlideData } from '../src/slide-data.ts';
-import {
-	handleOptions,
-	isMethod,
-	type JsonObject,
-	readJsonBody,
-	sendJson,
-} from './_lib/http.ts';
+import { handleOptions, isMethod, type JsonObject, readJsonBody, sendJson } from './_lib/http.ts';
 
 export default function handler(req: IncomingMessage, res: ServerResponse): void {
 	if (handleOptions(req, res)) {

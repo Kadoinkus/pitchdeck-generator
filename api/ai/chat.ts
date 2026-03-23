@@ -1,9 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import {
-	type ChatRequest,
-	type ChatResult,
-	runChatAssistant,
-} from '../../src/ai/orchestrator.ts';
+import { type ChatRequest, type ChatResult, runChatAssistant } from '../../src/ai/orchestrator.ts';
 import { handleOptions, isMethod, type JsonObject, readJsonBody, sendJson } from '../_lib/http.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {

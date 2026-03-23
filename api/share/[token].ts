@@ -1,11 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readShare, type ShareRecord } from '../../src/share-store.ts';
-import {
-	extractLastPathSegment,
-	handleOptions,
-	isMethod,
-	sendJson,
-} from '../_lib/http.ts';
+import { extractLastPathSegment, handleOptions, isMethod, sendJson } from '../_lib/http.ts';
 import { getOutputDir } from '../_lib/storage.ts';
 
 export default function handler(req: IncomingMessage, res: ServerResponse): void {

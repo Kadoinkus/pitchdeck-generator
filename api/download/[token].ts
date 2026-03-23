@@ -1,12 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readShare, type ShareRecord } from '../../src/share-store.ts';
-import {
-	extractLastPathSegment,
-	handleOptions,
-	isMethod,
-	sendBinary,
-	sendJson,
-} from '../_lib/http.ts';
+import { extractLastPathSegment, handleOptions, isMethod, sendBinary, sendJson } from '../_lib/http.ts';
 import { getOutputDir } from '../_lib/storage.ts';
 
 export default function handler(req: IncomingMessage, res: ServerResponse): void {
@@ -28,10 +22,9 @@ export default function handler(req: IncomingMessage, res: ServerResponse): void
 	void readShare(getOutputDir(), token)
 		.then((record: ShareRecord | null) => {
 			const base64 = typeof record?.pptxBase64 === 'string' ? record.pptxBase64 : '';
-			const fileName =
-				typeof record?.fileName === 'string' && record.fileName !== ''
-					? record.fileName
-					: `pitchdeck-${token}.pptx`;
+			const fileName = typeof record?.fileName === 'string' && record.fileName !== ''
+				? record.fileName
+				: `pitchdeck-${token}.pptx`;
 
 			if (!record || base64 === '') {
 				sendJson(res, 404, { success: false, message: 'Deck download not found.' });

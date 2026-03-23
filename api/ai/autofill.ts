@@ -1,8 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import {
-	type AutofillResult,
-	generateAutofill,
-} from '../../src/ai/orchestrator.ts';
+import { type AutofillResult, generateAutofill } from '../../src/ai/orchestrator.ts';
 import { handleOptions, isMethod, type JsonObject, readJsonBody, sendJson } from '../_lib/http.ts';
 
 export default function handler(req: IncomingMessage, res: ServerResponse): void {
