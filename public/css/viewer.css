@@ -328,15 +328,23 @@
   overflow: hidden;
 }
 
-.slide-canvas {
-  width: min(100%, 1020px);
+.slide-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1020px;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.slide-canvas {
+  width: 1020px;
+  height: 573.75px;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
-  position: relative;
   border: 1px solid #d2dbe9;
   background: #fff;
+  transform-origin: top left;
 }
 
 .viewer-chat-launcher {

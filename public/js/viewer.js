@@ -3,8 +3,21 @@ import { renderSlide } from './slide-renderers.js';
 const viewer = document.getElementById('slide-viewer');
 const page = document.querySelector('.page');
 const slideCanvas = document.getElementById('slide-canvas');
+const canvasWrapper = document.getElementById('slide-canvas-wrapper');
 const thumbnailsEl = document.getElementById('thumbnails');
 const slideCounter = document.getElementById('slide-counter');
+
+const SLIDE_WIDTH = 1020;
+
+function scaleSlideCanvas() {
+  if (!canvasWrapper) return;
+  const available = canvasWrapper.clientWidth;
+  const scale = Math.min(available / SLIDE_WIDTH, 1);
+  slideCanvas.style.transform = `scale(${scale})`;
+}
+
+const resizeObserver = new ResizeObserver(scaleSlideCanvas);
+resizeObserver.observe(document.querySelector('.slide-stage'));
 
 const downloadPptxBtn = document.getElementById('viewer-download-pptx');
 const downloadPdfBtn = document.getElementById('viewer-download-pdf');
@@ -92,6 +105,7 @@ export function showViewer(data, options = {}) {
 
   page.classList.add('hidden');
   viewer.classList.remove('hidden');
+  scaleSlideCanvas();
 }
 
 export function updateViewerData(data) {
