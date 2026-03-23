@@ -77,11 +77,7 @@ export function renderImageSlot({
   }
 
   return `<figure ${attrTarget(target, label, `image-slot ${cls}`)}>
-    <div class="image-frame">
-      <span class="image-icon">🖼</span>
-      ${hideTitle ? '' : '<p class="image-title">Missing image</p>'}
-      ${hideHint ? '' : `<p class="image-hint">${esc(fitText(helper, 80))}</p>`}
-    </div>
+    <div class="image-frame is-empty"></div>
   </figure>`;
 }
 
