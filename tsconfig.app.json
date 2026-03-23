@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"allowJs": false,
+		"checkJs": false,
+		"jsx": "preserve",
+		"strict": false,
+		"noEmit": true,
+		"skipLibCheck": true,
+		"verbatimModuleSyntax": true,
+		"types": ["vite/client"]
+	},
+	"include": ["src/client/**/*.ts"]
+}

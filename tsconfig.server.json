@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"lib": ["ES2022"],
+		"allowJs": false,
+		"checkJs": false,
+		"strict": false,
+		"noImplicitAny": false,
+		"skipLibCheck": true,
+		"verbatimModuleSyntax": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"types": ["node"],
+		"outDir": "dist/server",
+		"rootDir": "src"
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["src/client/**/*"]
+}
