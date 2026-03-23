@@ -3,6 +3,7 @@ import { renderSlide } from "./slide-renderers.js";
 const viewer = document.getElementById("slide-viewer");
 const page = document.querySelector(".page");
 const slideCanvas = document.getElementById("slide-canvas");
+const slideTrack = document.getElementById("slide-track");
 const thumbnailsEl = document.getElementById("thumbnails");
 const slideCounter = document.getElementById("slide-counter");
 
@@ -16,6 +17,15 @@ const shareToggleBtn = document.getElementById("viewer-share-toggle");
 let currentSlide = 0;
 let slideData = null;
 let copyFeedbackTimer = null;
+let suppressClickUntil = 0;
+
+const drag = {
+	active: false,
+	startX: 0,
+	deltaX: 0,
+	width: 0,
+	moved: false
+};
 
 function isShareMenuOpen() {
 	return Boolean(shareDropdown?.classList.contains("open"));
@@ -68,6 +78,45 @@ function setToolbarLinks(options = {}) {
 	}
 }
 
+function updateTrackPosition({ animate = true, offsetPx = 0 } = {}) {
+	if (!slideCanvas || !slideTrack) return;
+	const width = slideCanvas.clientWidth || 1;
+	const position = -currentSlide * width + offsetPx;
+	if (!animate) {
+		slideTrack.style.transition = "none";
+	}
+	slideTrack.style.transform = `translate3d(${position}px, 0, 0)`;
+	if (!animate) {
+		requestAnimationFrame(() => {
+			if (!drag.active) {
+				slideTrack.style.transition = "";
+			}
+		});
+	}
+}
+
+function updateSlidePageStates() {
+	if (!slideTrack) return;
+	slideTrack.querySelectorAll(".slide-page").forEach((node, index) => {
+		node.classList.toggle("is-active", index === currentSlide);
+		node.classList.toggle("is-prev", index === currentSlide - 1);
+		node.classList.toggle("is-next", index === currentSlide + 1);
+	});
+}
+
+function renderSlides() {
+	if (!slideTrack || !slideData?.slides?.length) return;
+	slideTrack.innerHTML = "";
+
+	slideData.slides.forEach((slide, index) => {
+		const pageNode = document.createElement("section");
+		pageNode.className = "slide-page";
+		pageNode.dataset.slideIndex = String(index);
+		pageNode.innerHTML = renderSlide(slide, slideData.theme, slideData);
+		slideTrack.appendChild(pageNode);
+	});
+}
+
 function renderThumbnails() {
 	thumbnailsEl.innerHTML = "";
 
@@ -87,8 +136,9 @@ export function showViewer(data, options = {}) {
 	currentSlide = Math.max(0, Math.min(currentSlide, data.slides.length - 1));
 
 	setToolbarLinks(options);
+	renderSlides();
 	renderThumbnails();
-	goToSlide(currentSlide);
+	goToSlide(currentSlide, { animate: false });
 
 	page.classList.add("hidden");
 	viewer.classList.remove("hidden");
@@ -99,8 +149,9 @@ export function updateViewerData(data) {
 
 	slideData = data;
 	currentSlide = Math.max(0, Math.min(currentSlide, data.slides.length - 1));
+	renderSlides();
 	renderThumbnails();
-	goToSlide(currentSlide);
+	goToSlide(currentSlide, { animate: false });
 }
 
 export function hideViewer() {
@@ -109,15 +160,15 @@ export function hideViewer() {
 	page.classList.remove("hidden");
 }
 
-function goToSlide(index) {
+function goToSlide(index, options = {}) {
 	if (!slideData || !slideData.slides?.length) return;
 
 	const maxIndex = slideData.slides.length - 1;
 	currentSlide = Math.max(0, Math.min(index, maxIndex));
 
-	const current = slideData.slides[currentSlide];
-	slideCanvas.innerHTML = renderSlide(current, slideData.theme, slideData);
 	slideCounter.textContent = `${currentSlide + 1} / ${slideData.slides.length}`;
+	updateSlidePageStates();
+	updateTrackPosition({ animate: options.animate !== false });
 
 	thumbnailsEl.querySelectorAll(".thumb").forEach((thumb, i) => {
 		thumb.classList.toggle("active", i === currentSlide);
@@ -129,7 +180,66 @@ function goToSlide(index) {
 	}
 }
 
+function startSwipe(event) {
+	if (!slideData?.slides?.length || slideData.slides.length < 2) return;
+	if (event.button !== undefined && event.button !== 0) return;
+	if (event.target.closest("a,button,input,textarea,select")) return;
+
+	drag.active = true;
+	drag.startX = event.clientX;
+	drag.deltaX = 0;
+	drag.width = slideCanvas.clientWidth || 1;
+	drag.moved = false;
+	slideCanvas.classList.add("is-dragging");
+	slideCanvas.setPointerCapture?.(event.pointerId);
+}
+
+function moveSwipe(event) {
+	if (!drag.active) return;
+	drag.deltaX = event.clientX - drag.startX;
+	if (Math.abs(drag.deltaX) > 6) drag.moved = true;
+
+	const maxIndex = (slideData?.slides?.length || 1) - 1;
+	let offset = drag.deltaX;
+	if ((currentSlide === 0 && drag.deltaX > 0) || (currentSlide === maxIndex && drag.deltaX < 0)) {
+		offset *= 0.35;
+	}
+
+	updateTrackPosition({ animate: false, offsetPx: offset });
+}
+
+function endSwipe(event) {
+	if (!drag.active) return;
+	drag.active = false;
+	slideCanvas.classList.remove("is-dragging");
+	slideCanvas.releasePointerCapture?.(event.pointerId);
+
+	const threshold = Math.min(140, (drag.width || 1) * 0.16);
+	const delta = drag.deltaX;
+	const moved = drag.moved;
+
+	if (moved && Math.abs(delta) > threshold) {
+		suppressClickUntil = Date.now() + 240;
+		if (delta < 0) goToSlide(currentSlide + 1);
+		else goToSlide(currentSlide - 1);
+		return;
+	}
+
+	goToSlide(currentSlide);
+}
+
+slideCanvas.addEventListener("pointerdown", startSwipe);
+slideCanvas.addEventListener("pointermove", moveSwipe);
+slideCanvas.addEventListener("pointerup", endSwipe);
+slideCanvas.addEventListener("pointercancel", endSwipe);
+
 slideCanvas.addEventListener("click", (event) => {
+	if (Date.now() < suppressClickUntil) {
+		event.preventDefault();
+		event.stopPropagation();
+		return;
+	}
+
 	const target = event.target.closest("[data-ai-target]");
 	if (!target) return;
 
@@ -137,10 +247,15 @@ slideCanvas.addEventListener("click", (event) => {
 		target: target.getAttribute("data-ai-target"),
 		label:
 			target.getAttribute("data-ai-label") ||
-			target.getAttribute("data-ai-target"),
+			target.getAttribute("data-ai-target")
 	};
 
 	window.dispatchEvent(new CustomEvent("deck:select-target", { detail }));
+});
+
+window.addEventListener("resize", () => {
+	if (viewer.classList.contains("hidden")) return;
+	updateTrackPosition({ animate: false });
 });
 
 document.getElementById("back-to-editor").addEventListener("click", hideViewer);
