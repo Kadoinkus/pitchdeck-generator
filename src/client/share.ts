@@ -142,7 +142,9 @@ function startSwipe(event: PointerEvent): void {
 	drag.width = deckEl ? deckEl.clientWidth || 1 : 1;
 	drag.moved = false;
 	deckEl?.classList.add('is-dragging');
-	deckEl?.setPointerCapture?.(event.pointerId);
+	document.addEventListener('pointermove', moveSwipe);
+	document.addEventListener('pointerup', endSwipe);
+	document.addEventListener('pointercancel', endSwipe);
 }
 
 function moveSwipe(event: PointerEvent): void {
@@ -162,11 +164,13 @@ function moveSwipe(event: PointerEvent): void {
 	updateTrackPosition({ animate: false, offsetPx: offset });
 }
 
-function endSwipe(event: PointerEvent): void {
+function endSwipe(_event: PointerEvent): void {
 	if (!drag.active) return;
 	drag.active = false;
 	deckEl?.classList.remove('is-dragging');
-	deckEl?.releasePointerCapture?.(event.pointerId);
+	document.removeEventListener('pointermove', moveSwipe);
+	document.removeEventListener('pointerup', endSwipe);
+	document.removeEventListener('pointercancel', endSwipe);
 
 	const threshold = Math.min(140, (drag.width || 1) * 0.16);
 	const delta = drag.deltaX;
@@ -249,9 +253,6 @@ printButton?.addEventListener('click', () => {
 });
 
 deckEl?.addEventListener('pointerdown', startSwipe);
-deckEl?.addEventListener('pointermove', moveSwipe);
-deckEl?.addEventListener('pointerup', endSwipe);
-deckEl?.addEventListener('pointercancel', endSwipe);
 
 window.addEventListener('resize', () => {
 	if (!slideData) return;

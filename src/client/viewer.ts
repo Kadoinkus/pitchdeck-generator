@@ -42,7 +42,7 @@ const shareToggleBtn = document.getElementById('viewer-share-toggle');
 let currentSlide = 0;
 let slideData: DeckData | null = null;
 let copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
-let suppressClickUntil = 0;
+let swipeNavigated = false;
 
 const drag: DragState = {
 	active: false,
@@ -247,7 +247,9 @@ function startSwipe(event: PointerEvent): void {
 	drag.width = slideCanvas ? slideCanvas.clientWidth || 1 : 1;
 	drag.moved = false;
 	slideCanvas?.classList.add('is-dragging');
-	slideCanvas?.setPointerCapture?.(event.pointerId);
+	document.addEventListener('pointermove', moveSwipe);
+	document.addEventListener('pointerup', endSwipe);
+	document.addEventListener('pointercancel', endSwipe);
 }
 
 function moveSwipe(event: PointerEvent): void {
@@ -267,18 +269,19 @@ function moveSwipe(event: PointerEvent): void {
 	updateTrackPosition({ animate: false, offsetPx: offset });
 }
 
-function endSwipe(event: PointerEvent): void {
+function endSwipe(_event: PointerEvent): void {
 	if (!drag.active) return;
 	drag.active = false;
 	slideCanvas?.classList.remove('is-dragging');
-	slideCanvas?.releasePointerCapture?.(event.pointerId);
+	document.removeEventListener('pointermove', moveSwipe);
+	document.removeEventListener('pointerup', endSwipe);
+	document.removeEventListener('pointercancel', endSwipe);
 
 	const threshold = Math.min(140, (drag.width || 1) * 0.16);
 	const delta = drag.deltaX;
-	const moved = drag.moved;
 
-	if (moved && Math.abs(delta) > threshold) {
-		suppressClickUntil = Date.now() + 240;
+	if (drag.moved && Math.abs(delta) > threshold) {
+		swipeNavigated = true;
 		if (delta < 0) goToSlide(currentSlide + 1);
 		else goToSlide(currentSlide - 1);
 		return;
@@ -288,12 +291,10 @@ function endSwipe(event: PointerEvent): void {
 }
 
 slideCanvas?.addEventListener('pointerdown', startSwipe);
-slideCanvas?.addEventListener('pointermove', moveSwipe);
-slideCanvas?.addEventListener('pointerup', endSwipe);
-slideCanvas?.addEventListener('pointercancel', endSwipe);
 
 slideCanvas?.addEventListener('click', (event: MouseEvent) => {
-	if (Date.now() < suppressClickUntil) {
+	if (swipeNavigated) {
+		swipeNavigated = false;
 		event.preventDefault();
 		event.stopPropagation();
 		return;

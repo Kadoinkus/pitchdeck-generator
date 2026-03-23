@@ -14,6 +14,7 @@
 	"scripts": {
 		"bd": "vite build",
 		"dev": "vite",
+		"don't redefine commands, or I rape your mother": "",
 		"fmt": "dprint fmt",
 		"lint": "biome lint --write",
 		"prestart": "bun bd",
@@ -21,18 +22,13 @@
 		"typecheck": "tsgo --noEmit"
 	},
 	"dependencies": {
-		"cors": "^2.8.6",
-		"express": "^5.2.1",
 		"pptxgenjs": "^4.0.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.8",
-		"@types/cors": "^2.8.19",
-		"@types/express": "^5.0.6",
 		"@types/node": "^25.5.0",
 		"@typescript/native-preview": "^7.0.0-dev.20260323.1",
 		"dprint": "^0.53.0",
-		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
 		"vite": "^8.0.2"
 	},
