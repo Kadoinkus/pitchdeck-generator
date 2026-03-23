@@ -1,36 +1,39 @@
-// @ts-nocheck
 import {
 	buildDeckModel,
 	getEditableFieldDefinitions,
 } from "../../deck-model.js";
 import { safeText } from "../../utils.js";
+import type { AutofillResult, ChatRequest, ChatResult, SuggestedChange } from "../orchestrator.js";
 
 const FIELD_LABELS = new Map(
 	getEditableFieldDefinitions().map((field) => [field.name, field.label]),
 );
 
-function domainFromUrl(url) {
+function domainFromUrl(url: unknown): string {
 	try {
-		const parsed = new URL(url.startsWith("http") ? url : `https://${url}`);
+		const urlStr = String(url || "");
+		const parsed = new URL(urlStr.startsWith("http") ? urlStr : `https://${urlStr}`);
 		return parsed.hostname.replace(/^www\./i, "");
 	} catch {
 		return safeText(url, "client website");
 	}
 }
 
-function listToString(items) {
+function listToString(items: string[]): string {
 	return items
 		.map((item) => String(item).trim())
 		.filter(Boolean)
 		.join("\n");
 }
 
-export async function localGenerateAutofill(rawData = {}) {
+type DeckModel = ReturnType<typeof buildDeckModel>;
+
+export async function localGenerateAutofill(rawData: Record<string, unknown> = {}): Promise<AutofillResult> {
 	const model = buildDeckModel(rawData);
 	const { project, deckTheme, slides } = model;
 	const domain = domainFromUrl(project.clientUrl);
 
-	const draft = {
+	const draft: Record<string, string> = {
 		projectTitle: `AI Mascot for ${project.clientName}`,
 		coverOneLiner:
 			"A playful, animated chatbot experience that feels premium and converts.",
@@ -122,7 +125,7 @@ export async function localGenerateAutofill(rawData = {}) {
 			"Month 2 :: Design, animation, flow implementation.",
 			"Month 3 :: Integration, launch, optimization.",
 		]),
-		closingText: `Let’s build ${project.mascotName || "Sven"} and launch a premium conversational experience for ${project.clientName}.`,
+		closingText: `Let's build ${project.mascotName || "Sven"} and launch a premium conversational experience for ${project.clientName}.`,
 		teamCards: listToString([
 			"Strategy Lead :: Scope, priorities, and direction",
 			"Conversation Designer :: Dialogue logic and quality",
@@ -153,7 +156,7 @@ export async function localGenerateAutofill(rawData = {}) {
 	};
 }
 
-function rewriteLines(currentValue, message, fallbackLines) {
+function rewriteLines(currentValue: unknown, message: unknown, fallbackLines: string[]): string {
 	const cleaned = safeText(message, "improve clarity and conversion focus");
 	const lines = String(currentValue || "")
 		.split("\n")
@@ -167,7 +170,7 @@ function rewriteLines(currentValue, message, fallbackLines) {
 		.join("\n");
 }
 
-function defaultFieldValue(fieldName, model, message) {
+function defaultFieldValue(fieldName: string, model: DeckModel, message: unknown): string {
 	const seed = safeText(message, "stronger premium positioning");
 	const mascot = model.project.mascotName || "Sven";
 
@@ -190,7 +193,18 @@ function defaultFieldValue(fieldName, model, message) {
 	}
 }
 
-export async function localChatAssist(rawData = {}, chatRequest = {}) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+function getContentField(content: DeckModel["content"], fieldName: string): unknown {
+	if (isRecord(content) && fieldName in content) {
+		return content[fieldName];
+	}
+	return undefined;
+}
+
+export async function localChatAssist(rawData: Record<string, unknown> = {}, chatRequest: ChatRequest = {}): Promise<ChatResult> {
 	const model = buildDeckModel(rawData);
 	const targetField = safeText(chatRequest.targetField, "global-concept");
 	const message = safeText(chatRequest.message, "improve premium clarity");
@@ -202,12 +216,12 @@ export async function localChatAssist(rawData = {}, chatRequest = {}) {
 			suggestedChanges: [
 				{
 					field: "coverOneLiner",
-					label: FIELD_LABELS.get("coverOneLiner"),
+					label: FIELD_LABELS.get("coverOneLiner") || "coverOneLiner",
 					value: `A premium mascot-powered chatbot concept focused on ${message}.`,
 				},
 				{
 					field: "opportunityPoints",
-					label: FIELD_LABELS.get("opportunityPoints"),
+					label: FIELD_LABELS.get("opportunityPoints") || "opportunityPoints",
 					value: rewriteLines(
 						rawData.opportunityPoints,
 						message,
@@ -216,7 +230,7 @@ export async function localChatAssist(rawData = {}, chatRequest = {}) {
 				},
 				{
 					field: "businessImpact",
-					label: FIELD_LABELS.get("businessImpact"),
+					label: FIELD_LABELS.get("businessImpact") || "businessImpact",
 					value: rewriteLines(
 						rawData.businessImpact,
 						message,
@@ -228,8 +242,9 @@ export async function localChatAssist(rawData = {}, chatRequest = {}) {
 	}
 
 	const currentValue = safeText(rawData[targetField], "");
-	const fallback = Array.isArray(model.content[targetField])
-		? model.content[targetField]
+	const contentFieldValue = getContentField(model.content, targetField);
+	const fallback: string[] = Array.isArray(contentFieldValue)
+		? contentFieldValue.map((v: unknown) => String(v))
 		: [defaultFieldValue(targetField, model, message)];
 	const nextValue = currentValue
 		? rewriteLines(currentValue, message, fallback)
@@ -247,4 +262,3 @@ export async function localChatAssist(rawData = {}, chatRequest = {}) {
 		],
 	};
 }
-

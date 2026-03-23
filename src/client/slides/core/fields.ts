@@ -1,5 +1,9 @@
-// @ts-nocheck
-export function getTargetField(slide) {
+interface SlideInput {
+	type?: string;
+	sourceField?: string;
+}
+
+export function getTargetField(slide: SlideInput | null | undefined): string {
 	if (slide?.sourceField) return slide.sourceField;
 
 	switch (slide?.type) {
@@ -37,4 +41,3 @@ export function getTargetField(slide) {
 			return "global-concept";
 	}
 }
-

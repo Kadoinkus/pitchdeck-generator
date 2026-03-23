@@ -1,4 +1,4 @@
-// @ts-nocheck
+import type { SlotPolicy } from "./core/slot-policy.js";
 import { resolveImageMode, resolveSlotPolicy } from "./core/slot-policy.js";
 import { resolveTheme, themeVars } from "./core/theme.js";
 import { esc } from "./core/utils.js";
@@ -17,8 +17,11 @@ import { renderSolution } from "./layouts/solution.js";
 import { renderTimeline } from "./layouts/timeline.js";
 import { renderWhatNotsoDoes } from "./layouts/what-notso-does.js";
 import { renderWhatYouGet } from "./layouts/what-you-get.js";
+import type { DeckData, SlideData, ThemeData } from "./types.js";
 
-const RENDERERS = {
+type SlideRenderer = (slide: SlideData, theme: ThemeData, deckData: DeckData) => string;
+
+const RENDERERS: Record<string, SlideRenderer> = {
 	cover: renderCover,
 	problem: renderProblem,
 	opportunity: renderOpportunity,
@@ -36,21 +39,40 @@ const RENDERERS = {
 	closing: renderClosing,
 };
 
-export function renderSlide(slide, theme, deckData) {
-	const resolvedTheme = resolveTheme(theme, deckData);
-	const slotPolicy = resolveSlotPolicy(slide?.type, slide?.slotPolicy);
-	const imageRatio = ["16:9", "4:3", "3:4", "1:1"].includes(slide?.imageRatio)
-		? slide.imageRatio
+function toRecord(obj: ThemeData | undefined): Record<string, unknown> | undefined {
+	if (obj === undefined) return undefined;
+	const rec: Record<string, unknown> = { ...obj };
+	return rec;
+}
+
+function isSlotPolicyLike(value: unknown): value is Partial<SlotPolicy> {
+	return typeof value === "object" && value !== null;
+}
+
+function toSlotPolicyOverride(value: unknown): Partial<SlotPolicy> | null {
+	if (isSlotPolicyLike(value)) {
+		return value;
+	}
+	return null;
+}
+
+export function renderSlide(slide: SlideData | null | undefined, theme: ThemeData | undefined, deckData: DeckData | undefined): string {
+	const resolvedTheme = resolveTheme(toRecord(theme), deckData);
+	const slotPolicy = resolveSlotPolicy(slide?.type, toSlotPolicyOverride(slide?.slotPolicy));
+	const validRatios = ["16:9", "4:3", "3:4", "1:1"];
+	const slideImageRatio = slide?.imageRatio ?? "";
+	const imageRatio = validRatios.includes(slideImageRatio)
+		? slideImageRatio
 		: "4:3";
 	const rawHide = Boolean(slide?.hideImages);
 	const hideImages = slotPolicy.image.required ? false : rawHide;
 	const imageMode = resolveImageMode(
-		slide,
+		slide ?? undefined,
 		slide?.imageMode || slotPolicy.image.defaultMode,
 	);
 	const textMode =
 		slotPolicy.text.mode === "clamp" ? "clamp" : slide?.textMode || "fit";
-	const slideForRender = slide
+	const slideForRender: SlideData | null | undefined = slide
 		? {
 				...slide,
 				slotPolicy,
@@ -60,12 +82,11 @@ export function renderSlide(slide, theme, deckData) {
 				textMode,
 			}
 		: slide;
-	const renderer = RENDERERS[slideForRender?.type];
+	const renderer = RENDERERS[slideForRender?.type ?? ""];
 
-	if (renderer) {
-		return renderer(slideForRender, resolvedTheme, deckData);
+	if (renderer && slideForRender) {
+		return renderer(slideForRender, resolvedTheme, deckData ?? {});
 	}
 
 	return `<article class="slide-render deck-slide mode-light" style="${themeVars(resolvedTheme)}"><section class="deck-content"><p>Unknown slide type: ${esc(slideForRender?.type || "n/a")}</p></section></article>`;
 }
-

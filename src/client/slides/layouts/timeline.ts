@@ -1,4 +1,4 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems } from "../core/utils.js";
@@ -8,7 +8,7 @@ import {
 	renderTitlePanel,
 } from "../panels/index.js";
 
-export function renderTimeline(slide, theme, deckData) {
+export function renderTimeline(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const phases = ensureItems(slide.phases, [
 		{ title: "Month 1", description: "Discovery and concept alignment." },
@@ -61,4 +61,3 @@ export function renderTimeline(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

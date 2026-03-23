@@ -1,5 +1,4 @@
-// @ts-nocheck
-export function panelVariantClass(variant = "solid") {
+export function panelVariantClass(variant: string = "solid"): string {
 	const value = String(variant || "solid")
 		.trim()
 		.toLowerCase();
@@ -10,8 +9,12 @@ export function panelVariantClass(variant = "solid") {
 	return "is-solid";
 }
 
-export function panelClassName({ variant = "solid", className = "" } = {}) {
+interface PanelClassNameOptions {
+	variant?: string;
+	className?: string;
+}
+
+export function panelClassName({ variant = "solid", className = "" }: PanelClassNameOptions = {}): string {
 	const variantClass = panelVariantClass(variant);
 	return ["panel", variantClass, className].filter(Boolean).join(" ");
 }
-

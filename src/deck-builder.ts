@@ -1,27 +1,54 @@
-// @ts-nocheck
 import PptxGenJS from "pptxgenjs";
 import { buildDeckModel } from "./deck-model.js";
+
+type DeckModel = ReturnType<typeof buildDeckModel>;
+type DeckSlide = DeckModel["slides"][number];
+type DeckTheme = DeckModel["deckTheme"];
+type PptxPresentation = InstanceType<typeof PptxGenJS>;
+
+/** Derive the Slide type from addSlide() return type */
+type PptxSlide = ReturnType<PptxPresentation["addSlide"]>;
+
+interface ImagePlaceholderOptions {
+	slideInfo?: DeckSlide | null;
+	optional?: boolean;
+	mode?: string;
+	x?: number;
+	y?: number;
+	w?: number;
+	h?: number;
+}
+
+interface BulletOptions {
+	x?: number;
+	y?: number;
+	w?: number;
+	h?: number;
+	fontFace?: string;
+	fontSize?: number;
+	color?: string;
+}
 
 const _SLIDE_WIDTH = 13.333;
 const _SLIDE_HEIGHT = 7.5;
 
-function toPptColor(hex, fallback = "0B1D2E") {
+function toPptColor(hex: unknown, fallback = "0B1D2E"): string {
 	const value = String(hex || "")
 		.replace("#", "")
 		.trim();
 	return value.length ? value : fallback;
 }
 
-function fontByDensity(size, density, min = 7) {
+function fontByDensity(size: number, density: unknown, min = 7): number {
 	void density;
 	return Math.max(min, Math.round(size * 10) / 10);
 }
 
-function bg(slide, color) {
+function bg(slide: PptxSlide, color: unknown): void {
 	slide.background = { color: toPptColor(color, "F2F4F6") };
 }
 
-function addFooter(slide, theme, brandName) {
+function addFooter(slide: PptxSlide, theme: DeckTheme, brandName: string): void {
 	slide.addText(brandName || "", {
 		x: 0.62,
 		y: 7.12,
@@ -34,7 +61,7 @@ function addFooter(slide, theme, brandName) {
 	});
 }
 
-function addTop(slide, slideInfo, theme, step) {
+function addTop(slide: PptxSlide, slideInfo: { title?: string; subtitle?: string; density?: unknown }, theme: DeckTheme & { textColor: string }, step: string): void {
 	if (step) {
 		slide.addShape("ellipse", {
 			x: 0.64,
@@ -81,7 +108,7 @@ function addTop(slide, slideInfo, theme, step) {
 	}
 }
 
-function imagePlaceholder(slide, theme, prompt, options = {}) {
+function imagePlaceholder(slide: PptxSlide, theme: DeckTheme, prompt: string | undefined, options: ImagePlaceholderOptions = {}): void {
 	const {
 		slideInfo = null,
 		optional = true,
@@ -106,7 +133,7 @@ function imagePlaceholder(slide, theme, prompt, options = {}) {
 		h,
 		rectRadius: 0.08,
 		fill: { color: "F7FAFD" },
-		line: { color: "C8D7EA", pt: 1, dash: "dash" },
+		line: { color: "C8D7EA", pt: 1, dashType: "dash" },
 	});
 
 	slide.addText(`[Visual · ${activeMode}]`, {
@@ -132,7 +159,7 @@ function imagePlaceholder(slide, theme, prompt, options = {}) {
 	});
 }
 
-function addBullets(slide, items, options = {}) {
+function addBullets(slide: PptxSlide, items: string[], options: BulletOptions = {}): void {
 	const {
 		x = 1.0,
 		y = 2.0,
@@ -160,12 +187,12 @@ function addBullets(slide, items, options = {}) {
 		fontFace,
 		fontSize,
 		color,
-		paraSpaceAfterPt: 9,
+		paraSpaceAfter: 9,
 		margin: 2,
 	});
 }
 
-function renderCover(slide, slideInfo, model) {
+function renderCover(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 
@@ -202,7 +229,8 @@ function renderCover(slide, slideInfo, model) {
 		fit: "shrink",
 	});
 
-	slide.addText(slideInfo.oneLiner || model.project.coverOneLiner, {
+	const oneLiner = getStringField(slideInfo, "oneLiner");
+	slide.addText(oneLiner || model.project.coverOneLiner, {
 		x: 1.0,
 		y: 2.78,
 		w: 4.6,
@@ -245,12 +273,12 @@ function renderCover(slide, slideInfo, model) {
 	});
 }
 
-function renderProblem(slide, slideInfo, model, step) {
+function renderProblem(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
 
-	const points = slideInfo.points || [];
+	const points = getStringArray(slideInfo, "points");
 	points.slice(0, 3).forEach((point, idx) => {
 		const x = 1.0 + idx * 4.06;
 		slide.addShape("roundRect", {
@@ -314,7 +342,7 @@ function renderProblem(slide, slideInfo, model, step) {
 	});
 }
 
-function renderSplit(slide, slideInfo, model, step, lines, _ratio = "4:3") {
+function renderSplit(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string, lines: string[], _ratio = "4:3"): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -349,7 +377,58 @@ function renderSplit(slide, slideInfo, model, step, lines, _ratio = "4:3") {
 	});
 }
 
-function renderSolution(slide, slideInfo, model, step) {
+interface TitleDescription {
+	title: string;
+	description: string;
+}
+
+interface ToneSlider {
+	label: string;
+	value: number;
+}
+
+interface PricingPackage {
+	name: string;
+	price: string;
+	description: string;
+}
+
+interface DeliverableSection {
+	title: string;
+	bullets: string[];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+/** Safely extract a dynamic property from a slide's extra fields */
+function getSlideField(slideInfo: DeckSlide, key: string): unknown {
+	if (isRecord(slideInfo) && key in slideInfo) {
+		return slideInfo[key];
+	}
+	return undefined;
+}
+
+/** Safely extract a string array from a slide's extra fields */
+function getStringArray(slideInfo: DeckSlide, key: string): string[] {
+	const val = getSlideField(slideInfo, key);
+	return Array.isArray(val) ? val : [];
+}
+
+/** Safely extract a typed array from a slide's extra fields */
+function getTypedArray<T>(slideInfo: DeckSlide, key: string): T[] {
+	const val = getSlideField(slideInfo, key);
+	return Array.isArray(val) ? val : [];
+}
+
+/** Safely extract a string field from a slide's extra fields */
+function getStringField(slideInfo: DeckSlide, key: string): string {
+	const val = getSlideField(slideInfo, key);
+	return typeof val === "string" ? val : "";
+}
+
+function renderSolution(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -366,7 +445,7 @@ function renderSolution(slide, slideInfo, model, step) {
 		align: "center",
 	});
 
-	const pillars = slideInfo.pillars || [];
+	const pillars = getTypedArray<TitleDescription>(slideInfo, "pillars");
 	pillars.slice(0, 3).forEach((item, idx) => {
 		const x = 1.05 + idx * 4.12;
 		slide.addShape("roundRect", {
@@ -403,7 +482,7 @@ function renderSolution(slide, slideInfo, model, step) {
 	});
 }
 
-function renderCapabilities(slide, slideInfo, model, step) {
+function renderCapabilities(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -417,7 +496,7 @@ function renderCapabilities(slide, slideInfo, model, step) {
 		fill: { color: "FFFFFF" },
 		line: { color: "D8E2F2", pt: 1 },
 	});
-	slide.addText(slideInfo.intro || "", {
+	slide.addText(getStringField(slideInfo, "intro"), {
 		x: 1.28,
 		y: 2.2,
 		w: 5.15,
@@ -428,7 +507,7 @@ function renderCapabilities(slide, slideInfo, model, step) {
 		fit: "shrink",
 	});
 
-	(slideInfo.cards || []).slice(0, 4).forEach((card, idx) => {
+	getTypedArray<TitleDescription>(slideInfo, "cards").slice(0, 4).forEach((card, idx) => {
 		const col = idx % 2;
 		const row = Math.floor(idx / 2);
 		const x = 7.05 + col * 2.63;
@@ -466,7 +545,7 @@ function renderCapabilities(slide, slideInfo, model, step) {
 	});
 }
 
-function renderBuddy(slide, slideInfo, model, step) {
+function renderBuddy(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -481,7 +560,7 @@ function renderBuddy(slide, slideInfo, model, step) {
 		line: { color: "D8E2F2", pt: 1 },
 	});
 
-	slide.addText(slideInfo.description || "", {
+	slide.addText(getStringField(slideInfo, "description"), {
 		x: 1.28,
 		y: 2.15,
 		w: 5.18,
@@ -492,7 +571,7 @@ function renderBuddy(slide, slideInfo, model, step) {
 		fit: "shrink",
 	});
 
-	addBullets(slide, slideInfo.personality || [], {
+	addBullets(slide, getStringArray(slideInfo, "personality"), {
 		x: 1.2,
 		y: 3.35,
 		w: 5.3,
@@ -502,7 +581,7 @@ function renderBuddy(slide, slideInfo, model, step) {
 		color: "3B5881",
 	});
 
-	(slideInfo.toneSliders || []).slice(0, 4).forEach((tone, idx) => {
+	getTypedArray<ToneSlider>(slideInfo, "toneSliders").slice(0, 4).forEach((tone, idx) => {
 		const y = 4.92 + idx * 0.3;
 		slide.addText(tone.label || "", {
 			x: 1.28,
@@ -544,7 +623,7 @@ function renderBuddy(slide, slideInfo, model, step) {
 	});
 }
 
-function renderExampleInteraction(slide, slideInfo, model, step) {
+function renderExampleInteraction(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -569,7 +648,7 @@ function renderExampleInteraction(slide, slideInfo, model, step) {
 		h: 4.2,
 	});
 
-	const messages = slideInfo.messages || [];
+	const messages = getStringArray(slideInfo, "messages");
 	messages.slice(0, 4).forEach((msg, idx) => {
 		slide.addShape("roundRect", {
 			x: idx % 2 ? 6.55 : 2.72,
@@ -593,7 +672,7 @@ function renderExampleInteraction(slide, slideInfo, model, step) {
 	});
 }
 
-function renderImpact(slide, slideInfo, model, step) {
+function renderImpact(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.secondaryColor || theme.primaryColor || "#004B49");
 
@@ -638,7 +717,7 @@ function renderImpact(slide, slideInfo, model, step) {
 		});
 	}
 
-	(slideInfo.impacts || []).slice(0, 4).forEach((impact, idx) => {
+	getStringArray(slideInfo, "impacts").slice(0, 4).forEach((impact, idx) => {
 		const x = 1.02 + idx * 3.05;
 		slide.addShape("roundRect", {
 			x,
@@ -664,14 +743,14 @@ function renderImpact(slide, slideInfo, model, step) {
 	});
 }
 
-function renderAnalytics(slide, slideInfo, model, step) {
-	const lines = [slideInfo.description, ...(slideInfo.bullets || [])].filter(
+function renderAnalytics(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
+	const lines = [getStringField(slideInfo, "description"), ...getStringArray(slideInfo, "bullets")].filter(
 		Boolean,
 	);
 	renderSplit(slide, slideInfo, model, step, lines, "4:3");
 }
 
-function renderDeliverables(slide, slideInfo, model, step) {
+function renderDeliverables(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.secondaryColor || theme.primaryColor || "#004B49");
 
@@ -682,7 +761,7 @@ function renderDeliverables(slide, slideInfo, model, step) {
 		step,
 	);
 
-	(slideInfo.sections || []).slice(0, 4).forEach((section, idx) => {
+	getTypedArray<DeliverableSection>(slideInfo, "sections").slice(0, 4).forEach((section, idx) => {
 		const x = 0.95 + idx * 3.08;
 		slide.addShape("roundRect", {
 			x,
@@ -717,7 +796,7 @@ function renderDeliverables(slide, slideInfo, model, step) {
 	});
 }
 
-function renderPricing(slide, slideInfo, model, step) {
+function renderPricing(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -745,7 +824,7 @@ function renderPricing(slide, slideInfo, model, step) {
 		align: "center",
 	});
 
-	const packages = slideInfo.packages || [];
+	const packages = getTypedArray<PricingPackage>(slideInfo, "packages");
 	packages.slice(0, 3).forEach((pkg, idx) => {
 		const x = 0.9 + idx * 4.16;
 		const middle = idx === 1;
@@ -833,7 +912,7 @@ function renderPricing(slide, slideInfo, model, step) {
 	});
 }
 
-function renderTimeline(slide, slideInfo, model, step) {
+function renderTimeline(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme } = model;
 	bg(slide, theme.backgroundColor);
 	addTop(slide, slideInfo, theme, step);
@@ -846,7 +925,7 @@ function renderTimeline(slide, slideInfo, model, step) {
 		line: { color: "BFD0E6", pt: 2 },
 	});
 
-	const phases = slideInfo.phases || [];
+	const phases = getTypedArray<TitleDescription>(slideInfo, "phases");
 	phases.slice(0, 3).forEach((phase, idx) => {
 		const x = 1.25 + idx * 3.74;
 		slide.addShape("ellipse", {
@@ -890,11 +969,12 @@ function renderTimeline(slide, slideInfo, model, step) {
 	});
 }
 
-function renderClosing(slide, slideInfo, model, step) {
+function renderClosing(slide: PptxSlide, slideInfo: DeckSlide, model: DeckModel, step: string): void {
 	const { deckTheme: theme, project } = model;
 	bg(slide, theme.secondaryColor || theme.primaryColor || "#004B49");
 
-	slide.addText(slideInfo.headline || `Let's build ${project.mascotName}`, {
+	const headline = getStringField(slideInfo, "headline");
+	slide.addText(headline || `Let's build ${project.mascotName}`, {
 		x: 1.0,
 		y: 1.0,
 		w: 5.8,
@@ -906,7 +986,8 @@ function renderClosing(slide, slideInfo, model, step) {
 		fit: "shrink",
 	});
 
-	slide.addText(slideInfo.text || "", {
+	const text = getStringField(slideInfo, "text");
+	slide.addText(text, {
 		x: 1.0,
 		y: 2.35,
 		w: 5.7,
@@ -964,7 +1045,7 @@ function renderClosing(slide, slideInfo, model, step) {
 	}
 }
 
-export function buildDeck(data) {
+export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 	const model = buildDeckModel(data);
 	const theme = model.deckTheme || model.theme;
 	const { project, slides } = model;
@@ -975,11 +1056,9 @@ export function buildDeck(data) {
 	pptx.company = theme.brandName;
 	pptx.subject = `${project.projectTitle} for ${project.clientName}`;
 	pptx.title = `${project.projectTitle} - ${project.clientName}`;
-	pptx.lang = "en-US";
 	pptx.theme = {
 		headFontFace: theme.headingFont,
 		bodyFontFace: theme.bodyFont,
-		lang: "en-US",
 	};
 
 	slides.forEach((slideInfo, idx) => {
@@ -999,7 +1078,7 @@ export function buildDeck(data) {
 					slideInfo,
 					model,
 					step,
-					slideInfo.points || [],
+					getStringArray(slideInfo, "points"),
 					"4:3",
 				);
 				break;
@@ -1018,7 +1097,7 @@ export function buildDeck(data) {
 					slideInfo,
 					model,
 					step,
-					slideInfo.points || [],
+					getStringArray(slideInfo, "points"),
 					"4:3",
 				);
 				break;
@@ -1028,7 +1107,7 @@ export function buildDeck(data) {
 					slideInfo,
 					model,
 					step,
-					slideInfo.steps || [],
+					getStringArray(slideInfo, "steps"),
 					"4:3",
 				);
 				break;
@@ -1059,7 +1138,7 @@ export function buildDeck(data) {
 					slideInfo,
 					model,
 					step,
-					slideInfo.points || [],
+					getStringArray(slideInfo, "points"),
 					"4:3",
 				);
 				break;
@@ -1070,4 +1149,3 @@ export function buildDeck(data) {
 
 	return pptx;
 }
-

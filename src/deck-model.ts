@@ -1,12 +1,277 @@
-// @ts-nocheck
 import { resolveThemePalette } from "./color-palette.js";
 import { resolveImageModeForSlide, resolveSlotPolicy } from "./slot-policy.js";
 import { normalizeList, safeText } from "./utils.js";
 
+/* ------------------------------------------------------------------ */
+/*  Shared type definitions                                           */
+/* ------------------------------------------------------------------ */
+
+export type SlideType =
+	| "cover"
+	| "problem"
+	| "opportunity"
+	| "solution"
+	| "what-notso-does"
+	| "meet-buddy"
+	| "experience-concept"
+	| "chat-flow"
+	| "example-interaction"
+	| "business-impact"
+	| "data-analytics"
+	| "what-you-get"
+	| "pricing"
+	| "timeline"
+	| "closing";
+
+export interface SlideDefinition {
+	id: string;
+	label: string;
+	type: SlideType;
+	field: string;
+	required: boolean;
+	optional: boolean;
+	defaultIncluded: boolean;
+}
+
+export interface FieldDefinition {
+	name: string;
+	label: string;
+}
+
+export interface Pair {
+	title: string;
+	description: string;
+}
+
+export interface Triple {
+	name: string;
+	price: string;
+	description: string;
+}
+
+export interface ToneSlider {
+	label: string;
+	value: number;
+}
+
+export interface Deliverable {
+	title: string;
+	bullets: string[];
+}
+
+export interface CharacterAsset {
+	id: string;
+	name: string;
+	dataUrl: string;
+	placement: string;
+}
+
+interface TemplateDefinition {
+	id: string;
+	label: string;
+	description: string;
+	version: string;
+	slides: SlideDefinition[];
+}
+
+interface LayoutPreset {
+	id: string;
+	label: string;
+	slideLayoutByType: Record<SlideType, string>;
+	imageRatioByType: Record<SlideType, string>;
+	backgroundModeByType: Record<SlideType, string>;
+}
+
+interface SlotPolicy {
+	image: {
+		required: boolean;
+		optional: boolean;
+		defaultMode: string;
+		allowedModes: string[];
+	};
+	text: {
+		mode: string;
+	};
+}
+
+export interface SlideData {
+	id: string;
+	type: SlideType;
+	title: string;
+	subtitle: string;
+	purpose: string;
+	sourceField: string;
+	[key: string]: unknown;
+}
+
+export interface SlideWithLayout extends SlideData {
+	layoutKey: string;
+	imageRatio: string;
+	backgroundMode: string;
+	imagePrompt: string;
+	imageAsset: CharacterAsset | null;
+	slotPolicy: SlotPolicy;
+	imageMode: string;
+	textMode: string;
+}
+
+interface AppTheme {
+	surfaceTop: string;
+	surfaceBottom: string;
+	card: string;
+	line: string;
+	text: string;
+	muted: string;
+	primaryColor: string;
+	accentColor: string;
+	secondaryColor: string;
+}
+
+interface DeckTheme {
+	brandName: string;
+	primaryColor: string;
+	accentColor: string;
+	secondaryColor: string;
+	backgroundColor: string;
+	textColor: string;
+	harmonyMode: string;
+	paletteShuffleSeed: number;
+	headingFont: string;
+	bodyFont: string;
+}
+
+interface Project {
+	clientName: string;
+	clientUrl: string;
+	projectTitle: string;
+	coverOneLiner: string;
+	subtitle: string;
+	proposalDate: string;
+	mascotName: string;
+	deckVersion: string;
+	contactName: string;
+	contactEmail: string;
+	contactPhone: string;
+	characterAssets: CharacterAsset[];
+}
+
+interface Content {
+	problemPoints: string[];
+	opportunityPoints: string[];
+	solutionPillars: Pair[];
+	whatNotsoIntro: string;
+	whatNotsoCards: Pair[];
+	buddyDescription: string;
+	buddyPersonality: string[];
+	toneSliders: ToneSlider[];
+	experienceConcept: string[];
+	chatFlow: string[];
+	interactionExample: string[];
+	businessImpact: string[];
+	analyticsDescription: string;
+	analyticsBullets: string[];
+	deliverables: Deliverable[];
+	pricing: Triple[];
+	timeline: Pair[];
+	closingText: string;
+	teamCards: Pair[];
+	characterAssets: CharacterAsset[];
+	imagePrompts: string[];
+}
+
+interface AvailableSlide extends SlideDefinition {
+	included: boolean;
+}
+
+export interface DeckModel {
+	template: {
+		id: string;
+		label: string;
+		description: string;
+		version: string;
+	};
+	excludedSlides: string[];
+	availableSlides: AvailableSlide[];
+	project: Project;
+	content: Content;
+	appTheme: AppTheme;
+	deckTheme: DeckTheme;
+	theme: DeckTheme;
+	layout: {
+		presetId: string;
+		presetLabel: string;
+		locked: boolean;
+	};
+	slides: SlideWithLayout[];
+}
+
+/** Input data shape for buildDeckModel — all fields optional, coming from user input */
+interface RawDeckInput {
+	templateId?: unknown;
+	excludedSlides?: unknown;
+	layoutPreset?: unknown;
+	layoutPresetLock?: unknown;
+	primaryColor?: unknown;
+	harmonyMode?: unknown;
+	paletteShuffleSeed?: unknown;
+	lockAccentColor?: unknown;
+	lockSecondaryColor?: unknown;
+	deckAccentColor?: unknown;
+	accentColor?: unknown;
+	deckSecondaryColor?: unknown;
+	secondaryColor?: unknown;
+	deckBackgroundColor?: unknown;
+	backgroundColor?: unknown;
+	deckTextColor?: unknown;
+	textColor?: unknown;
+	brandName?: unknown;
+	deckHeadingFont?: unknown;
+	headingFont?: unknown;
+	deckBodyFont?: unknown;
+	bodyFont?: unknown;
+	clientName?: unknown;
+	clientUrl?: unknown;
+	projectTitle?: unknown;
+	coverOneLiner?: unknown;
+	subtitle?: unknown;
+	proposalDate?: unknown;
+	mascotName?: unknown;
+	deckVersion?: unknown;
+	contactName?: unknown;
+	contactEmail?: unknown;
+	contactPhone?: unknown;
+	characterAssets?: unknown;
+	problemPoints?: unknown;
+	opportunityPoints?: unknown;
+	solutionPillars?: unknown;
+	whatNotsoIntro?: unknown;
+	whatNotsoCards?: unknown;
+	buddyDescription?: unknown;
+	buddyPersonality?: unknown;
+	toneSliders?: unknown;
+	experienceConcept?: unknown;
+	chatFlow?: unknown;
+	interactionExample?: unknown;
+	businessImpact?: unknown;
+	analyticsDescription?: unknown;
+	analyticsBullets?: unknown;
+	deliverables?: unknown;
+	pricing?: unknown;
+	timeline?: unknown;
+	closingText?: unknown;
+	teamCards?: unknown;
+	imagePrompts?: unknown;
+	[key: string]: unknown;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                         */
+/* ------------------------------------------------------------------ */
+
 const TEMPLATE_PREMIUM_PROPOSAL = "pitch-proposal";
 const DEFAULT_LAYOUT_PRESET = "notso-premium-v1";
 
-const TEMPLATE_DEFINITIONS = {
+const TEMPLATE_DEFINITIONS: Record<string, TemplateDefinition> = {
 	[TEMPLATE_PREMIUM_PROPOSAL]: {
 		id: TEMPLATE_PREMIUM_PROPOSAL,
 		label: "Notso Premium Proposal",
@@ -152,7 +417,7 @@ const TEMPLATE_DEFINITIONS = {
 	},
 };
 
-export const EDITABLE_FIELD_DEFINITIONS = [
+export const EDITABLE_FIELD_DEFINITIONS: readonly FieldDefinition[] = [
 	{ name: "projectTitle", label: "Project title" },
 	{ name: "coverOneLiner", label: "Cover one-liner" },
 	{ name: "subtitle", label: "Subtitle" },
@@ -194,7 +459,7 @@ export const EDITABLE_FIELD_DEFINITIONS = [
 	{ name: "bodyFont", label: "Deck body font" },
 ];
 
-const LAYOUT_PRESETS = {
+const LAYOUT_PRESETS: Record<string, LayoutPreset> = {
 	[DEFAULT_LAYOUT_PRESET]: {
 		id: DEFAULT_LAYOUT_PRESET,
 		label: "Notso Premium v1",
@@ -252,7 +517,15 @@ const LAYOUT_PRESETS = {
 	},
 };
 
-function asBoolean(value, fallback = true) {
+/* ------------------------------------------------------------------ */
+/*  Helper functions                                                  */
+/* ------------------------------------------------------------------ */
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asBoolean(value: unknown, fallback = true): boolean {
 	if (typeof value === "boolean") return value;
 	if (typeof value === "string") {
 		const normalized = value.trim().toLowerCase();
@@ -262,9 +535,9 @@ function asBoolean(value, fallback = true) {
 	return fallback;
 }
 
-function parseExcludedSlides(value) {
+function parseExcludedSlides(value: unknown): string[] {
 	if (Array.isArray(value))
-		return value.map((item) => safeText(item).toLowerCase()).filter(Boolean);
+		return value.map((item: unknown) => safeText(item).toLowerCase()).filter(Boolean);
 	if (typeof value === "string")
 		return value
 			.split(/[,\n]/g)
@@ -273,7 +546,12 @@ function parseExcludedSlides(value) {
 	return [];
 }
 
-function parsePairs(value, fallback = [], separator = "::", limit = 8) {
+function parsePairs(
+	value: unknown,
+	fallback: string[] = [],
+	separator = "::",
+	limit = 8,
+): Pair[] {
 	return normalizeList(value, fallback)
 		.slice(0, limit)
 		.map((line) => {
@@ -286,7 +564,12 @@ function parsePairs(value, fallback = [], separator = "::", limit = 8) {
 		.filter((item) => item.title);
 }
 
-function parseTriples(value, fallback = [], separator = "::", limit = 6) {
+function parseTriples(
+	value: unknown,
+	fallback: string[] = [],
+	separator = "::",
+	limit = 6,
+): Triple[] {
 	return normalizeList(value, fallback)
 		.slice(0, limit)
 		.map((line) => {
@@ -304,7 +587,7 @@ function parseTriples(value, fallback = [], separator = "::", limit = 6) {
 		});
 }
 
-function parseTone(value, fallback = []) {
+function parseTone(value: unknown, fallback: string[] = []): ToneSlider[] {
 	return parsePairs(value, fallback, "::", 4).map((item) => {
 		const score = Number.parseInt(item.description, 10);
 		return {
@@ -314,7 +597,7 @@ function parseTone(value, fallback = []) {
 	});
 }
 
-function parseDeliverables(value, fallback = []) {
+function parseDeliverables(value: unknown, fallback: string[] = []): Deliverable[] {
 	return parsePairs(value, fallback, "::", 4).map((item) => ({
 		title: item.title,
 		bullets: item.description
@@ -325,8 +608,8 @@ function parseDeliverables(value, fallback = []) {
 	}));
 }
 
-function parseCharacterAssets(value, limit = 10) {
-	let list = value;
+function parseCharacterAssets(value: unknown, limit = 10): CharacterAsset[] {
+	let list: unknown = value;
 
 	if (typeof value === "string") {
 		try {
@@ -338,31 +621,38 @@ function parseCharacterAssets(value, limit = 10) {
 
 	if (!Array.isArray(list)) return [];
 
-	return list
-		.slice(0, limit)
-		.map((item, index) => {
-			const id = safeText(item?.id, `asset-${index + 1}`);
-			const name = safeText(item?.name, `Character asset ${index + 1}`);
-			const dataUrl = safeText(item?.dataUrl || item?.url, "");
-			const placement = safeText(item?.placement, "all-mascot").toLowerCase();
+	const results: CharacterAsset[] = [];
 
-			if (!dataUrl) return null;
-			if (
-				!(
-					dataUrl.startsWith("data:image/") ||
-					dataUrl.startsWith("/generated/") ||
-					/^https?:\/\//i.test(dataUrl)
-				)
-			) {
-				return null;
-			}
+	for (let index = 0; index < Math.min(list.length, limit); index++) {
+		const item: unknown = list[index];
+		if (!isRecord(item)) continue;
 
-			return { id, name, dataUrl, placement };
-		})
-		.filter(Boolean);
+		const id = safeText(item.id, `asset-${index + 1}`);
+		const name = safeText(item.name, `Character asset ${index + 1}`);
+		const dataUrl = safeText(item.dataUrl || item.url, "");
+		const placement = safeText(item.placement, "all-mascot").toLowerCase();
+
+		if (!dataUrl) continue;
+		if (
+			!(
+				dataUrl.startsWith("data:image/") ||
+				dataUrl.startsWith("/generated/") ||
+				/^https?:\/\//i.test(dataUrl)
+			)
+		) {
+			continue;
+		}
+
+		results.push({ id, name, dataUrl, placement });
+	}
+
+	return results;
 }
 
-function resolveImageAssetForSlide(slideId, assets = []) {
+function resolveImageAssetForSlide(
+	slideId: string,
+	assets: CharacterAsset[] = [],
+): CharacterAsset | null {
 	if (!Array.isArray(assets) || !assets.length) return null;
 
 	const id = safeText(slideId, "").toLowerCase();
@@ -389,18 +679,22 @@ function resolveImageAssetForSlide(slideId, assets = []) {
 }
 
 function withSlide(
-	id,
-	type,
-	title,
-	subtitle,
-	purpose,
-	sourceField,
-	extra = {},
-) {
+	id: string,
+	type: SlideType,
+	title: string,
+	subtitle: string,
+	purpose: string,
+	sourceField: string,
+	extra: Record<string, unknown> = {},
+): SlideData {
 	return { id, type, title, subtitle, purpose, sourceField, ...extra };
 }
 
-function defaultImagePrompt(type, project, mascotName) {
+function defaultImagePrompt(
+	type: SlideType,
+	project: Project,
+	mascotName: string,
+): string {
 	switch (type) {
 		case "cover":
 			return `Hero composition with ${mascotName} overlapping device UI for ${project.clientName}.`;
@@ -437,19 +731,23 @@ function defaultImagePrompt(type, project, mascotName) {
 	}
 }
 
-function resolveTemplateId(rawTemplateId) {
+function resolveTemplateId(rawTemplateId: unknown): string {
 	const candidate = safeText(rawTemplateId, TEMPLATE_PREMIUM_PROPOSAL);
 	return TEMPLATE_DEFINITIONS[candidate]
 		? candidate
 		: TEMPLATE_PREMIUM_PROPOSAL;
 }
 
-function resolveLayoutPreset(rawPresetId) {
+function resolveLayoutPreset(rawPresetId: unknown): LayoutPreset {
 	const candidate = safeText(rawPresetId, DEFAULT_LAYOUT_PRESET);
 	return LAYOUT_PRESETS[candidate] || LAYOUT_PRESETS[DEFAULT_LAYOUT_PRESET];
 }
 
-export function getTemplateDefinitions() {
+/* ------------------------------------------------------------------ */
+/*  Public API                                                        */
+/* ------------------------------------------------------------------ */
+
+export function getTemplateDefinitions(): TemplateDefinition[] {
 	return Object.values(TEMPLATE_DEFINITIONS).map((template) => ({
 		id: template.id,
 		label: template.label,
@@ -459,33 +757,36 @@ export function getTemplateDefinitions() {
 	}));
 }
 
-export function getEditableFieldDefinitions() {
+export function getEditableFieldDefinitions(): readonly FieldDefinition[] {
 	return EDITABLE_FIELD_DEFINITIONS;
 }
 
-export function buildDeckModel(rawData = {}) {
+export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 	const templateId = resolveTemplateId(rawData.templateId);
 	const template = TEMPLATE_DEFINITIONS[templateId];
+	if (!template) {
+		throw new Error(`Unknown template: ${templateId}`);
+	}
 	const excludedSlides = new Set(parseExcludedSlides(rawData.excludedSlides));
 	const layoutPreset = resolveLayoutPreset(rawData.layoutPreset);
 	const layoutPresetLock = asBoolean(rawData.layoutPresetLock, true);
 	const paletteResult = resolveThemePalette({
-		primaryColor: rawData.primaryColor || "#004B49",
-		harmonyMode: rawData.harmonyMode,
+		primaryColor: safeText(rawData.primaryColor, "#004B49"),
+		harmonyMode: safeText(rawData.harmonyMode, ""),
 		shuffleSeed: rawData.paletteShuffleSeed,
 		locks: {
 			accentColor: asBoolean(rawData.lockAccentColor, false),
 			secondaryColor: asBoolean(rawData.lockSecondaryColor, false),
 		},
 		manualColors: {
-			accentColor: rawData.deckAccentColor || rawData.accentColor,
-			secondaryColor: rawData.deckSecondaryColor || rawData.secondaryColor,
-			backgroundColor: rawData.deckBackgroundColor || rawData.backgroundColor,
-			textColor: rawData.deckTextColor || rawData.textColor,
+			accentColor: safeText(rawData.deckAccentColor || rawData.accentColor, ""),
+			secondaryColor: safeText(rawData.deckSecondaryColor || rawData.secondaryColor, ""),
+			backgroundColor: safeText(rawData.deckBackgroundColor || rawData.backgroundColor, ""),
+			textColor: safeText(rawData.deckTextColor || rawData.textColor, ""),
 		},
 	});
 
-	const appTheme = {
+	const appTheme: AppTheme = {
 		surfaceTop: "#EAF4FF",
 		surfaceBottom: "#F8FBFF",
 		card: "#FFFFFF",
@@ -497,7 +798,7 @@ export function buildDeckModel(rawData = {}) {
 		secondaryColor: "#7D2AE8",
 	};
 
-	const deckTheme = {
+	const deckTheme: DeckTheme = {
 		brandName: safeText(rawData.brandName, "Notso AI"),
 		primaryColor: paletteResult.theme.primaryColor,
 		accentColor: paletteResult.theme.accentColor,
@@ -513,7 +814,7 @@ export function buildDeckModel(rawData = {}) {
 		bodyFont: safeText(rawData.deckBodyFont || rawData.bodyFont, "Inter"),
 	};
 
-	const project = {
+	const project: Project = {
 		clientName: safeText(rawData.clientName, "Acme Client"),
 		clientUrl: safeText(rawData.clientUrl, "https://www.acme-client.com"),
 		projectTitle: safeText(rawData.projectTitle, "AI Mascot Proposal"),
@@ -534,7 +835,7 @@ export function buildDeckModel(rawData = {}) {
 		characterAssets: parseCharacterAssets(rawData.characterAssets),
 	};
 
-	const content = {
+	const content: Content = {
 		problemPoints: normalizeList(rawData.problemPoints, [
 			`${project.clientName} loses momentum when visitors do not get instant answers.`,
 			"Support teams repeat the same pre-sales and service responses manually.",
@@ -677,7 +978,7 @@ export function buildDeckModel(rawData = {}) {
 		]).slice(0, 30),
 	};
 
-	const allSlides = [
+	const allSlides: SlideData[] = [
 		withSlide(
 			"cover",
 			"cover",
@@ -844,7 +1145,7 @@ export function buildDeckModel(rawData = {}) {
 		withSlide(
 			"closing",
 			"closing",
-			"Let’s Build This Together",
+			"Let's Build This Together",
 			"From concept to launch-ready experience.",
 			"Drive commitment and next action.",
 			"closingText",
@@ -860,7 +1161,7 @@ export function buildDeckModel(rawData = {}) {
 		),
 	];
 
-	const slidesWithLayout = allSlides.map((slide, index) => {
+	const slidesWithLayout: SlideWithLayout[] = allSlides.map((slide, index) => {
 		const lockedLayout = layoutPreset.slideLayoutByType[slide.type];
 		const imageRatio = layoutPreset.imageRatioByType[slide.type] || "16:9";
 		const backgroundMode =
@@ -891,7 +1192,7 @@ export function buildDeckModel(rawData = {}) {
 	);
 	if (!slides.length) slides = slidesWithLayout.slice(0, 1);
 
-	const availableSlides = template.slides.map((slideMeta) => ({
+	const availableSlides: AvailableSlide[] = template.slides.map((slideMeta) => ({
 		...slideMeta,
 		included: !excludedSlides.has(slideMeta.id),
 	}));
@@ -918,4 +1219,3 @@ export function buildDeckModel(rawData = {}) {
 		slides,
 	};
 }
-

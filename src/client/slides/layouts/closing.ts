@@ -1,10 +1,10 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems, esc, fitText } from "../core/utils.js";
 import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
 
-export function renderClosing(slide, theme, deckData) {
+export function renderClosing(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const team = ensureItems(slide.team, [
 		{ title: "Strategy", description: "Direction and scope" },
@@ -55,4 +55,3 @@ export function renderClosing(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

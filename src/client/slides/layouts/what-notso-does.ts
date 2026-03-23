@@ -1,4 +1,4 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems, esc, fitText } from "../core/utils.js";
@@ -8,7 +8,7 @@ import {
 	renderTitlePanel,
 } from "../panels/index.js";
 
-export function renderWhatNotsoDoes(slide, theme, deckData) {
+export function renderWhatNotsoDoes(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const cards = ensureItems(slide.cards, [
 		{ title: "Strategy", description: "Voice, role, and emotional behavior." },
@@ -61,4 +61,3 @@ export function renderWhatNotsoDoes(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

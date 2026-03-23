@@ -1,4 +1,4 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems, fitList } from "../core/utils.js";
@@ -8,7 +8,7 @@ import {
 	renderTitlePanel,
 } from "../panels/index.js";
 
-export function renderBusinessImpact(slide, theme, deckData) {
+export function renderBusinessImpact(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const impacts = fitList(
 		ensureItems(slide.impacts, [
@@ -58,4 +58,3 @@ export function renderBusinessImpact(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

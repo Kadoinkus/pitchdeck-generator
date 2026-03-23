@@ -1,4 +1,3 @@
-// @ts-nocheck
 export {
 	renderIconFeaturePanel,
 	renderImagePanel,
@@ -8,4 +7,3 @@ export {
 	renderTitlePanel,
 } from "./presets.js";
 export { panelClassName, panelVariantClass } from "./variants.js";
-

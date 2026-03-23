@@ -1,9 +1,9 @@
-// @ts-nocheck
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import { createApiRouter } from "./routes/api.js";
 import type { ViteDevServer } from "vite";
 
@@ -17,10 +17,12 @@ const outputDir = path.join(rootDir, "generated");
 const clientDistDir = path.join(rootDir, "dist", "client");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port: string | number = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === "production";
 
-async function createFrontendRenderer() {
+async function createFrontendRenderer(): Promise<
+	(templateName: "index" | "share", url: string) => Promise<string>
+> {
 	let vite: ViteDevServer | null = null;
 
 	if (isProduction) {
@@ -37,7 +39,10 @@ async function createFrontendRenderer() {
 		app.use(vite.middlewares);
 	}
 
-	return async function renderPage(templateName: "index" | "share", url: string) {
+	return async function renderPage(
+		templateName: "index" | "share",
+		url: string,
+	): Promise<string> {
 		if (vite) {
 			const templatePath = path.join(clientRootDir, `${templateName}.html`);
 			const template = await vite.transformIndexHtml(
@@ -52,7 +57,7 @@ async function createFrontendRenderer() {
 	};
 }
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
 	const renderPage = await createFrontendRenderer();
 
 	app.use(cors());
@@ -61,18 +66,27 @@ async function bootstrap() {
 
 	app.use("/api", createApiRouter(outputDir));
 
-	app.get("/share/:token", async (req, res, next) => {
-		try {
-			res.status(200).type("html").send(await renderPage("share", req.originalUrl));
-		} catch (error) {
-			next(error);
-		}
-	});
+	app.get(
+		"/share/:token",
+		async (req: Request, res: Response, next: NextFunction) => {
+			try {
+				res
+					.status(200)
+					.type("html")
+					.send(await renderPage("share", req.originalUrl));
+			} catch (error: unknown) {
+				next(error);
+			}
+		},
+	);
 
-	app.get("*", async (req, res, next) => {
+	app.get("*", async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			res.status(200).type("html").send(await renderPage("index", req.originalUrl));
-		} catch (error) {
+			res
+				.status(200)
+				.type("html")
+				.send(await renderPage("index", req.originalUrl));
+		} catch (error: unknown) {
 			next(error);
 		}
 	});
@@ -82,8 +96,7 @@ async function bootstrap() {
 	});
 }
 
-bootstrap().catch((error) => {
+bootstrap().catch((error: unknown) => {
 	console.error("Server bootstrap failed:", error);
 	process.exit(1);
 });
-

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
 	attrTarget,
 	renderHeadline,
@@ -7,7 +6,94 @@ import {
 import { renderPanelIcon } from "../core/icon-policy.js";
 import { iconByKeyword } from "../core/icons.js";
 import { esc, fitText, splitFeatureLines } from "../core/utils.js";
+import type { DeckData, SlideData } from "../types.js";
 import { panelClassName } from "./variants.js";
+
+interface TitlePanelOptions {
+	slide?: SlideData;
+	target?: string;
+	kicker?: string;
+	title?: string;
+	accentPhrase?: string;
+	subtitle?: string;
+	align?: string;
+	compact?: boolean;
+	asPanel?: boolean;
+	variant?: string;
+	className?: string;
+	maxTitleChars?: number;
+	maxSubtitleChars?: number;
+}
+
+interface ImagePanelOptions {
+	slide?: SlideData;
+	deckData?: DeckData;
+	target?: string;
+	label?: string;
+	helper?: string;
+	ratio?: string;
+	className?: string;
+	variant?: string;
+	hideTitle?: boolean;
+	hideHint?: boolean;
+	forceVisible?: boolean;
+}
+
+interface SummaryPanelOptions {
+	target?: string;
+	label?: string;
+	title?: string;
+	text?: string;
+	variant?: string;
+	className?: string;
+	maxTitleChars?: number;
+	maxTextChars?: number;
+}
+
+interface IconFeaturePanelOptions {
+	slideType?: string;
+	sectionKey?: string;
+	panelCount?: number;
+	target?: string;
+	label?: string;
+	index?: number | null;
+	title?: string;
+	text?: string;
+	variant?: string;
+	className?: string;
+	showTitle?: boolean;
+	showText?: boolean;
+	maxTitleChars?: number;
+	maxTextChars?: number;
+}
+
+interface PricingTier {
+	name?: string;
+	price?: string;
+	description?: string;
+}
+
+interface PricingCardPanelOptions {
+	tier?: PricingTier;
+	index?: number;
+	titleTarget?: string;
+	variant?: string;
+	maxNameChars?: number;
+	maxPriceChars?: number;
+	maxFeatureChars?: number;
+}
+
+interface MetricPanelOptions {
+	slideType?: string;
+	sectionKey?: string;
+	panelCount?: number;
+	target?: string;
+	label?: string;
+	value?: string;
+	variant?: string;
+	className?: string;
+	maxValueChars?: number;
+}
 
 export function renderTitlePanel({
 	slide,
@@ -23,7 +109,7 @@ export function renderTitlePanel({
 	className = "text-surface",
 	maxTitleChars = 58,
 	maxSubtitleChars = 140,
-} = {}) {
+}: TitlePanelOptions = {}): string {
 	const headline = renderHeadline({
 		kicker,
 		title,
@@ -52,7 +138,7 @@ export function renderImagePanel({
 	hideTitle = false,
 	hideHint = false,
 	forceVisible = false,
-} = {}) {
+}: ImagePanelOptions = {}): string {
 	const content = renderImageSlot({
 		slide,
 		deckData,
@@ -79,7 +165,7 @@ export function renderSummaryPanel({
 	className = "summary-panel",
 	maxTitleChars = 32,
 	maxTextChars = 130,
-} = {}) {
+}: SummaryPanelOptions = {}): string {
 	return `<article class="${panelClassName({ variant, className })}" ${attrTarget(target, label)}>
     <h3>${esc(fitText(title, maxTitleChars))}</h3>
     <p>${esc(fitText(text, maxTextChars))}</p>
@@ -101,10 +187,10 @@ export function renderIconFeaturePanel({
 	showText = true,
 	maxTitleChars = 28,
 	maxTextChars = 92,
-} = {}) {
+}: IconFeaturePanelOptions = {}): string {
 	const iconName = iconByKeyword(`${title} ${text}`);
 	const indexMarkup = Number.isFinite(index)
-		? `<span class="card-index">${String(index + 1).padStart(2, "0")}</span>`
+		? `<span class="card-index">${String((index ?? 0) + 1).padStart(2, "0")}</span>`
 		: "";
 
 	return `<article class="${panelClassName({ variant, className })}" ${attrTarget(target, label)}>
@@ -129,7 +215,7 @@ export function renderPricingCardPanel({
 	maxNameChars = 26,
 	maxPriceChars = 24,
 	maxFeatureChars = 44,
-} = {}) {
+}: PricingCardPanelOptions = {}): string {
 	const classNames = [
 		panelClassName({ variant, className: "pricing-card" }),
 		index === 1 ? "is-featured" : "",
@@ -159,7 +245,7 @@ export function renderMetricPanel({
 	variant = "solid",
 	className = "impact-card panel-card-with-icon",
 	maxValueChars = 42,
-} = {}) {
+}: MetricPanelOptions = {}): string {
 	const iconName = iconByKeyword(String(value || ""));
 
 	return `<article class="${panelClassName({ variant, className })}" ${attrTarget(target, label)}>
@@ -173,4 +259,3 @@ export function renderMetricPanel({
     <p>${esc(fitText(value, maxValueChars))}</p>
   </article>`;
 }
-

@@ -1,12 +1,13 @@
-// @ts-nocheck
 import { themeVars } from "./theme.js";
+import type { ThemeInput } from "./theme.js";
 import { esc, findAssetForSlide, fitText } from "./utils.js";
+import type { SlideData, DeckData, ImageAssetRef } from "./utils.js";
 
-export function attrTarget(target, label, className = "ai-clickable") {
+export function attrTarget(target: string, label: string, className = "ai-clickable"): string {
 	return `class="${className}" data-ai-target="${esc(target)}" data-ai-label="${esc(label)}"`;
 }
 
-function highlightTitle(title, accentPhrase) {
+function highlightTitle(title: unknown, accentPhrase: unknown): string {
 	const t = String(title || "");
 	const phrase = String(accentPhrase || "").trim();
 	if (!phrase) return esc(t);
@@ -20,6 +21,18 @@ function highlightTitle(title, accentPhrase) {
 	return `${before}<span class="accent-text">${hit}</span>${after}`;
 }
 
+export interface HeadlineOptions {
+	kicker?: string;
+	title?: string;
+	accentPhrase?: string;
+	subtitle?: string;
+	target?: string;
+	align?: string;
+	compact?: boolean;
+	maxTitleChars?: number;
+	maxSubtitleChars?: number;
+}
+
 export function renderHeadline({
 	kicker = "",
 	title = "",
@@ -30,7 +43,7 @@ export function renderHeadline({
 	compact = false,
 	maxTitleChars = 58,
 	maxSubtitleChars = 140,
-} = {}) {
+}: HeadlineOptions = {}): string {
 	const safeKicker = fitText(kicker, 46);
 	const safeTitle = fitText(title, maxTitleChars);
 	const safeSubtitle = fitText(subtitle, maxSubtitleChars);
@@ -42,11 +55,24 @@ export function renderHeadline({
   </header>`;
 }
 
-function ratioClass(ratio = "16:9") {
+function ratioClass(ratio = "16:9"): string {
 	if (ratio === "3:4") return "ratio-3-4";
 	if (ratio === "1:1") return "ratio-1-1";
 	if (ratio === "4:3") return "ratio-4-3";
 	return "ratio-16-9";
+}
+
+export interface ImageSlotOptions {
+	slide?: SlideData | null;
+	deckData?: DeckData | null;
+	target?: string;
+	label?: string;
+	helper?: string;
+	ratio?: string;
+	className?: string;
+	hideTitle?: boolean;
+	hideHint?: boolean;
+	forceVisible?: boolean;
 }
 
 export function renderImageSlot({
@@ -60,7 +86,7 @@ export function renderImageSlot({
 	hideTitle = false,
 	hideHint = false,
 	forceVisible = false,
-} = {}) {
+}: ImageSlotOptions = {}): string {
 	const isHidden = Boolean(slide?.hideImages);
 	if (isHidden && !forceVisible) return "";
 
@@ -87,7 +113,13 @@ export function renderImageSlot({
   </figure>`;
 }
 
-export function renderFrame({ slide, theme, body }) {
+export interface FrameOptions {
+	slide?: SlideData | null;
+	theme?: ThemeInput | null;
+	body: string;
+}
+
+export function renderFrame({ slide, theme, body }: FrameOptions): string {
 	const modeClass =
 		slide?.backgroundMode === "dark" ? "mode-dark" : "mode-light";
 	const textMode =
@@ -102,4 +134,3 @@ export function renderFrame({ slide, theme, body }) {
     <footer class="deck-footer">${esc(theme?.brandName || "Notso AI")}</footer>
   </article>`;
 }
-

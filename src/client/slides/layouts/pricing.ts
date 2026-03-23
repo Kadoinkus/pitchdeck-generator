@@ -1,10 +1,10 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems } from "../core/utils.js";
 import { renderPricingCardPanel, renderTitlePanel } from "../panels/index.js";
 
-export function renderPricing(slide, theme, _deckData) {
+export function renderPricing(slide: SlideData, theme: ThemeData, _deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const tiers = ensureItems(slide.packages, [
 		{
@@ -42,4 +42,3 @@ export function renderPricing(slide, theme, _deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

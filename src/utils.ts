@@ -1,5 +1,4 @@
-// @ts-nocheck
-export function sanitizeFilename(input) {
+export function sanitizeFilename(input: unknown): string {
 	return (
 		String(input || "deck")
 			.trim()
@@ -10,9 +9,9 @@ export function sanitizeFilename(input) {
 	);
 }
 
-export function normalizeList(value, fallback = []) {
+export function normalizeList(value: unknown, fallback: string[] = []): string[] {
 	if (Array.isArray(value)) {
-		return value.map((item) => String(item).trim()).filter(Boolean);
+		return value.map((item: unknown) => String(item).trim()).filter(Boolean);
 	}
 
 	if (typeof value === "string") {
@@ -25,7 +24,6 @@ export function normalizeList(value, fallback = []) {
 	return fallback;
 }
 
-export function safeText(value, fallback = "") {
+export function safeText(value: unknown, fallback: string = ""): string {
 	return String(value ?? fallback).trim();
 }
-

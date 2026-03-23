@@ -1,16 +1,40 @@
-// @ts-nocheck
-const DEFAULT_IMAGE_POLICY = {
+export type ImageMode = "cover" | "contain";
+export type TextMode = "fit" | "clamp";
+
+export interface ImagePolicy {
+	required: boolean;
+	optional: boolean;
+	defaultMode: ImageMode;
+	allowedModes: ImageMode[];
+}
+
+export interface TextPolicy {
+	mode: TextMode;
+}
+
+export interface SlotPolicy {
+	image: ImagePolicy;
+	text: TextPolicy;
+}
+
+const VALID_IMAGE_MODES: readonly ImageMode[] = ["cover", "contain"];
+
+function isImageMode(value: string): value is ImageMode {
+	return (VALID_IMAGE_MODES as readonly string[]).includes(value);
+}
+
+const DEFAULT_IMAGE_POLICY: ImagePolicy = {
 	required: false,
 	optional: true,
 	defaultMode: "cover",
 	allowedModes: ["cover", "contain"],
 };
 
-const DEFAULT_TEXT_POLICY = {
+const DEFAULT_TEXT_POLICY: TextPolicy = {
 	mode: "fit",
 };
 
-const SLOT_POLICIES = {
+const SLOT_POLICIES: Record<string, { image?: Partial<ImagePolicy>; text?: Partial<TextPolicy> }> = {
 	cover: {
 		text: { mode: "fit" },
 		image: {
@@ -148,7 +172,7 @@ const SLOT_POLICIES = {
 	},
 };
 
-function normalizeMode(value, fallback, allowedModes) {
+function normalizeMode(value: string, fallback: string, allowedModes: string[]): string {
 	const candidate = String(value || "")
 		.trim()
 		.toLowerCase();
@@ -156,29 +180,49 @@ function normalizeMode(value, fallback, allowedModes) {
 	return fallback;
 }
 
-export function resolveSlotPolicy(slideType = "") {
-	const policy = SLOT_POLICIES[String(slideType || "").trim()] || {};
-	const image = { ...DEFAULT_IMAGE_POLICY, ...(policy.image || {}) };
-	const text = { ...DEFAULT_TEXT_POLICY, ...(policy.text || {}) };
-	image.allowedModes =
-		Array.isArray(image.allowedModes) && image.allowedModes.length
-			? image.allowedModes
+function normalizeImageMode(value: string, fallback: ImageMode, allowedModes: ImageMode[]): ImageMode {
+	const candidate = String(value || "")
+		.trim()
+		.toLowerCase();
+	if (isImageMode(candidate) && allowedModes.includes(candidate)) return candidate;
+	return fallback;
+}
+
+export function resolveSlotPolicy(slideType: string = ""): SlotPolicy {
+	const policy = SLOT_POLICIES[String(slideType || "").trim()];
+	const rawImage = { ...DEFAULT_IMAGE_POLICY, ...(policy?.image ?? {}) };
+	const text: TextPolicy = { ...DEFAULT_TEXT_POLICY, ...(policy?.text ?? {}) };
+
+	const allowedModes: ImageMode[] =
+		Array.isArray(rawImage.allowedModes) && rawImage.allowedModes.length
+			? rawImage.allowedModes
 					.map((mode) => String(mode || "").toLowerCase())
-					.filter(Boolean)
+					.filter(isImageMode)
 			: DEFAULT_IMAGE_POLICY.allowedModes.slice();
-	image.defaultMode = normalizeMode(
-		image.defaultMode,
+
+	const defaultMode = normalizeImageMode(
+		rawImage.defaultMode,
 		DEFAULT_IMAGE_POLICY.defaultMode,
-		image.allowedModes,
+		allowedModes,
 	);
-	image.required = Boolean(image.required);
-	image.optional = image.required ? false : Boolean(image.optional);
+
+	const required = Boolean(rawImage.required);
+	const optional = required ? false : Boolean(rawImage.optional);
+
 	text.mode =
 		String(text.mode || "fit").toLowerCase() === "clamp" ? "clamp" : "fit";
+
+	const image: ImagePolicy = {
+		required,
+		optional,
+		defaultMode,
+		allowedModes,
+	};
+
 	return { image, text };
 }
 
-export function resolveImageModeForSlide(slideType = "", requestedMode = "") {
+export function resolveImageModeForSlide(slideType: string = "", requestedMode: string = ""): string {
 	const policy = resolveSlotPolicy(slideType);
 	return normalizeMode(
 		requestedMode,
@@ -186,4 +230,3 @@ export function resolveImageModeForSlide(slideType = "", requestedMode = "") {
 		policy.image.allowedModes,
 	);
 }
-

@@ -1,9 +1,9 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { esc, fitText } from "../core/utils.js";
 import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
 
-export function renderCover(slide, theme, deckData) {
+export function renderCover(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const project = deckData?.project || {};
 	const mascot = slide.mascotName || project.mascotName || "Buddy";
 	const visual = renderImagePanel({
@@ -43,4 +43,3 @@ export function renderCover(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

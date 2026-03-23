@@ -1,16 +1,31 @@
-// @ts-nocheck
-const DEFAULT_IMAGE_POLICY = {
+export interface ImagePolicy {
+	required: boolean;
+	optional: boolean;
+	defaultMode: string;
+	allowedModes: string[];
+}
+
+export interface TextPolicy {
+	mode: string;
+}
+
+export interface SlotPolicy {
+	image: ImagePolicy;
+	text: TextPolicy;
+}
+
+const DEFAULT_IMAGE_POLICY: ImagePolicy = {
 	required: false,
 	optional: true,
 	defaultMode: "cover",
 	allowedModes: ["cover", "contain"],
 };
 
-const DEFAULT_TEXT_POLICY = {
+const DEFAULT_TEXT_POLICY: TextPolicy = {
 	mode: "fit",
 };
 
-const SLOT_POLICIES = {
+const SLOT_POLICIES: Record<string, { text?: Partial<TextPolicy>; image?: Partial<ImagePolicy> }> = {
 	cover: {
 		text: { mode: "fit" },
 		image: {
@@ -148,7 +163,11 @@ const SLOT_POLICIES = {
 	},
 };
 
-function normalizeMode(value, fallback, allowedModes) {
+function isSlotPolicyLike(value: unknown): value is Partial<SlotPolicy> {
+	return typeof value === "object" && value !== null;
+}
+
+function normalizeMode(value: unknown, fallback: string, allowedModes: string[]): string {
 	const candidate = String(value || "")
 		.trim()
 		.toLowerCase();
@@ -156,15 +175,15 @@ function normalizeMode(value, fallback, allowedModes) {
 	return fallback;
 }
 
-export function resolveSlotPolicy(slideType = "", override = null) {
+export function resolveSlotPolicy(slideType = "", override: unknown = null): SlotPolicy {
 	const base = SLOT_POLICIES[String(slideType || "").trim()] || {};
-	const input = override || {};
-	const image = {
+	const input: Partial<SlotPolicy> = isSlotPolicyLike(override) ? override : {};
+	const image: ImagePolicy = {
 		...DEFAULT_IMAGE_POLICY,
 		...(base.image || {}),
 		...(input.image || {}),
 	};
-	const text = {
+	const text: TextPolicy = {
 		...DEFAULT_TEXT_POLICY,
 		...(base.text || {}),
 		...(input.text || {}),
@@ -187,7 +206,12 @@ export function resolveSlotPolicy(slideType = "", override = null) {
 	return { image, text };
 }
 
-export function resolveImageMode(slide = {}, requested = "") {
+interface SlideForImageMode {
+	type?: string;
+	slotPolicy?: unknown;
+}
+
+export function resolveImageMode(slide: SlideForImageMode | null | undefined = {}, requested = ""): string {
 	const policy = resolveSlotPolicy(slide?.type, slide?.slotPolicy);
 	return normalizeMode(
 		requested,
@@ -195,4 +219,3 @@ export function resolveImageMode(slide = {}, requested = "") {
 		policy.image.allowedModes,
 	);
 }
-

@@ -1,5 +1,34 @@
-// @ts-nocheck
 import { renderSlide } from "./slide-renderers.js";
+
+interface SlideEntry {
+	type: string;
+	[key: string]: unknown;
+}
+
+interface DeckData {
+	slides: SlideEntry[];
+	theme: Record<string, unknown>;
+	project?: {
+		projectTitle?: string;
+		clientName?: string;
+	};
+	[key: string]: unknown;
+}
+
+interface ShareApiResponse {
+	success: boolean;
+	message?: string;
+	slideData?: DeckData;
+	downloadUrl?: string;
+}
+
+interface DragState {
+	active: boolean;
+	startX: number;
+	deltaX: number;
+	width: number;
+	moved: boolean;
+}
 
 const deckEl = document.getElementById("share-deck");
 const trackEl = document.getElementById("share-track");
@@ -12,24 +41,27 @@ const printButton = document.getElementById("share-print");
 const prevButton = document.getElementById("share-prev");
 const nextButton = document.getElementById("share-next");
 
-let slideData = null;
+let slideData: DeckData | null = null;
 let currentSlide = 0;
 let isPrintMode = false;
 
-const drag = {
+const drag: DragState = {
 	active: false,
 	startX: 0,
 	deltaX: 0,
 	width: 0,
-	moved: false
+	moved: false,
 };
 
-function getTokenFromPath() {
+function getTokenFromPath(): string {
 	const parts = window.location.pathname.split("/").filter(Boolean);
 	return parts[1] || "";
 }
 
-function updateTrackPosition({ animate = true, offsetPx = 0 } = {}) {
+function updateTrackPosition({
+	animate = true,
+	offsetPx = 0,
+}: { animate?: boolean; offsetPx?: number } = {}): void {
 	if (!trackEl || !deckEl) return;
 	const width = deckEl.clientWidth || 1;
 	const x = -currentSlide * width + offsetPx;
@@ -39,24 +71,31 @@ function updateTrackPosition({ animate = true, offsetPx = 0 } = {}) {
 	trackEl.style.transform = `translate3d(${x}px, 0, 0)`;
 	if (!animate) {
 		requestAnimationFrame(() => {
-			if (!drag.active) trackEl.style.transition = "";
+			if (!drag.active && trackEl) trackEl.style.transition = "";
 		});
 	}
 }
 
-function updateUi() {
+function updateUi(): void {
 	if (!slideData) return;
 	const total = slideData.slides.length;
 	if (counterEl) counterEl.textContent = `${currentSlide + 1} / ${total}`;
-	if (prevButton) prevButton.disabled = currentSlide <= 0;
-	if (nextButton) nextButton.disabled = currentSlide >= total - 1;
+	if (prevButton instanceof HTMLButtonElement)
+		prevButton.disabled = currentSlide <= 0;
+	if (nextButton instanceof HTMLButtonElement)
+		nextButton.disabled = currentSlide >= total - 1;
 
-	trackEl.querySelectorAll(".share-slide").forEach((node, index) => {
-		node.classList.toggle("is-active", index === currentSlide);
-	});
+	if (trackEl) {
+		trackEl.querySelectorAll(".share-slide").forEach((node, index) => {
+			node.classList.toggle("is-active", index === currentSlide);
+		});
+	}
 }
 
-function goToSlide(index, options = {}) {
+function goToSlide(
+	index: number,
+	options: { animate?: boolean } = {},
+): void {
 	if (!slideData?.slides?.length) return;
 	const maxIndex = slideData.slides.length - 1;
 	currentSlide = Math.max(0, Math.min(index, maxIndex));
@@ -64,52 +103,67 @@ function goToSlide(index, options = {}) {
 	updateTrackPosition({ animate: options.animate !== false });
 }
 
-function renderDeck(data) {
+function renderDeck(data: DeckData): void {
 	if (!trackEl) return;
 	trackEl.innerHTML = "";
 
+	if (!(template instanceof HTMLTemplateElement)) return;
+
 	data.slides.forEach((slide, index) => {
-		const node = template.content.firstElementChild.cloneNode(true);
+		const firstChild = template.content.firstElementChild;
+		if (!firstChild) return;
+		const node = firstChild.cloneNode(true);
+		if (!(node instanceof HTMLElement)) return;
 		const frame = node.querySelector(".share-slide-frame");
+		if (!frame) return;
 		frame.innerHTML = renderSlide(slide, data.theme, data);
 		frame.setAttribute("aria-label", `Slide ${index + 1}`);
 		trackEl.appendChild(node);
 	});
 }
 
-function startSwipe(event) {
-	if (!slideData?.slides?.length || slideData.slides.length < 2 || isPrintMode) return;
+function startSwipe(event: PointerEvent): void {
+	if (
+		!slideData?.slides?.length ||
+		slideData.slides.length < 2 ||
+		isPrintMode
+	)
+		return;
 	if (event.button !== undefined && event.button !== 0) return;
-	if (event.target.closest("a,button,input,textarea,select")) return;
+	if (event.target instanceof HTMLElement && event.target.closest("a,button,input,textarea,select"))
+		return;
 
 	drag.active = true;
 	drag.startX = event.clientX;
 	drag.deltaX = 0;
-	drag.width = deckEl.clientWidth || 1;
+	drag.width = deckEl ? deckEl.clientWidth || 1 : 1;
 	drag.moved = false;
-	deckEl.classList.add("is-dragging");
-	deckEl.setPointerCapture?.(event.pointerId);
+	deckEl?.classList.add("is-dragging");
+	deckEl?.setPointerCapture?.(event.pointerId);
 }
 
-function moveSwipe(event) {
-	if (!drag.active) return;
+function moveSwipe(event: PointerEvent): void {
+	if (!drag.active || !slideData) return;
 	drag.deltaX = event.clientX - drag.startX;
 	if (Math.abs(drag.deltaX) > 6) drag.moved = true;
 
 	const maxIndex = slideData.slides.length - 1;
 	let offset = drag.deltaX;
-	if ((currentSlide === 0 && offset > 0) || (currentSlide === maxIndex && offset < 0)) {
+	if (
+		(currentSlide === 0 && offset > 0) ||
+		(currentSlide === maxIndex && offset < 0)
+	) {
 		offset *= 0.35;
 	}
 
 	updateTrackPosition({ animate: false, offsetPx: offset });
 }
 
-function endSwipe(event) {
+function endSwipe(event: PointerEvent): void {
 	if (!drag.active) return;
 	drag.active = false;
-	deckEl.classList.remove("is-dragging");
-	deckEl.releasePointerCapture?.(event.pointerId);
+	deckEl?.classList.remove("is-dragging");
+	deckEl?.releasePointerCapture?.(event.pointerId);
 
 	const threshold = Math.min(140, (drag.width || 1) * 0.16);
 	const delta = drag.deltaX;
@@ -122,31 +176,37 @@ function endSwipe(event) {
 	goToSlide(currentSlide);
 }
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
 	const token = getTokenFromPath();
 	if (!token) {
-		titleEl.textContent = "Invalid share link";
+		if (titleEl) titleEl.textContent = "Invalid share link";
 		return;
 	}
 
 	try {
 		const response = await fetch(`/api/share/${token}`);
-		const result = await response.json();
+		const result: ShareApiResponse = await response.json();
 
 		if (!response.ok || !result.success || !result.slideData) {
 			throw new Error(result.message || "Deck not found.");
 		}
 
 		slideData = result.slideData;
-		titleEl.textContent = `${slideData.project?.projectTitle || "Pitch Deck"}`;
-		subtitleEl.textContent = `Prepared for ${slideData.project?.clientName || "Client"} · ${slideData.slides.length} slides`;
+		if (titleEl)
+			titleEl.textContent = `${slideData.project?.projectTitle || "Pitch Deck"}`;
+		if (subtitleEl)
+			subtitleEl.textContent = `Prepared for ${slideData.project?.clientName || "Client"} · ${slideData.slides.length} slides`;
 
 		if (result.downloadUrl) {
-			pptxLink.href = result.downloadUrl;
-			pptxLink.classList.remove("disabled");
+			if (pptxLink instanceof HTMLAnchorElement) {
+				pptxLink.href = result.downloadUrl;
+				pptxLink.classList.remove("disabled");
+			}
 		} else {
-			pptxLink.href = "#";
-			pptxLink.classList.add("disabled");
+			if (pptxLink instanceof HTMLAnchorElement) {
+				pptxLink.href = "#";
+				pptxLink.classList.add("disabled");
+			}
 		}
 
 		renderDeck(slideData);
@@ -160,9 +220,12 @@ async function bootstrap() {
 		}
 	} catch (error) {
 		console.error(error);
-		titleEl.textContent = "Could not load deck";
-		subtitleEl.textContent =
-			error.message || "Try generating a new share link.";
+		if (titleEl) titleEl.textContent = "Could not load deck";
+		if (subtitleEl)
+			subtitleEl.textContent =
+				error instanceof Error
+					? error.message
+					: "Try generating a new share link.";
 	}
 }
 
@@ -174,25 +237,24 @@ nextButton?.addEventListener("click", () => {
 	goToSlide(currentSlide + 1);
 });
 
-printButton.addEventListener("click", () => {
+printButton?.addEventListener("click", () => {
 	window.print();
 });
 
-deckEl.addEventListener("pointerdown", startSwipe);
-deckEl.addEventListener("pointermove", moveSwipe);
-deckEl.addEventListener("pointerup", endSwipe);
-deckEl.addEventListener("pointercancel", endSwipe);
+deckEl?.addEventListener("pointerdown", startSwipe);
+deckEl?.addEventListener("pointermove", moveSwipe);
+deckEl?.addEventListener("pointerup", endSwipe);
+deckEl?.addEventListener("pointercancel", endSwipe);
 
 window.addEventListener("resize", () => {
 	if (!slideData) return;
 	updateTrackPosition({ animate: false });
 });
 
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event: KeyboardEvent) => {
 	if (!slideData || isPrintMode) return;
 	if (event.key === "ArrowLeft") goToSlide(currentSlide - 1);
 	if (event.key === "ArrowRight") goToSlide(currentSlide + 1);
 });
 
 bootstrap();
-

@@ -1,10 +1,10 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems, esc, fitText } from "../core/utils.js";
 import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
 
-export function renderWhatYouGet(slide, theme, deckData) {
+export function renderWhatYouGet(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const sections = ensureItems(slide.sections, [
 		{
@@ -69,4 +69,3 @@ export function renderWhatYouGet(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

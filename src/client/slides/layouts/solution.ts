@@ -1,4 +1,4 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems } from "../core/utils.js";
@@ -8,7 +8,7 @@ import {
 	renderTitlePanel,
 } from "../panels/index.js";
 
-export function renderSolution(slide, theme, deckData) {
+export function renderSolution(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const pillars = ensureItems(slide.pillars, [
 		{ title: "Character", description: "A recognizable mascot personality." },
@@ -59,4 +59,3 @@ export function renderSolution(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

@@ -1,5 +1,62 @@
-// @ts-nocheck
-export const DEFAULT_THEME_COLORS = {
+export interface Rgb {
+	r: number;
+	g: number;
+	b: number;
+}
+
+export interface Hsl {
+	h: number;
+	s: number;
+	l: number;
+}
+
+export interface ThemeColors {
+	primaryColor: string;
+	accentColor: string;
+	secondaryColor: string;
+	backgroundColor: string;
+	textColor: string;
+}
+
+interface HarmonyVariant {
+	a: number;
+	b: number;
+	accentL: number;
+	secondaryL: number;
+	accentS: number;
+	secondaryS: number;
+}
+
+interface ThemeSafetyMetrics {
+	textOnBackground: number;
+	accentOnBackground: number;
+	secondaryOnBackground: number;
+	secondaryOnWhite: number;
+}
+
+interface ThemeAdjustment {
+	key: keyof ThemeColors;
+	reason: string;
+	color: string;
+}
+
+interface GenerateThemePaletteInput {
+	primaryColor?: string;
+	baseColor?: string;
+	harmonyMode?: string;
+	shuffleSeed?: unknown;
+}
+
+interface ResolveThemePaletteInput {
+	primaryColor?: string;
+	baseColor?: string;
+	harmonyMode?: string;
+	shuffleSeed?: unknown;
+	locks?: Partial<Record<string, unknown>>;
+	manualColors?: Partial<ThemeColors>;
+}
+
+export const DEFAULT_THEME_COLORS: ThemeColors = {
 	primaryColor: "#004B49",
 	accentColor: "#30D89E",
 	secondaryColor: "#0B6E6C",
@@ -7,7 +64,7 @@ export const DEFAULT_THEME_COLORS = {
 	textColor: "#0B1D2E",
 };
 
-export const HARMONY_MODES = [
+export const HARMONY_MODES: readonly string[] = [
 	"complementary",
 	"split-complementary",
 	"analogous",
@@ -15,14 +72,14 @@ export const HARMONY_MODES = [
 	"monochromatic",
 ];
 
-const THEME_SAFETY_THRESHOLDS = {
+const THEME_SAFETY_THRESHOLDS: Readonly<ThemeSafetyMetrics> = {
 	textOnBackground: 7,
 	accentOnBackground: 2.2,
 	secondaryOnBackground: 3,
 	secondaryOnWhite: 4.8,
 };
 
-const HARMONY_VARIANTS = {
+const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
 	complementary: [
 		{
 			a: 180,
@@ -195,23 +252,23 @@ const HARMONY_VARIANTS = {
 	],
 };
 
-function clamp(value, min, max) {
+function clamp(value: number, min: number, max: number): number {
 	return Math.min(max, Math.max(min, value));
 }
 
-function toFinite(value, fallback = 0) {
+function toFinite(value: unknown, fallback: number = 0): number {
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function wrapHue(h) {
+function wrapHue(h: number): number {
 	return ((h % 360) + 360) % 360;
 }
 
 export function normalizeHexColor(
-	value,
-	fallback = DEFAULT_THEME_COLORS.primaryColor,
-) {
+	value: unknown,
+	fallback: string = DEFAULT_THEME_COLORS.primaryColor,
+): string {
 	const raw = String(value || "").trim();
 	if (/^#?[0-9a-fA-F]{6}$/.test(raw)) {
 		return (raw.startsWith("#") ? raw : `#${raw}`).toUpperCase();
@@ -221,7 +278,7 @@ export function normalizeHexColor(
 	return "#004B49";
 }
 
-function hexToRgb(hex) {
+function hexToRgb(hex: string): Rgb {
 	const normalized = normalizeHexColor(hex);
 	return {
 		r: Number.parseInt(normalized.slice(1, 3), 16),
@@ -230,13 +287,13 @@ function hexToRgb(hex) {
 	};
 }
 
-function rgbToHex({ r, g, b }) {
-	const toHex = (channel) =>
+function rgbToHex({ r, g, b }: Rgb): string {
+	const toHex = (channel: number): string =>
 		clamp(Math.round(channel), 0, 255).toString(16).padStart(2, "0");
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
-function rgbToHsl({ r, g, b }) {
+function rgbToHsl({ r, g, b }: Rgb): Hsl {
 	const rn = r / 255;
 	const gn = g / 255;
 	const bn = b / 255;
@@ -259,7 +316,7 @@ function rgbToHsl({ r, g, b }) {
 	return { h, s, l };
 }
 
-function hslToRgb({ h, s, l }) {
+function hslToRgb({ h, s, l }: Hsl): Rgb {
 	const hue = wrapHue(h);
 	const sat = clamp(s, 0, 1);
 	const light = clamp(l, 0, 1);
@@ -285,13 +342,13 @@ function hslToRgb({ h, s, l }) {
 	};
 }
 
-function channelLuminance(channel) {
+function channelLuminance(channel: number): number {
 	const normalized = channel / 255;
 	if (normalized <= 0.03928) return normalized / 12.92;
 	return ((normalized + 0.055) / 1.055) ** 2.4;
 }
 
-function relativeLuminance(hex) {
+function relativeLuminance(hex: string): number {
 	const { r, g, b } = hexToRgb(hex);
 	return (
 		0.2126 * channelLuminance(r) +
@@ -300,7 +357,7 @@ function relativeLuminance(hex) {
 	);
 }
 
-export function contrastRatio(a, b) {
+export function contrastRatio(a: string, b: string): number {
 	const la = relativeLuminance(normalizeHexColor(a));
 	const lb = relativeLuminance(normalizeHexColor(b));
 	const brighter = Math.max(la, lb);
@@ -309,11 +366,11 @@ export function contrastRatio(a, b) {
 }
 
 function adjustForContrast(
-	color,
-	fixedColor,
-	minContrast,
-	direction = "darker",
-) {
+	color: string,
+	fixedColor: string,
+	minContrast: number,
+	direction: "darker" | "lighter" = "darker",
+): string {
 	const fixed = normalizeHexColor(fixedColor, "#FFFFFF");
 	const start = normalizeHexColor(color, "#000000");
 	let best = start;
@@ -340,9 +397,9 @@ function adjustForContrast(
 }
 
 function normalizeThemeInput(
-	themeInput = {},
-	fallbackTheme = DEFAULT_THEME_COLORS,
-) {
+	themeInput: Partial<ThemeColors> = {},
+	fallbackTheme: ThemeColors = DEFAULT_THEME_COLORS,
+): ThemeColors {
 	return {
 		primaryColor: normalizeHexColor(
 			themeInput.primaryColor,
@@ -364,7 +421,7 @@ function normalizeThemeInput(
 	};
 }
 
-function normalizeHarmonyMode(value) {
+function normalizeHarmonyMode(value: unknown): string {
 	const mode = String(value || "")
 		.trim()
 		.toLowerCase();
@@ -372,8 +429,11 @@ function normalizeHarmonyMode(value) {
 	return "complementary";
 }
 
-function resolveVariant(mode, shuffleSeed) {
-	const options = HARMONY_VARIANTS[mode] || HARMONY_VARIANTS.complementary;
+function resolveVariant(
+	mode: string,
+	shuffleSeed: unknown,
+): { variant: HarmonyVariant; index: number; count: number } {
+	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS["complementary"];
 	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
 	const index = seed % options.length;
 	return {
@@ -383,7 +443,16 @@ function resolveVariant(mode, shuffleSeed) {
 	};
 }
 
-function generateHarmonyTheme(primaryColor, harmonyMode, shuffleSeed) {
+function generateHarmonyTheme(
+	primaryColor: string,
+	harmonyMode: string,
+	shuffleSeed: unknown,
+): {
+	theme: Pick<ThemeColors, "primaryColor" | "accentColor" | "secondaryColor">;
+	harmonyMode: string;
+	variantIndex: number;
+	variantCount: number;
+} {
 	const primary = normalizeHexColor(
 		primaryColor,
 		DEFAULT_THEME_COLORS.primaryColor,
@@ -426,7 +495,7 @@ function generateHarmonyTheme(primaryColor, harmonyMode, shuffleSeed) {
 	};
 }
 
-export function evaluateTheme(themeInput = {}) {
+export function evaluateTheme(themeInput: Partial<ThemeColors> = {}): ThemeSafetyMetrics {
 	const theme = normalizeThemeInput(themeInput);
 	return {
 		textOnBackground: contrastRatio(theme.textColor, theme.backgroundColor),
@@ -439,9 +508,9 @@ export function evaluateTheme(themeInput = {}) {
 	};
 }
 
-export function describeThemeSafety(themeInput = {}) {
+export function describeThemeSafety(themeInput: Partial<ThemeColors> = {}): string[] {
 	const metrics = evaluateTheme(themeInput);
-	const warnings = [];
+	const warnings: string[] = [];
 
 	if (metrics.textOnBackground < THEME_SAFETY_THRESHOLDS.textOnBackground) {
 		warnings.push("Text and background contrast is too low.");
@@ -456,11 +525,13 @@ export function describeThemeSafety(themeInput = {}) {
 	return warnings;
 }
 
-export function enforceThemeSafety(themeInput = {}) {
+export function enforceThemeSafety(
+	themeInput: Partial<ThemeColors> = {},
+): { theme: ThemeColors; adjustments: ThemeAdjustment[]; metrics: ThemeSafetyMetrics } {
 	const theme = normalizeThemeInput(themeInput);
-	const adjustments = [];
+	const adjustments: ThemeAdjustment[] = [];
 
-	function applyIfChanged(key, nextColor, reason) {
+	function applyIfChanged(key: keyof ThemeColors, nextColor: string, reason: string): void {
 		const normalized = normalizeHexColor(nextColor, theme[key]);
 		if (normalized === theme[key]) return;
 		theme[key] = normalized;
@@ -529,7 +600,7 @@ export function enforceThemeSafety(themeInput = {}) {
 	};
 }
 
-export function generateThemePalette(input = {}) {
+export function generateThemePalette(input: GenerateThemePaletteInput = {}) {
 	const primaryColor = normalizeHexColor(
 		input.primaryColor || input.baseColor,
 		DEFAULT_THEME_COLORS.primaryColor,
@@ -549,7 +620,7 @@ export function generateThemePalette(input = {}) {
 	};
 }
 
-export function resolveThemePalette(input = {}) {
+export function resolveThemePalette(input: ResolveThemePaletteInput = {}) {
 	const primaryColor = normalizeHexColor(
 		input.primaryColor || input.baseColor,
 		DEFAULT_THEME_COLORS.primaryColor,
@@ -572,7 +643,7 @@ export function resolveThemePalette(input = {}) {
 		harmonyMode,
 		shuffleSeed,
 	);
-	const nextTheme = {
+	const nextTheme: ThemeColors = {
 		primaryColor,
 		accentColor: locks.accentColor
 			? manualTheme.accentColor
@@ -603,4 +674,3 @@ export function resolveThemePalette(input = {}) {
 		warnings: describeThemeSafety(enforced.theme),
 	};
 }
-

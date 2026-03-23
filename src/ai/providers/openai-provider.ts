@@ -1,9 +1,9 @@
-// @ts-nocheck
 import {
 	buildDeckModel,
 	getEditableFieldDefinitions,
 } from "../../deck-model.js";
 import { safeText } from "../../utils.js";
+import type { AutofillResult, ChatRequest, ChatResult, ImagePrompt, ProviderConfig, SuggestedChange } from "../orchestrator.js";
 
 const ALL_FIELDS = getEditableFieldDefinitions().map((field) => field.name);
 const ALLOWED_FIELDS = new Set(ALL_FIELDS);
@@ -58,17 +58,49 @@ const MULTILINE_FIELDS = new Set([
 	"teamCards",
 ]);
 
-function normalizeBaseUrl(baseUrl) {
+interface ChatMessage {
+	role: "system" | "user" | "assistant";
+	content: string;
+}
+
+interface OpenAIChatParams {
+	apiKey: string;
+	baseUrl: string;
+	model: string;
+	messages: ChatMessage[];
+	temperature?: number;
+}
+
+interface OpenAIChoice {
+	message?: {
+		content?: string;
+	};
+}
+
+interface OpenAIChatResponse {
+	choices?: OpenAIChoice[];
+}
+
+function isOpenAIChatResponse(value: unknown): value is OpenAIChatResponse {
+	return typeof value === "object" && value !== null && "choices" in value;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+function normalizeBaseUrl(baseUrl: unknown): string {
 	const value = safeText(baseUrl, "https://api.openai.com/v1");
 	return value.endsWith("/") ? value.slice(0, -1) : value;
 }
 
-function extractJsonObject(text) {
+function extractJsonObject(text: unknown): Record<string, unknown> {
 	const trimmed = String(text || "").trim();
 	if (!trimmed) throw new Error("AI response was empty.");
 
 	try {
-		return JSON.parse(trimmed);
+		const parsed: Record<string, unknown> = JSON.parse(trimmed);
+		return parsed;
 	} catch {
 		const start = trimmed.indexOf("{");
 		const end = trimmed.lastIndexOf("}");
@@ -76,7 +108,8 @@ function extractJsonObject(text) {
 			throw new Error("AI response did not contain JSON.");
 		}
 
-		return JSON.parse(trimmed.slice(start, end + 1));
+		const extracted: Record<string, unknown> = JSON.parse(trimmed.slice(start, end + 1));
+		return extracted;
 	}
 }
 
@@ -86,7 +119,7 @@ async function callOpenAIChat({
 	model,
 	messages,
 	temperature = 0.4,
-}) {
+}: OpenAIChatParams): Promise<string> {
 	const endpoint = `${normalizeBaseUrl(baseUrl)}/chat/completions`;
 
 	const response = await fetch(endpoint, {
@@ -109,31 +142,38 @@ async function callOpenAIChat({
 		);
 	}
 
-	const result = await response.json();
-	const content = result?.choices?.[0]?.message?.content;
+	const result: unknown = await response.json();
+	if (!isOpenAIChatResponse(result)) {
+		throw new Error("OpenAI returned unexpected response format.");
+	}
+
+	const content = result.choices?.[0]?.message?.content;
 	if (!content) throw new Error("OpenAI returned no message content.");
 
 	return content;
 }
 
-function sanitizeSuggestedChanges(changes) {
+function sanitizeSuggestedChanges(changes: unknown): SuggestedChange[] {
 	if (!Array.isArray(changes)) return [];
 
 	return changes
-		.map((change) => ({
-			field: safeText(change?.field),
-			label: safeText(change?.label),
-			value: safeText(change?.value),
-		}))
+		.map((change: unknown) => {
+			const item: Record<string, unknown> | null | undefined = isRecord(change) ? change : null;
+			return {
+				field: safeText(item?.field),
+				label: safeText(item?.label),
+				value: safeText(item?.value),
+			};
+		})
 		.filter(
-			(change) =>
-				change.field && ALLOWED_FIELDS.has(change.field) && change.value,
+			(change): change is SuggestedChange =>
+				change.field !== "" && ALLOWED_FIELDS.has(change.field) && change.value !== "",
 		);
 }
 
-function sanitizeDraft(draft) {
-	const output = {};
-	if (!draft || typeof draft !== "object") return output;
+function sanitizeDraft(draft: unknown): Record<string, string> {
+	const output: Record<string, string> = {};
+	if (!isRecord(draft)) return output;
 
 	AUTOFILL_FIELDS.forEach((fieldName) => {
 		if (!(fieldName in draft)) return;
@@ -143,7 +183,7 @@ function sanitizeDraft(draft) {
 	return output;
 }
 
-export async function openAIAutofill(rawData = {}, config = {}) {
+export async function openAIAutofill(rawData: Record<string, unknown> = {}, config: ProviderConfig): Promise<AutofillResult> {
 	const model = buildDeckModel(rawData);
 	const { project, template, availableSlides } = model;
 	const includedSlides = availableSlides
@@ -204,28 +244,32 @@ export async function openAIAutofill(rawData = {}, config = {}) {
 	});
 
 	const parsed = extractJsonObject(content);
-	const prompts = Array.isArray(parsed?.imageDraft?.prompts)
-		? parsed.imageDraft.prompts
+	const imageDraftRaw = isRecord(parsed.imageDraft) ? parsed.imageDraft : undefined;
+	const prompts: unknown[] = Array.isArray(imageDraftRaw?.prompts)
+		? imageDraftRaw.prompts
 		: [];
 
-	const sanitizedPrompts = prompts
-		.map((item, index) => ({
-			slideId: safeText(
-				item?.slideId,
-				includedSlides[index] || `slide-${index + 1}`,
-			),
-			slideNumber: index + 1,
-			slideTitle: safeText(
-				item?.slideTitle,
-				item?.slideId || `Slide ${index + 1}`,
-			),
-			prompt: safeText(item?.prompt),
-		}))
-		.filter((item) => item.prompt);
+	const sanitizedPrompts: ImagePrompt[] = prompts
+		.map((item: unknown, index: number) => {
+			const entry = isRecord(item) ? item : null;
+			return {
+				slideId: safeText(
+					entry?.slideId,
+					includedSlides[index] || `slide-${index + 1}`,
+				),
+				slideNumber: index + 1,
+				slideTitle: safeText(
+					entry?.slideTitle,
+					safeText(entry?.slideId, `Slide ${index + 1}`),
+				),
+				prompt: safeText(entry?.prompt),
+			};
+		})
+		.filter((item) => item.prompt !== "");
 
 	return {
 		provider: "openai",
-		draft: sanitizeDraft(parsed?.draft),
+		draft: sanitizeDraft(parsed.draft),
 		imageDraft: {
 			prompts: sanitizedPrompts,
 			combinedPromptText: sanitizedPrompts
@@ -239,10 +283,10 @@ export async function openAIAutofill(rawData = {}, config = {}) {
 }
 
 export async function openAIChatAssist(
-	rawData = {},
-	chatRequest = {},
-	config = {},
-) {
+	rawData: Record<string, unknown> = {},
+	chatRequest: ChatRequest = {},
+	config: ProviderConfig,
+): Promise<ChatResult> {
 	const targetField = safeText(chatRequest.targetField, "global-concept");
 	const message = safeText(chatRequest.message, "Improve this section.");
 
@@ -295,8 +339,7 @@ export async function openAIChatAssist(
 
 	return {
 		provider: "openai",
-		reply: safeText(parsed?.reply, "Draft suggestions prepared."),
-		suggestedChanges: sanitizeSuggestedChanges(parsed?.suggestedChanges),
+		reply: safeText(parsed.reply, "Draft suggestions prepared."),
+		suggestedChanges: sanitizeSuggestedChanges(parsed.suggestedChanges),
 	};
 }
-

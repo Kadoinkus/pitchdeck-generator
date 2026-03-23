@@ -1,5 +1,4 @@
-// @ts-nocheck
-const HERO_PATHS = {
+const HERO_PATHS: Record<string, string> = {
 	exclamation:
 		"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
 	chat: "M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z",
@@ -28,7 +27,7 @@ const HERO_PATHS = {
 	cash: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z",
 };
 
-const PATHS = {
+const PATHS: Record<string, string> = {
 	"alert-triangle": `<path d="${HERO_PATHS.exclamation}"/>`,
 	"message-circle": `<path d="${HERO_PATHS.chat}"/>`,
 	zap: `<path d="${HERO_PATHS.bolt}"/>`,
@@ -51,26 +50,39 @@ const PATHS = {
 	wallet: `<path d="${HERO_PATHS.cash}"/>`,
 };
 
-const SIZE_MAP = {
+const SIZE_MAP: Record<"sm" | "md" | "lg" | "xl", number> = {
 	sm: 18,
 	md: 22,
 	lg: 30,
 	xl: 42,
 };
 
-function resolveSize(size) {
-	if (typeof size === "number") return Math.max(14, Math.min(size, 64));
-	return SIZE_MAP[size] || SIZE_MAP.md;
+type SizeKey = keyof typeof SIZE_MAP;
+
+function isSizeKey(value: string): value is SizeKey {
+	return value in SIZE_MAP;
 }
 
-export function hasIcon(name) {
+function resolveSize(size: string | number): number {
+	if (typeof size === "number") return Math.max(14, Math.min(size, 64));
+	if (isSizeKey(size)) return SIZE_MAP[size];
+	return SIZE_MAP.md;
+}
+
+export interface RenderIconOptions {
+	size?: string | number;
+	className?: string;
+	label?: string;
+}
+
+export function hasIcon(name: string): boolean {
 	return Boolean(PATHS[name]);
 }
 
 export function renderIcon(
-	name,
-	{ size = "md", className = "", label = "" } = {},
-) {
+	name: string,
+	{ size = "md", className = "", label = "" }: RenderIconOptions = {},
+): string {
 	const paths = PATHS[name] || PATHS.sparkles;
 	const px = resolveSize(size);
 	const ariaHidden = label ? "false" : "true";
@@ -79,7 +91,7 @@ export function renderIcon(
 	return `<span class="deck-icon ${className}" style="--icon-size:${px}px" aria-hidden="${ariaHidden}"${ariaLabel}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg></span>`;
 }
 
-export function iconByKeyword(keyword = "") {
+export function iconByKeyword(keyword = ""): string {
 	const k = String(keyword).toLowerCase();
 	if (k.includes("price") || k.includes("cost") || k.includes("budget"))
 		return "wallet";
@@ -98,4 +110,3 @@ export function iconByKeyword(keyword = "") {
 	if (k.includes("security") || k.includes("privacy")) return "shield-check";
 	return "sparkles";
 }
-

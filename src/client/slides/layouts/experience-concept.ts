@@ -1,10 +1,10 @@
-// @ts-nocheck
+import type { DeckData, SlideData, ThemeData } from "../types.js";
 import { attrTarget, renderFrame } from "../core/components.js";
 import { getTargetField } from "../core/fields.js";
 import { ensureItems, esc, fitList, fitText } from "../core/utils.js";
 import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
 
-export function renderExperienceConcept(slide, theme, deckData) {
+export function renderExperienceConcept(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
 	const target = getTargetField(slide);
 	const points = fitList(
 		ensureItems(slide.points, [
@@ -56,4 +56,3 @@ export function renderExperienceConcept(slide, theme, deckData) {
 
 	return renderFrame({ slide, theme, body });
 }
-

@@ -1,7 +1,17 @@
-// @ts-nocheck
 import { safeColor, safeFont } from "./utils.js";
 
-export function themeVars(theme) {
+export interface ThemeInput {
+	primaryColor?: string;
+	accentColor?: string;
+	secondaryColor?: string;
+	backgroundColor?: string;
+	textColor?: string;
+	headingFont?: string;
+	bodyFont?: string;
+	brandName?: string;
+}
+
+export function themeVars(theme: ThemeInput | null | undefined): string {
 	const primary = safeColor(theme?.primaryColor, "#004B49");
 	const accent = safeColor(theme?.accentColor, "#30D89E");
 	const secondary = safeColor(theme?.secondaryColor, "#0B6E6C");
@@ -21,7 +31,11 @@ export function themeVars(theme) {
 	].join(";");
 }
 
-export function resolveTheme(theme, deckData) {
-	return deckData?.deckTheme || theme || deckData?.theme || {};
+interface ThemeSource {
+	deckTheme?: ThemeInput;
+	theme?: ThemeInput;
 }
 
+export function resolveTheme(theme: ThemeInput | null | undefined, deckData: ThemeSource | null | undefined): ThemeInput {
+	return deckData?.deckTheme || theme || deckData?.theme || {};
+}
