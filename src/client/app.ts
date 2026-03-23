@@ -97,11 +97,17 @@ const DRAFT_STORAGE_KEY = 'proposalDeckDraftV4';
 const DECK_RESULT_STORAGE_KEY = 'proposalDeckLastResultV1';
 const HISTORY_LIMIT = 80;
 
-const form = document.getElementById('deck-form')!;
-const templateSelect = document.getElementById('templateId')!;
-const slideSelector = document.getElementById('slide-selector')!;
-const includeAllSlidesButton = document.getElementById('include-all-slides')!;
-const includeCoreSlidesButton = document.getElementById('include-core-slides')!;
+function requireEl(id: string): HTMLElement {
+	const el = document.getElementById(id);
+	if (!el) throw new Error(`Missing required element: #${id}`);
+	return el;
+}
+
+const form = requireEl('deck-form');
+const templateSelect = requireEl('templateId');
+const slideSelector = requireEl('slide-selector');
+const includeAllSlidesButton = requireEl('include-all-slides');
+const includeCoreSlidesButton = requireEl('include-core-slides');
 const layoutPresetSelect = document.getElementById('layoutPreset');
 const layoutPresetLock = document.getElementById('layoutPresetLock');
 const primaryColorInput = document.getElementById('primaryColor');
@@ -115,11 +121,11 @@ const shuffleHarmonyButton = document.getElementById('shuffle-harmony');
 const lockAccentColorInput = document.getElementById('lock-accentColor');
 const lockSecondaryColorInput = document.getElementById('lock-secondaryColor');
 const paletteStatusEl = document.getElementById('palette-status');
-const autoFillButton = document.getElementById('ai-autofill')!;
-const generateButton = document.getElementById('generate-button')!;
-const statusEl = document.getElementById('status')!;
+const autoFillButton = requireEl('ai-autofill');
+const generateButton = requireEl('generate-button');
+const statusEl = requireEl('status');
 
-const saveAiSettingsButton = document.getElementById('save-ai-settings')!;
+const saveAiSettingsButton = requireEl('save-ai-settings');
 const characterAssetsInput = document.getElementById('character-assets-input');
 const characterAssetsPreview = document.getElementById(
 	'character-assets-preview',
@@ -131,12 +137,12 @@ const clearCharacterAssetsButton = document.getElementById(
 	'clear-character-assets',
 );
 
-const outputStatus = document.getElementById('output-status')!;
-const openViewerLink = document.getElementById('open-viewer-link')!;
+const outputStatus = requireEl('output-status');
+const openViewerLink = requireEl('open-viewer-link');
 const downloadPptxLink = document.getElementById('download-pptx-link');
 const downloadPdfLink = document.getElementById('download-pdf-link');
 const openShareLink = document.getElementById('open-share-link');
-const copyShareLinkButton = document.getElementById('copy-share-link')!;
+const copyShareLinkButton = requireEl('copy-share-link');
 const projectNameDisplay = document.getElementById('project-name-display');
 const projectContextDisplay = document.getElementById(
 	'project-context-display',
@@ -146,14 +152,14 @@ const undoChangeButton = document.getElementById('undo-change');
 const redoChangeButton = document.getElementById('redo-change');
 const slideViewerEl = document.getElementById('slide-viewer');
 
-const chatLauncher = document.getElementById('viewer-chat-launcher')!;
-const chatPanel = document.getElementById('viewer-chat-panel')!;
-const chatClose = document.getElementById('viewer-chat-close')!;
-const chatTargetEl = document.getElementById('viewer-chat-target')!;
-const chatMessagesEl = document.getElementById('viewer-chat-messages')!;
-const chatSuggestionsEl = document.getElementById('viewer-chat-suggestions')!;
-const chatInputEl = document.getElementById('viewer-chat-input')!;
-const chatSendButton = document.getElementById('viewer-chat-send')!;
+const chatLauncher = requireEl('viewer-chat-launcher');
+const chatPanel = requireEl('viewer-chat-panel');
+const chatClose = requireEl('viewer-chat-close');
+const chatTargetEl = requireEl('viewer-chat-target');
+const chatMessagesEl = requireEl('viewer-chat-messages');
+const chatSuggestionsEl = requireEl('viewer-chat-suggestions');
+const chatInputEl = requireEl('viewer-chat-input');
+const chatSendButton = requireEl('viewer-chat-send');
 
 const templateMap = new Map<string, TemplateEntry>();
 let currentDeckResult: DeckResult | null = null;
@@ -443,7 +449,8 @@ function applyPayloadToForm(payload: FormPayload = {}): void {
 		&& getInputValue(templateSelect) !== nextTemplateId
 	) {
 		setInputValue(templateSelect, nextTemplateId);
-		renderSlideSelector(templateMap.get(nextTemplateId)!, false);
+		const entry = templateMap.get(nextTemplateId);
+		if (entry) renderSlideSelector(entry, false);
 	}
 
 	const fields = form.querySelectorAll(

@@ -149,27 +149,29 @@ function updateSlidePageStates(): void {
 }
 
 function renderSlides(): void {
-	if (!slideTrack || !slideData?.slides?.length) return;
+	const data = slideData;
+	if (!slideTrack || !data?.slides?.length) return;
 	slideTrack.innerHTML = '';
 
-	slideData.slides.forEach((slide, index) => {
+	data.slides.forEach((slide, index) => {
 		const pageNode = document.createElement('section');
 		pageNode.className = 'slide-page';
 		pageNode.dataset.slideIndex = String(index);
-		pageNode.innerHTML = renderSlide(slide, slideData!.theme, slideData!);
+		pageNode.innerHTML = renderSlide(slide, data.theme, data);
 		slideTrack.appendChild(pageNode);
 	});
 }
 
 function renderThumbnails(): void {
-	if (!thumbnailsEl || !slideData) return;
+	const data = slideData;
+	if (!thumbnailsEl || !data) return;
 	thumbnailsEl.innerHTML = '';
 
-	slideData.slides.forEach((slide, index) => {
+	data.slides.forEach((slide, index) => {
 		const thumb = document.createElement('div');
 		thumb.className = `thumb${index === currentSlide ? ' active' : ''}`;
 		thumb.innerHTML = `<span class="thumb-number">${index + 1}</span><div class="thumb-inner">${
-			renderSlide(slide, slideData!.theme, slideData!)
+			renderSlide(slide, data.theme, data)
 		}</div>`;
 		thumb.addEventListener('click', () => goToSlide(index));
 		thumbnailsEl.appendChild(thumb);

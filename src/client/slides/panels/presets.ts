@@ -92,7 +92,7 @@ interface MetricPanelOptions {
 }
 
 export function renderTitlePanel({
-	slide,
+	slide: _slide,
 	target = 'global-concept',
 	kicker = '',
 	title = '',

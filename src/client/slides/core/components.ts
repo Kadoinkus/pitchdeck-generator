@@ -1,6 +1,6 @@
 import type { ThemeInput } from './theme.ts';
 import { themeVars } from './theme.ts';
-import type { DeckData, ImageAssetRef, SlideData } from './utils.ts';
+import type { DeckData, SlideData } from './utils.ts';
 import { esc, findAssetForSlide, fitText } from './utils.ts';
 
 export function attrTarget(
