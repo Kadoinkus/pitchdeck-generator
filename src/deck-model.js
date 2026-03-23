@@ -1,4 +1,5 @@
 import { normalizeList, safeText } from './utils.js';
+import { resolveImageModeForSlide, resolveSlotPolicy } from './slot-policy.js';
 
 const TEMPLATE_PREMIUM_PROPOSAL = 'pitch-proposal';
 const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
@@ -516,6 +517,8 @@ export function buildDeckModel(rawData = {}) {
     const layoutKey = layoutPresetLock
       ? (lockedLayout || slide.type)
       : safeText(rawData[`layout_${slide.id}`], lockedLayout || slide.type);
+    const slotPolicy = resolveSlotPolicy(slide.type);
+    const imageMode = resolveImageModeForSlide(slide.type, '');
 
     return {
       ...slide,
@@ -523,7 +526,10 @@ export function buildDeckModel(rawData = {}) {
       imageRatio,
       backgroundMode,
       imagePrompt: content.imagePrompts[index] || defaultImagePrompt(slide.type, project, project.mascotName),
-      imageAsset: resolveImageAssetForSlide(slide.id, content.characterAssets)
+      imageAsset: resolveImageAssetForSlide(slide.id, content.characterAssets),
+      slotPolicy,
+      imageMode,
+      textMode: slotPolicy.text.mode
     };
   });
 

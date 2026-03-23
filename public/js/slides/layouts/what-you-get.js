@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
+import { renderFrame, attrTarget } from '../core/components.js';
 import { ensureItems, esc, fitText } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderWhatYouGet(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -12,16 +13,18 @@ export function renderWhatYouGet(slide, theme, deckData) {
   ]).slice(0, 4);
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'What You Get',
       title: 'Everything Needed To Launch Fast',
       accentPhrase: 'Launch Fast',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-4 deliverable-grid" ${attrTarget(target, `${slide.title} deliverables`)}>
       ${sections.map((section, index) => `<article class="panel deliverable-card">
-        ${renderImageSlot({
+        ${renderImagePanel({
           slide,
           deckData,
           target: 'imagePrompts',

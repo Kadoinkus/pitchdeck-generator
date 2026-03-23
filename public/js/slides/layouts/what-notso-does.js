@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
+import { renderFrame, attrTarget } from '../core/components.js';
 import { ensureItems, esc, fitText } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderIconFeaturePanel, renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderWhatNotsoDoes(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -10,18 +11,22 @@ export function renderWhatNotsoDoes(slide, theme, deckData) {
     { title: 'Conversation', description: 'Structured chat logic.' },
     { title: 'Analytics', description: 'Track and optimize outcomes.' }
   ]).slice(0, 4);
+  const cardCount = cards.length;
 
   const body = `<div class="split-layout what-layout">
-    <article class="panel text-panel" ${attrTarget('whatNotsoIntro', `${slide.title} intro`)}>
-      ${renderHeadline({
+    <article class="text-surface text-panel" ${attrTarget('whatNotsoIntro', `${slide.title} intro`)}>
+      ${renderTitlePanel({
+        slide,
         kicker: 'What We Do',
         title: 'AI-powered Character Experiences',
         accentPhrase: 'Character Experiences',
         target,
-        compact: true
+        compact: true,
+        asPanel: false,
+        variant: 'transparent'
       })}
       <p class="paragraph">${esc(fitText(slide.intro || '', 220))}</p>
-      ${renderImageSlot({
+      ${renderImagePanel({
         slide,
         deckData,
         target: 'imagePrompts',
@@ -31,7 +36,21 @@ export function renderWhatNotsoDoes(slide, theme, deckData) {
       })}
     </article>
     <div class="grid-2x2" ${attrTarget(target, `${slide.title} cards`)}>
-      ${cards.map((card) => `<article class="panel feature-card"><h3>${esc(fitText(card.title || '', 26))}</h3><p>${esc(fitText(card.description || '', 92))}</p></article>`).join('')}
+      ${cards
+        .map((card) =>
+          renderIconFeaturePanel({
+            slideType: slide?.type,
+            sectionKey: 'cards',
+            panelCount: cardCount,
+            target,
+            label: `${card.title || 'Card'} panel`,
+            title: card.title || '',
+            text: card.description || '',
+            maxTitleChars: 26,
+            maxTextChars: 92
+          })
+        )
+        .join('')}
     </div>
   </div>`;
 

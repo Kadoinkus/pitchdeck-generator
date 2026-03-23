@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
+import { renderFrame, attrTarget } from '../core/components.js';
 import { ensureItems, esc, fitText } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderClosing(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -12,14 +13,17 @@ export function renderClosing(slide, theme, deckData) {
   ]).slice(0, 4);
 
   const body = `<div class="split-layout closing-layout">
-    <article class="panel text-panel closing-copy">
-      ${renderHeadline({
+    <article class="text-surface text-panel closing-copy">
+      ${renderTitlePanel({
+        slide,
         kicker: 'Next Step',
         title: fitText(slide.headline || `Let's Build ${slide.mascotName || deckData?.project?.mascotName || 'This Together'}`, 46),
         accentPhrase: slide.mascotName || deckData?.project?.mascotName || '',
         subtitle: '',
         target,
-        compact: true
+        compact: true,
+        asPanel: false,
+        variant: 'transparent'
       })}
       <p class="paragraph" ${attrTarget(target, 'Closing statement')}>${esc(fitText(slide.text || '', 220))}</p>
       <div class="contact-lines">
@@ -29,7 +33,7 @@ export function renderClosing(slide, theme, deckData) {
       </div>
     </article>
     <div class="closing-right">
-      ${renderImageSlot({
+      ${renderImagePanel({
         slide,
         deckData,
         target: 'imagePrompts',

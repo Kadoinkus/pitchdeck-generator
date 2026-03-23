@@ -1,23 +1,38 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
-import { ensureItems, esc, fitList } from '../core/utils.js';
+import { renderFrame, attrTarget } from '../core/components.js';
+import { ensureItems, fitList } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderImagePanel, renderMetricPanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderBusinessImpact(slide, theme, deckData) {
   const target = getTargetField(slide);
   const impacts = fitList(ensureItems(slide.impacts, ['Increase conversion', 'Reduce support load', 'Boost engagement', 'Strengthen brand recall']), 4, 42);
+  const impactCount = impacts.length;
 
   const body = `<div class="stack-layout impact-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'Business Impact',
       title: 'Results That Drive Revenue',
       accentPhrase: 'Drive Revenue',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-4" ${attrTarget(target, `${slide.title} impact points`)}>
-      ${impacts.map((impact) => `<article class="panel impact-card"><p>${esc(impact)}</p></article>`).join('')}
+      ${impacts
+        .map((impact) =>
+          renderMetricPanel({
+            slideType: slide?.type,
+            sectionKey: 'impacts',
+            panelCount: impactCount,
+            target,
+            label: `${impact} metric`,
+            value: impact
+          })
+        )
+        .join('')}
     </div>
-    ${renderImageSlot({
+    ${renderImagePanel({
       slide,
       deckData,
       target: 'imagePrompts',

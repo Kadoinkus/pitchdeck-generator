@@ -1,6 +1,8 @@
 import { showViewer, updateViewerData } from './js/viewer.js';
 
 const AI_SETTINGS_KEY = 'proposalDeckAiSettingsV3';
+const DRAFT_STORAGE_KEY = 'proposalDeckDraftV4';
+const HISTORY_LIMIT = 80;
 
 const form = document.getElementById('deck-form');
 const templateSelect = document.getElementById('templateId');
@@ -25,6 +27,12 @@ const downloadPptxLink = document.getElementById('download-pptx-link');
 const downloadPdfLink = document.getElementById('download-pdf-link');
 const openShareLink = document.getElementById('open-share-link');
 const copyShareLinkButton = document.getElementById('copy-share-link');
+const projectNameDisplay = document.getElementById('project-name-display');
+const projectContextDisplay = document.getElementById('project-context-display');
+const saveIndicator = document.getElementById('save-indicator');
+const undoChangeButton = document.getElementById('undo-change');
+const redoChangeButton = document.getElementById('redo-change');
+const slideViewerEl = document.getElementById('slide-viewer');
 
 const chatLauncher = document.getElementById('viewer-chat-launcher');
 const chatPanel = document.getElementById('viewer-chat-panel');
@@ -40,6 +48,12 @@ let currentDeckResult = null;
 let chatTarget = { field: 'global-concept', label: 'Global concept' };
 let chatHistory = [];
 let characterAssets = [];
+let historyStack = [];
+let historyIndex = -1;
+let suspendHistory = false;
+let autosaveTimer = null;
+let historyInputTimer = null;
+let lastSavedSignature = '';
 
 const CHARACTER_PLACEMENTS = [
   { value: 'all-mascot', label: 'All mascot slides' },
@@ -59,6 +73,274 @@ function syncLayoutPresetLockUi() {
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle('error', isError);
+}
+
+function clonePayload(payload = {}) {
+  return JSON.parse(JSON.stringify(payload));
+}
+
+function payloadSignature(payload = {}) {
+  const normalized = {
+    ...payload,
+    excludedSlides: Array.isArray(payload.excludedSlides) ? [...payload.excludedSlides].sort() : []
+  };
+  const ordered = {};
+  Object.keys(normalized)
+    .sort()
+    .forEach((key) => {
+      ordered[key] = normalized[key];
+    });
+  return JSON.stringify(ordered);
+}
+
+function setSaveIndicator(state = 'is-saved', text = '') {
+  if (!saveIndicator) return;
+  const labelByState = {
+    'is-saved': 'All changes saved',
+    'is-dirty': 'Unsaved changes',
+    'is-saving': 'Saving...',
+    'is-error': 'Save failed'
+  };
+
+  saveIndicator.classList.remove('is-saved', 'is-dirty', 'is-saving', 'is-error');
+  saveIndicator.classList.add(state);
+  saveIndicator.textContent = text || labelByState[state] || labelByState['is-saved'];
+}
+
+function updateProjectChrome() {
+  const clientName = form.querySelector('[name="clientName"]')?.value.trim();
+  const clientUrl = form.querySelector('[name="clientUrl"]')?.value.trim();
+  const projectTitle = form.querySelector('[name="projectTitle"]')?.value.trim();
+  const deckVersion = form.querySelector('[name="deckVersion"]')?.value.trim();
+  const templateLabel = templateMap.get(templateSelect?.value)?.label || 'Pitch Deck Proposal';
+
+  if (projectNameDisplay) {
+    projectNameDisplay.textContent = projectTitle || (clientName ? `${clientName} proposal` : 'Untitled design');
+  }
+
+  if (projectContextDisplay) {
+    const context = [clientName || 'No client', templateLabel, deckVersion || 'v1.0']
+      .filter(Boolean)
+      .join(' • ');
+    projectContextDisplay.textContent = clientUrl ? `${context} • ${clientUrl}` : context;
+  }
+}
+
+function syncHistoryButtons() {
+  if (undoChangeButton) undoChangeButton.disabled = historyIndex <= 0;
+  if (redoChangeButton) redoChangeButton.disabled = historyIndex >= historyStack.length - 1;
+}
+
+function applyPayloadToForm(payload = {}) {
+  suspendHistory = true;
+
+  const nextTemplateId = payload.templateId;
+  if (nextTemplateId && templateMap.has(nextTemplateId) && templateSelect.value !== nextTemplateId) {
+    templateSelect.value = nextTemplateId;
+    renderSlideSelector(templateMap.get(nextTemplateId), false);
+  }
+
+  const fields = form.querySelectorAll('input[name], textarea[name], select[name]');
+  fields.forEach((field) => {
+    if (!(field.name in payload)) return;
+    if (field.name === 'templateId') return;
+
+    if (field.type === 'checkbox') {
+      field.checked = Boolean(payload[field.name]);
+      return;
+    }
+
+    field.value = String(payload[field.name] ?? '');
+  });
+
+  const excluded = new Set(Array.isArray(payload.excludedSlides) ? payload.excludedSlides : []);
+  slideSelector.querySelectorAll('input[type="checkbox"][data-slide-id]').forEach((checkbox) => {
+    checkbox.checked = !excluded.has(checkbox.dataset.slideId);
+  });
+
+  characterAssets = parseCharacterAssetsFromField();
+  renderCharacterAssetsPreview();
+  syncLayoutPresetLockUi();
+  updateProjectChrome();
+  suspendHistory = false;
+}
+
+function pushHistorySnapshot() {
+  if (suspendHistory) return;
+
+  const payload = clonePayload(readFormPayload());
+  const signature = payloadSignature(payload);
+  const current = historyStack[historyIndex];
+  if (current?.signature === signature) {
+    syncHistoryButtons();
+    return;
+  }
+
+  if (historyIndex < historyStack.length - 1) {
+    historyStack = historyStack.slice(0, historyIndex + 1);
+  }
+
+  historyStack.push({
+    payload,
+    signature,
+    at: Date.now()
+  });
+
+  if (historyStack.length > HISTORY_LIMIT) {
+    const overflow = historyStack.length - HISTORY_LIMIT;
+    historyStack.splice(0, overflow);
+  }
+
+  historyIndex = historyStack.length - 1;
+  syncHistoryButtons();
+}
+
+function autosaveNow({ quiet = false } = {}) {
+  clearTimeout(autosaveTimer);
+  const payload = clonePayload(readFormPayload());
+  const signature = payloadSignature(payload);
+
+  if (!quiet) {
+    setSaveIndicator('is-saving');
+  }
+
+  try {
+    localStorage.setItem(
+      DRAFT_STORAGE_KEY,
+      JSON.stringify({
+        version: 4,
+        savedAt: new Date().toISOString(),
+        payload
+      })
+    );
+
+    lastSavedSignature = signature;
+    setSaveIndicator('is-saved');
+  } catch (error) {
+    console.error(error);
+    setSaveIndicator('is-error');
+  }
+}
+
+function scheduleAutosave() {
+  if (suspendHistory) return;
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    autosaveNow();
+  }, 700);
+}
+
+function loadDraftFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return false;
+
+    const parsed = JSON.parse(raw);
+    const payload = parsed?.payload && typeof parsed.payload === 'object' ? parsed.payload : parsed;
+    if (!payload || typeof payload !== 'object') return false;
+
+    applyPayloadToForm(payload);
+    lastSavedSignature = payloadSignature(readFormPayload());
+    setSaveIndicator('is-saved');
+    return true;
+  } catch (error) {
+    console.error(error);
+    setSaveIndicator('is-error', 'Draft load failed');
+    return false;
+  }
+}
+
+async function applyHistoryIndex(nextIndex) {
+  const entry = historyStack[nextIndex];
+  if (!entry) return;
+
+  historyIndex = nextIndex;
+  applyPayloadToForm(entry.payload);
+  syncHistoryButtons();
+
+  if (entry.signature === lastSavedSignature) {
+    setSaveIndicator('is-saved');
+  } else {
+    setSaveIndicator('is-dirty');
+  }
+
+  if (currentDeckResult?.slideData && slideViewerEl && !slideViewerEl.classList.contains('hidden')) {
+    try {
+      await refreshViewerFromPayload();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+async function undoChange() {
+  if (historyIndex <= 0) return;
+  await applyHistoryIndex(historyIndex - 1);
+}
+
+async function redoChange() {
+  if (historyIndex >= historyStack.length - 1) return;
+  await applyHistoryIndex(historyIndex + 1);
+}
+
+function markEditorDirty() {
+  const signature = payloadSignature(readFormPayload());
+  if (signature === lastSavedSignature) {
+    clearTimeout(autosaveTimer);
+    setSaveIndicator('is-saved');
+    return;
+  }
+
+  setSaveIndicator('is-dirty');
+  scheduleAutosave();
+}
+
+function queueInputHistorySnapshot() {
+  clearTimeout(historyInputTimer);
+  historyInputTimer = setTimeout(() => {
+    pushHistorySnapshot();
+  }, 160);
+}
+
+function handleFormMutation(event) {
+  if (suspendHistory) return;
+  const target = event.target;
+  if (!target) return;
+
+  const hasFieldName = typeof target.name === 'string' && target.name.length > 0;
+  const isSlideToggle = Boolean(target.dataset?.slideId);
+  if (!hasFieldName && !isSlideToggle) return;
+
+  updateProjectChrome();
+
+  if (event.type === 'input') {
+    queueInputHistorySnapshot();
+  } else {
+    pushHistorySnapshot();
+  }
+
+  markEditorDirty();
+}
+
+function handleHistoryHotkeys(event) {
+  if (!event.metaKey && !event.ctrlKey) return;
+  if (slideViewerEl && !slideViewerEl.classList.contains('hidden')) return;
+
+  const target = event.target;
+  const tag = target?.tagName?.toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select' || target?.isContentEditable) return;
+
+  const key = event.key.toLowerCase();
+  const wantsUndo = key === 'z' && !event.shiftKey;
+  const wantsRedo = (key === 'z' && event.shiftKey) || key === 'y';
+  if (!wantsUndo && !wantsRedo) return;
+
+  event.preventDefault();
+  if (wantsUndo) {
+    undoChange();
+    return;
+  }
+  redoChange();
 }
 
 function setLinkState(el, url) {
@@ -93,6 +375,7 @@ function setOutputState(state = {}) {
   setLinkState(openShareLink, state.shareUrl);
   copyShareLinkButton.disabled = !state.shareUrl;
 }
+
 
 function collectSlideExclusions() {
   const excluded = [];
@@ -217,6 +500,8 @@ function renderCharacterAssetsPreview() {
     placement.addEventListener('change', () => {
       characterAssets[index] = { ...characterAssets[index], placement: placement.value };
       syncCharacterAssetsField();
+      pushHistorySnapshot();
+      markEditorDirty();
     });
 
     const remove = document.createElement('button');
@@ -227,6 +512,8 @@ function renderCharacterAssetsPreview() {
       characterAssets.splice(index, 1);
       syncCharacterAssetsField();
       renderCharacterAssetsPreview();
+      pushHistorySnapshot();
+      markEditorDirty();
       if (currentDeckResult?.slideData) {
         try {
           await refreshViewerFromPayload();
@@ -297,6 +584,8 @@ async function handleCharacterAssetsUpload(event) {
   syncCharacterAssetsField();
   renderCharacterAssetsPreview();
   event.target.value = '';
+  pushHistorySnapshot();
+  markEditorDirty();
   setStatus('Character assets updated.');
 
   if (currentDeckResult?.slideData) {
@@ -312,6 +601,8 @@ async function clearCharacterAssets() {
   characterAssets = [];
   syncCharacterAssetsField();
   renderCharacterAssetsPreview();
+  pushHistorySnapshot();
+  markEditorDirty();
   setStatus('Character assets cleared.');
 
   if (currentDeckResult?.slideData) {
@@ -505,6 +796,9 @@ function renderChatSuggestions(suggestions = []) {
     applyButton.textContent = `Apply to ${change.field}`;
     applyButton.addEventListener('click', async () => {
       writeField(change.field, change.value);
+      updateProjectChrome();
+      pushHistorySnapshot();
+      markEditorDirty();
       setStatus(`Applied update to ${change.field}. Refreshing viewer...`);
       await refreshViewerFromPayload();
     });
@@ -555,6 +849,9 @@ async function runAutofill() {
 
     applyDraftToForm(result.draft || {});
     applyImageDraft(result.imageDraft || {});
+    updateProjectChrome();
+    pushHistorySnapshot();
+    markEditorDirty();
     setStatus(`Autofill complete (${result.provider || 'local'}).`);
   } catch (error) {
     console.error(error);
@@ -589,16 +886,17 @@ async function generateDeck(event) {
 
     const shareUrlAbsolute = result.shareUrl ? new URL(result.shareUrl, window.location.origin).toString() : null;
     const pdfUrlAbsolute = result.pdfUrl ? new URL(result.pdfUrl, window.location.origin).toString() : null;
+    const downloadUrlAbsolute = result.downloadUrl ? new URL(result.downloadUrl, window.location.origin).toString() : null;
 
     setOutputState({
       slideData: result.slideData,
-      downloadUrl: result.downloadUrl,
+      downloadUrl: downloadUrlAbsolute,
       pdfUrl: pdfUrlAbsolute,
       shareUrl: shareUrlAbsolute
     });
 
     showViewer(result.slideData, {
-      downloadUrl: result.downloadUrl,
+      downloadUrl: downloadUrlAbsolute,
       pdfUrl: pdfUrlAbsolute,
       shareUrl: shareUrlAbsolute
     });
@@ -657,6 +955,9 @@ async function runViewerChat() {
 
 templateSelect.addEventListener('change', () => {
   renderSlideSelector(templateMap.get(templateSelect.value), false);
+  updateProjectChrome();
+  pushHistorySnapshot();
+  markEditorDirty();
   setStatus(`Template selected: ${templateMap.get(templateSelect.value)?.label || templateSelect.value}`);
 });
 
@@ -664,6 +965,8 @@ includeAllSlidesButton.addEventListener('click', () => {
   slideSelector.querySelectorAll('input[type="checkbox"][data-slide-id]').forEach((checkbox) => {
     checkbox.checked = true;
   });
+  pushHistorySnapshot();
+  markEditorDirty();
   setStatus('All slides included.');
 });
 
@@ -677,18 +980,31 @@ includeCoreSlidesButton.addEventListener('click', () => {
     checkbox.checked = required.has(checkbox.dataset.slideId);
   });
 
+  pushHistorySnapshot();
+  markEditorDirty();
   setStatus('Core slides selected.');
 });
 
 layoutPresetLock?.addEventListener('change', () => {
   syncLayoutPresetLockUi();
+  pushHistorySnapshot();
+  markEditorDirty();
 });
 
 autoFillButton.addEventListener('click', runAutofill);
 form.addEventListener('submit', generateDeck);
+form.addEventListener('input', handleFormMutation);
+form.addEventListener('change', handleFormMutation);
 saveAiSettingsButton.addEventListener('click', saveAiSettings);
 characterAssetsInput?.addEventListener('change', handleCharacterAssetsUpload);
 clearCharacterAssetsButton?.addEventListener('click', clearCharacterAssets);
+undoChangeButton?.addEventListener('click', () => {
+  undoChange();
+});
+redoChangeButton?.addEventListener('click', () => {
+  redoChange();
+});
+document.addEventListener('keydown', handleHistoryHotkeys);
 
 openViewerLink.addEventListener('click', (event) => {
   if (!currentDeckResult?.slideData) {
@@ -742,6 +1058,8 @@ document.getElementById('back-to-editor').addEventListener('click', () => {
 
 (async function bootstrap() {
   setOutputState(null);
+  setSaveIndicator('is-saved');
+  syncHistoryButtons();
 
   try {
     characterAssets = parseCharacterAssetsFromField();
@@ -752,9 +1070,20 @@ document.getElementById('back-to-editor').addEventListener('click', () => {
     await hydrateAiProviders();
     applyAiSettings(readAiSettings());
     setChatTarget('global-concept', 'Global concept');
-    await runAutofill();
+    updateProjectChrome();
+
+    const restoredDraft = loadDraftFromLocalStorage();
+    if (!restoredDraft) {
+      await runAutofill();
+      updateProjectChrome();
+    }
+
+    pushHistorySnapshot();
+    autosaveNow({ quiet: true });
+    syncHistoryButtons();
   } catch (error) {
     console.error(error);
     setStatus(error.message || 'Could not initialize editor.', true);
+    setSaveIndicator('is-error');
   }
 })();

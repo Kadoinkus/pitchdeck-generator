@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
+import { renderFrame, attrTarget } from '../core/components.js';
 import { ensureItems, esc, fitList, fitText } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderMeetBuddy(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -11,15 +12,28 @@ export function renderMeetBuddy(slide, theme, deckData) {
     { label: 'Playful', value: 68 },
     { label: 'Direct', value: 82 }
   ]).slice(0, 4);
+  const visual = renderImagePanel({
+    slide,
+    deckData,
+    target: 'imagePrompts',
+    label: 'Buddy image',
+    helper: 'Large mascot render with expressions',
+    ratio: '4:3',
+    className: 'is-large'
+  });
+  const layoutClass = visual ? 'split-layout buddy-layout' : 'stack-layout buddy-layout';
 
-  const body = `<div class="split-layout buddy-layout">
-    <article class="panel text-panel">
-      ${renderHeadline({
+  const body = `<div class="${layoutClass}">
+    <article class="text-surface text-panel">
+      ${renderTitlePanel({
+        slide,
         kicker: 'Meet The Digital Buddy',
         title: `Meet ${slide.mascotName || deckData?.project?.mascotName || 'Your Mascot'}`,
         accentPhrase: slide.mascotName || deckData?.project?.mascotName || '',
         target,
-        compact: true
+        compact: true,
+        asPanel: false,
+        variant: 'transparent'
       })}
       <p class="paragraph" ${attrTarget(target, `${slide.title} description`)}>${esc(fitText(slide.description || '', 210))}</p>
       <ul class="bullet-list" ${attrTarget('buddyPersonality', `${slide.title} traits`)}>
@@ -29,15 +43,7 @@ export function renderMeetBuddy(slide, theme, deckData) {
         ${tone.map((item) => `<div class="tone-row"><span>${esc(item.label || '')}</span><div class="tone-track"><i style="width:${Math.max(10, Math.min(100, Number(item.value) || 70))}%"></i></div></div>`).join('')}
       </div>
     </article>
-    ${renderImageSlot({
-      slide,
-      deckData,
-      target: 'imagePrompts',
-      label: 'Buddy image',
-      helper: 'Large mascot render with expressions',
-      ratio: '4:3',
-      className: 'is-large'
-    })}
+    ${visual}
   </div>`;
 
   return renderFrame({ slide, theme, body });

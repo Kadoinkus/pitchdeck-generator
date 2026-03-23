@@ -9,6 +9,11 @@ function toPptColor(hex, fallback = '0B1D2E') {
   return value.length ? value : fallback;
 }
 
+function fontByDensity(size, density, min = 7) {
+  void density;
+  return Math.max(min, Math.round(size * 10) / 10);
+}
+
 function bg(slide, color) {
   slide.background = { color: toPptColor(color, 'F2F4F6') };
 }
@@ -55,7 +60,7 @@ function addTop(slide, slideInfo, theme, step) {
     w: 8.8,
     h: 0.58,
     fontFace: theme.headingFont,
-    fontSize: 29,
+    fontSize: fontByDensity(29, slideInfo?.density, 18),
     bold: true,
     color: toPptColor(theme.textColor, '0B1D2E')
   });
@@ -67,7 +72,7 @@ function addTop(slide, slideInfo, theme, step) {
       w: 9.4,
       h: 0.3,
       fontFace: theme.bodyFont,
-      fontSize: 12,
+      fontSize: fontByDensity(12, slideInfo?.density, 8),
       color: '4D617E'
     });
   }
@@ -75,40 +80,33 @@ function addTop(slide, slideInfo, theme, step) {
 
 function imagePlaceholder(slide, theme, prompt, options = {}) {
   const {
+    slideInfo = null,
+    optional = true,
+    mode = 'cover',
     x = 8.0,
     y = 1.8,
     w = 4.6,
-    h = 4.6,
-    ratio = '4:3'
+    h = 4.6
   } = options;
 
-  let fw = w;
-  let fh = h;
-  if (ratio === '1:1') {
-    fh = Math.min(h, w);
-    fw = fh;
-  } else if (ratio === '16:9') {
-    fh = Math.min(h, w * 9 / 16);
-    fw = fh * 16 / 9;
-  } else {
-    fh = Math.min(h, w * 3 / 4);
-    fw = fh * 4 / 3;
-  }
+  const hideImages = Boolean(slideInfo?.hideImages);
+  if (hideImages && optional) return;
+  const activeMode = String(slideInfo?.imageMode || mode || 'cover').toLowerCase() === 'contain' ? 'contain' : 'cover';
 
   slide.addShape('roundRect', {
     x,
     y,
-    w: fw,
-    h: fh,
+    w,
+    h,
     rectRadius: 0.08,
     fill: { color: 'F7FAFD' },
     line: { color: 'C8D7EA', pt: 1, dash: 'dash' }
   });
 
-  slide.addText('[Visual]', {
+  slide.addText(`[Visual · ${activeMode}]`, {
     x: x + 0.2,
     y: y + 0.12,
-    w: fw - 0.4,
+    w: w - 0.4,
     h: 0.2,
     fontFace: theme.bodyFont,
     fontSize: 9,
@@ -119,8 +117,8 @@ function imagePlaceholder(slide, theme, prompt, options = {}) {
   slide.addText(prompt || 'Add visual', {
     x: x + 0.2,
     y: y + 0.35,
-    w: fw - 0.35,
-    h: fh - 0.5,
+    w: w - 0.35,
+    h: h - 0.5,
     fontFace: theme.bodyFont,
     fontSize: 8,
     color: '4A638A',
@@ -192,7 +190,7 @@ function renderCover(slide, slideInfo, model) {
     w: 4.6,
     h: 1.1,
     fontFace: theme.headingFont,
-    fontSize: 41,
+    fontSize: fontByDensity(41, slideInfo?.density, 24),
     bold: true,
     color: toPptColor(theme.textColor, '0B1D2E'),
     fit: 'shrink'
@@ -204,7 +202,7 @@ function renderCover(slide, slideInfo, model) {
     w: 4.6,
     h: 1.2,
     fontFace: theme.bodyFont,
-    fontSize: 16,
+    fontSize: fontByDensity(16, slideInfo?.density, 10),
     color: '334E77',
     fit: 'shrink'
   });
@@ -231,11 +229,13 @@ function renderCover(slide, slideInfo, model) {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    optional: false,
+    mode: slideInfo?.imageMode,
     x: 6.08,
     y: 0.78,
     w: 6.45,
-    h: 5.95,
-    ratio: slideInfo.imageRatio || '16:9'
+    h: 5.95
   });
 }
 
@@ -299,11 +299,12 @@ function renderProblem(slide, slideInfo, model, step) {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    mode: slideInfo?.imageMode,
     x: 8.62,
     y: 3.55,
     w: 3.72,
-    h: 2.55,
-    ratio: slideInfo.imageRatio || '4:3'
+    h: 2.55
   });
 }
 
@@ -333,11 +334,12 @@ function renderSplit(slide, slideInfo, model, step, lines, ratio = '4:3') {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    mode: slideInfo?.imageMode,
     x: 8.22,
     y: 1.85,
     w: 4.06,
-    h: 4.3,
-    ratio
+    h: 4.3
   });
 }
 
@@ -526,11 +528,13 @@ function renderBuddy(slide, slideInfo, model, step) {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    optional: false,
+    mode: slideInfo?.imageMode,
     x: 7.0,
     y: 1.75,
     w: 5.3,
-    h: 4.4,
-    ratio: '1:1'
+    h: 4.4
   });
 }
 
@@ -550,11 +554,13 @@ function renderExampleInteraction(slide, slideInfo, model, step) {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    optional: false,
+    mode: slideInfo?.imageMode,
     x: 2.45,
     y: 2.0,
     w: 8.4,
-    h: 4.2,
-    ratio: '16:9'
+    h: 4.2
   });
 
   const messages = slideInfo.messages || [];
@@ -890,11 +896,13 @@ function renderClosing(slide, slideInfo, model, step) {
   });
 
   imagePlaceholder(slide, theme, slideInfo.imagePrompt, {
+    slideInfo,
+    optional: false,
+    mode: slideInfo?.imageMode,
     x: 6.7,
     y: 1.12,
     w: 5.65,
-    h: 5.3,
-    ratio: '4:3'
+    h: 5.3
   });
 
   if (step) {

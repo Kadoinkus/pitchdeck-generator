@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, attrTarget } from '../core/components.js';
-import { ensureItems, splitFeatureLines, esc, fitText } from '../core/utils.js';
+import { renderFrame, attrTarget } from '../core/components.js';
+import { ensureItems } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderPricingCardPanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderPricing(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -11,21 +12,17 @@ export function renderPricing(slide, theme, deckData) {
   ]).slice(0, 3);
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'Flexible Solutions',
       title: 'Pricing That Fits Your Vision',
       accentPhrase: 'Your Vision',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-3 pricing-grid" ${attrTarget(target, `${slide.title} pricing`)}>
-      ${tiers.map((tier, i) => `<article class="panel pricing-card ${i === 1 ? 'is-featured' : ''} ${i === 2 ? 'is-dark' : ''}">
-        <h3>${esc(fitText(tier.name || '', 24))}</h3>
-        <p class="price">${esc(fitText(tier.price || '', 24))}</p>
-        <ul>
-          ${splitFeatureLines(tier.description, 5).map((line) => `<li>${esc(fitText(line, 44))}</li>`).join('')}
-        </ul>
-      </article>`).join('')}
+      ${tiers.map((tier, i) => renderPricingCardPanel({ tier, index: i, titleTarget: target })).join('')}
     </div>
   </div>`;
 

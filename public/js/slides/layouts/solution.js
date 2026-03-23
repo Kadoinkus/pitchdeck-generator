@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
-import { ensureItems, esc, fitText } from '../core/utils.js';
+import { renderFrame, attrTarget } from '../core/components.js';
+import { ensureItems } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderIconFeaturePanel, renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderSolution(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -9,19 +10,36 @@ export function renderSolution(slide, theme, deckData) {
     { title: 'AI', description: 'Context-aware routing and responses.' },
     { title: 'Interaction', description: 'Clear flows that guide next action.' }
   ]).slice(0, 3);
+  const pillarCount = pillars.length;
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'The Solution',
       title: 'Character + AI + Interaction',
       accentPhrase: 'AI',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-3" ${attrTarget(target, `${slide.title} pillars`)}>
-      ${pillars.map((pillar) => `<article class="panel feature-card"><h3>${esc(fitText(pillar.title || '', 24))}</h3><p>${esc(fitText(pillar.description || '', 86))}</p></article>`).join('')}
+      ${pillars
+        .map((pillar) =>
+          renderIconFeaturePanel({
+            slideType: slide?.type,
+            sectionKey: 'pillars',
+            panelCount: pillarCount,
+            target,
+            label: `${pillar.title || 'Pillar'} panel`,
+            title: pillar.title || '',
+            text: pillar.description || '',
+            maxTitleChars: 24,
+            maxTextChars: 86
+          })
+        )
+        .join('')}
     </div>
-    ${renderImageSlot({
+    ${renderImagePanel({
       slide,
       deckData,
       target: 'imagePrompts',

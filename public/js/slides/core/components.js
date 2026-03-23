@@ -42,6 +42,7 @@ export function renderHeadline({
 }
 
 function ratioClass(ratio = '16:9') {
+  if (ratio === '3:4') return 'ratio-3-4';
   if (ratio === '1:1') return 'ratio-1-1';
   if (ratio === '4:3') return 'ratio-4-3';
   return 'ratio-16-9';
@@ -56,10 +57,16 @@ export function renderImageSlot({
   ratio = '4:3',
   className = '',
   hideTitle = false,
-  hideHint = false
+  hideHint = false,
+  forceVisible = false
 } = {}) {
+  const isHidden = Boolean(slide?.hideImages);
+  if (isHidden && !forceVisible) return '';
+
   const asset = findAssetForSlide(slide, deckData);
-  const cls = `${ratioClass(slide?.imageRatio || ratio)} ${className}`.trim();
+  const activeRatio = slide?.imageRatio || ratio;
+  const modeClass = (slide?.imageMode || 'cover') === 'contain' ? 'mode-contain' : 'mode-cover';
+  const cls = `${ratioClass(activeRatio)} ${modeClass} ${className}`.trim();
 
   if (asset?.dataUrl) {
     return `<figure ${attrTarget(target, label, `image-slot ${cls}`)}>
@@ -80,8 +87,9 @@ export function renderImageSlot({
 
 export function renderFrame({ slide, theme, body }) {
   const modeClass = slide?.backgroundMode === 'dark' ? 'mode-dark' : 'mode-light';
+  const textMode = String(slide?.textMode || 'fit').toLowerCase() === 'clamp' ? 'text-mode-clamp' : 'text-mode-fit';
 
-  return `<article class="slide-render deck-slide ${modeClass} ${esc(slide?.type || 'generic')}-slide" style="${themeVars(theme)}">
+  return `<article class="slide-render deck-slide ${modeClass} ${textMode} ${esc(slide?.type || 'generic')}-slide" style="${themeVars(theme)}">
     <section class="deck-content">
       ${body}
     </section>

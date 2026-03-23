@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
-import { ensureItems, esc, fitText } from '../core/utils.js';
+import { renderFrame, attrTarget } from '../core/components.js';
+import { ensureItems } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderIconFeaturePanel, renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderTimeline(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -9,19 +10,38 @@ export function renderTimeline(slide, theme, deckData) {
     { title: 'Month 2', description: 'Design production and flow implementation.' },
     { title: 'Month 3', description: 'Integration, launch, and optimization.' }
   ]).slice(0, 4);
+  const phaseCount = phases.length;
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'Implementation Timeline',
       title: 'A Clear Path To Launch',
       accentPhrase: 'To Launch',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-3 timeline-grid" ${attrTarget(target, `${slide.title} phases`)}>
-      ${phases.map((phase, i) => `<article class="panel timeline-card"><span class="card-index">${String(i + 1).padStart(2, '0')}</span><h3>${esc(fitText(phase.title || '', 20))}</h3><p>${esc(fitText(phase.description || '', 72))}</p></article>`).join('')}
+      ${phases
+        .map((phase, i) =>
+          renderIconFeaturePanel({
+            slideType: slide?.type,
+            sectionKey: 'phases',
+            panelCount: phaseCount,
+            target,
+            label: `${phase.title || 'Phase'} card`,
+            index: i,
+            title: phase.title || '',
+            text: phase.description || '',
+            className: 'timeline-card panel-card-with-icon',
+            maxTitleChars: 20,
+            maxTextChars: 72
+          })
+        )
+        .join('')}
     </div>
-    ${renderImageSlot({
+    ${renderImagePanel({
       slide,
       deckData,
       target: 'imagePrompts',

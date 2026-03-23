@@ -230,15 +230,34 @@
 
     <div id="slide-viewer" class="slide-viewer hidden">
       <div class="viewer-toolbar">
-        <button id="back-to-editor" class="toolbar-btn">Back</button>
-        <span id="slide-counter" class="slide-counter">1 / 1</span>
-        <div class="toolbar-nav">
-          <button id="prev-slide" class="toolbar-btn">Prev</button>
-          <button id="next-slide" class="toolbar-btn">Next</button>
+        <div class="viewer-toolbar-left">
+          <button id="back-to-editor" class="toolbar-btn">Back</button>
+          <div class="viewer-project">
+            <div class="viewer-project-row">
+              <strong id="project-name-display">Untitled design</strong>
+              <span id="save-indicator" class="save-indicator is-saved">All changes saved</span>
+            </div>
+            <p id="project-context-display" class="viewer-project-context">No client selected</p>
+          </div>
         </div>
-        <a id="viewer-download-pptx" class="toolbar-btn download-btn" href="#" download>PPTX</a>
-        <a id="viewer-download-pdf" class="toolbar-btn" href="#" target="_blank" rel="noopener">PDF</a>
-        <a id="viewer-share-link" class="toolbar-btn" href="#" target="_blank" rel="noopener">Share</a>
+        <div class="viewer-toolbar-middle">
+          <button id="undo-change" class="history-btn" type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
+            &#8630;
+          </button>
+          <button id="redo-change" class="history-btn" type="button" title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">
+            &#8631;
+          </button>
+          <span id="slide-counter" class="slide-counter">1 / 1</span>
+          <div class="toolbar-nav">
+            <button id="prev-slide" class="toolbar-btn">Prev</button>
+            <button id="next-slide" class="toolbar-btn">Next</button>
+          </div>
+        </div>
+        <div class="viewer-toolbar-right">
+          <a id="viewer-download-pptx" class="toolbar-btn download-btn" href="#" download>PPTX</a>
+          <a id="viewer-download-pdf" class="toolbar-btn" href="#" target="_blank" rel="noopener">PDF</a>
+          <a id="viewer-share-link" class="toolbar-btn" href="#" target="_blank" rel="noopener">Share</a>
+        </div>
       </div>
       <div class="viewer-body">
         <div id="thumbnails" class="thumbnails"></div>

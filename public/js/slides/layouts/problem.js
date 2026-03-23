@@ -1,36 +1,61 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
-import { ensureItems, esc, fitList, fitText } from '../core/utils.js';
+import { renderFrame, attrTarget } from '../core/components.js';
+import { ensureItems, fitList } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderIconFeaturePanel, renderImagePanel, renderSummaryPanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderProblem(slide, theme, deckData) {
   const target = getTargetField(slide);
   const points = fitList(ensureItems(slide.points, ['Users do not get instant answers.', 'Support repeats the same work.', 'Automation feels generic.']), 4, 90);
+  const pointCards = points.slice(0, 3);
+  const visual = renderImagePanel({
+    slide,
+    deckData,
+    target: 'imagePrompts',
+    label: 'Problem image',
+    helper: 'Visualize current friction state',
+    ratio: '16:9'
+  });
+  const bottomLayoutClass = visual ? 'split-layout' : 'stack-layout';
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'Client Situation',
       title: 'What Is Blocking Growth Today',
       accentPhrase: 'Blocking Growth',
       subtitle: '',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
     <div class="grid-3" ${attrTarget(target, `${slide.title} points`)}>
-      ${points.slice(0, 3).map((point, i) => `<article class="panel short-card"><span class="card-index">${String(i + 1).padStart(2, '0')}</span><p>${esc(fitText(point, 80))}</p></article>`).join('')}
+      ${pointCards
+        .map((point, i) =>
+          renderIconFeaturePanel({
+            slideType: slide?.type,
+            sectionKey: 'points',
+            panelCount: pointCards.length,
+            target,
+            label: `${slide.title} point ${i + 1}`,
+            index: i,
+            title: '',
+            text: point,
+            className: 'short-card panel-card-with-icon',
+            showTitle: false,
+            maxTextChars: 80
+          })
+        )
+        .join('')}
     </div>
-    <div class="split-layout">
-      <article class="panel summary-panel" ${attrTarget(target, `${slide.title} summary`)}>
-        <h3>Core message</h3>
-        <p>${esc(fitText(points[0], 120))}</p>
-      </article>
-      ${renderImageSlot({
-        slide,
-        deckData,
-        target: 'imagePrompts',
-        label: 'Problem image',
-        helper: 'Visualize current friction state',
-        ratio: '4:3'
+    <div class="${bottomLayoutClass}">
+      ${renderSummaryPanel({
+        target,
+        label: `${slide.title} summary`,
+        title: 'Core message',
+        text: points[0] || '',
+        maxTextChars: 120
       })}
+      ${visual}
     </div>
   </div>`;
 

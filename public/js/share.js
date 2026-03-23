@@ -20,7 +20,6 @@ function renderDeck(slideData) {
     const frame = node.querySelector('.share-slide-frame');
     frame.innerHTML = renderSlide(slide, slideData.theme, slideData);
     frame.setAttribute('aria-label', `Slide ${index + 1}`);
-
     deckEl.appendChild(node);
   });
 }

@@ -1,6 +1,7 @@
-import { renderFrame, renderHeadline, renderImageSlot, attrTarget } from '../core/components.js';
+import { renderFrame, attrTarget } from '../core/components.js';
 import { ensureItems, esc, fitList, fitText } from '../core/utils.js';
 import { getTargetField } from '../core/fields.js';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.js';
 
 export function renderExampleInteraction(slide, theme, deckData) {
   const target = getTargetField(slide);
@@ -10,16 +11,28 @@ export function renderExampleInteraction(slide, theme, deckData) {
     'User: Comfort for long work sessions.',
     'Buddy: I recommend Comfort LX006. Want a quick comparison?'
   ]), 7, 92);
+  const visual = renderImagePanel({
+    slide,
+    deckData,
+    target: 'imagePrompts',
+    label: 'Example interaction image',
+    helper: 'Phone/tablet interaction with mascot',
+    ratio: '4:3',
+    className: 'is-large'
+  });
+  const interactionLayoutClass = visual ? 'split-layout interaction-layout' : 'stack-layout interaction-layout';
 
   const body = `<div class="stack-layout">
-    ${renderHeadline({
+    ${renderTitlePanel({
+      slide,
       kicker: 'Example Interaction',
       title: 'How The Experience Feels In Practice',
       accentPhrase: 'Feels In Practice',
       target,
-      align: 'center'
+      align: 'center',
+      variant: 'transparent'
     })}
-    <div class="split-layout interaction-layout">
+    <div class="${interactionLayoutClass}">
       <article class="panel device-panel" ${attrTarget(target, `${slide.title} messages`)}>
         <div class="chat-thread">
           ${lines.map((line) => {
@@ -32,15 +45,7 @@ export function renderExampleInteraction(slide, theme, deckData) {
           }).join('')}
         </div>
       </article>
-      ${renderImageSlot({
-        slide,
-        deckData,
-        target: 'imagePrompts',
-        label: 'Example interaction image',
-        helper: 'Phone/tablet interaction with mascot',
-        ratio: '4:3',
-        className: 'is-large'
-      })}
+      ${visual}
     </div>
   </div>`;
 

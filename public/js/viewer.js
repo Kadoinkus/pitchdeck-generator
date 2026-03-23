@@ -69,7 +69,8 @@ function goToSlide(index) {
   const maxIndex = slideData.slides.length - 1;
   currentSlide = Math.max(0, Math.min(index, maxIndex));
 
-  slideCanvas.innerHTML = renderSlide(slideData.slides[currentSlide], slideData.theme, slideData);
+  const current = slideData.slides[currentSlide];
+  slideCanvas.innerHTML = renderSlide(current, slideData.theme, slideData);
   slideCounter.textContent = `${currentSlide + 1} / ${slideData.slides.length}`;
 
   thumbnailsEl.querySelectorAll('.thumb').forEach((thumb, i) => {
