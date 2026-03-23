@@ -14,6 +14,10 @@ const generateButton = document.getElementById('generate-button');
 const statusEl = document.getElementById('status');
 
 const saveAiSettingsButton = document.getElementById('save-ai-settings');
+const characterAssetsInput = document.getElementById('character-assets-input');
+const characterAssetsPreview = document.getElementById('character-assets-preview');
+const characterAssetsStatus = document.getElementById('character-assets-status');
+const clearCharacterAssetsButton = document.getElementById('clear-character-assets');
 
 const outputStatus = document.getElementById('output-status');
 const openViewerLink = document.getElementById('open-viewer-link');
@@ -35,6 +39,16 @@ const templateMap = new Map();
 let currentDeckResult = null;
 let chatTarget = { field: 'global-concept', label: 'Global concept' };
 let chatHistory = [];
+let characterAssets = [];
+
+const CHARACTER_PLACEMENTS = [
+  { value: 'all-mascot', label: 'All mascot slides' },
+  { value: 'cover', label: 'Cover' },
+  { value: 'meet-buddy', label: 'Meet the buddy' },
+  { value: 'example-interaction', label: 'Example interaction' },
+  { value: 'closing', label: 'Closing' },
+  { value: 'all', label: 'All slides' }
+];
 
 function syncLayoutPresetLockUi() {
   if (!layoutPresetSelect || !layoutPresetLock) return;
@@ -136,6 +150,176 @@ function applyImageDraft(imageDraft = {}) {
     field.value = imageDraft.prompts
       .map((prompt, index) => `Slide ${index + 1} (${prompt.slideId || 'slide'}) :: ${prompt.prompt || ''}`)
       .join('\n');
+  }
+}
+
+function parseCharacterAssetsFromField() {
+  const field = form.querySelector('[name="characterAssets"]');
+  if (!field || !field.value.trim()) return [];
+
+  try {
+    const parsed = JSON.parse(field.value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item) => item && item.dataUrl).slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
+function syncCharacterAssetsField() {
+  const field = form.querySelector('[name="characterAssets"]');
+  if (!field) return;
+  field.value = JSON.stringify(characterAssets);
+}
+
+function formatBytes(size) {
+  if (!Number.isFinite(size) || size <= 0) return '0 KB';
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function renderCharacterAssetsPreview() {
+  if (!characterAssetsPreview || !characterAssetsStatus) return;
+
+  characterAssetsPreview.innerHTML = '';
+
+  if (!characterAssets.length) {
+    characterAssetsStatus.textContent = 'No character assets uploaded.';
+    return;
+  }
+
+  characterAssetsStatus.textContent = `${characterAssets.length} character asset${characterAssets.length > 1 ? 's' : ''} ready.`;
+
+  characterAssets.forEach((asset, index) => {
+    const card = document.createElement('article');
+    card.className = 'asset-card';
+
+    const img = document.createElement('img');
+    img.src = asset.dataUrl;
+    img.alt = asset.name || `Character asset ${index + 1}`;
+
+    const meta = document.createElement('div');
+    meta.className = 'asset-meta';
+
+    const name = document.createElement('p');
+    name.className = 'asset-name';
+    name.textContent = `${asset.name || `Asset ${index + 1}`} (${formatBytes(asset.size || 0)})`;
+
+    const placement = document.createElement('select');
+    CHARACTER_PLACEMENTS.forEach((optionData) => {
+      const option = document.createElement('option');
+      option.value = optionData.value;
+      option.textContent = optionData.label;
+      option.selected = (asset.placement || 'all-mascot') === optionData.value;
+      placement.appendChild(option);
+    });
+    placement.addEventListener('change', () => {
+      characterAssets[index] = { ...characterAssets[index], placement: placement.value };
+      syncCharacterAssetsField();
+    });
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'ghost small';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', async () => {
+      characterAssets.splice(index, 1);
+      syncCharacterAssetsField();
+      renderCharacterAssetsPreview();
+      if (currentDeckResult?.slideData) {
+        try {
+          await refreshViewerFromPayload();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    });
+
+    meta.appendChild(name);
+    meta.appendChild(placement);
+    meta.appendChild(remove);
+
+    card.appendChild(img);
+    card.appendChild(meta);
+    characterAssetsPreview.appendChild(card);
+  });
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleCharacterAssetsUpload(event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+
+  const maxPerFileBytes = 1.5 * 1024 * 1024;
+  const maxAssets = 8;
+  const room = Math.max(0, maxAssets - characterAssets.length);
+
+  if (!room) {
+    setStatus('Character asset limit reached (8). Remove one to add another.', true);
+    event.target.value = '';
+    return;
+  }
+
+  const accepted = files
+    .filter((file) => file.type.startsWith('image/'))
+    .slice(0, room);
+
+  for (const file of accepted) {
+    if (file.size > maxPerFileBytes) {
+      setStatus(`${file.name} is too large (max 1.5MB).`, true);
+      continue;
+    }
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      characterAssets.push({
+        id: `asset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        name: file.name,
+        size: file.size,
+        dataUrl: String(dataUrl),
+        placement: 'all-mascot'
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus(error.message || 'Could not upload one of the images.', true);
+    }
+  }
+
+  syncCharacterAssetsField();
+  renderCharacterAssetsPreview();
+  event.target.value = '';
+  setStatus('Character assets updated.');
+
+  if (currentDeckResult?.slideData) {
+    try {
+      await refreshViewerFromPayload();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+async function clearCharacterAssets() {
+  characterAssets = [];
+  syncCharacterAssetsField();
+  renderCharacterAssetsPreview();
+  setStatus('Character assets cleared.');
+
+  if (currentDeckResult?.slideData) {
+    try {
+      await refreshViewerFromPayload();
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
@@ -345,6 +529,9 @@ async function refreshViewerFromPayload() {
     throw new Error(result.message || 'Could not refresh viewer.');
   }
 
+  if (currentDeckResult) {
+    currentDeckResult.slideData = result.slideData;
+  }
   updateViewerData(result.slideData);
 }
 
@@ -500,6 +687,8 @@ layoutPresetLock?.addEventListener('change', () => {
 autoFillButton.addEventListener('click', runAutofill);
 form.addEventListener('submit', generateDeck);
 saveAiSettingsButton.addEventListener('click', saveAiSettings);
+characterAssetsInput?.addEventListener('change', handleCharacterAssetsUpload);
+clearCharacterAssetsButton?.addEventListener('click', clearCharacterAssets);
 
 openViewerLink.addEventListener('click', (event) => {
   if (!currentDeckResult?.slideData) {
@@ -555,6 +744,9 @@ document.getElementById('back-to-editor').addEventListener('click', () => {
   setOutputState(null);
 
   try {
+    characterAssets = parseCharacterAssetsFromField();
+    renderCharacterAssetsPreview();
+    syncCharacterAssetsField();
     syncLayoutPresetLockUi();
     await hydrateTemplates();
     await hydrateAiProviders();

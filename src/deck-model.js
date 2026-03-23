@@ -54,6 +54,7 @@ export const EDITABLE_FIELD_DEFINITIONS = [
   { name: 'timeline', label: 'Timeline' },
   { name: 'closingText', label: 'Closing text' },
   { name: 'teamCards', label: 'Team cards' },
+  { name: 'characterAssets', label: 'Character assets' },
   { name: 'imagePrompts', label: 'Image prompts' },
   { name: 'layoutPreset', label: 'Layout preset' },
   { name: 'layoutPresetLock', label: 'Layout preset lock' },
@@ -193,6 +194,53 @@ function parseDeliverables(value, fallback = []) {
   }));
 }
 
+function parseCharacterAssets(value, limit = 10) {
+  let list = value;
+
+  if (typeof value === 'string') {
+    try {
+      list = JSON.parse(value);
+    } catch {
+      list = [];
+    }
+  }
+
+  if (!Array.isArray(list)) return [];
+
+  return list
+    .slice(0, limit)
+    .map((item, index) => {
+      const id = safeText(item?.id, `asset-${index + 1}`);
+      const name = safeText(item?.name, `Character asset ${index + 1}`);
+      const dataUrl = safeText(item?.dataUrl || item?.url, '');
+      const placement = safeText(item?.placement, 'all-mascot').toLowerCase();
+
+      if (!dataUrl) return null;
+      if (!(dataUrl.startsWith('data:image/') || dataUrl.startsWith('/generated/') || /^https?:\/\//i.test(dataUrl))) {
+        return null;
+      }
+
+      return { id, name, dataUrl, placement };
+    })
+    .filter(Boolean);
+}
+
+function resolveImageAssetForSlide(slideId, assets = []) {
+  if (!Array.isArray(assets) || !assets.length) return null;
+
+  const id = safeText(slideId, '').toLowerCase();
+  const mascotSlides = new Set(['cover', 'meet-buddy', 'example-interaction', 'closing']);
+
+  const exact = assets.find((asset) => asset.placement === id);
+  if (exact) return exact;
+
+  if (mascotSlides.has(id)) {
+    return assets.find((asset) => asset.placement === 'all-mascot' || asset.placement === 'mascot') || assets[0];
+  }
+
+  return assets.find((asset) => asset.placement === 'all') || null;
+}
+
 function withSlide(id, type, title, subtitle, purpose, sourceField, extra = {}) {
   return { id, type, title, subtitle, purpose, sourceField, ...extra };
 }
@@ -283,7 +331,8 @@ export function buildDeckModel(rawData = {}) {
     deckVersion: safeText(rawData.deckVersion, 'v1.0'),
     contactName: safeText(rawData.contactName, 'Max Kowalski'),
     contactEmail: safeText(rawData.contactEmail, 'max@notso.ai'),
-    contactPhone: safeText(rawData.contactPhone, '+31 6 40450599')
+    contactPhone: safeText(rawData.contactPhone, '+31 6 40450599'),
+    characterAssets: parseCharacterAssets(rawData.characterAssets)
   };
 
   const content = {
@@ -377,6 +426,7 @@ export function buildDeckModel(rawData = {}) {
       'Motion Designer :: Character and animation polish',
       'Implementation Engineer :: Integration and launch delivery'
     ], '::', 4),
+    characterAssets: project.characterAssets,
     imagePrompts: normalizeList(rawData.imagePrompts, [
       `Cover hero visual with ${project.mascotName} and tablet mockup for ${project.clientName}.`,
       'Problem-state visual with fragmented customer support journey.',
@@ -472,7 +522,8 @@ export function buildDeckModel(rawData = {}) {
       layoutKey,
       imageRatio,
       backgroundMode,
-      imagePrompt: content.imagePrompts[index] || defaultImagePrompt(slide.type, project, project.mascotName)
+      imagePrompt: content.imagePrompts[index] || defaultImagePrompt(slide.type, project, project.mascotName),
+      imageAsset: resolveImageAssetForSlide(slide.id, content.characterAssets)
     };
   });
 

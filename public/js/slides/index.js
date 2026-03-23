@@ -1,0 +1,47 @@
+import { resolveTheme } from './core/theme.js';
+import { renderCover } from './layouts/cover.js';
+import { renderProblem } from './layouts/problem.js';
+import { renderOpportunity } from './layouts/opportunity.js';
+import { renderSolution } from './layouts/solution.js';
+import { renderWhatNotsoDoes } from './layouts/what-notso-does.js';
+import { renderMeetBuddy } from './layouts/meet-buddy.js';
+import { renderExperienceConcept } from './layouts/experience-concept.js';
+import { renderChatFlow } from './layouts/chat-flow.js';
+import { renderExampleInteraction } from './layouts/example-interaction.js';
+import { renderBusinessImpact } from './layouts/business-impact.js';
+import { renderDataAnalytics } from './layouts/data-analytics.js';
+import { renderWhatYouGet } from './layouts/what-you-get.js';
+import { renderPricing } from './layouts/pricing.js';
+import { renderTimeline } from './layouts/timeline.js';
+import { renderClosing } from './layouts/closing.js';
+import { themeVars } from './core/theme.js';
+import { esc } from './core/utils.js';
+
+const RENDERERS = {
+  cover: renderCover,
+  problem: renderProblem,
+  opportunity: renderOpportunity,
+  solution: renderSolution,
+  'what-notso-does': renderWhatNotsoDoes,
+  'meet-buddy': renderMeetBuddy,
+  'experience-concept': renderExperienceConcept,
+  'chat-flow': renderChatFlow,
+  'example-interaction': renderExampleInteraction,
+  'business-impact': renderBusinessImpact,
+  'data-analytics': renderDataAnalytics,
+  'what-you-get': renderWhatYouGet,
+  pricing: renderPricing,
+  timeline: renderTimeline,
+  closing: renderClosing
+};
+
+export function renderSlide(slide, theme, deckData) {
+  const resolvedTheme = resolveTheme(theme, deckData);
+  const renderer = RENDERERS[slide?.type];
+
+  if (renderer) {
+    return renderer(slide, resolvedTheme, deckData);
+  }
+
+  return `<article class="slide-render deck-slide mode-light" style="${themeVars(resolvedTheme)}"><section class="deck-content"><p>Unknown slide type: ${esc(slide?.type || 'n/a')}</p></section></article>`;
+}

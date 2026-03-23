@@ -164,6 +164,20 @@
             </div>
           </details>
 
+          <details class="form-section">
+            <summary>Character Design Assets</summary>
+            <div class="section-head compact">
+              <p>Upload mascot references and choose where they should appear in the deck.</p>
+            </div>
+            <div class="asset-tools">
+              <label class="ghost-link upload-btn" for="character-assets-input">Upload images</label>
+              <input id="character-assets-input" type="file" accept="image/*" multiple class="hidden" />
+              <button id="clear-character-assets" type="button" class="ghost">Clear assets</button>
+              <p id="character-assets-status" class="status">No character assets uploaded.</p>
+            </div>
+            <div id="character-assets-preview" class="asset-preview-grid"></div>
+          </details>
+
           <section class="form-section output-section" id="output-panel">
             <div class="section-head compact">
               <h2>Output</h2>
@@ -204,6 +218,7 @@
             <textarea name="timeline"></textarea>
             <textarea name="closingText"></textarea>
             <textarea name="teamCards"></textarea>
+            <textarea name="characterAssets"></textarea>
             <textarea name="imagePrompts"></textarea>
             <input name="contactName" value="Max Kowalski" />
             <input name="contactEmail" value="max@notso.ai" />
