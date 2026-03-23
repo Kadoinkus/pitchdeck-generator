@@ -1,5 +1,6 @@
 import { normalizeList, safeText } from './utils.js';
 import { resolveImageModeForSlide, resolveSlotPolicy } from './slot-policy.js';
+import { resolveThemePalette } from './color-palette.js';
 
 const TEMPLATE_PREMIUM_PROPOSAL = 'pitch-proposal';
 const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
@@ -59,6 +60,10 @@ export const EDITABLE_FIELD_DEFINITIONS = [
   { name: 'imagePrompts', label: 'Image prompts' },
   { name: 'layoutPreset', label: 'Layout preset' },
   { name: 'layoutPresetLock', label: 'Layout preset lock' },
+  { name: 'harmonyMode', label: 'Color harmony mode' },
+  { name: 'paletteShuffleSeed', label: 'Color shuffle seed' },
+  { name: 'lockAccentColor', label: 'Lock accent color' },
+  { name: 'lockSecondaryColor', label: 'Lock secondary color' },
   { name: 'primaryColor', label: 'Deck primary' },
   { name: 'accentColor', label: 'Deck accent' },
   { name: 'secondaryColor', label: 'Deck secondary' },
@@ -125,12 +130,6 @@ const LAYOUT_PRESETS = {
     }
   }
 };
-
-function normalizeHex(input, fallback) {
-  let value = safeText(input, fallback).toUpperCase();
-  if (!value.startsWith('#')) value = `#${value}`;
-  return value;
-}
 
 function asBoolean(value, fallback = true) {
   if (typeof value === 'boolean') return value;
@@ -297,6 +296,21 @@ export function buildDeckModel(rawData = {}) {
   const excludedSlides = new Set(parseExcludedSlides(rawData.excludedSlides));
   const layoutPreset = resolveLayoutPreset(rawData.layoutPreset);
   const layoutPresetLock = asBoolean(rawData.layoutPresetLock, true);
+  const paletteResult = resolveThemePalette({
+    primaryColor: rawData.primaryColor || '#004B49',
+    harmonyMode: rawData.harmonyMode,
+    shuffleSeed: rawData.paletteShuffleSeed,
+    locks: {
+      accentColor: asBoolean(rawData.lockAccentColor, false),
+      secondaryColor: asBoolean(rawData.lockSecondaryColor, false)
+    },
+    manualColors: {
+      accentColor: rawData.deckAccentColor || rawData.accentColor,
+      secondaryColor: rawData.deckSecondaryColor || rawData.secondaryColor,
+      backgroundColor: rawData.deckBackgroundColor || rawData.backgroundColor,
+      textColor: rawData.deckTextColor || rawData.textColor
+    }
+  });
 
   const appTheme = {
     surfaceTop: '#EAF4FF',
@@ -312,11 +326,13 @@ export function buildDeckModel(rawData = {}) {
 
   const deckTheme = {
     brandName: safeText(rawData.brandName, 'Notso AI'),
-    primaryColor: normalizeHex(rawData.primaryColor, '#004B49'),
-    accentColor: normalizeHex(rawData.deckAccentColor || rawData.accentColor, '#30D89E'),
-    secondaryColor: normalizeHex(rawData.deckSecondaryColor || rawData.secondaryColor, '#0B6E6C'),
-    backgroundColor: normalizeHex(rawData.deckBackgroundColor || rawData.backgroundColor, '#F2F4F6'),
-    textColor: normalizeHex(rawData.deckTextColor || rawData.textColor, '#0B1D2E'),
+    primaryColor: paletteResult.theme.primaryColor,
+    accentColor: paletteResult.theme.accentColor,
+    secondaryColor: paletteResult.theme.secondaryColor,
+    backgroundColor: paletteResult.theme.backgroundColor,
+    textColor: paletteResult.theme.textColor,
+    harmonyMode: paletteResult.harmonyMode,
+    paletteShuffleSeed: paletteResult.shuffleSeed,
     headingFont: safeText(rawData.deckHeadingFont || rawData.headingFont, 'Sora'),
     bodyFont: safeText(rawData.deckBodyFont || rawData.bodyFont, 'Inter')
   };

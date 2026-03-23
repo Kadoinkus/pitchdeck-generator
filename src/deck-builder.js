@@ -589,7 +589,7 @@ function renderExampleInteraction(slide, slideInfo, model, step) {
 
 function renderImpact(slide, slideInfo, model, step) {
   const { deckTheme: theme } = model;
-  bg(slide, theme.primaryColor || '#004B49');
+  bg(slide, theme.secondaryColor || theme.primaryColor || '#004B49');
 
   slide.addText(slideInfo.title || 'Business Impact', {
     x: 0.95,
@@ -665,7 +665,7 @@ function renderAnalytics(slide, slideInfo, model, step) {
 
 function renderDeliverables(slide, slideInfo, model, step) {
   const { deckTheme: theme } = model;
-  bg(slide, theme.primaryColor || '#004B49');
+  bg(slide, theme.secondaryColor || theme.primaryColor || '#004B49');
 
   addTop(slide, { ...slideInfo, subtitle: '' }, { ...theme, textColor: '#FFFFFF' }, step);
 
@@ -743,8 +743,8 @@ function renderPricing(slide, slideInfo, model, step) {
       w: 3.76,
       h: 3.98,
       rectRadius: 0.12,
-      fill: { color: dark ? toPptColor(theme.primaryColor, '004B49') : (middle ? 'FFFFFF' : 'EDEFF2') },
-      line: { color: middle ? toPptColor(theme.primaryColor, '004B49') : (dark ? toPptColor(theme.primaryColor, '004B49') : 'D9E0EA'), pt: middle ? 2 : 1 }
+      fill: { color: dark ? toPptColor(theme.secondaryColor || theme.primaryColor, '004B49') : (middle ? 'FFFFFF' : 'EDEFF2') },
+      line: { color: middle ? toPptColor(theme.primaryColor, '004B49') : (dark ? toPptColor(theme.secondaryColor || theme.primaryColor, '004B49') : 'D9E0EA'), pt: middle ? 2 : 1 }
     });
     slide.addText(pkg.name || `Tier ${idx + 1}`, {
       x: x + 0.18,
@@ -764,7 +764,7 @@ function renderPricing(slide, slideInfo, model, step) {
       w: 3.14,
       h: 0.52,
       rectRadius: 0.08,
-      fill: { color: dark ? toPptColor(theme.primaryColor, '004B49') : 'F7F9FC' },
+      fill: { color: dark ? toPptColor(theme.secondaryColor || theme.primaryColor, '004B49') : 'F7F9FC' },
       line: { color: dark ? toPptColor(theme.accentColor, '30D89E') : 'D6E0EE', pt: 1 }
     });
     slide.addText(pkg.price || '', {
@@ -859,7 +859,7 @@ function renderTimeline(slide, slideInfo, model, step) {
 
 function renderClosing(slide, slideInfo, model, step) {
   const { deckTheme: theme, project } = model;
-  bg(slide, theme.primaryColor || '#004B49');
+  bg(slide, theme.secondaryColor || theme.primaryColor || '#004B49');
 
   slide.addText(slideInfo.headline || `Let's build ${project.mascotName}`, {
     x: 1.0,

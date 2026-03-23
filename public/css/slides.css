@@ -30,7 +30,7 @@
   --muted: rgba(244, 255, 252, 0.88);
   --shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
 
-  background: var(--deck-primary, #004b49);
+  background: var(--deck-secondary, #0b6e6c);
   color: #f4fffc;
 }
 
@@ -171,8 +171,8 @@
 }
 
 .panel.is-dark {
-  background: var(--deck-primary, #004b49);
-  border-color: color-mix(in srgb, var(--deck-accent, #30d89e) 34%, var(--deck-primary, #004b49));
+  background: var(--deck-secondary, #0b6e6c);
+  border-color: color-mix(in srgb, var(--deck-accent, #30d89e) 34%, var(--deck-secondary, #0b6e6c));
   color: #f4fffc;
 }
 
@@ -585,9 +585,9 @@
 }
 
 .pricing-card.is-dark {
-  background: var(--deck-primary, #004b49);
+  background: var(--deck-secondary, #0b6e6c);
   color: #f4fffc;
-  border-color: color-mix(in srgb, var(--deck-accent, #30d89e) 38%, var(--deck-primary, #004b49));
+  border-color: color-mix(in srgb, var(--deck-accent, #30d89e) 38%, var(--deck-secondary, #0b6e6c));
 }
 
 .pricing-card.is-dark .price {

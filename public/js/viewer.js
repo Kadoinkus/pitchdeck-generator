@@ -9,18 +9,63 @@ const slideCounter = document.getElementById('slide-counter');
 const downloadPptxBtn = document.getElementById('viewer-download-pptx');
 const downloadPdfBtn = document.getElementById('viewer-download-pdf');
 const shareBtn = document.getElementById('viewer-share-link');
+const copyShareBtn = document.getElementById('viewer-copy-share');
+const shareDropdown = document.getElementById('viewer-share-dropdown');
+const shareToggleBtn = document.getElementById('viewer-share-toggle');
 
 let currentSlide = 0;
 let slideData = null;
+let copyFeedbackTimer = null;
+
+function isShareMenuOpen() {
+  return Boolean(shareDropdown?.classList.contains('open'));
+}
+
+function closeShareMenu() {
+  if (!shareDropdown || !shareToggleBtn) return;
+  shareDropdown.classList.remove('open');
+  shareToggleBtn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleShareMenu() {
+  if (!shareDropdown || !shareToggleBtn || shareToggleBtn.disabled) return;
+  const willOpen = !isShareMenuOpen();
+  shareDropdown.classList.toggle('open', willOpen);
+  shareToggleBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+}
+
+function resetCopyShareLabel() {
+  if (!copyShareBtn) return;
+  copyShareBtn.textContent = 'Copy share link';
+}
 
 function setToolbarLinks(options = {}) {
+  const hasDownloadUrl = Boolean(options.downloadUrl);
+  const hasPdfUrl = Boolean(options.pdfUrl);
+  const hasShareUrl = Boolean(options.shareUrl);
+  const hasAnyShareAction = hasDownloadUrl || hasPdfUrl || hasShareUrl;
+
   downloadPptxBtn.href = options.downloadUrl || '#';
   downloadPdfBtn.href = options.pdfUrl || '#';
   shareBtn.href = options.shareUrl || '#';
 
-  downloadPptxBtn.classList.toggle('disabled', !options.downloadUrl);
-  downloadPdfBtn.classList.toggle('disabled', !options.pdfUrl);
-  shareBtn.classList.toggle('disabled', !options.shareUrl);
+  downloadPptxBtn.classList.toggle('disabled', !hasDownloadUrl);
+  downloadPdfBtn.classList.toggle('disabled', !hasPdfUrl);
+  shareBtn.classList.toggle('disabled', !hasShareUrl);
+
+  if (shareToggleBtn) {
+    shareToggleBtn.disabled = !hasAnyShareAction;
+    shareToggleBtn.classList.toggle('disabled', !hasAnyShareAction);
+    if (!hasAnyShareAction) {
+      closeShareMenu();
+    }
+  }
+
+  if (copyShareBtn) {
+    copyShareBtn.disabled = !hasShareUrl;
+    copyShareBtn.classList.toggle('disabled', !hasShareUrl);
+    resetCopyShareLabel();
+  }
 }
 
 function renderThumbnails() {
@@ -59,6 +104,7 @@ export function updateViewerData(data) {
 }
 
 export function hideViewer() {
+  closeShareMenu();
   viewer.classList.add('hidden');
   page.classList.remove('hidden');
 }
@@ -105,9 +151,53 @@ document.getElementById('next-slide').addEventListener('click', () => {
   goToSlide(currentSlide + 1);
 });
 
+shareToggleBtn?.addEventListener('click', (event) => {
+  event.preventDefault();
+  toggleShareMenu();
+});
+
+copyShareBtn?.addEventListener('click', async () => {
+  if (!shareBtn?.href || shareBtn.href.endsWith('#') || copyShareBtn.disabled) return;
+
+  try {
+    await navigator.clipboard.writeText(shareBtn.href);
+    copyShareBtn.textContent = 'Link copied';
+    clearTimeout(copyFeedbackTimer);
+    copyFeedbackTimer = setTimeout(() => {
+      resetCopyShareLabel();
+    }, 1400);
+    closeShareMenu();
+  } catch {
+    copyShareBtn.textContent = 'Copy failed';
+    clearTimeout(copyFeedbackTimer);
+    copyFeedbackTimer = setTimeout(() => {
+      resetCopyShareLabel();
+    }, 1400);
+  }
+});
+
+[downloadPptxBtn, downloadPdfBtn, shareBtn].forEach((item) => {
+  item?.addEventListener('click', () => {
+    closeShareMenu();
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (!isShareMenuOpen()) return;
+  if (!shareDropdown?.contains(event.target)) {
+    closeShareMenu();
+  }
+});
+
 document.addEventListener('keydown', (event) => {
   if (viewer.classList.contains('hidden') || !slideData) return;
   if (event.key === 'ArrowLeft') goToSlide(currentSlide - 1);
   if (event.key === 'ArrowRight') goToSlide(currentSlide + 1);
-  if (event.key === 'Escape') hideViewer();
+  if (event.key === 'Escape') {
+    if (isShareMenuOpen()) {
+      closeShareMenu();
+      return;
+    }
+    hideViewer();
+  }
 });

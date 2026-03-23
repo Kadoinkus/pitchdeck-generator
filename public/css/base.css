@@ -220,6 +220,47 @@ body {
   padding: 2px;
 }
 
+.brand-palette-tools {
+  margin-top: 10px;
+}
+
+.palette-toolbar {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.palette-status {
+  margin: 8px 0 2px;
+  font-size: 0.82rem;
+}
+
+.palette-field {
+  gap: 4px;
+}
+
+.palette-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #44608f;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.palette-lock input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--secondary);
+}
+
+.field input.is-color-warning {
+  border-color: #f0b453;
+  box-shadow: 0 0 0 3px rgba(240, 180, 83, 0.2);
+}
+
 .actions-row {
   margin-top: 12px;
   display: flex;
@@ -336,6 +377,10 @@ button.small {
 
 .status.error {
   color: #b32358;
+}
+
+.status.warning {
+  color: #8a6118;
 }
 
 .inline-actions {

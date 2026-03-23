@@ -1,4 +1,5 @@
 import { showViewer, updateViewerData } from './js/viewer.js';
+import { DEFAULT_THEME_COLORS, resolveThemePalette, normalizeHexColor } from './js/color-palette.js';
 
 const AI_SETTINGS_KEY = 'proposalDeckAiSettingsV3';
 const DRAFT_STORAGE_KEY = 'proposalDeckDraftV4';
@@ -11,6 +12,17 @@ const includeAllSlidesButton = document.getElementById('include-all-slides');
 const includeCoreSlidesButton = document.getElementById('include-core-slides');
 const layoutPresetSelect = document.getElementById('layoutPreset');
 const layoutPresetLock = document.getElementById('layoutPresetLock');
+const primaryColorInput = document.getElementById('primaryColor');
+const accentColorInput = document.getElementById('accentColor');
+const secondaryColorInput = document.getElementById('secondaryColor');
+const backgroundColorInput = document.getElementById('backgroundColor');
+const textColorInput = document.getElementById('textColor');
+const harmonyModeSelect = document.getElementById('harmonyMode');
+const paletteShuffleSeedInput = document.getElementById('paletteShuffleSeed');
+const shuffleHarmonyButton = document.getElementById('shuffle-harmony');
+const lockAccentColorInput = document.getElementById('lock-accentColor');
+const lockSecondaryColorInput = document.getElementById('lock-secondaryColor');
+const paletteStatusEl = document.getElementById('palette-status');
 const autoFillButton = document.getElementById('ai-autofill');
 const generateButton = document.getElementById('generate-button');
 const statusEl = document.getElementById('status');
@@ -64,10 +76,114 @@ const CHARACTER_PLACEMENTS = [
   { value: 'all', label: 'All slides' }
 ];
 
+const brandColorControls = {
+  primaryColor: primaryColorInput,
+  accentColor: accentColorInput,
+  secondaryColor: secondaryColorInput,
+  backgroundColor: backgroundColorInput,
+  textColor: textColorInput
+};
+
 function syncLayoutPresetLockUi() {
   if (!layoutPresetSelect || !layoutPresetLock) return;
   layoutPresetSelect.disabled = false;
   layoutPresetSelect.classList.toggle('is-locked', layoutPresetLock.checked);
+}
+
+function setPaletteStatus(message, tone = '') {
+  if (!paletteStatusEl) return;
+  paletteStatusEl.textContent = message;
+  paletteStatusEl.classList.remove('warning', 'error');
+  if (tone) paletteStatusEl.classList.add(tone);
+}
+
+function readManualPaletteColors() {
+  return {
+    primaryColor: normalizeHexColor(brandColorControls.primaryColor?.value, DEFAULT_THEME_COLORS.primaryColor),
+    accentColor: normalizeHexColor(brandColorControls.accentColor?.value, DEFAULT_THEME_COLORS.accentColor),
+    secondaryColor: normalizeHexColor(brandColorControls.secondaryColor?.value, DEFAULT_THEME_COLORS.secondaryColor),
+    backgroundColor: normalizeHexColor(brandColorControls.backgroundColor?.value, DEFAULT_THEME_COLORS.backgroundColor),
+    textColor: normalizeHexColor(brandColorControls.textColor?.value, DEFAULT_THEME_COLORS.textColor)
+  };
+}
+
+function getShuffleSeed() {
+  return Math.max(0, Math.floor(Number.parseInt(paletteShuffleSeedInput?.value || '0', 10) || 0));
+}
+
+function syncBrandPaletteUi() {
+  if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput) return;
+
+  const manualColors = readManualPaletteColors();
+  const palette = resolveThemePalette({
+    primaryColor: manualColors.primaryColor,
+    harmonyMode: harmonyModeSelect.value || 'complementary',
+    shuffleSeed: getShuffleSeed(),
+    locks: {
+      accentColor: Boolean(lockAccentColorInput?.checked),
+      secondaryColor: Boolean(lockSecondaryColorInput?.checked)
+    },
+    manualColors
+  });
+
+  primaryColorInput.value = palette.theme.primaryColor;
+  accentColorInput.value = palette.theme.accentColor;
+  secondaryColorInput.value = palette.theme.secondaryColor;
+  backgroundColorInput.value = palette.theme.backgroundColor;
+  textColorInput.value = palette.theme.textColor;
+  harmonyModeSelect.value = palette.harmonyMode;
+  paletteShuffleSeedInput.value = String(palette.shuffleSeed);
+  if (accentColorInput) accentColorInput.disabled = !palette.locks.accentColor;
+  if (secondaryColorInput) secondaryColorInput.disabled = !palette.locks.secondaryColor;
+
+  const adjustedKeys = new Set(palette.adjustments.map((entry) => entry.key));
+
+  Object.entries(brandColorControls).forEach(([key, input]) => {
+    if (!input) return;
+    input.classList.toggle('is-color-warning', adjustedKeys.has(key));
+  });
+
+  if (palette.adjustments.length) {
+    setPaletteStatus(
+      `${palette.harmonyMode} harmony · variant ${palette.variantIndex + 1}/${palette.variantCount}. Corrected ${palette.adjustments.length} color${palette.adjustments.length === 1 ? '' : 's'} for readability.`,
+      'warning'
+    );
+    return;
+  }
+
+  setPaletteStatus(`${palette.harmonyMode} harmony · variant ${palette.variantIndex + 1}/${palette.variantCount}.`);
+}
+
+function bindBrandPaletteControls() {
+  if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput) return;
+
+  const controls = [
+    primaryColorInput,
+    accentColorInput,
+    secondaryColorInput,
+    backgroundColorInput,
+    textColorInput,
+    harmonyModeSelect,
+    lockAccentColorInput,
+    lockSecondaryColorInput
+  ].filter(Boolean);
+
+  controls.forEach((control) => {
+    control.addEventListener('change', () => {
+      syncBrandPaletteUi();
+    });
+  });
+
+  primaryColorInput.addEventListener('input', () => {
+    syncBrandPaletteUi();
+  });
+
+  shuffleHarmonyButton?.addEventListener('click', () => {
+    paletteShuffleSeedInput.value = String(getShuffleSeed() + 1);
+    syncBrandPaletteUi();
+    pushHistorySnapshot();
+    markEditorDirty();
+  });
 }
 
 function setStatus(message, isError = false) {
@@ -161,6 +277,7 @@ function applyPayloadToForm(payload = {}) {
   characterAssets = parseCharacterAssetsFromField();
   renderCharacterAssetsPreview();
   syncLayoutPresetLockUi();
+  syncBrandPaletteUi();
   updateProjectChrome();
   suspendHistory = false;
 }
@@ -990,6 +1107,7 @@ layoutPresetLock?.addEventListener('change', () => {
   pushHistorySnapshot();
   markEditorDirty();
 });
+bindBrandPaletteControls();
 
 autoFillButton.addEventListener('click', runAutofill);
 form.addEventListener('submit', generateDeck);
@@ -1066,6 +1184,7 @@ document.getElementById('back-to-editor').addEventListener('click', () => {
     renderCharacterAssetsPreview();
     syncCharacterAssetsField();
     syncLayoutPresetLockUi();
+    syncBrandPaletteUi();
     await hydrateTemplates();
     await hydrateAiProviders();
     applyAiSettings(readAiSettings());
