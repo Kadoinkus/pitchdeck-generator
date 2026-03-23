@@ -1,6 +1,6 @@
-import crypto from "node:crypto";
-import fs from "node:fs/promises";
-import path from "node:path";
+import crypto from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 export interface SharePayload {
 	[key: string]: unknown;
@@ -12,7 +12,7 @@ export interface ShareRecord extends SharePayload {
 }
 
 function shareDir(outputDir: string): string {
-	return path.join(outputDir, "shares");
+	return path.join(outputDir, 'shares');
 }
 
 function sharePath(outputDir: string, token: string): string {
@@ -20,10 +20,13 @@ function sharePath(outputDir: string, token: string): string {
 }
 
 function createToken(): string {
-	return crypto.randomBytes(9).toString("base64url");
+	return crypto.randomBytes(9).toString('base64url');
 }
 
-export async function saveShare(outputDir: string, payload: SharePayload): Promise<string> {
+export async function saveShare(
+	outputDir: string,
+	payload: SharePayload,
+): Promise<string> {
 	const dir = shareDir(outputDir);
 	await fs.mkdir(dir, { recursive: true });
 
@@ -35,14 +38,17 @@ export async function saveShare(outputDir: string, payload: SharePayload): Promi
 		...payload,
 	};
 
-	await fs.writeFile(filePath, JSON.stringify(record, null, 2), "utf8");
+	await fs.writeFile(filePath, JSON.stringify(record, null, 2), 'utf8');
 	return token;
 }
 
-export async function readShare(outputDir: string, token: string): Promise<ShareRecord | null> {
+export async function readShare(
+	outputDir: string,
+	token: string,
+): Promise<ShareRecord | null> {
 	try {
 		const filePath = sharePath(outputDir, token);
-		const content = await fs.readFile(filePath, "utf8");
+		const content = await fs.readFile(filePath, 'utf8');
 		const parsed: ShareRecord = JSON.parse(content);
 		return parsed;
 	} catch {

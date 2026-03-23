@@ -1,336 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notso AI Pitch Deck Studio</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <div class="page">
-      <header class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Notso AI Studio</p>
-          <h1>Pitch Deck Generator</h1>
-          <p class="intro">
-            Minimal workflow: set client name + URL, let AI fill the deck, exclude slides, and export to PowerPoint,
-            PDF, or shareable web link.
-          </p>
-        </div>
-        <div class="hero-card">
-          <strong>Flow</strong>
-          <ol>
-            <li>Client name + website</li>
-            <li>AI autofill content + image prompts</li>
-            <li>Exclude slides if needed</li>
-            <li>Generate and share</li>
-          </ol>
-        </div>
-      </header>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Notso AI Pitch Deck Studio</title>
+		<link rel="stylesheet" href="/styles.css">
+	</head>
+	<body>
+		<div class="page">
+			<header class="hero">
+				<div class="hero-copy">
+					<p class="eyebrow">Notso AI Studio</p>
+					<h1>Pitch Deck Generator</h1>
+					<p class="intro">
+						Minimal workflow: set client name + URL, let AI fill the deck,
+						exclude slides, and export to PowerPoint, PDF, or shareable web
+						link.
+					</p>
+				</div>
+				<div class="hero-card">
+					<strong>Flow</strong>
+					<ol>
+						<li>Client name + website</li>
+						<li>AI autofill content + image prompts</li>
+						<li>Exclude slides if needed</li>
+						<li>Generate and share</li>
+					</ol>
+				</div>
+			</header>
 
-      <main class="layout single">
-        <form id="deck-form" class="card form-grid minimal">
-          <section class="form-section">
-            <div class="section-head">
-              <h2>Quick Start</h2>
-              <p>Designed for speed. Everything else is optional.</p>
-            </div>
-            <div class="section-grid quick-grid">
-              <div class="field">
-                <label for="templateId">Template</label>
-                <select id="templateId" name="templateId"></select>
-              </div>
-              <div class="field">
-                <label for="clientName">Client name</label>
-                <input id="clientName" name="clientName" value="Acme Client" />
-              </div>
-              <div class="field">
-                <label for="clientUrl">Client URL</label>
-                <input id="clientUrl" name="clientUrl" value="https://www.acme-client.com" />
-              </div>
-              <div class="field">
-                <label for="brandName">Brand</label>
-                <input id="brandName" name="brandName" value="Notso AI" />
-              </div>
-              <div class="field">
-                <label for="deckVersion">Version</label>
-                <input id="deckVersion" name="deckVersion" value="v1.0" />
-              </div>
-            </div>
-            <div class="actions-row">
-              <button id="ai-autofill" type="button">AI Autofill</button>
-              <button id="generate-button" type="submit">Generate Deck</button>
-              <p id="status" class="status">Ready.</p>
-            </div>
-          </section>
+			<main class="layout single">
+				<form id="deck-form" class="card form-grid minimal">
+					<section class="form-section">
+						<div class="section-head">
+							<h2>Quick Start</h2>
+							<p>Designed for speed. Everything else is optional.</p>
+						</div>
+						<div class="section-grid quick-grid">
+							<div class="field">
+								<label for="templateId">Template</label>
+								<select id="templateId" name="templateId"></select>
+							</div>
+							<div class="field">
+								<label for="clientName">Client name</label>
+								<input id="clientName" name="clientName" value="Acme Client">
+							</div>
+							<div class="field">
+								<label for="clientUrl">Client URL</label>
+								<input
+									id="clientUrl"
+									name="clientUrl"
+									value="https://www.acme-client.com"
+								>
+							</div>
+							<div class="field">
+								<label for="brandName">Brand</label>
+								<input id="brandName" name="brandName" value="Notso AI">
+							</div>
+							<div class="field">
+								<label for="deckVersion">Version</label>
+								<input id="deckVersion" name="deckVersion" value="v1.0">
+							</div>
+						</div>
+						<div class="actions-row">
+							<button id="ai-autofill" type="button">AI Autofill</button>
+							<button id="generate-button" type="submit">Generate Deck</button>
+							<p id="status" class="status">Ready.</p>
+						</div>
+					</section>
 
-          <details class="form-section" open>
-            <summary>Slide Inclusion</summary>
-            <div class="section-head compact">
-              <p>Uncheck slides to exclude from this version.</p>
-            </div>
-            <div class="slide-toolbar">
-              <button id="include-all-slides" type="button" class="ghost">Include all</button>
-              <button id="include-core-slides" type="button" class="ghost">Core only</button>
-            </div>
-            <div id="slide-selector" class="slide-selector"></div>
-          </details>
+					<details class="form-section" open>
+						<summary>Slide Inclusion</summary>
+						<div class="section-head compact">
+							<p>Uncheck slides to exclude from this version.</p>
+						</div>
+						<div class="slide-toolbar">
+							<button id="include-all-slides" type="button" class="ghost">
+								Include all
+							</button>
+							<button id="include-core-slides" type="button" class="ghost">
+								Core only
+							</button>
+						</div>
+						<div id="slide-selector" class="slide-selector"></div>
+					</details>
 
-          <details class="form-section">
-            <summary>Brand Styling</summary>
-            <div class="section-grid two-col">
-              <div class="field">
-                <label for="layoutPreset">Layout preset</label>
-                <select id="layoutPreset" name="layoutPreset">
-                  <option value="notso-premium-v1">Notso Premium v1</option>
-                </select>
-              </div>
-              <label class="slide-chip">
-                <input id="layoutPresetLock" name="layoutPresetLock" type="checkbox" checked />
-                <span>Lock preset</span>
-                <small>Keeps slide structure fixed for consistent pitch quality</small>
-              </label>
-            </div>
-            <div class="section-grid two-col brand-palette-tools">
-              <div class="field color-field">
-                <label for="primaryColor">Brand primary color</label>
-                <input id="primaryColor" name="primaryColor" type="color" value="#004B49" />
-              </div>
-              <div class="field">
-                <label for="harmonyMode">Harmony mode</label>
-                <select id="harmonyMode" name="harmonyMode">
-                  <option value="complementary">Complementary</option>
-                  <option value="split-complementary">Split Complementary</option>
-                  <option value="analogous">Analogous</option>
-                  <option value="triad">Triad</option>
-                  <option value="monochromatic">Monochromatic</option>
-                </select>
-              </div>
-            </div>
-            <div class="palette-toolbar">
-              <input id="paletteShuffleSeed" name="paletteShuffleSeed" type="hidden" value="0" />
-              <button id="shuffle-harmony" type="button" class="ghost small">Shuffle colors</button>
-              <label class="palette-lock" for="lock-accentColor">
-                <input id="lock-accentColor" name="lockAccentColor" type="checkbox" />
-                <span>Lock color 2</span>
-              </label>
-              <label class="palette-lock" for="lock-secondaryColor">
-                <input id="lock-secondaryColor" name="lockSecondaryColor" type="checkbox" />
-                <span>Lock color 3 (dark)</span>
-              </label>
-            </div>
-            <p id="palette-status" class="status palette-status">
-              Colors 2 and 3 are generated from the harmony mode. Use Shuffle to try variants.
-            </p>
-            <div class="section-grid five-col">
-              <div class="field color-field palette-field">
-                <label for="accentColor">Color 2</label>
-                <input id="accentColor" name="accentColor" type="color" value="#30D89E" />
-              </div>
-              <div class="field color-field palette-field">
-                <label for="secondaryColor">Color 3 (dark slide)</label>
-                <input id="secondaryColor" name="secondaryColor" type="color" value="#0B6E6C" />
-              </div>
-              <div class="field color-field palette-field">
-                <label for="backgroundColor">Deck background</label>
-                <input id="backgroundColor" name="backgroundColor" type="color" value="#F2F4F6" />
-              </div>
-              <div class="field color-field palette-field">
-                <label for="textColor">Deck text</label>
-                <input id="textColor" name="textColor" type="color" value="#0B1D2E" />
-              </div>
-              <div class="field">
-                <label for="headingFont">Deck heading font</label>
-                <input id="headingFont" name="headingFont" value="Sora" />
-              </div>
-              <div class="field">
-                <label for="bodyFont">Deck body font</label>
-                <input id="bodyFont" name="bodyFont" value="Inter" />
-              </div>
-            </div>
-          </details>
+					<details class="form-section">
+						<summary>Brand Styling</summary>
+						<div class="section-grid two-col">
+							<div class="field">
+								<label for="layoutPreset">Layout preset</label>
+								<select id="layoutPreset" name="layoutPreset">
+									<option value="notso-premium-v1">Notso Premium v1</option>
+								</select>
+							</div>
+							<label class="slide-chip">
+								<input
+									id="layoutPresetLock"
+									name="layoutPresetLock"
+									type="checkbox"
+									checked
+								>
+								<span>Lock preset</span>
+								<small>Keeps slide structure fixed for consistent pitch
+									quality</small>
+							</label>
+						</div>
+						<div class="section-grid two-col brand-palette-tools">
+							<div class="field color-field">
+								<label for="primaryColor">Brand primary color</label>
+								<input
+									id="primaryColor"
+									name="primaryColor"
+									type="color"
+									value="#004B49"
+								>
+							</div>
+							<div class="field">
+								<label for="harmonyMode">Harmony mode</label>
+								<select id="harmonyMode" name="harmonyMode">
+									<option value="complementary">Complementary</option>
+									<option value="split-complementary">
+										Split Complementary
+									</option>
+									<option value="analogous">Analogous</option>
+									<option value="triad">Triad</option>
+									<option value="monochromatic">Monochromatic</option>
+								</select>
+							</div>
+						</div>
+						<div class="palette-toolbar">
+							<input
+								id="paletteShuffleSeed"
+								name="paletteShuffleSeed"
+								type="hidden"
+								value="0"
+							>
+							<button id="shuffle-harmony" type="button" class="ghost small">
+								Shuffle colors
+							</button>
+							<label class="palette-lock" for="lock-accentColor">
+								<input
+									id="lock-accentColor"
+									name="lockAccentColor"
+									type="checkbox"
+								>
+								<span>Lock color 2</span>
+							</label>
+							<label class="palette-lock" for="lock-secondaryColor">
+								<input
+									id="lock-secondaryColor"
+									name="lockSecondaryColor"
+									type="checkbox"
+								>
+								<span>Lock color 3 (dark)</span>
+							</label>
+						</div>
+						<p id="palette-status" class="status palette-status">
+							Colors 2 and 3 are generated from the harmony mode. Use Shuffle to
+							try variants.
+						</p>
+						<div class="section-grid five-col">
+							<div class="field color-field palette-field">
+								<label for="accentColor">Color 2</label>
+								<input
+									id="accentColor"
+									name="accentColor"
+									type="color"
+									value="#30D89E"
+								>
+							</div>
+							<div class="field color-field palette-field">
+								<label for="secondaryColor">Color 3 (dark slide)</label>
+								<input
+									id="secondaryColor"
+									name="secondaryColor"
+									type="color"
+									value="#0B6E6C"
+								>
+							</div>
+							<div class="field color-field palette-field">
+								<label for="backgroundColor">Deck background</label>
+								<input
+									id="backgroundColor"
+									name="backgroundColor"
+									type="color"
+									value="#F2F4F6"
+								>
+							</div>
+							<div class="field color-field palette-field">
+								<label for="textColor">Deck text</label>
+								<input
+									id="textColor"
+									name="textColor"
+									type="color"
+									value="#0B1D2E"
+								>
+							</div>
+							<div class="field">
+								<label for="headingFont">Deck heading font</label>
+								<input id="headingFont" name="headingFont" value="Sora">
+							</div>
+							<div class="field">
+								<label for="bodyFont">Deck body font</label>
+								<input id="bodyFont" name="bodyFont" value="Inter">
+							</div>
+						</div>
+					</details>
 
-          <details class="form-section">
-            <summary>AI Provider Keys</summary>
-            <div class="section-grid two-col">
-              <div class="field">
-                <label for="aiTextProvider">Text provider</label>
-                <select id="aiTextProvider" name="aiTextProvider"></select>
-              </div>
-              <div class="field">
-                <label for="aiTextModel">Text model</label>
-                <input id="aiTextModel" name="aiTextModel" value="gpt-4.1-mini" />
-              </div>
-              <div class="field">
-                <label for="aiTextApiKey">Text API key</label>
-                <input id="aiTextApiKey" name="aiTextApiKey" type="password" autocomplete="off" />
-              </div>
-              <div class="field">
-                <label for="aiTextBaseUrl">Text base URL</label>
-                <input id="aiTextBaseUrl" name="aiTextBaseUrl" value="https://api.openai.com/v1" />
-              </div>
-              <div class="field">
-                <label for="aiImageProvider">Image provider</label>
-                <select id="aiImageProvider" name="aiImageProvider"></select>
-              </div>
-              <div class="field">
-                <label for="aiImageModel">Image model</label>
-                <input id="aiImageModel" name="aiImageModel" value="gpt-4.1-mini" />
-              </div>
-              <div class="field">
-                <label for="aiImageApiKey">Image API key</label>
-                <input id="aiImageApiKey" name="aiImageApiKey" type="password" autocomplete="off" />
-              </div>
-              <div class="field">
-                <label for="aiImageBaseUrl">Image base URL</label>
-                <input id="aiImageBaseUrl" name="aiImageBaseUrl" value="https://api.openai.com/v1" />
-              </div>
-            </div>
-            <div class="inline-actions">
-              <button id="save-ai-settings" type="button" class="ghost">Save locally</button>
-            </div>
-          </details>
+					<details class="form-section">
+						<summary>AI Provider Keys</summary>
+						<div class="section-grid two-col">
+							<div class="field">
+								<label for="aiTextProvider">Text provider</label>
+								<select id="aiTextProvider" name="aiTextProvider"></select>
+							</div>
+							<div class="field">
+								<label for="aiTextModel">Text model</label>
+								<input id="aiTextModel" name="aiTextModel" value="gpt-4.1-mini">
+							</div>
+							<div class="field">
+								<label for="aiTextApiKey">Text API key</label>
+								<input
+									id="aiTextApiKey"
+									name="aiTextApiKey"
+									type="password"
+									autocomplete="off"
+								>
+							</div>
+							<div class="field">
+								<label for="aiTextBaseUrl">Text base URL</label>
+								<input
+									id="aiTextBaseUrl"
+									name="aiTextBaseUrl"
+									value="https://api.openai.com/v1"
+								>
+							</div>
+							<div class="field">
+								<label for="aiImageProvider">Image provider</label>
+								<select id="aiImageProvider" name="aiImageProvider"></select>
+							</div>
+							<div class="field">
+								<label for="aiImageModel">Image model</label>
+								<input
+									id="aiImageModel"
+									name="aiImageModel"
+									value="gpt-4.1-mini"
+								>
+							</div>
+							<div class="field">
+								<label for="aiImageApiKey">Image API key</label>
+								<input
+									id="aiImageApiKey"
+									name="aiImageApiKey"
+									type="password"
+									autocomplete="off"
+								>
+							</div>
+							<div class="field">
+								<label for="aiImageBaseUrl">Image base URL</label>
+								<input
+									id="aiImageBaseUrl"
+									name="aiImageBaseUrl"
+									value="https://api.openai.com/v1"
+								>
+							</div>
+						</div>
+						<div class="inline-actions">
+							<button id="save-ai-settings" type="button" class="ghost">
+								Save locally
+							</button>
+						</div>
+					</details>
 
-          <details class="form-section">
-            <summary>Character Design Assets</summary>
-            <div class="section-head compact">
-              <p>Upload mascot references and choose where they should appear in the deck.</p>
-            </div>
-            <div class="asset-tools">
-              <label class="ghost-link upload-btn" for="character-assets-input">Upload images</label>
-              <input id="character-assets-input" type="file" accept="image/*" multiple class="hidden" />
-              <button id="clear-character-assets" type="button" class="ghost">Clear assets</button>
-              <p id="character-assets-status" class="status">No character assets uploaded.</p>
-            </div>
-            <div id="character-assets-preview" class="asset-preview-grid"></div>
-          </details>
+					<details class="form-section">
+						<summary>Character Design Assets</summary>
+						<div class="section-head compact">
+							<p>
+								Upload mascot references and choose where they should appear in
+								the deck.
+							</p>
+						</div>
+						<div class="asset-tools">
+							<label class="ghost-link upload-btn" for="character-assets-input"
+							>Upload images</label>
+							<input
+								id="character-assets-input"
+								type="file"
+								accept="image/*"
+								multiple
+								class="hidden"
+							>
+							<button id="clear-character-assets" type="button" class="ghost">
+								Clear assets
+							</button>
+							<p id="character-assets-status" class="status">
+								No character assets uploaded.
+							</p>
+						</div>
+						<div id="character-assets-preview" class="asset-preview-grid"></div>
+					</details>
 
-          <section class="form-section output-section" id="output-panel">
-            <div class="section-head compact">
-              <h2>Output</h2>
-              <p id="output-status">Generate a deck to unlock links and exports.</p>
-            </div>
-            <div class="output-actions">
-              <a id="open-viewer-link" class="ghost-link disabled" href="#">Open viewer</a>
-              <a id="download-pptx-link" class="ghost-link disabled" href="#">Download .pptx</a>
-              <a id="download-pdf-link" class="ghost-link disabled" href="#" target="_blank" rel="noopener">Download PDF</a>
-              <a id="open-share-link" class="ghost-link disabled" href="#" target="_blank" rel="noopener">Open share page</a>
-              <button id="copy-share-link" type="button" class="ghost" disabled>Copy share link</button>
-            </div>
-          </section>
+					<section class="form-section output-section" id="output-panel">
+						<div class="section-head compact">
+							<h2>Output</h2>
+							<p id="output-status">
+								Generate a deck to unlock links and exports.
+							</p>
+						</div>
+						<div class="output-actions">
+							<a id="open-viewer-link" class="ghost-link disabled" href="#"
+							>Open viewer</a>
+							<a id="download-pptx-link" class="ghost-link disabled" href="#"
+							>Download .pptx</a>
+							<a
+								id="download-pdf-link"
+								class="ghost-link disabled"
+								href="#"
+								target="_blank"
+								rel="noopener"
+							>Download PDF</a>
+							<a
+								id="open-share-link"
+								class="ghost-link disabled"
+								href="#"
+								target="_blank"
+								rel="noopener"
+							>Open share page</a>
+							<button id="copy-share-link" type="button" class="ghost" disabled>
+								Copy share link
+							</button>
+						</div>
+					</section>
 
-          <div class="hidden">
-            <input name="projectTitle" value="AI Mascot Proposal" />
-            <input name="coverOneLiner" value="A playful, animated chatbot experience that feels premium and converts." />
-            <input name="subtitle" value="A reusable digital buddy concept tailored to your brand." />
-            <input name="proposalDate" value="June 2026" />
-            <input name="mascotName" value="Sven" />
-            <textarea name="problemPoints"></textarea>
-            <textarea name="opportunityPoints"></textarea>
-            <textarea name="solutionPillars"></textarea>
-            <textarea name="whatNotsoIntro"></textarea>
-            <textarea name="whatNotsoCards"></textarea>
-            <textarea name="buddyDescription"></textarea>
-            <textarea name="buddyPersonality"></textarea>
-            <textarea name="toneSliders"></textarea>
-            <textarea name="experienceConcept"></textarea>
-            <textarea name="chatFlow"></textarea>
-            <textarea name="interactionExample"></textarea>
-            <textarea name="businessImpact"></textarea>
-            <textarea name="analyticsDescription"></textarea>
-            <textarea name="analyticsBullets"></textarea>
-            <textarea name="deliverables"></textarea>
-            <textarea name="pricing"></textarea>
-            <textarea name="timeline"></textarea>
-            <textarea name="closingText"></textarea>
-            <textarea name="teamCards"></textarea>
-            <textarea name="characterAssets"></textarea>
-            <textarea name="imagePrompts"></textarea>
-            <input name="contactName" value="Max Kowalski" />
-            <input name="contactEmail" value="max@notso.ai" />
-            <input name="contactPhone" value="+31 6 40450599" />
-          </div>
-        </form>
-      </main>
-    </div>
+					<div class="hidden">
+						<input name="projectTitle" value="AI Mascot Proposal">
+						<input
+							name="coverOneLiner"
+							value="A playful, animated chatbot experience that feels premium and converts."
+						>
+						<input
+							name="subtitle"
+							value="A reusable digital buddy concept tailored to your brand."
+						>
+						<input name="proposalDate" value="June 2026">
+						<input name="mascotName" value="Sven">
+						<textarea name="problemPoints"></textarea>
+						<textarea name="opportunityPoints"></textarea>
+						<textarea name="solutionPillars"></textarea>
+						<textarea name="whatNotsoIntro"></textarea>
+						<textarea name="whatNotsoCards"></textarea>
+						<textarea name="buddyDescription"></textarea>
+						<textarea name="buddyPersonality"></textarea>
+						<textarea name="toneSliders"></textarea>
+						<textarea name="experienceConcept"></textarea>
+						<textarea name="chatFlow"></textarea>
+						<textarea name="interactionExample"></textarea>
+						<textarea name="businessImpact"></textarea>
+						<textarea name="analyticsDescription"></textarea>
+						<textarea name="analyticsBullets"></textarea>
+						<textarea name="deliverables"></textarea>
+						<textarea name="pricing"></textarea>
+						<textarea name="timeline"></textarea>
+						<textarea name="closingText"></textarea>
+						<textarea name="teamCards"></textarea>
+						<textarea name="characterAssets"></textarea>
+						<textarea name="imagePrompts"></textarea>
+						<input name="contactName" value="Max Kowalski">
+						<input name="contactEmail" value="max@notso.ai">
+						<input name="contactPhone" value="+31 6 40450599">
+					</div>
+				</form>
+			</main>
+		</div>
 
-    <div id="slide-viewer" class="slide-viewer hidden">
-      <div class="viewer-toolbar">
-        <div class="viewer-toolbar-left">
-          <button id="back-to-editor" class="toolbar-btn viewer-home-btn" type="button" aria-label="Back to editor">
-            Editor
-          </button>
-          <div class="viewer-menu-pills" aria-hidden="true">
-            <span class="viewer-menu-pill">File</span>
-            <span class="viewer-menu-pill">Resize</span>
-            <span class="viewer-menu-pill">Editing</span>
-          </div>
-          <div class="viewer-project">
-            <div class="viewer-project-row">
-              <strong id="project-name-display">Untitled design</strong>
-              <span id="save-indicator" class="save-indicator is-saved">All changes saved</span>
-            </div>
-          </div>
-        </div>
-        <div class="viewer-toolbar-middle">
-          <button id="undo-change" class="history-btn" type="button" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
-            &#8630;
-          </button>
-          <button id="redo-change" class="history-btn" type="button" title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">
-            &#8631;
-          </button>
-          <span id="slide-counter" class="slide-counter">1 / 1</span>
-          <div class="toolbar-nav">
-            <button type="button" id="prev-slide" class="toolbar-btn">Prev</button>
-            <button type="button" id="next-slide" class="toolbar-btn">Next</button>
-          </div>
-        </div>
-        <div class="viewer-toolbar-right">
-          <div id="viewer-share-dropdown" class="viewer-share-dropdown">
-            <button
-              id="viewer-share-toggle"
-              class="toolbar-btn viewer-share-toggle"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Share
-              <span class="share-caret">&#9662;</span>
-            </button>
-            <div class="viewer-share-menu" role="menu" aria-label="Share and export options">
-              <a id="viewer-download-pptx" class="viewer-share-item" href="#" download role="menuitem">Download .pptx</a>
-              <a id="viewer-download-pdf" class="viewer-share-item" href="#" target="_blank" rel="noopener" role="menuitem">Download PDF</a>
-              <a id="viewer-share-link" class="viewer-share-item" href="#" target="_blank" rel="noopener" role="menuitem">Open share page</a>
-              <button id="viewer-copy-share" class="viewer-share-item viewer-share-copy" type="button" role="menuitem">
-                Copy share link
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="viewer-body">
-        <div id="thumbnails" class="thumbnails"></div>
-        <div class="slide-stage">
-          <div id="slide-canvas" class="slide-canvas">
-            <div id="slide-track" class="slide-track"></div>
-          </div>
-        </div>
-      </div>
+		<div id="slide-viewer" class="slide-viewer hidden">
+			<div class="viewer-toolbar">
+				<div class="viewer-toolbar-left">
+					<button
+						id="back-to-editor"
+						class="toolbar-btn viewer-home-btn"
+						type="button"
+						aria-label="Back to editor"
+					>
+						Editor
+					</button>
+					<div class="viewer-menu-pills" aria-hidden="true">
+						<span class="viewer-menu-pill">File</span>
+						<span class="viewer-menu-pill">Resize</span>
+						<span class="viewer-menu-pill">Editing</span>
+					</div>
+					<div class="viewer-project">
+						<div class="viewer-project-row">
+							<strong id="project-name-display">Untitled design</strong>
+							<span id="save-indicator" class="save-indicator is-saved"
+							>All changes saved</span>
+						</div>
+					</div>
+				</div>
+				<div class="viewer-toolbar-middle">
+					<button
+						id="undo-change"
+						class="history-btn"
+						type="button"
+						title="Undo (Ctrl/Cmd+Z)"
+						aria-label="Undo"
+					>
+						&#8630;
+					</button>
+					<button
+						id="redo-change"
+						class="history-btn"
+						type="button"
+						title="Redo (Ctrl/Cmd+Shift+Z)"
+						aria-label="Redo"
+					>
+						&#8631;
+					</button>
+					<span id="slide-counter" class="slide-counter">1 / 1</span>
+					<div class="toolbar-nav">
+						<button type="button" id="prev-slide" class="toolbar-btn">
+							Prev
+						</button>
+						<button type="button" id="next-slide" class="toolbar-btn">
+							Next
+						</button>
+					</div>
+				</div>
+				<div class="viewer-toolbar-right">
+					<div id="viewer-share-dropdown" class="viewer-share-dropdown">
+						<button
+							id="viewer-share-toggle"
+							class="toolbar-btn viewer-share-toggle"
+							type="button"
+							aria-haspopup="true"
+							aria-expanded="false"
+						>
+							Share
+							<span class="share-caret">&#9662;</span>
+						</button>
+						<div
+							class="viewer-share-menu"
+							role="menu"
+							aria-label="Share and export options"
+						>
+							<a
+								id="viewer-download-pptx"
+								class="viewer-share-item"
+								href="#"
+								download
+								role="menuitem"
+							>Download .pptx</a>
+							<a
+								id="viewer-download-pdf"
+								class="viewer-share-item"
+								href="#"
+								target="_blank"
+								rel="noopener"
+								role="menuitem"
+							>Download PDF</a>
+							<a
+								id="viewer-share-link"
+								class="viewer-share-item"
+								href="#"
+								target="_blank"
+								rel="noopener"
+								role="menuitem"
+							>Open share page</a>
+							<button
+								id="viewer-copy-share"
+								class="viewer-share-item viewer-share-copy"
+								type="button"
+								role="menuitem"
+							>
+								Copy share link
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="viewer-body">
+				<div id="thumbnails" class="thumbnails"></div>
+				<div class="slide-stage">
+					<div id="slide-canvas" class="slide-canvas">
+						<div id="slide-track" class="slide-track"></div>
+					</div>
+				</div>
+			</div>
 
-      <button id="viewer-chat-launcher" class="viewer-chat-launcher" type="button">AI</button>
-      <div id="viewer-chat-panel" class="viewer-chat-panel hidden">
-        <div class="chat-head">
-          <strong>Deck Copilot</strong>
-          <button id="viewer-chat-close" class="text-btn" type="button">Close</button>
-        </div>
-        <p class="chat-target-line">Target: <span id="viewer-chat-target">Global concept</span></p>
-        <div id="viewer-chat-messages" class="viewer-chat-messages"></div>
-        <div id="viewer-chat-suggestions" class="viewer-chat-suggestions"></div>
-        <textarea id="viewer-chat-input" placeholder="Ask to rewrite selected text or change image direction..."></textarea>
-        <button id="viewer-chat-send" type="button">Send</button>
-      </div>
-    </div>
+			<button
+				id="viewer-chat-launcher"
+				class="viewer-chat-launcher"
+				type="button"
+			>
+				AI
+			</button>
+			<div id="viewer-chat-panel" class="viewer-chat-panel hidden">
+				<div class="chat-head">
+					<strong>Deck Copilot</strong>
+					<button id="viewer-chat-close" class="text-btn" type="button">
+						Close
+					</button>
+				</div>
+				<p class="chat-target-line">
+					Target: <span id="viewer-chat-target">Global concept</span>
+				</p>
+				<div id="viewer-chat-messages" class="viewer-chat-messages"></div>
+				<div id="viewer-chat-suggestions" class="viewer-chat-suggestions"></div>
+				<textarea
+					id="viewer-chat-input"
+					placeholder="Ask to rewrite selected text or change image direction..."
+				></textarea>
+				<button id="viewer-chat-send" type="button">Send</button>
+			</div>
+		</div>
 
-    <script src="/app.ts" type="module"></script>
-  </body>
+		<script src="/app.ts" type="module"></script>
+	</body>
 </html>

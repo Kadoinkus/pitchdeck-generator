@@ -1,27 +1,27 @@
-import { resolveThemePalette } from "./color-palette.js";
-import { resolveImageModeForSlide, resolveSlotPolicy } from "./slot-policy.js";
-import { normalizeList, safeText } from "./utils.js";
+import { resolveThemePalette } from './color-palette.ts';
+import { resolveImageModeForSlide, resolveSlotPolicy } from './slot-policy.ts';
+import { normalizeList, safeText } from './utils.ts';
 
 /* ------------------------------------------------------------------ */
 /*  Shared type definitions                                           */
 /* ------------------------------------------------------------------ */
 
 export type SlideType =
-	| "cover"
-	| "problem"
-	| "opportunity"
-	| "solution"
-	| "what-notso-does"
-	| "meet-buddy"
-	| "experience-concept"
-	| "chat-flow"
-	| "example-interaction"
-	| "business-impact"
-	| "data-analytics"
-	| "what-you-get"
-	| "pricing"
-	| "timeline"
-	| "closing";
+	| 'cover'
+	| 'problem'
+	| 'opportunity'
+	| 'solution'
+	| 'what-notso-does'
+	| 'meet-buddy'
+	| 'experience-concept'
+	| 'chat-flow'
+	| 'example-interaction'
+	| 'business-impact'
+	| 'data-analytics'
+	| 'what-you-get'
+	| 'pricing'
+	| 'timeline'
+	| 'closing';
 
 export interface SlideDefinition {
 	id: string;
@@ -268,147 +268,147 @@ interface RawDeckInput {
 /*  Constants                                                         */
 /* ------------------------------------------------------------------ */
 
-const TEMPLATE_PREMIUM_PROPOSAL = "pitch-proposal";
-const DEFAULT_LAYOUT_PRESET = "notso-premium-v1";
+const TEMPLATE_PREMIUM_PROPOSAL = 'pitch-proposal';
+const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
 
 const TEMPLATE_DEFINITIONS: Record<string, TemplateDefinition> = {
 	[TEMPLATE_PREMIUM_PROPOSAL]: {
 		id: TEMPLATE_PREMIUM_PROPOSAL,
-		label: "Notso Premium Proposal",
-		description: "15-slide premium pitch deck for animated chatbot proposals.",
-		version: "2.0.0",
+		label: 'Notso Premium Proposal',
+		description: '15-slide premium pitch deck for animated chatbot proposals.',
+		version: '2.0.0',
 		slides: [
 			{
-				id: "cover",
-				label: "Cover",
-				type: "cover",
-				field: "projectTitle",
+				id: 'cover',
+				label: 'Cover',
+				type: 'cover',
+				field: 'projectTitle',
 				required: true,
 				optional: false,
 				defaultIncluded: true,
 			},
 			{
-				id: "problem",
-				label: "The Problem",
-				type: "problem",
-				field: "problemPoints",
+				id: 'problem',
+				label: 'The Problem',
+				type: 'problem',
+				field: 'problemPoints',
 				required: true,
 				optional: false,
 				defaultIncluded: true,
 			},
 			{
-				id: "opportunity",
-				label: "The Opportunity",
-				type: "opportunity",
-				field: "opportunityPoints",
+				id: 'opportunity',
+				label: 'The Opportunity',
+				type: 'opportunity',
+				field: 'opportunityPoints',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "solution",
-				label: "The Solution",
-				type: "solution",
-				field: "solutionPillars",
+				id: 'solution',
+				label: 'The Solution',
+				type: 'solution',
+				field: 'solutionPillars',
 				required: true,
 				optional: false,
 				defaultIncluded: true,
 			},
 			{
-				id: "what-notso-does",
-				label: "What Notso AI Does",
-				type: "what-notso-does",
-				field: "whatNotsoCards",
+				id: 'what-notso-does',
+				label: 'What Notso AI Does',
+				type: 'what-notso-does',
+				field: 'whatNotsoCards',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "meet-buddy",
-				label: "Meet The Buddy",
-				type: "meet-buddy",
-				field: "buddyDescription",
+				id: 'meet-buddy',
+				label: 'Meet The Buddy',
+				type: 'meet-buddy',
+				field: 'buddyDescription',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "experience-concept",
-				label: "Experience Concept",
-				type: "experience-concept",
-				field: "experienceConcept",
+				id: 'experience-concept',
+				label: 'Experience Concept',
+				type: 'experience-concept',
+				field: 'experienceConcept',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "chat-flow",
-				label: "Chat Flow",
-				type: "chat-flow",
-				field: "chatFlow",
+				id: 'chat-flow',
+				label: 'Chat Flow',
+				type: 'chat-flow',
+				field: 'chatFlow',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "example-interaction",
-				label: "Example Interaction",
-				type: "example-interaction",
-				field: "interactionExample",
+				id: 'example-interaction',
+				label: 'Example Interaction',
+				type: 'example-interaction',
+				field: 'interactionExample',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "business-impact",
-				label: "Business Impact",
-				type: "business-impact",
-				field: "businessImpact",
+				id: 'business-impact',
+				label: 'Business Impact',
+				type: 'business-impact',
+				field: 'businessImpact',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "data-analytics",
-				label: "Data & Analytics",
-				type: "data-analytics",
-				field: "analyticsBullets",
+				id: 'data-analytics',
+				label: 'Data & Analytics',
+				type: 'data-analytics',
+				field: 'analyticsBullets',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "what-you-get",
-				label: "What You Get",
-				type: "what-you-get",
-				field: "deliverables",
+				id: 'what-you-get',
+				label: 'What You Get',
+				type: 'what-you-get',
+				field: 'deliverables',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "pricing",
-				label: "Pricing",
-				type: "pricing",
-				field: "pricing",
+				id: 'pricing',
+				label: 'Pricing',
+				type: 'pricing',
+				field: 'pricing',
 				required: true,
 				optional: false,
 				defaultIncluded: true,
 			},
 			{
-				id: "timeline",
-				label: "Timeline",
-				type: "timeline",
-				field: "timeline",
+				id: 'timeline',
+				label: 'Timeline',
+				type: 'timeline',
+				field: 'timeline',
 				required: false,
 				optional: true,
 				defaultIncluded: true,
 			},
 			{
-				id: "closing",
-				label: "Closing",
-				type: "closing",
-				field: "closingText",
+				id: 'closing',
+				label: 'Closing',
+				type: 'closing',
+				field: 'closingText',
 				required: true,
 				optional: false,
 				defaultIncluded: true,
@@ -418,101 +418,101 @@ const TEMPLATE_DEFINITIONS: Record<string, TemplateDefinition> = {
 };
 
 export const EDITABLE_FIELD_DEFINITIONS: readonly FieldDefinition[] = [
-	{ name: "projectTitle", label: "Project title" },
-	{ name: "coverOneLiner", label: "Cover one-liner" },
-	{ name: "subtitle", label: "Subtitle" },
-	{ name: "proposalDate", label: "Proposal date" },
-	{ name: "mascotName", label: "Mascot name" },
-	{ name: "problemPoints", label: "Problem points" },
-	{ name: "opportunityPoints", label: "Opportunity points" },
-	{ name: "solutionPillars", label: "Solution pillars" },
-	{ name: "whatNotsoIntro", label: "What Notso intro" },
-	{ name: "whatNotsoCards", label: "What Notso cards" },
-	{ name: "buddyDescription", label: "Buddy description" },
-	{ name: "buddyPersonality", label: "Buddy personality bullets" },
-	{ name: "toneSliders", label: "Tone sliders" },
-	{ name: "experienceConcept", label: "Experience concept" },
-	{ name: "chatFlow", label: "Chat flow" },
-	{ name: "interactionExample", label: "Example interaction" },
-	{ name: "businessImpact", label: "Business impact" },
-	{ name: "analyticsDescription", label: "Analytics description" },
-	{ name: "analyticsBullets", label: "Analytics bullets" },
-	{ name: "deliverables", label: "Deliverables" },
-	{ name: "pricing", label: "Pricing" },
-	{ name: "timeline", label: "Timeline" },
-	{ name: "closingText", label: "Closing text" },
-	{ name: "teamCards", label: "Team cards" },
-	{ name: "characterAssets", label: "Character assets" },
-	{ name: "imagePrompts", label: "Image prompts" },
-	{ name: "layoutPreset", label: "Layout preset" },
-	{ name: "layoutPresetLock", label: "Layout preset lock" },
-	{ name: "harmonyMode", label: "Color harmony mode" },
-	{ name: "paletteShuffleSeed", label: "Color shuffle seed" },
-	{ name: "lockAccentColor", label: "Lock accent color" },
-	{ name: "lockSecondaryColor", label: "Lock secondary color" },
-	{ name: "primaryColor", label: "Deck primary" },
-	{ name: "accentColor", label: "Deck accent" },
-	{ name: "secondaryColor", label: "Deck secondary" },
-	{ name: "backgroundColor", label: "Deck background" },
-	{ name: "textColor", label: "Deck text" },
-	{ name: "headingFont", label: "Deck heading font" },
-	{ name: "bodyFont", label: "Deck body font" },
+	{ name: 'projectTitle', label: 'Project title' },
+	{ name: 'coverOneLiner', label: 'Cover one-liner' },
+	{ name: 'subtitle', label: 'Subtitle' },
+	{ name: 'proposalDate', label: 'Proposal date' },
+	{ name: 'mascotName', label: 'Mascot name' },
+	{ name: 'problemPoints', label: 'Problem points' },
+	{ name: 'opportunityPoints', label: 'Opportunity points' },
+	{ name: 'solutionPillars', label: 'Solution pillars' },
+	{ name: 'whatNotsoIntro', label: 'What Notso intro' },
+	{ name: 'whatNotsoCards', label: 'What Notso cards' },
+	{ name: 'buddyDescription', label: 'Buddy description' },
+	{ name: 'buddyPersonality', label: 'Buddy personality bullets' },
+	{ name: 'toneSliders', label: 'Tone sliders' },
+	{ name: 'experienceConcept', label: 'Experience concept' },
+	{ name: 'chatFlow', label: 'Chat flow' },
+	{ name: 'interactionExample', label: 'Example interaction' },
+	{ name: 'businessImpact', label: 'Business impact' },
+	{ name: 'analyticsDescription', label: 'Analytics description' },
+	{ name: 'analyticsBullets', label: 'Analytics bullets' },
+	{ name: 'deliverables', label: 'Deliverables' },
+	{ name: 'pricing', label: 'Pricing' },
+	{ name: 'timeline', label: 'Timeline' },
+	{ name: 'closingText', label: 'Closing text' },
+	{ name: 'teamCards', label: 'Team cards' },
+	{ name: 'characterAssets', label: 'Character assets' },
+	{ name: 'imagePrompts', label: 'Image prompts' },
+	{ name: 'layoutPreset', label: 'Layout preset' },
+	{ name: 'layoutPresetLock', label: 'Layout preset lock' },
+	{ name: 'harmonyMode', label: 'Color harmony mode' },
+	{ name: 'paletteShuffleSeed', label: 'Color shuffle seed' },
+	{ name: 'lockAccentColor', label: 'Lock accent color' },
+	{ name: 'lockSecondaryColor', label: 'Lock secondary color' },
+	{ name: 'primaryColor', label: 'Deck primary' },
+	{ name: 'accentColor', label: 'Deck accent' },
+	{ name: 'secondaryColor', label: 'Deck secondary' },
+	{ name: 'backgroundColor', label: 'Deck background' },
+	{ name: 'textColor', label: 'Deck text' },
+	{ name: 'headingFont', label: 'Deck heading font' },
+	{ name: 'bodyFont', label: 'Deck body font' },
 ];
 
 const LAYOUT_PRESETS: Record<string, LayoutPreset> = {
 	[DEFAULT_LAYOUT_PRESET]: {
 		id: DEFAULT_LAYOUT_PRESET,
-		label: "Notso Premium v1",
+		label: 'Notso Premium v1',
 		slideLayoutByType: {
-			cover: "hook-cover",
-			problem: "problem-grid",
-			opportunity: "opportunity-split",
-			solution: "solution-centered",
-			"what-notso-does": "capability-grid",
-			"meet-buddy": "buddy-hero",
-			"experience-concept": "concept-split",
-			"chat-flow": "flow-split",
-			"example-interaction": "interaction-hero",
-			"business-impact": "impact-dark",
-			"data-analytics": "analytics-split",
-			"what-you-get": "deliverables-dark",
-			pricing: "pricing-3cards",
-			timeline: "timeline-horizontal",
-			closing: "closing-dark",
+			cover: 'hook-cover',
+			problem: 'problem-grid',
+			opportunity: 'opportunity-split',
+			solution: 'solution-centered',
+			'what-notso-does': 'capability-grid',
+			'meet-buddy': 'buddy-hero',
+			'experience-concept': 'concept-split',
+			'chat-flow': 'flow-split',
+			'example-interaction': 'interaction-hero',
+			'business-impact': 'impact-dark',
+			'data-analytics': 'analytics-split',
+			'what-you-get': 'deliverables-dark',
+			pricing: 'pricing-3cards',
+			timeline: 'timeline-horizontal',
+			closing: 'closing-dark',
 		},
 		imageRatioByType: {
-			cover: "16:9",
-			problem: "4:3",
-			opportunity: "4:3",
-			solution: "1:1",
-			"what-notso-does": "1:1",
-			"meet-buddy": "1:1",
-			"experience-concept": "4:3",
-			"chat-flow": "4:3",
-			"example-interaction": "16:9",
-			"business-impact": "1:1",
-			"data-analytics": "4:3",
-			"what-you-get": "1:1",
-			pricing: "4:3",
-			timeline: "16:9",
-			closing: "4:3",
+			cover: '16:9',
+			problem: '4:3',
+			opportunity: '4:3',
+			solution: '1:1',
+			'what-notso-does': '1:1',
+			'meet-buddy': '1:1',
+			'experience-concept': '4:3',
+			'chat-flow': '4:3',
+			'example-interaction': '16:9',
+			'business-impact': '1:1',
+			'data-analytics': '4:3',
+			'what-you-get': '1:1',
+			pricing: '4:3',
+			timeline: '16:9',
+			closing: '4:3',
 		},
 		backgroundModeByType: {
-			cover: "light",
-			problem: "light",
-			opportunity: "light",
-			solution: "light",
-			"what-notso-does": "light",
-			"meet-buddy": "light",
-			"experience-concept": "light",
-			"chat-flow": "light",
-			"example-interaction": "light",
-			"business-impact": "dark",
-			"data-analytics": "light",
-			"what-you-get": "dark",
-			pricing: "light",
-			timeline: "light",
-			closing: "dark",
+			cover: 'light',
+			problem: 'light',
+			opportunity: 'light',
+			solution: 'light',
+			'what-notso-does': 'light',
+			'meet-buddy': 'light',
+			'experience-concept': 'light',
+			'chat-flow': 'light',
+			'example-interaction': 'light',
+			'business-impact': 'dark',
+			'data-analytics': 'light',
+			'what-you-get': 'dark',
+			pricing: 'light',
+			timeline: 'light',
+			closing: 'dark',
 		},
 	},
 };
@@ -522,34 +522,38 @@ const LAYOUT_PRESETS: Record<string, LayoutPreset> = {
 /* ------------------------------------------------------------------ */
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function asBoolean(value: unknown, fallback = true): boolean {
-	if (typeof value === "boolean") return value;
-	if (typeof value === "string") {
+	if (typeof value === 'boolean') return value;
+	if (typeof value === 'string') {
 		const normalized = value.trim().toLowerCase();
-		if (["true", "1", "yes", "on"].includes(normalized)) return true;
-		if (["false", "0", "no", "off"].includes(normalized)) return false;
+		if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+		if (['false', '0', 'no', 'off'].includes(normalized)) return false;
 	}
 	return fallback;
 }
 
 function parseExcludedSlides(value: unknown): string[] {
-	if (Array.isArray(value))
-		return value.map((item: unknown) => safeText(item).toLowerCase()).filter(Boolean);
-	if (typeof value === "string")
+	if (Array.isArray(value)) {
+		return value
+			.map((item: unknown) => safeText(item).toLowerCase())
+			.filter(Boolean);
+	}
+	if (typeof value === 'string') {
 		return value
 			.split(/[,\n]/g)
 			.map((item) => safeText(item).toLowerCase())
 			.filter(Boolean);
+	}
 	return [];
 }
 
 function parsePairs(
 	value: unknown,
 	fallback: string[] = [],
-	separator = "::",
+	separator = '::',
 	limit = 8,
 ): Pair[] {
 	return normalizeList(value, fallback)
@@ -558,7 +562,7 @@ function parsePairs(
 			const [left, ...rest] = String(line).split(separator);
 			return {
 				title: safeText(left, line),
-				description: safeText(rest.join(separator), ""),
+				description: safeText(rest.join(separator), ''),
 			};
 		})
 		.filter((item) => item.title);
@@ -567,7 +571,7 @@ function parsePairs(
 function parseTriples(
 	value: unknown,
 	fallback: string[] = [],
-	separator = "::",
+	separator = '::',
 	limit = 6,
 ): Triple[] {
 	return normalizeList(value, fallback)
@@ -577,18 +581,18 @@ function parseTriples(
 				.split(separator)
 				.map((part) => safeText(part));
 			return {
-				name: a || "Tier",
-				price: b || "On request",
+				name: a || 'Tier',
+				price: b || 'On request',
 				description: safeText(
-					rest.join(" "),
-					"Scope details provided in proposal.",
+					rest.join(' '),
+					'Scope details provided in proposal.',
 				),
 			};
 		});
 }
 
 function parseTone(value: unknown, fallback: string[] = []): ToneSlider[] {
-	return parsePairs(value, fallback, "::", 4).map((item) => {
+	return parsePairs(value, fallback, '::', 4).map((item) => {
 		const score = Number.parseInt(item.description, 10);
 		return {
 			label: item.title,
@@ -597,8 +601,11 @@ function parseTone(value: unknown, fallback: string[] = []): ToneSlider[] {
 	});
 }
 
-function parseDeliverables(value: unknown, fallback: string[] = []): Deliverable[] {
-	return parsePairs(value, fallback, "::", 4).map((item) => ({
+function parseDeliverables(
+	value: unknown,
+	fallback: string[] = [],
+): Deliverable[] {
+	return parsePairs(value, fallback, '::', 4).map((item) => ({
 		title: item.title,
 		bullets: item.description
 			.split(/[;,]\s*/)
@@ -611,7 +618,7 @@ function parseDeliverables(value: unknown, fallback: string[] = []): Deliverable
 function parseCharacterAssets(value: unknown, limit = 10): CharacterAsset[] {
 	let list: unknown = value;
 
-	if (typeof value === "string") {
+	if (typeof value === 'string') {
 		try {
 			list = JSON.parse(value);
 		} catch {
@@ -629,15 +636,15 @@ function parseCharacterAssets(value: unknown, limit = 10): CharacterAsset[] {
 
 		const id = safeText(item.id, `asset-${index + 1}`);
 		const name = safeText(item.name, `Character asset ${index + 1}`);
-		const dataUrl = safeText(item.dataUrl || item.url, "");
-		const placement = safeText(item.placement, "all-mascot").toLowerCase();
+		const dataUrl = safeText(item.dataUrl || item.url, '');
+		const placement = safeText(item.placement, 'all-mascot').toLowerCase();
 
 		if (!dataUrl) continue;
 		if (
 			!(
-				dataUrl.startsWith("data:image/") ||
-				dataUrl.startsWith("/generated/") ||
-				/^https?:\/\//i.test(dataUrl)
+				dataUrl.startsWith('data:image/')
+				|| dataUrl.startsWith('/generated/')
+				|| /^https?:\/\//i.test(dataUrl)
 			)
 		) {
 			continue;
@@ -655,12 +662,12 @@ function resolveImageAssetForSlide(
 ): CharacterAsset | null {
 	if (!Array.isArray(assets) || !assets.length) return null;
 
-	const id = safeText(slideId, "").toLowerCase();
+	const id = safeText(slideId, '').toLowerCase();
 	const mascotSlides = new Set([
-		"cover",
-		"meet-buddy",
-		"example-interaction",
-		"closing",
+		'cover',
+		'meet-buddy',
+		'example-interaction',
+		'closing',
 	]);
 
 	const exact = assets.find((asset) => asset.placement === id);
@@ -669,13 +676,12 @@ function resolveImageAssetForSlide(
 	if (mascotSlides.has(id)) {
 		return (
 			assets.find(
-				(asset) =>
-					asset.placement === "all-mascot" || asset.placement === "mascot",
+				(asset) => asset.placement === 'all-mascot' || asset.placement === 'mascot',
 			) || assets[0]
 		);
 	}
 
-	return assets.find((asset) => asset.placement === "all") || null;
+	return assets.find((asset) => asset.placement === 'all') || null;
 }
 
 function withSlide(
@@ -696,35 +702,35 @@ function defaultImagePrompt(
 	mascotName: string,
 ): string {
 	switch (type) {
-		case "cover":
+		case 'cover':
 			return `Hero composition with ${mascotName} overlapping device UI for ${project.clientName}.`;
-		case "problem":
+		case 'problem':
 			return `Clean problem-state visual showing friction in support journey for ${project.clientName}.`;
-		case "opportunity":
+		case 'opportunity':
 			return `Optimistic before/after visual of user support improvement with ${mascotName}.`;
-		case "solution":
-			return "Three-block solution visual: character, AI intelligence, interaction layer.";
-		case "what-notso-does":
-			return "2x2 capability card visual with product-style iconography and mascot accents.";
-		case "meet-buddy":
+		case 'solution':
+			return 'Three-block solution visual: character, AI intelligence, interaction layer.';
+		case 'what-notso-does':
+			return '2x2 capability card visual with product-style iconography and mascot accents.';
+		case 'meet-buddy':
 			return `${mascotName} full-body hero render with expressive personality variations.`;
-		case "experience-concept":
+		case 'experience-concept':
 			return `Concept diagram with ${mascotName} moving between key product moments.`;
-		case "chat-flow":
-			return "Structured chat funnel visual with simple step transitions.";
-		case "example-interaction":
-			return "Large phone/tablet mockup with realistic chat bubbles and mascot overlap.";
-		case "business-impact":
-			return "Bold dark-slide impact icons for conversion, support, engagement, and brand lift.";
-		case "data-analytics":
-			return "Dashboard mockup with clean charts and mascot helper element.";
-		case "what-you-get":
-			return "Four-column product deliverable visual with icons and concise labels.";
-		case "pricing":
-			return "Premium SaaS three-tier pricing card visual with highlighted recommended tier.";
-		case "timeline":
-			return "Horizontal three-phase timeline visual with milestones.";
-		case "closing":
+		case 'chat-flow':
+			return 'Structured chat funnel visual with simple step transitions.';
+		case 'example-interaction':
+			return 'Large phone/tablet mockup with realistic chat bubbles and mascot overlap.';
+		case 'business-impact':
+			return 'Bold dark-slide impact icons for conversion, support, engagement, and brand lift.';
+		case 'data-analytics':
+			return 'Dashboard mockup with clean charts and mascot helper element.';
+		case 'what-you-get':
+			return 'Four-column product deliverable visual with icons and concise labels.';
+		case 'pricing':
+			return 'Premium SaaS three-tier pricing card visual with highlighted recommended tier.';
+		case 'timeline':
+			return 'Horizontal three-phase timeline visual with milestones.';
+		case 'closing':
 			return `${mascotName} closing hero visual with confident CTA atmosphere.`;
 		default:
 			return `Premium visual for ${project.clientName} proposal slide.`;
@@ -771,35 +777,41 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 	const layoutPreset = resolveLayoutPreset(rawData.layoutPreset);
 	const layoutPresetLock = asBoolean(rawData.layoutPresetLock, true);
 	const paletteResult = resolveThemePalette({
-		primaryColor: safeText(rawData.primaryColor, "#004B49"),
-		harmonyMode: safeText(rawData.harmonyMode, ""),
+		primaryColor: safeText(rawData.primaryColor, '#004B49'),
+		harmonyMode: safeText(rawData.harmonyMode, ''),
 		shuffleSeed: rawData.paletteShuffleSeed,
 		locks: {
 			accentColor: asBoolean(rawData.lockAccentColor, false),
 			secondaryColor: asBoolean(rawData.lockSecondaryColor, false),
 		},
 		manualColors: {
-			accentColor: safeText(rawData.deckAccentColor || rawData.accentColor, ""),
-			secondaryColor: safeText(rawData.deckSecondaryColor || rawData.secondaryColor, ""),
-			backgroundColor: safeText(rawData.deckBackgroundColor || rawData.backgroundColor, ""),
-			textColor: safeText(rawData.deckTextColor || rawData.textColor, ""),
+			accentColor: safeText(rawData.deckAccentColor || rawData.accentColor, ''),
+			secondaryColor: safeText(
+				rawData.deckSecondaryColor || rawData.secondaryColor,
+				'',
+			),
+			backgroundColor: safeText(
+				rawData.deckBackgroundColor || rawData.backgroundColor,
+				'',
+			),
+			textColor: safeText(rawData.deckTextColor || rawData.textColor, ''),
 		},
 	});
 
 	const appTheme: AppTheme = {
-		surfaceTop: "#EAF4FF",
-		surfaceBottom: "#F8FBFF",
-		card: "#FFFFFF",
-		line: "#CFDDFF",
-		text: "#102347",
-		muted: "#4F5F83",
-		primaryColor: "#0B1F4D",
-		accentColor: "#00C4CC",
-		secondaryColor: "#7D2AE8",
+		surfaceTop: '#EAF4FF',
+		surfaceBottom: '#F8FBFF',
+		card: '#FFFFFF',
+		line: '#CFDDFF',
+		text: '#102347',
+		muted: '#4F5F83',
+		primaryColor: '#0B1F4D',
+		accentColor: '#00C4CC',
+		secondaryColor: '#7D2AE8',
 	};
 
 	const deckTheme: DeckTheme = {
-		brandName: safeText(rawData.brandName, "Notso AI"),
+		brandName: safeText(rawData.brandName, 'Notso AI'),
 		primaryColor: paletteResult.theme.primaryColor,
 		accentColor: paletteResult.theme.accentColor,
 		secondaryColor: paletteResult.theme.secondaryColor,
@@ -809,66 +821,66 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 		paletteShuffleSeed: paletteResult.shuffleSeed,
 		headingFont: safeText(
 			rawData.deckHeadingFont || rawData.headingFont,
-			"Sora",
+			'Sora',
 		),
-		bodyFont: safeText(rawData.deckBodyFont || rawData.bodyFont, "Inter"),
+		bodyFont: safeText(rawData.deckBodyFont || rawData.bodyFont, 'Inter'),
 	};
 
 	const project: Project = {
-		clientName: safeText(rawData.clientName, "Acme Client"),
-		clientUrl: safeText(rawData.clientUrl, "https://www.acme-client.com"),
-		projectTitle: safeText(rawData.projectTitle, "AI Mascot Proposal"),
+		clientName: safeText(rawData.clientName, 'Acme Client'),
+		clientUrl: safeText(rawData.clientUrl, 'https://www.acme-client.com'),
+		projectTitle: safeText(rawData.projectTitle, 'AI Mascot Proposal'),
 		coverOneLiner: safeText(
 			rawData.coverOneLiner,
-			"A playful, premium chatbot experience that converts and delights.",
+			'A playful, premium chatbot experience that converts and delights.',
 		),
 		subtitle: safeText(
 			rawData.subtitle,
-			"A reusable digital buddy concept tailored to your brand.",
+			'A reusable digital buddy concept tailored to your brand.',
 		),
-		proposalDate: safeText(rawData.proposalDate, "June 2026"),
-		mascotName: safeText(rawData.mascotName, "Sven"),
-		deckVersion: safeText(rawData.deckVersion, "v1.0"),
-		contactName: safeText(rawData.contactName, "Max Kowalski"),
-		contactEmail: safeText(rawData.contactEmail, "max@notso.ai"),
-		contactPhone: safeText(rawData.contactPhone, "+31 6 40450599"),
+		proposalDate: safeText(rawData.proposalDate, 'June 2026'),
+		mascotName: safeText(rawData.mascotName, 'Sven'),
+		deckVersion: safeText(rawData.deckVersion, 'v1.0'),
+		contactName: safeText(rawData.contactName, 'Max Kowalski'),
+		contactEmail: safeText(rawData.contactEmail, 'max@notso.ai'),
+		contactPhone: safeText(rawData.contactPhone, '+31 6 40450599'),
 		characterAssets: parseCharacterAssets(rawData.characterAssets),
 	};
 
 	const content: Content = {
 		problemPoints: normalizeList(rawData.problemPoints, [
 			`${project.clientName} loses momentum when visitors do not get instant answers.`,
-			"Support teams repeat the same pre-sales and service responses manually.",
-			"Current automation lacks brand personality and emotional connection.",
+			'Support teams repeat the same pre-sales and service responses manually.',
+			'Current automation lacks brand personality and emotional connection.',
 		]).slice(0, 4),
 		opportunityPoints: normalizeList(rawData.opportunityPoints, [
-			"Convert static support into guided, interactive discovery.",
-			"Reduce service load with intelligent first-line responses.",
+			'Convert static support into guided, interactive discovery.',
+			'Reduce service load with intelligent first-line responses.',
 			`Create a memorable branded assistant with ${project.mascotName}.`,
 		]).slice(0, 4),
 		solutionPillars: parsePairs(
 			rawData.solutionPillars,
 			[
-				"Character :: A custom digital buddy with recognizable personality.",
-				"AI :: Smart intent handling and dynamic guidance.",
-				"Interaction :: Conversational UI for web, mobile, and campaign touchpoints.",
+				'Character :: A custom digital buddy with recognizable personality.',
+				'AI :: Smart intent handling and dynamic guidance.',
+				'Interaction :: Conversational UI for web, mobile, and campaign touchpoints.',
 			],
-			"::",
+			'::',
 			3,
 		),
 		whatNotsoIntro: safeText(
 			rawData.whatNotsoIntro,
-			"At Notso AI, we design and deploy animated AI characters that turn support and sales conversations into premium experiences.",
+			'At Notso AI, we design and deploy animated AI characters that turn support and sales conversations into premium experiences.',
 		),
 		whatNotsoCards: parsePairs(
 			rawData.whatNotsoCards,
 			[
-				"Strategy & Personality :: We define tone, role, and emotional behavior.",
-				"Design & Animation :: High-quality mascot animation and motion direction.",
-				"Smart Conversations :: Structured chat logic with conversion intent.",
-				"Measurable Impact :: Analytics visibility for performance and optimization.",
+				'Strategy & Personality :: We define tone, role, and emotional behavior.',
+				'Design & Animation :: High-quality mascot animation and motion direction.',
+				'Smart Conversations :: Structured chat logic with conversion intent.',
+				'Measurable Impact :: Analytics visibility for performance and optimization.',
 			],
-			"::",
+			'::',
 			4,
 		),
 		buddyDescription: safeText(
@@ -876,71 +888,71 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 			`${project.mascotName} is a playful but practical assistant that guides users with empathy, clarity, and speed.`,
 		),
 		buddyPersonality: normalizeList(rawData.buddyPersonality, [
-			"Friendly and professional tone",
-			"Emotion-aware replies",
-			"Brand-consistent language",
-			"Conversion-focused prompts",
+			'Friendly and professional tone',
+			'Emotion-aware replies',
+			'Brand-consistent language',
+			'Conversion-focused prompts',
 		]).slice(0, 5),
 		toneSliders: parseTone(rawData.toneSliders, [
-			"Friendly :: 88",
-			"Professional :: 74",
-			"Playful :: 69",
-			"Direct :: 82",
+			'Friendly :: 88',
+			'Professional :: 74',
+			'Playful :: 69',
+			'Direct :: 82',
 		]),
 		experienceConcept: normalizeList(rawData.experienceConcept, [
-			"User starts on website, greeted by mascot assistant.",
-			"Assistant routes intent to product, support, or booking path.",
-			"Recommendations adapt to user behavior and preference.",
-			"Outcome-driven CTA closes loop with conversion or handoff.",
+			'User starts on website, greeted by mascot assistant.',
+			'Assistant routes intent to product, support, or booking path.',
+			'Recommendations adapt to user behavior and preference.',
+			'Outcome-driven CTA closes loop with conversion or handoff.',
 		]).slice(0, 6),
 		chatFlow: normalizeList(rawData.chatFlow, [
-			"Greeting",
-			"Discovery",
-			"Suggestions",
-			"Personalization",
-			"Conversion",
+			'Greeting',
+			'Discovery',
+			'Suggestions',
+			'Personalization',
+			'Conversion',
 		]).slice(0, 6),
 		interactionExample: normalizeList(rawData.interactionExample, [
-			"User: I need help picking the best chair.",
-			"Buddy: Great, do you prefer ergonomic or lounge style?",
-			"User: Ergonomic for long work sessions.",
-			"Buddy: I recommend Comfort LX006, would you like a quick comparison?",
+			'User: I need help picking the best chair.',
+			'Buddy: Great, do you prefer ergonomic or lounge style?',
+			'User: Ergonomic for long work sessions.',
+			'Buddy: I recommend Comfort LX006, would you like a quick comparison?',
 		]).slice(0, 8),
 		businessImpact: normalizeList(rawData.businessImpact, [
-			"Increase conversion rate",
-			"Reduce support load",
-			"Improve engagement",
-			"Strengthen branded recall",
+			'Increase conversion rate',
+			'Reduce support load',
+			'Improve engagement',
+			'Strengthen branded recall',
 		]).slice(0, 4),
 		analyticsDescription: safeText(
 			rawData.analyticsDescription,
-			"Every interaction is tracked and analyzed to improve messaging, product guidance, and conversion outcomes.",
+			'Every interaction is tracked and analyzed to improve messaging, product guidance, and conversion outcomes.',
 		),
 		analyticsBullets: normalizeList(rawData.analyticsBullets, [
-			"Live dashboard for conversation and conversion metrics",
-			"Top questions and topic trends",
-			"Interaction volume and dwell-time tracking",
-			"Exportable monthly reports",
+			'Live dashboard for conversation and conversion metrics',
+			'Top questions and topic trends',
+			'Interaction volume and dwell-time tracking',
+			'Exportable monthly reports',
 		]).slice(0, 7),
 		deliverables: parseDeliverables(rawData.deliverables, [
-			"Deployment-ready mascot :: Branded character; 40+ expressions; campaign-ready assets",
-			"Multichannel access :: Website widget; mobile support; campaign microsites",
-			"Performance insights :: Dashboard access; reporting cadence; optimization recommendations",
-			"Brand activation media :: Social visuals; video loops; launch pack templates",
+			'Deployment-ready mascot :: Branded character; 40+ expressions; campaign-ready assets',
+			'Multichannel access :: Website widget; mobile support; campaign microsites',
+			'Performance insights :: Dashboard access; reporting cadence; optimization recommendations',
+			'Brand activation media :: Social visuals; video loops; launch pack templates',
 		]),
 		pricing: parseTriples(rawData.pricing, [
-			"Basic - Chat :: EUR 2.600,- :: 3D mascot based on template;Template rig;Emotion based",
-			"Premium - Chat :: EUR 24.000,- :: Custom-designed mascot;Full rig 40+ animations;Advanced LLM integration",
-			"Pro - Chat & Voice :: EUR 38.000,- :: Custom mascot;Voice support;Advanced analytics",
+			'Basic - Chat :: EUR 2.600,- :: 3D mascot based on template;Template rig;Emotion based',
+			'Premium - Chat :: EUR 24.000,- :: Custom-designed mascot;Full rig 40+ animations;Advanced LLM integration',
+			'Pro - Chat & Voice :: EUR 38.000,- :: Custom mascot;Voice support;Advanced analytics',
 		]),
 		timeline: parsePairs(
 			rawData.timeline,
 			[
-				"Month 1 :: Discovery, concept alignment, and storyboard.",
-				"Month 2 :: Design production, conversation flow build.",
-				"Month 3 :: Integration, launch readiness, optimization kickoff.",
+				'Month 1 :: Discovery, concept alignment, and storyboard.',
+				'Month 2 :: Design production, conversation flow build.',
+				'Month 3 :: Integration, launch readiness, optimization kickoff.',
 			],
-			"::",
+			'::',
 			3,
 		),
 		closingText: safeText(
@@ -950,42 +962,42 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 		teamCards: parsePairs(
 			rawData.teamCards,
 			[
-				"Strategy Lead :: Vision, scope, and decision alignment",
-				"Conversation Designer :: Dialog logic and flow quality",
-				"Motion Designer :: Character and animation polish",
-				"Implementation Engineer :: Integration and launch delivery",
+				'Strategy Lead :: Vision, scope, and decision alignment',
+				'Conversation Designer :: Dialog logic and flow quality',
+				'Motion Designer :: Character and animation polish',
+				'Implementation Engineer :: Integration and launch delivery',
 			],
-			"::",
+			'::',
 			4,
 		),
 		characterAssets: project.characterAssets,
 		imagePrompts: normalizeList(rawData.imagePrompts, [
 			`Cover hero visual with ${project.mascotName} and tablet mockup for ${project.clientName}.`,
-			"Problem-state visual with fragmented customer support journey.",
-			"Opportunity visual showing before/after support transformation.",
-			"Solution visual with 3 modular pillars: character, AI, interaction.",
-			"Capability grid visual with icon-based cards and mascot accents.",
+			'Problem-state visual with fragmented customer support journey.',
+			'Opportunity visual showing before/after support transformation.',
+			'Solution visual with 3 modular pillars: character, AI, interaction.',
+			'Capability grid visual with icon-based cards and mascot accents.',
 			`${project.mascotName} full character hero render with expressions.`,
-			"Experience concept visual flow with mascot between touchpoints.",
-			"Chat funnel visual with step-by-step conversation blocks.",
-			"Large interaction mockup with realistic chat bubbles and mascot.",
-			"Dark impact slide with bold conversion/support/engagement icons.",
-			"Analytics dashboard visual with clean charts and KPIs.",
-			"Four-column deliverables visual with productized sections.",
-			"Premium SaaS pricing comparison cards with highlighted tier.",
-			"Horizontal 3-phase timeline with milestones.",
+			'Experience concept visual flow with mascot between touchpoints.',
+			'Chat funnel visual with step-by-step conversation blocks.',
+			'Large interaction mockup with realistic chat bubbles and mascot.',
+			'Dark impact slide with bold conversion/support/engagement icons.',
+			'Analytics dashboard visual with clean charts and KPIs.',
+			'Four-column deliverables visual with productized sections.',
+			'Premium SaaS pricing comparison cards with highlighted tier.',
+			'Horizontal 3-phase timeline with milestones.',
 			`Closing hero visual for ${project.mascotName} with confident CTA.`,
 		]).slice(0, 30),
 	};
 
 	const allSlides: SlideData[] = [
 		withSlide(
-			"cover",
-			"cover",
+			'cover',
+			'cover',
 			project.projectTitle,
 			project.coverOneLiner,
-			"Create immediate emotional impact and context.",
-			"projectTitle",
+			'Create immediate emotional impact and context.',
+			'projectTitle',
 			{
 				oneLiner: project.coverOneLiner,
 				proposalDate: project.proposalDate,
@@ -994,57 +1006,57 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 			},
 		),
 		withSlide(
-			"problem",
-			"problem",
-			"The Problem",
-			"What is blocking growth today.",
-			"Create tension and urgency.",
-			"problemPoints",
+			'problem',
+			'problem',
+			'The Problem',
+			'What is blocking growth today.',
+			'Create tension and urgency.',
+			'problemPoints',
 			{
 				points: content.problemPoints,
 			},
 		),
 		withSlide(
-			"opportunity",
-			"opportunity",
-			"The Opportunity",
-			"What becomes possible with the right assistant.",
-			"Shift from friction to possibility.",
-			"opportunityPoints",
+			'opportunity',
+			'opportunity',
+			'The Opportunity',
+			'What becomes possible with the right assistant.',
+			'Shift from friction to possibility.',
+			'opportunityPoints',
 			{
 				points: content.opportunityPoints,
 			},
 		),
 		withSlide(
-			"solution",
-			"solution",
-			"The Solution",
-			"Character + AI + interaction model.",
-			"Provide simple clarity of approach.",
-			"solutionPillars",
+			'solution',
+			'solution',
+			'The Solution',
+			'Character + AI + interaction model.',
+			'Provide simple clarity of approach.',
+			'solutionPillars',
 			{
 				pillars: content.solutionPillars,
 			},
 		),
 		withSlide(
-			"what-notso-does",
-			"what-notso-does",
-			"What Notso AI Does",
-			"A productized approach to animated AI assistants.",
-			"Build credibility with clear capability blocks.",
-			"whatNotsoCards",
+			'what-notso-does',
+			'what-notso-does',
+			'What Notso AI Does',
+			'A productized approach to animated AI assistants.',
+			'Build credibility with clear capability blocks.',
+			'whatNotsoCards',
 			{
 				intro: content.whatNotsoIntro,
 				cards: content.whatNotsoCards,
 			},
 		),
 		withSlide(
-			"meet-buddy",
-			"meet-buddy",
+			'meet-buddy',
+			'meet-buddy',
 			`Meet ${project.mascotName}`,
-			"Personality and tone profile.",
-			"Create emotional connection with the mascot.",
-			"buddyDescription",
+			'Personality and tone profile.',
+			'Create emotional connection with the mascot.',
+			'buddyDescription',
 			{
 				mascotName: project.mascotName,
 				description: content.buddyDescription,
@@ -1053,102 +1065,102 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 			},
 		),
 		withSlide(
-			"experience-concept",
-			"experience-concept",
-			"Experience Concept",
-			"How the assistant moves across product moments.",
-			"Show interaction concept and visual journey.",
-			"experienceConcept",
+			'experience-concept',
+			'experience-concept',
+			'Experience Concept',
+			'How the assistant moves across product moments.',
+			'Show interaction concept and visual journey.',
+			'experienceConcept',
 			{
 				points: content.experienceConcept,
 			},
 		),
 		withSlide(
-			"chat-flow",
-			"chat-flow",
-			"Chat Flow",
-			"The logic behind each conversation.",
-			"Explain the operational conversation steps.",
-			"chatFlow",
+			'chat-flow',
+			'chat-flow',
+			'Chat Flow',
+			'The logic behind each conversation.',
+			'Explain the operational conversation steps.',
+			'chatFlow',
 			{
 				steps: content.chatFlow,
 			},
 		),
 		withSlide(
-			"example-interaction",
-			"example-interaction",
-			"Example Interaction",
-			"How it feels in a real user moment.",
-			"Make the concept tangible with a realistic interaction.",
-			"interactionExample",
+			'example-interaction',
+			'example-interaction',
+			'Example Interaction',
+			'How it feels in a real user moment.',
+			'Make the concept tangible with a realistic interaction.',
+			'interactionExample',
 			{
 				messages: content.interactionExample,
 				mascotName: project.mascotName,
 			},
 		),
 		withSlide(
-			"business-impact",
-			"business-impact",
-			"Business Impact",
-			"The commercial outcome of this assistant.",
-			"Sell business value in one glance.",
-			"businessImpact",
+			'business-impact',
+			'business-impact',
+			'Business Impact',
+			'The commercial outcome of this assistant.',
+			'Sell business value in one glance.',
+			'businessImpact',
 			{
 				impacts: content.businessImpact,
 			},
 		),
 		withSlide(
-			"data-analytics",
-			"data-analytics",
-			"Data & Analytics",
-			"Insights that improve performance over time.",
-			"Show the intelligence and measurable layer.",
-			"analyticsBullets",
+			'data-analytics',
+			'data-analytics',
+			'Data & Analytics',
+			'Insights that improve performance over time.',
+			'Show the intelligence and measurable layer.',
+			'analyticsBullets',
 			{
 				description: content.analyticsDescription,
 				bullets: content.analyticsBullets,
 			},
 		),
 		withSlide(
-			"what-you-get",
-			"what-you-get",
-			"What You Get",
-			"Deliverables packaged for deployment and growth.",
-			"Clarify exactly what is included.",
-			"deliverables",
+			'what-you-get',
+			'what-you-get',
+			'What You Get',
+			'Deliverables packaged for deployment and growth.',
+			'Clarify exactly what is included.',
+			'deliverables',
 			{
 				sections: content.deliverables,
 			},
 		),
 		withSlide(
-			"pricing",
-			"pricing",
-			"Pricing",
-			"Flexible solutions based on ambition and scope.",
-			"Make decision-making easy.",
-			"pricing",
+			'pricing',
+			'pricing',
+			'Pricing',
+			'Flexible solutions based on ambition and scope.',
+			'Make decision-making easy.',
+			'pricing',
 			{
 				packages: content.pricing,
 			},
 		),
 		withSlide(
-			"timeline",
-			"timeline",
-			"Timeline",
-			"A clear 3-month execution path.",
-			"Reduce risk with transparent phasing.",
-			"timeline",
+			'timeline',
+			'timeline',
+			'Timeline',
+			'A clear 3-month execution path.',
+			'Reduce risk with transparent phasing.',
+			'timeline',
 			{
 				phases: content.timeline,
 			},
 		),
 		withSlide(
-			"closing",
-			"closing",
+			'closing',
+			'closing',
 			"Let's Build This Together",
-			"From concept to launch-ready experience.",
-			"Drive commitment and next action.",
-			"closingText",
+			'From concept to launch-ready experience.',
+			'Drive commitment and next action.',
+			'closingText',
 			{
 				headline: `Let's build ${project.mascotName}`,
 				text: content.closingText,
@@ -1163,23 +1175,21 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 
 	const slidesWithLayout: SlideWithLayout[] = allSlides.map((slide, index) => {
 		const lockedLayout = layoutPreset.slideLayoutByType[slide.type];
-		const imageRatio = layoutPreset.imageRatioByType[slide.type] || "16:9";
-		const backgroundMode =
-			layoutPreset.backgroundModeByType[slide.type] || "light";
+		const imageRatio = layoutPreset.imageRatioByType[slide.type] || '16:9';
+		const backgroundMode = layoutPreset.backgroundModeByType[slide.type] || 'light';
 		const layoutKey = layoutPresetLock
 			? lockedLayout || slide.type
 			: safeText(rawData[`layout_${slide.id}`], lockedLayout || slide.type);
 		const slotPolicy = resolveSlotPolicy(slide.type);
-		const imageMode = resolveImageModeForSlide(slide.type, "");
+		const imageMode = resolveImageModeForSlide(slide.type, '');
 
 		return {
 			...slide,
 			layoutKey,
 			imageRatio,
 			backgroundMode,
-			imagePrompt:
-				content.imagePrompts[index] ||
-				defaultImagePrompt(slide.type, project, project.mascotName),
+			imagePrompt: content.imagePrompts[index]
+				|| defaultImagePrompt(slide.type, project, project.mascotName),
 			imageAsset: resolveImageAssetForSlide(slide.id, content.characterAssets),
 			slotPolicy,
 			imageMode,
@@ -1192,10 +1202,12 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 	);
 	if (!slides.length) slides = slidesWithLayout.slice(0, 1);
 
-	const availableSlides: AvailableSlide[] = template.slides.map((slideMeta) => ({
-		...slideMeta,
-		included: !excludedSlides.has(slideMeta.id),
-	}));
+	const availableSlides: AvailableSlide[] = template.slides.map(
+		(slideMeta) => ({
+			...slideMeta,
+			included: !excludedSlides.has(slideMeta.id),
+		}),
+	);
 
 	return {
 		template: {

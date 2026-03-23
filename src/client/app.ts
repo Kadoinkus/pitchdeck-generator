@@ -1,10 +1,5 @@
-import {
-	DEFAULT_THEME_COLORS,
-	normalizeHexColor,
-	resolveThemePalette,
-	type ThemeColors,
-} from "./color-palette.js";
-import { showViewer, updateViewerData } from "./viewer.js";
+import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette, type ThemeColors } from './color-palette.ts';
+import { showViewer, updateViewerData } from './viewer.ts';
 
 interface SlideEntry {
 	type: string;
@@ -85,84 +80,87 @@ interface ProviderOption {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null;
+	return typeof value === 'object' && value !== null;
 }
 
 function isStringRecord(value: unknown): value is Record<string, string> {
 	if (!isRecord(value)) return false;
-	return Object.values(value).every((v) => typeof v === "string");
+	return Object.values(value).every((v) => typeof v === 'string');
 }
 
 function isDeckResult(value: unknown): value is DeckResult {
-	return isRecord(value) && "downloadUrl" in value && "slideData" in value;
+	return isRecord(value) && 'downloadUrl' in value && 'slideData' in value;
 }
 
-const AI_SETTINGS_KEY = "proposalDeckAiSettingsV3";
-const DRAFT_STORAGE_KEY = "proposalDeckDraftV4";
-const DECK_RESULT_STORAGE_KEY = "proposalDeckLastResultV1";
+const AI_SETTINGS_KEY = 'proposalDeckAiSettingsV3';
+const DRAFT_STORAGE_KEY = 'proposalDeckDraftV4';
+const DECK_RESULT_STORAGE_KEY = 'proposalDeckLastResultV1';
 const HISTORY_LIMIT = 80;
 
-const form = document.getElementById("deck-form")!;
-const templateSelect = document.getElementById("templateId")!;
-const slideSelector = document.getElementById("slide-selector")!;
-const includeAllSlidesButton = document.getElementById("include-all-slides")!;
-const includeCoreSlidesButton = document.getElementById("include-core-slides")!;
-const layoutPresetSelect = document.getElementById("layoutPreset");
-const layoutPresetLock = document.getElementById("layoutPresetLock");
-const primaryColorInput = document.getElementById("primaryColor");
-const accentColorInput = document.getElementById("accentColor");
-const secondaryColorInput = document.getElementById("secondaryColor");
-const backgroundColorInput = document.getElementById("backgroundColor");
-const textColorInput = document.getElementById("textColor");
-const harmonyModeSelect = document.getElementById("harmonyMode");
-const paletteShuffleSeedInput = document.getElementById("paletteShuffleSeed");
-const shuffleHarmonyButton = document.getElementById("shuffle-harmony");
-const lockAccentColorInput = document.getElementById("lock-accentColor");
-const lockSecondaryColorInput = document.getElementById("lock-secondaryColor");
-const paletteStatusEl = document.getElementById("palette-status");
-const autoFillButton = document.getElementById("ai-autofill")!;
-const generateButton = document.getElementById("generate-button")!;
-const statusEl = document.getElementById("status")!;
+const form = document.getElementById('deck-form')!;
+const templateSelect = document.getElementById('templateId')!;
+const slideSelector = document.getElementById('slide-selector')!;
+const includeAllSlidesButton = document.getElementById('include-all-slides')!;
+const includeCoreSlidesButton = document.getElementById('include-core-slides')!;
+const layoutPresetSelect = document.getElementById('layoutPreset');
+const layoutPresetLock = document.getElementById('layoutPresetLock');
+const primaryColorInput = document.getElementById('primaryColor');
+const accentColorInput = document.getElementById('accentColor');
+const secondaryColorInput = document.getElementById('secondaryColor');
+const backgroundColorInput = document.getElementById('backgroundColor');
+const textColorInput = document.getElementById('textColor');
+const harmonyModeSelect = document.getElementById('harmonyMode');
+const paletteShuffleSeedInput = document.getElementById('paletteShuffleSeed');
+const shuffleHarmonyButton = document.getElementById('shuffle-harmony');
+const lockAccentColorInput = document.getElementById('lock-accentColor');
+const lockSecondaryColorInput = document.getElementById('lock-secondaryColor');
+const paletteStatusEl = document.getElementById('palette-status');
+const autoFillButton = document.getElementById('ai-autofill')!;
+const generateButton = document.getElementById('generate-button')!;
+const statusEl = document.getElementById('status')!;
 
-const saveAiSettingsButton = document.getElementById("save-ai-settings")!;
-const characterAssetsInput = document.getElementById("character-assets-input");
+const saveAiSettingsButton = document.getElementById('save-ai-settings')!;
+const characterAssetsInput = document.getElementById('character-assets-input');
 const characterAssetsPreview = document.getElementById(
-	"character-assets-preview",
+	'character-assets-preview',
 );
 const characterAssetsStatus = document.getElementById(
-	"character-assets-status",
+	'character-assets-status',
 );
 const clearCharacterAssetsButton = document.getElementById(
-	"clear-character-assets",
+	'clear-character-assets',
 );
 
-const outputStatus = document.getElementById("output-status")!;
-const openViewerLink = document.getElementById("open-viewer-link")!;
-const downloadPptxLink = document.getElementById("download-pptx-link");
-const downloadPdfLink = document.getElementById("download-pdf-link");
-const openShareLink = document.getElementById("open-share-link");
-const copyShareLinkButton = document.getElementById("copy-share-link")!;
-const projectNameDisplay = document.getElementById("project-name-display");
+const outputStatus = document.getElementById('output-status')!;
+const openViewerLink = document.getElementById('open-viewer-link')!;
+const downloadPptxLink = document.getElementById('download-pptx-link');
+const downloadPdfLink = document.getElementById('download-pdf-link');
+const openShareLink = document.getElementById('open-share-link');
+const copyShareLinkButton = document.getElementById('copy-share-link')!;
+const projectNameDisplay = document.getElementById('project-name-display');
 const projectContextDisplay = document.getElementById(
-	"project-context-display",
+	'project-context-display',
 );
-const saveIndicator = document.getElementById("save-indicator");
-const undoChangeButton = document.getElementById("undo-change");
-const redoChangeButton = document.getElementById("redo-change");
-const slideViewerEl = document.getElementById("slide-viewer");
+const saveIndicator = document.getElementById('save-indicator');
+const undoChangeButton = document.getElementById('undo-change');
+const redoChangeButton = document.getElementById('redo-change');
+const slideViewerEl = document.getElementById('slide-viewer');
 
-const chatLauncher = document.getElementById("viewer-chat-launcher")!;
-const chatPanel = document.getElementById("viewer-chat-panel")!;
-const chatClose = document.getElementById("viewer-chat-close")!;
-const chatTargetEl = document.getElementById("viewer-chat-target")!;
-const chatMessagesEl = document.getElementById("viewer-chat-messages")!;
-const chatSuggestionsEl = document.getElementById("viewer-chat-suggestions")!;
-const chatInputEl = document.getElementById("viewer-chat-input")!;
-const chatSendButton = document.getElementById("viewer-chat-send")!;
+const chatLauncher = document.getElementById('viewer-chat-launcher')!;
+const chatPanel = document.getElementById('viewer-chat-panel')!;
+const chatClose = document.getElementById('viewer-chat-close')!;
+const chatTargetEl = document.getElementById('viewer-chat-target')!;
+const chatMessagesEl = document.getElementById('viewer-chat-messages')!;
+const chatSuggestionsEl = document.getElementById('viewer-chat-suggestions')!;
+const chatInputEl = document.getElementById('viewer-chat-input')!;
+const chatSendButton = document.getElementById('viewer-chat-send')!;
 
 const templateMap = new Map<string, TemplateEntry>();
 let currentDeckResult: DeckResult | null = null;
-let chatTarget: ChatTarget = { field: "global-concept", label: "Global concept" };
+let chatTarget: ChatTarget = {
+	field: 'global-concept',
+	label: 'Global concept',
+};
 const chatHistory: ChatMessage[] = [];
 let characterAssets: CharacterAsset[] = [];
 let historyStack: HistoryEntry[] = [];
@@ -170,22 +168,22 @@ let historyIndex = -1;
 let suspendHistory = false;
 let autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 let historyInputTimer: ReturnType<typeof setTimeout> | null = null;
-let lastSavedSignature = "";
+let lastSavedSignature = '';
 
 const CHARACTER_PLACEMENTS: Array<{ value: string; label: string }> = [
-	{ value: "all-mascot", label: "All mascot slides" },
-	{ value: "cover", label: "Cover" },
-	{ value: "meet-buddy", label: "Meet the buddy" },
-	{ value: "example-interaction", label: "Example interaction" },
-	{ value: "closing", label: "Closing" },
-	{ value: "all", label: "All slides" },
+	{ value: 'all-mascot', label: 'All mascot slides' },
+	{ value: 'cover', label: 'Cover' },
+	{ value: 'meet-buddy', label: 'Meet the buddy' },
+	{ value: 'example-interaction', label: 'Example interaction' },
+	{ value: 'closing', label: 'Closing' },
+	{ value: 'all', label: 'All slides' },
 ];
 
 function getInputValue(el: HTMLElement | null): string {
 	if (el instanceof HTMLInputElement) return el.value;
 	if (el instanceof HTMLSelectElement) return el.value;
 	if (el instanceof HTMLTextAreaElement) return el.value;
-	return "";
+	return '';
 }
 
 function setInputValue(el: HTMLElement | null, value: string): void {
@@ -215,13 +213,13 @@ const brandColorControls: Record<keyof ThemeColors, HTMLElement | null> = {
 function syncLayoutPresetLockUi(): void {
 	if (!layoutPresetSelect || !layoutPresetLock) return;
 	setDisabled(layoutPresetSelect, false);
-	layoutPresetSelect.classList.toggle("is-locked", isChecked(layoutPresetLock));
+	layoutPresetSelect.classList.toggle('is-locked', isChecked(layoutPresetLock));
 }
 
-function setPaletteStatus(message: string, tone = ""): void {
+function setPaletteStatus(message: string, tone = ''): void {
 	if (!paletteStatusEl) return;
 	paletteStatusEl.textContent = message;
-	paletteStatusEl.classList.remove("warning", "error");
+	paletteStatusEl.classList.remove('warning', 'error');
 	if (tone) paletteStatusEl.classList.add(tone);
 }
 
@@ -253,18 +251,21 @@ function readManualPaletteColors(): ThemeColors {
 function getShuffleSeed(): number {
 	return Math.max(
 		0,
-		Math.floor(Number.parseInt(getInputValue(paletteShuffleSeedInput) || "0", 10) || 0),
+		Math.floor(
+			Number.parseInt(getInputValue(paletteShuffleSeedInput) || '0', 10) || 0,
+		),
 	);
 }
 
 function syncBrandPaletteUi(): void {
-	if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput)
+	if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput) {
 		return;
+	}
 
 	const manualColors = readManualPaletteColors();
 	const palette = resolveThemePalette({
 		primaryColor: manualColors.primaryColor,
-		harmonyMode: getInputValue(harmonyModeSelect) || "complementary",
+		harmonyMode: getInputValue(harmonyModeSelect) || 'complementary',
 		shuffleSeed: getShuffleSeed(),
 		locks: {
 			accentColor: Boolean(isChecked(lockAccentColorInput)),
@@ -280,21 +281,30 @@ function syncBrandPaletteUi(): void {
 	setInputValue(textColorInput, palette.theme.textColor);
 	setInputValue(harmonyModeSelect, palette.harmonyMode);
 	setInputValue(paletteShuffleSeedInput, String(palette.shuffleSeed));
-	if (accentColorInput) setDisabled(accentColorInput, !palette.locks.accentColor);
-	if (secondaryColorInput)
+	if (accentColorInput) {
+		setDisabled(accentColorInput, !palette.locks.accentColor);
+	}
+	if (secondaryColorInput) {
 		setDisabled(secondaryColorInput, !palette.locks.secondaryColor);
+	}
 
-	const adjustedKeys: Set<string> = new Set(palette.adjustments.map((entry) => entry.key));
+	const adjustedKeys: Set<string> = new Set(
+		palette.adjustments.map((entry) => entry.key),
+	);
 
 	Object.entries(brandColorControls).forEach(([key, input]) => {
 		if (!input) return;
-		input.classList.toggle("is-color-warning", adjustedKeys.has(key));
+		input.classList.toggle('is-color-warning', adjustedKeys.has(key));
 	});
 
 	if (palette.adjustments.length) {
 		setPaletteStatus(
-			`${palette.harmonyMode} harmony · variant ${palette.variantIndex + 1}/${palette.variantCount}. Corrected ${palette.adjustments.length} color${palette.adjustments.length === 1 ? "" : "s"} for readability.`,
-			"warning",
+			`${palette.harmonyMode} harmony · variant ${
+				palette.variantIndex + 1
+			}/${palette.variantCount}. Corrected ${palette.adjustments.length} color${
+				palette.adjustments.length === 1 ? '' : 's'
+			} for readability.`,
+			'warning',
 		);
 		return;
 	}
@@ -305,8 +315,9 @@ function syncBrandPaletteUi(): void {
 }
 
 function bindBrandPaletteControls(): void {
-	if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput)
+	if (!primaryColorInput || !harmonyModeSelect || !paletteShuffleSeedInput) {
 		return;
+	}
 
 	const controls = [
 		primaryColorInput,
@@ -320,16 +331,16 @@ function bindBrandPaletteControls(): void {
 	].filter((el): el is HTMLElement => el !== null);
 
 	controls.forEach((control) => {
-		control.addEventListener("change", () => {
+		control.addEventListener('change', () => {
 			syncBrandPaletteUi();
 		});
 	});
 
-	primaryColorInput.addEventListener("input", () => {
+	primaryColorInput.addEventListener('input', () => {
 		syncBrandPaletteUi();
 	});
 
-	shuffleHarmonyButton?.addEventListener("click", () => {
+	shuffleHarmonyButton?.addEventListener('click', () => {
 		setInputValue(paletteShuffleSeedInput, String(getShuffleSeed() + 1));
 		syncBrandPaletteUi();
 		pushHistorySnapshot();
@@ -339,7 +350,7 @@ function bindBrandPaletteControls(): void {
 
 function setStatus(message: string, isError = false): void {
 	statusEl.textContent = message;
-	statusEl.classList.toggle("error", isError);
+	statusEl.classList.toggle('error', isError);
 }
 
 function clonePayload(payload: FormPayload = {}): FormPayload {
@@ -362,23 +373,23 @@ function payloadSignature(payload: FormPayload = {}): string {
 	return JSON.stringify(ordered);
 }
 
-function setSaveIndicator(state = "is-saved", text = ""): void {
+function setSaveIndicator(state = 'is-saved', text = ''): void {
 	if (!saveIndicator) return;
 	const labelByState: Record<string, string> = {
-		"is-saved": "All changes saved",
-		"is-dirty": "Unsaved changes",
-		"is-saving": "Saving...",
-		"is-error": "Save failed",
+		'is-saved': 'All changes saved',
+		'is-dirty': 'Unsaved changes',
+		'is-saving': 'Saving...',
+		'is-error': 'Save failed',
 	};
 
 	saveIndicator.classList.remove(
-		"is-saved",
-		"is-dirty",
-		"is-saving",
-		"is-error",
+		'is-saved',
+		'is-dirty',
+		'is-saving',
+		'is-error',
 	);
 	saveIndicator.classList.add(state);
-	saveIndicator.textContent = text || labelByState[state] || labelByState["is-saved"];
+	saveIndicator.textContent = text || labelByState[state] || labelByState['is-saved'];
 }
 
 function updateProjectChrome(): void {
@@ -387,37 +398,28 @@ function updateProjectChrome(): void {
 	const projectTitleEl = form.querySelector('[name="projectTitle"]');
 	const deckVersionEl = form.querySelector('[name="deckVersion"]');
 
-	const clientName =
-		clientNameEl instanceof HTMLInputElement
-			? clientNameEl.value.trim()
-			: "";
-	const clientUrl =
-		clientUrlEl instanceof HTMLInputElement ? clientUrlEl.value.trim() : "";
-	const projectTitle =
-		projectTitleEl instanceof HTMLInputElement
-			? projectTitleEl.value.trim()
-			: "";
-	const deckVersion =
-		deckVersionEl instanceof HTMLInputElement
-			? deckVersionEl.value.trim()
-			: "";
-	const templateLabel =
-		templateMap.get(getInputValue(templateSelect))?.label || "Pitch Deck Proposal";
+	const clientName = clientNameEl instanceof HTMLInputElement ? clientNameEl.value.trim() : '';
+	const clientUrl = clientUrlEl instanceof HTMLInputElement ? clientUrlEl.value.trim() : '';
+	const projectTitle = projectTitleEl instanceof HTMLInputElement
+		? projectTitleEl.value.trim()
+		: '';
+	const deckVersion = deckVersionEl instanceof HTMLInputElement ? deckVersionEl.value.trim() : '';
+	const templateLabel = templateMap.get(getInputValue(templateSelect))?.label
+		|| 'Pitch Deck Proposal';
 
 	if (projectNameDisplay) {
-		projectNameDisplay.textContent =
-			projectTitle ||
-			(clientName ? `${clientName} proposal` : "Untitled design");
+		projectNameDisplay.textContent = projectTitle
+			|| (clientName ? `${clientName} proposal` : 'Untitled design');
 	}
 
 	if (projectContextDisplay) {
 		const context = [
-			clientName || "No client",
+			clientName || 'No client',
 			templateLabel,
-			deckVersion || "v1.0",
+			deckVersion || 'v1.0',
 		]
 			.filter(Boolean)
-			.join(" · ");
+			.join(' · ');
 		projectContextDisplay.textContent = clientUrl
 			? `${context} · ${clientUrl}`
 			: context;
@@ -426,8 +428,9 @@ function updateProjectChrome(): void {
 
 function syncHistoryButtons(): void {
 	if (undoChangeButton) setDisabled(undoChangeButton, historyIndex <= 0);
-	if (redoChangeButton)
+	if (redoChangeButton) {
 		setDisabled(redoChangeButton, historyIndex >= historyStack.length - 1);
+	}
 }
 
 function applyPayloadToForm(payload: FormPayload = {}): void {
@@ -435,28 +438,36 @@ function applyPayloadToForm(payload: FormPayload = {}): void {
 
 	const nextTemplateId = payload.templateId;
 	if (
-		typeof nextTemplateId === "string" &&
-		templateMap.has(nextTemplateId) &&
-		getInputValue(templateSelect) !== nextTemplateId
+		typeof nextTemplateId === 'string'
+		&& templateMap.has(nextTemplateId)
+		&& getInputValue(templateSelect) !== nextTemplateId
 	) {
 		setInputValue(templateSelect, nextTemplateId);
 		renderSlideSelector(templateMap.get(nextTemplateId)!, false);
 	}
 
 	const fields = form.querySelectorAll(
-		"input[name], textarea[name], select[name]",
+		'input[name], textarea[name], select[name]',
 	);
 	fields.forEach((field) => {
-		if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement)) return;
+		if (
+			!(
+				field instanceof HTMLInputElement
+				|| field instanceof HTMLTextAreaElement
+				|| field instanceof HTMLSelectElement
+			)
+		) {
+			return;
+		}
 		if (!(field.name in payload)) return;
-		if (field.name === "templateId") return;
+		if (field.name === 'templateId') return;
 
-		if (field instanceof HTMLInputElement && field.type === "checkbox") {
+		if (field instanceof HTMLInputElement && field.type === 'checkbox') {
 			field.checked = Boolean(payload[field.name]);
 			return;
 		}
 
-		field.value = String(payload[field.name] ?? "");
+		field.value = String(payload[field.name] ?? '');
 	});
 
 	const excluded = new Set<string>(
@@ -466,7 +477,7 @@ function applyPayloadToForm(payload: FormPayload = {}): void {
 		.querySelectorAll('input[type="checkbox"][data-slide-id]')
 		.forEach((checkbox) => {
 			if (checkbox instanceof HTMLInputElement) {
-				checkbox.checked = !excluded.has(checkbox.dataset.slideId || "");
+				checkbox.checked = !excluded.has(checkbox.dataset.slideId || '');
 			}
 		});
 
@@ -514,7 +525,7 @@ function autosaveNow({ quiet = false }: { quiet?: boolean } = {}): void {
 	const signature = payloadSignature(payload);
 
 	if (!quiet) {
-		setSaveIndicator("is-saving");
+		setSaveIndicator('is-saving');
 	}
 
 	try {
@@ -528,10 +539,10 @@ function autosaveNow({ quiet = false }: { quiet?: boolean } = {}): void {
 		);
 
 		lastSavedSignature = signature;
-		setSaveIndicator("is-saved");
+		setSaveIndicator('is-saved');
 	} catch (error) {
 		console.error(error);
-		setSaveIndicator("is-error");
+		setSaveIndicator('is-error');
 	}
 }
 
@@ -556,11 +567,11 @@ function loadDraftFromLocalStorage(): boolean {
 
 		applyPayloadToForm(payload);
 		lastSavedSignature = payloadSignature(readFormPayload());
-		setSaveIndicator("is-saved");
+		setSaveIndicator('is-saved');
 		return true;
 	} catch (error) {
 		console.error(error);
-		setSaveIndicator("is-error", "Draft load failed");
+		setSaveIndicator('is-error', 'Draft load failed');
 		return false;
 	}
 }
@@ -574,15 +585,15 @@ async function applyHistoryIndex(nextIndex: number): Promise<void> {
 	syncHistoryButtons();
 
 	if (entry.signature === lastSavedSignature) {
-		setSaveIndicator("is-saved");
+		setSaveIndicator('is-saved');
 	} else {
-		setSaveIndicator("is-dirty");
+		setSaveIndicator('is-dirty');
 	}
 
 	if (
-		currentDeckResult?.slideData &&
-		slideViewerEl &&
-		!slideViewerEl.classList.contains("hidden")
+		currentDeckResult?.slideData
+		&& slideViewerEl
+		&& !slideViewerEl.classList.contains('hidden')
 	) {
 		try {
 			await refreshViewerFromPayload();
@@ -606,11 +617,11 @@ function markEditorDirty(): void {
 	const signature = payloadSignature(readFormPayload());
 	if (signature === lastSavedSignature) {
 		if (autosaveTimer !== null) clearTimeout(autosaveTimer);
-		setSaveIndicator("is-saved");
+		setSaveIndicator('is-saved');
 		return;
 	}
 
-	setSaveIndicator("is-dirty");
+	setSaveIndicator('is-dirty');
 	scheduleAutosave();
 }
 
@@ -626,12 +637,11 @@ function handleFormMutation(event: Event): void {
 	const target = event.target;
 	if (!target || !(target instanceof HTMLElement)) return;
 
-	const hasFieldName =
-		target instanceof HTMLInputElement ||
-		target instanceof HTMLTextAreaElement ||
-		target instanceof HTMLSelectElement
-			? target.name.length > 0
-			: false;
+	const hasFieldName = target instanceof HTMLInputElement
+			|| target instanceof HTMLTextAreaElement
+			|| target instanceof HTMLSelectElement
+		? target.name.length > 0
+		: false;
 	const isSlideToggle = Boolean(
 		target instanceof HTMLElement && target.dataset?.slideId,
 	);
@@ -639,7 +649,7 @@ function handleFormMutation(event: Event): void {
 
 	updateProjectChrome();
 
-	if (event.type === "input") {
+	if (event.type === 'input') {
 		queueInputHistorySnapshot();
 	} else {
 		pushHistorySnapshot();
@@ -650,7 +660,7 @@ function handleFormMutation(event: Event): void {
 
 function handleHistoryHotkeys(event: KeyboardEvent): void {
 	if (!event.metaKey && !event.ctrlKey) return;
-	if (slideViewerEl && !slideViewerEl.classList.contains("hidden")) return;
+	if (slideViewerEl && !slideViewerEl.classList.contains('hidden')) return;
 
 	const target = event.target;
 	if (target instanceof HTMLInputElement) return;
@@ -659,8 +669,8 @@ function handleHistoryHotkeys(event: KeyboardEvent): void {
 	if (target instanceof HTMLElement && target.isContentEditable) return;
 
 	const key = event.key.toLowerCase();
-	const wantsUndo = key === "z" && !event.shiftKey;
-	const wantsRedo = (key === "z" && event.shiftKey) || key === "y";
+	const wantsUndo = key === 'z' && !event.shiftKey;
+	const wantsRedo = (key === 'z' && event.shiftKey) || key === 'y';
 	if (!wantsUndo && !wantsRedo) return;
 
 	event.preventDefault();
@@ -671,15 +681,18 @@ function handleHistoryHotkeys(event: KeyboardEvent): void {
 	redoChange();
 }
 
-function setLinkState(el: HTMLElement | null, url: string | null | undefined): void {
+function setLinkState(
+	el: HTMLElement | null,
+	url: string | null | undefined,
+): void {
 	if (!el) return;
 
 	if (url) {
-		el.classList.remove("disabled");
-		el.setAttribute("href", url);
+		el.classList.remove('disabled');
+		el.setAttribute('href', url);
 	} else {
-		el.classList.add("disabled");
-		el.setAttribute("href", "#");
+		el.classList.add('disabled');
+		el.setAttribute('href', '#');
 	}
 }
 
@@ -697,7 +710,7 @@ function setOutputState(state: DeckResult | null = null): void {
 	}
 
 	if (!state?.downloadUrl) {
-		outputStatus.textContent = "Generate a deck to unlock links and exports.";
+		outputStatus.textContent = 'Generate a deck to unlock links and exports.';
 		setLinkState(openViewerLink, null);
 		setLinkState(downloadPptxLink, null);
 		setLinkState(downloadPdfLink, null);
@@ -706,9 +719,8 @@ function setOutputState(state: DeckResult | null = null): void {
 		return;
 	}
 
-	outputStatus.textContent =
-		"Deck ready. Open viewer, export files, or share web link.";
-	setLinkState(openViewerLink, "#viewer");
+	outputStatus.textContent = 'Deck ready. Open viewer, export files, or share web link.';
+	setLinkState(openViewerLink, '#viewer');
 	setLinkState(downloadPptxLink, state.downloadUrl);
 	setLinkState(downloadPdfLink, state.pdfUrl ?? null);
 	setLinkState(openShareLink, state.shareUrl ?? null);
@@ -739,7 +751,7 @@ function collectSlideExclusions(): string[] {
 		.querySelectorAll('input[type="checkbox"][data-slide-id]')
 		.forEach((checkbox) => {
 			if (checkbox instanceof HTMLInputElement && !checkbox.checked) {
-				excluded.push(checkbox.dataset.slideId || "");
+				excluded.push(checkbox.dataset.slideId || '');
 			}
 		});
 
@@ -749,14 +761,22 @@ function collectSlideExclusions(): string[] {
 function readFormPayload(): FormPayload {
 	const payload: FormPayload = {};
 	const fields = form.querySelectorAll(
-		"input[name], textarea[name], select[name]",
+		'input[name], textarea[name], select[name]',
 	);
 
 	fields.forEach((field) => {
-		if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement)) return;
+		if (
+			!(
+				field instanceof HTMLInputElement
+				|| field instanceof HTMLTextAreaElement
+				|| field instanceof HTMLSelectElement
+			)
+		) {
+			return;
+		}
 		if (field.disabled) return;
 
-		if (field instanceof HTMLInputElement && field.type === "checkbox") {
+		if (field instanceof HTMLInputElement && field.type === 'checkbox') {
 			payload[field.name] = field.checked;
 			return;
 		}
@@ -772,8 +792,12 @@ function readFormPayload(): FormPayload {
 function writeField(fieldName: string, value: unknown): boolean {
 	const field = form.querySelector(`[name="${fieldName}"]`);
 	if (!field) return false;
-	if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
-		field.value = String(value ?? "");
+	if (
+		field instanceof HTMLInputElement
+		|| field instanceof HTMLTextAreaElement
+		|| field instanceof HTMLSelectElement
+	) {
+		field.value = String(value ?? '');
 	}
 	return true;
 }
@@ -786,7 +810,12 @@ function applyDraftToForm(draft: Record<string, unknown> = {}): void {
 
 function applyImageDraft(imageDraft: ImageDraft = {}): void {
 	const field = form.querySelector('[name="imagePrompts"]');
-	if (!field || !(field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement)) return;
+	if (
+		!field
+		|| !(field instanceof HTMLTextAreaElement || field instanceof HTMLInputElement)
+	) {
+		return;
+	}
 
 	if (imageDraft.combinedPromptText) {
 		field.value = imageDraft.combinedPromptText;
@@ -796,16 +825,20 @@ function applyImageDraft(imageDraft: ImageDraft = {}): void {
 	if (Array.isArray(imageDraft.prompts)) {
 		field.value = imageDraft.prompts
 			.map(
-				(prompt, index) =>
-					`Slide ${index + 1} (${prompt.slideId || "slide"}) :: ${prompt.prompt || ""}`,
+				(prompt, index) => `Slide ${index + 1} (${prompt.slideId || 'slide'}) :: ${prompt.prompt || ''}`,
 			)
-			.join("\n");
+			.join('\n');
 	}
 }
 
 function parseCharacterAssetsFromField(): CharacterAsset[] {
 	const field = form.querySelector('[name="characterAssets"]');
-	if (!field || !(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return [];
+	if (
+		!field
+		|| !(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)
+	) {
+		return [];
+	}
 	if (!field.value.trim()) return [];
 
 	try {
@@ -814,9 +847,9 @@ function parseCharacterAssetsFromField(): CharacterAsset[] {
 		return parsed
 			.filter(
 				(item: unknown): item is CharacterAsset =>
-					isRecord(item) &&
-					"dataUrl" in item &&
-					typeof item.dataUrl === "string",
+					isRecord(item)
+					&& 'dataUrl' in item
+					&& typeof item.dataUrl === 'string',
 			)
 			.slice(0, 10);
 	} catch {
@@ -826,12 +859,17 @@ function parseCharacterAssetsFromField(): CharacterAsset[] {
 
 function syncCharacterAssetsField(): void {
 	const field = form.querySelector('[name="characterAssets"]');
-	if (!field || !(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
+	if (
+		!field
+		|| !(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)
+	) {
+		return;
+	}
 	field.value = JSON.stringify(characterAssets);
 }
 
 function formatBytes(size: number): string {
-	if (!Number.isFinite(size) || size <= 0) return "0 KB";
+	if (!Number.isFinite(size) || size <= 0) return '0 KB';
 	if (size < 1024) return `${size} B`;
 	if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
 	return `${(size / (1024 * 1024)).toFixed(1)} MB`;
@@ -840,39 +878,41 @@ function formatBytes(size: number): string {
 function renderCharacterAssetsPreview(): void {
 	if (!characterAssetsPreview || !characterAssetsStatus) return;
 
-	characterAssetsPreview.innerHTML = "";
+	characterAssetsPreview.innerHTML = '';
 
 	if (!characterAssets.length) {
-		characterAssetsStatus.textContent = "No character assets uploaded.";
+		characterAssetsStatus.textContent = 'No character assets uploaded.';
 		return;
 	}
 
-	characterAssetsStatus.textContent = `${characterAssets.length} character asset${characterAssets.length > 1 ? "s" : ""} ready.`;
+	characterAssetsStatus.textContent = `${characterAssets.length} character asset${
+		characterAssets.length > 1 ? 's' : ''
+	} ready.`;
 
 	characterAssets.forEach((asset, index) => {
-		const card = document.createElement("article");
-		card.className = "asset-card";
+		const card = document.createElement('article');
+		card.className = 'asset-card';
 
-		const img = document.createElement("img");
+		const img = document.createElement('img');
 		img.src = asset.dataUrl;
 		img.alt = asset.name || `Character asset ${index + 1}`;
 
-		const meta = document.createElement("div");
-		meta.className = "asset-meta";
+		const meta = document.createElement('div');
+		meta.className = 'asset-meta';
 
-		const name = document.createElement("p");
-		name.className = "asset-name";
+		const name = document.createElement('p');
+		name.className = 'asset-name';
 		name.textContent = `${asset.name || `Asset ${index + 1}`} (${formatBytes(asset.size || 0)})`;
 
-		const placement = document.createElement("select");
+		const placement = document.createElement('select');
 		CHARACTER_PLACEMENTS.forEach((optionData) => {
-			const option = document.createElement("option");
+			const option = document.createElement('option');
 			option.value = optionData.value;
 			option.textContent = optionData.label;
-			option.selected = (asset.placement || "all-mascot") === optionData.value;
+			option.selected = (asset.placement || 'all-mascot') === optionData.value;
 			placement.appendChild(option);
 		});
-		placement.addEventListener("change", () => {
+		placement.addEventListener('change', () => {
 			characterAssets[index] = {
 				...characterAssets[index],
 				placement: placement.value,
@@ -882,11 +922,11 @@ function renderCharacterAssetsPreview(): void {
 			markEditorDirty();
 		});
 
-		const remove = document.createElement("button");
-		remove.type = "button";
-		remove.className = "ghost small";
-		remove.textContent = "Remove";
-		remove.addEventListener("click", async () => {
+		const remove = document.createElement('button');
+		remove.type = 'button';
+		remove.className = 'ghost small';
+		remove.textContent = 'Remove';
+		remove.addEventListener('click', async () => {
 			characterAssets.splice(index, 1);
 			syncCharacterAssetsField();
 			renderCharacterAssetsPreview();
@@ -914,7 +954,7 @@ function renderCharacterAssetsPreview(): void {
 function readFileAsDataUrl(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
-		reader.onload = () => resolve(String(reader.result ?? ""));
+		reader.onload = () => resolve(String(reader.result ?? ''));
 		reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
 		reader.readAsDataURL(file);
 	});
@@ -932,15 +972,15 @@ async function handleCharacterAssetsUpload(event: Event): Promise<void> {
 
 	if (!room) {
 		setStatus(
-			"Character asset limit reached (8). Remove one to add another.",
+			'Character asset limit reached (8). Remove one to add another.',
 			true,
 		);
-		target.value = "";
+		target.value = '';
 		return;
 	}
 
 	const accepted = files
-		.filter((file) => file.type.startsWith("image/"))
+		.filter((file) => file.type.startsWith('image/'))
 		.slice(0, room);
 
 	for (const file of accepted) {
@@ -956,14 +996,14 @@ async function handleCharacterAssetsUpload(event: Event): Promise<void> {
 				name: file.name,
 				size: file.size,
 				dataUrl: String(dataUrl),
-				placement: "all-mascot",
+				placement: 'all-mascot',
 			});
 		} catch (error) {
 			console.error(error);
 			setStatus(
 				error instanceof Error
 					? error.message
-					: "Could not upload one of the images.",
+					: 'Could not upload one of the images.',
 				true,
 			);
 		}
@@ -971,10 +1011,10 @@ async function handleCharacterAssetsUpload(event: Event): Promise<void> {
 
 	syncCharacterAssetsField();
 	renderCharacterAssetsPreview();
-	target.value = "";
+	target.value = '';
 	pushHistorySnapshot();
 	markEditorDirty();
-	setStatus("Character assets updated.");
+	setStatus('Character assets updated.');
 
 	if (currentDeckResult?.slideData) {
 		try {
@@ -991,7 +1031,7 @@ async function clearCharacterAssets(): Promise<void> {
 	renderCharacterAssetsPreview();
 	pushHistorySnapshot();
 	markEditorDirty();
-	setStatus("Character assets cleared.");
+	setStatus('Character assets cleared.');
 
 	if (currentDeckResult?.slideData) {
 		try {
@@ -1014,29 +1054,29 @@ function renderSlideSelector(
 			.querySelectorAll('input[type="checkbox"][data-slide-id]')
 			.forEach((checkbox) => {
 				if (checkbox instanceof HTMLInputElement) {
-					existing.set(checkbox.dataset.slideId || "", checkbox.checked);
+					existing.set(checkbox.dataset.slideId || '', checkbox.checked);
 				}
 			});
 	}
 
-	slideSelector.innerHTML = "";
+	slideSelector.innerHTML = '';
 
 	template.slides.forEach((slide) => {
-		const chip = document.createElement("label");
-		chip.className = "slide-chip";
+		const chip = document.createElement('label');
+		chip.className = 'slide-chip';
 
-		const checkbox = document.createElement("input");
-		checkbox.type = "checkbox";
+		const checkbox = document.createElement('input');
+		checkbox.type = 'checkbox';
 		checkbox.dataset.slideId = slide.id;
 		checkbox.checked = existing.has(slide.id)
 			? (existing.get(slide.id) ?? false)
 			: Boolean(slide.defaultIncluded);
 
-		const name = document.createElement("span");
+		const name = document.createElement('span');
 		name.textContent = slide.label;
 
-		const meta = document.createElement("small");
-		meta.textContent = slide.required ? "Core" : "Optional";
+		const meta = document.createElement('small');
+		meta.textContent = slide.required ? 'Core' : 'Optional';
 
 		chip.appendChild(checkbox);
 		chip.appendChild(name);
@@ -1090,20 +1130,20 @@ interface ChatApiResponse {
 }
 
 async function hydrateTemplates(): Promise<void> {
-	const response = await fetch("/api/templates");
+	const response = await fetch('/api/templates');
 	const result: TemplatesApiResponse = await response.json();
 
 	if (!response.ok || !result.success || !Array.isArray(result.templates)) {
-		throw new Error("Could not load templates.");
+		throw new Error('Could not load templates.');
 	}
 
 	if (templateSelect instanceof HTMLSelectElement) {
-		templateSelect.innerHTML = "";
+		templateSelect.innerHTML = '';
 
 		result.templates.forEach((template) => {
 			templateMap.set(template.id, template);
 
-			const option = document.createElement("option");
+			const option = document.createElement('option');
 			option.value = template.id;
 			option.textContent = template.label;
 			option.title = template.description;
@@ -1119,18 +1159,18 @@ async function hydrateTemplates(): Promise<void> {
 }
 
 async function hydrateAiProviders(): Promise<void> {
-	const response = await fetch("/api/ai/providers");
+	const response = await fetch('/api/ai/providers');
 	const result: ProvidersApiResponse = await response.json();
 
 	if (!response.ok || !result.success || !result.providers) return;
 
-	const textProviderSelect = document.getElementById("aiTextProvider");
-	const imageProviderSelect = document.getElementById("aiImageProvider");
+	const textProviderSelect = document.getElementById('aiTextProvider');
+	const imageProviderSelect = document.getElementById('aiImageProvider');
 
 	if (textProviderSelect instanceof HTMLSelectElement) {
-		textProviderSelect.innerHTML = "";
+		textProviderSelect.innerHTML = '';
 		(result.providers.textProviders || []).forEach((provider) => {
-			const option = document.createElement("option");
+			const option = document.createElement('option');
 			option.value = provider.id;
 			option.textContent = provider.label;
 			textProviderSelect.appendChild(option);
@@ -1138,9 +1178,9 @@ async function hydrateAiProviders(): Promise<void> {
 	}
 
 	if (imageProviderSelect instanceof HTMLSelectElement) {
-		imageProviderSelect.innerHTML = "";
+		imageProviderSelect.innerHTML = '';
 		(result.providers.imageProviders || []).forEach((provider) => {
-			const option = document.createElement("option");
+			const option = document.createElement('option');
 			option.value = provider.id;
 			option.textContent = provider.label;
 			imageProviderSelect.appendChild(option);
@@ -1162,14 +1202,14 @@ function readAiSettings(): Record<string, string> {
 
 function applyAiSettings(settings: Record<string, string> = {}): void {
 	[
-		"aiTextProvider",
-		"aiTextModel",
-		"aiTextApiKey",
-		"aiTextBaseUrl",
-		"aiImageProvider",
-		"aiImageModel",
-		"aiImageApiKey",
-		"aiImageBaseUrl",
+		'aiTextProvider',
+		'aiTextModel',
+		'aiTextApiKey',
+		'aiTextBaseUrl',
+		'aiImageProvider',
+		'aiImageModel',
+		'aiImageApiKey',
+		'aiImageBaseUrl',
 	].forEach((fieldName) => {
 		const field = document.getElementById(fieldName);
 		if (!field || !(fieldName in settings)) return;
@@ -1181,14 +1221,14 @@ function saveAiSettings(): void {
 	const settings: Record<string, string> = {};
 
 	[
-		"aiTextProvider",
-		"aiTextModel",
-		"aiTextApiKey",
-		"aiTextBaseUrl",
-		"aiImageProvider",
-		"aiImageModel",
-		"aiImageApiKey",
-		"aiImageBaseUrl",
+		'aiTextProvider',
+		'aiTextModel',
+		'aiTextApiKey',
+		'aiTextBaseUrl',
+		'aiImageProvider',
+		'aiImageModel',
+		'aiImageApiKey',
+		'aiImageBaseUrl',
 	].forEach((fieldName) => {
 		const field = document.getElementById(fieldName);
 		if (!field) return;
@@ -1196,11 +1236,11 @@ function saveAiSettings(): void {
 	});
 
 	localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings));
-	setStatus("AI settings saved locally.");
+	setStatus('AI settings saved locally.');
 }
 
 function addChatMessage(role: string, text: string): void {
-	const item = document.createElement("div");
+	const item = document.createElement('div');
 	item.className = `chat-message ${role}`;
 	item.textContent = text;
 	chatMessagesEl.appendChild(item);
@@ -1209,42 +1249,42 @@ function addChatMessage(role: string, text: string): void {
 
 function setChatTarget(field: string, label: string): void {
 	chatTarget = {
-		field: field || "global-concept",
-		label: label || "Global concept",
+		field: field || 'global-concept',
+		label: label || 'Global concept',
 	};
 	chatTargetEl.textContent = chatTarget.label;
 }
 
 function openChatPanel(): void {
-	chatPanel.classList.remove("hidden");
-	chatLauncher.classList.add("hidden");
+	chatPanel.classList.remove('hidden');
+	chatLauncher.classList.add('hidden');
 }
 
 function closeChatPanel(): void {
-	chatPanel.classList.add("hidden");
-	chatLauncher.classList.remove("hidden");
+	chatPanel.classList.add('hidden');
+	chatLauncher.classList.remove('hidden');
 }
 
 function renderChatSuggestions(suggestions: SuggestedChange[] = []): void {
-	chatSuggestionsEl.innerHTML = "";
+	chatSuggestionsEl.innerHTML = '';
 
 	if (!Array.isArray(suggestions) || !suggestions.length) return;
 
 	suggestions.forEach((change) => {
-		const card = document.createElement("div");
-		card.className = "suggestion-card";
+		const card = document.createElement('div');
+		card.className = 'suggestion-card';
 
-		const title = document.createElement("strong");
+		const title = document.createElement('strong');
 		title.textContent = change.label || change.field;
 
-		const preview = document.createElement("p");
+		const preview = document.createElement('p');
 		preview.textContent = change.value;
 
-		const applyButton = document.createElement("button");
-		applyButton.type = "button";
-		applyButton.className = "ghost small";
+		const applyButton = document.createElement('button');
+		applyButton.type = 'button';
+		applyButton.className = 'ghost small';
 		applyButton.textContent = `Apply to ${change.field}`;
-		applyButton.addEventListener("click", async () => {
+		applyButton.addEventListener('click', async () => {
 			writeField(change.field, change.value);
 			updateProjectChrome();
 			pushHistorySnapshot();
@@ -1262,15 +1302,15 @@ function renderChatSuggestions(suggestions: SuggestedChange[] = []): void {
 
 async function refreshViewerFromPayload(): Promise<void> {
 	const payload = readFormPayload();
-	const response = await fetch("/api/preview", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
+	const response = await fetch('/api/preview', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload),
 	});
 
 	const result: PreviewApiResponse = await response.json();
 	if (!response.ok || !result.success) {
-		throw new Error(result.message || "Could not refresh viewer.");
+		throw new Error(result.message || 'Could not refresh viewer.');
 	}
 
 	if (currentDeckResult) {
@@ -1282,20 +1322,20 @@ async function refreshViewerFromPayload(): Promise<void> {
 
 async function runAutofill(): Promise<void> {
 	setDisabled(autoFillButton, true);
-	setStatus("AI is generating all slide text and image prompts...");
+	setStatus('AI is generating all slide text and image prompts...');
 
 	try {
 		const payload = readFormPayload();
 
-		const response = await fetch("/api/ai/autofill", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+		const response = await fetch('/api/ai/autofill', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload),
 		});
 
 		const result: AutofillApiResponse = await response.json();
 		if (!response.ok || !result.success) {
-			throw new Error(result.message || "AI autofill failed.");
+			throw new Error(result.message || 'AI autofill failed.');
 		}
 
 		applyDraftToForm(result.draft || {});
@@ -1303,13 +1343,11 @@ async function runAutofill(): Promise<void> {
 		updateProjectChrome();
 		pushHistorySnapshot();
 		markEditorDirty();
-		setStatus(`Autofill complete (${result.provider || "local"}).`);
+		setStatus(`Autofill complete (${result.provider || 'local'}).`);
 	} catch (error) {
 		console.error(error);
 		setStatus(
-			error instanceof Error
-				? error.message
-				: "Could not run AI autofill.",
+			error instanceof Error ? error.message : 'Could not run AI autofill.',
 			true,
 		);
 	} finally {
@@ -1320,7 +1358,7 @@ async function runAutofill(): Promise<void> {
 async function generateDeck(event: Event): Promise<void> {
 	event.preventDefault();
 	setDisabled(generateButton, true);
-	setStatus("Generating pitch deck...");
+	setStatus('Generating pitch deck...');
 
 	try {
 		const payload = readFormPayload();
@@ -1328,21 +1366,21 @@ async function generateDeck(event: Event): Promise<void> {
 			'input[type="checkbox"][data-slide-id]',
 		).length;
 		if (
-			Array.isArray(payload.excludedSlides) &&
-			payload.excludedSlides.length >= totalSlides
+			Array.isArray(payload.excludedSlides)
+			&& payload.excludedSlides.length >= totalSlides
 		) {
-			throw new Error("Include at least one slide before generating.");
+			throw new Error('Include at least one slide before generating.');
 		}
 
-		const response = await fetch("/api/generate", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+		const response = await fetch('/api/generate', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload),
 		});
 
 		const result: GenerateApiResponse = await response.json();
 		if (!response.ok || !result.success) {
-			throw new Error(result.message || "Could not generate deck.");
+			throw new Error(result.message || 'Could not generate deck.');
 		}
 
 		const shareUrlAbsolute = result.shareUrl
@@ -1368,13 +1406,11 @@ async function generateDeck(event: Event): Promise<void> {
 			shareUrl: shareUrlAbsolute,
 		});
 
-		setStatus("Deck generated successfully.");
+		setStatus('Deck generated successfully.');
 	} catch (error) {
 		console.error(error);
 		setStatus(
-			error instanceof Error
-				? error.message
-				: "Could not generate deck.",
+			error instanceof Error ? error.message : 'Could not generate deck.',
 			true,
 		);
 	} finally {
@@ -1387,15 +1423,15 @@ async function runViewerChat(): Promise<void> {
 	if (!message) return;
 
 	setDisabled(chatSendButton, true);
-	addChatMessage("user", message);
-	setInputValue(chatInputEl, "");
+	addChatMessage('user', message);
+	setInputValue(chatInputEl, '');
 
 	try {
 		const payload = readFormPayload();
 
-		const response = await fetch("/api/ai/chat", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+		const response = await fetch('/api/ai/chat', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				payload,
 				targetField: chatTarget.field,
@@ -1406,29 +1442,27 @@ async function runViewerChat(): Promise<void> {
 
 		const result: ChatApiResponse = await response.json();
 		if (!response.ok || !result.success) {
-			throw new Error(result.message || "AI chat failed.");
+			throw new Error(result.message || 'AI chat failed.');
 		}
 
-		addChatMessage("assistant", result.reply || "Suggestions ready.");
+		addChatMessage('assistant', result.reply || 'Suggestions ready.');
 		renderChatSuggestions(result.suggestedChanges || []);
 
-		chatHistory.push({ role: "user", content: message });
+		chatHistory.push({ role: 'user', content: message });
 		chatHistory.push({
-			role: "assistant",
-			content: result.reply || "Suggestions ready.",
+			role: 'assistant',
+			content: result.reply || 'Suggestions ready.',
 		});
 
-		setStatus(`Copilot suggestion ready (${result.provider || "local"}).`);
+		setStatus(`Copilot suggestion ready (${result.provider || 'local'}).`);
 	} catch (error) {
 		console.error(error);
 		addChatMessage(
-			"assistant",
-			`Error: ${error instanceof Error ? error.message : "Could not process request."}`,
+			'assistant',
+			`Error: ${error instanceof Error ? error.message : 'Could not process request.'}`,
 		);
 		setStatus(
-			error instanceof Error
-				? error.message
-				: "Could not run viewer copilot.",
+			error instanceof Error ? error.message : 'Could not run viewer copilot.',
 			true,
 		);
 	} finally {
@@ -1436,7 +1470,7 @@ async function runViewerChat(): Promise<void> {
 	}
 }
 
-templateSelect.addEventListener("change", () => {
+templateSelect.addEventListener('change', () => {
 	renderSlideSelector(templateMap.get(getInputValue(templateSelect)), false);
 	updateProjectChrome();
 	pushHistorySnapshot();
@@ -1446,7 +1480,7 @@ templateSelect.addEventListener("change", () => {
 	);
 });
 
-includeAllSlidesButton.addEventListener("click", () => {
+includeAllSlidesButton.addEventListener('click', () => {
 	slideSelector
 		.querySelectorAll('input[type="checkbox"][data-slide-id]')
 		.forEach((checkbox) => {
@@ -1456,10 +1490,10 @@ includeAllSlidesButton.addEventListener("click", () => {
 		});
 	pushHistorySnapshot();
 	markEditorDirty();
-	setStatus("All slides included.");
+	setStatus('All slides included.');
 });
 
-includeCoreSlidesButton.addEventListener("click", () => {
+includeCoreSlidesButton.addEventListener('click', () => {
 	const template = templateMap.get(getInputValue(templateSelect));
 	if (!template) return;
 
@@ -1471,38 +1505,38 @@ includeCoreSlidesButton.addEventListener("click", () => {
 		.querySelectorAll('input[type="checkbox"][data-slide-id]')
 		.forEach((checkbox) => {
 			if (checkbox instanceof HTMLInputElement) {
-				checkbox.checked = required.has(checkbox.dataset.slideId || "");
+				checkbox.checked = required.has(checkbox.dataset.slideId || '');
 			}
 		});
 
 	pushHistorySnapshot();
 	markEditorDirty();
-	setStatus("Core slides selected.");
+	setStatus('Core slides selected.');
 });
 
-layoutPresetLock?.addEventListener("change", () => {
+layoutPresetLock?.addEventListener('change', () => {
 	syncLayoutPresetLockUi();
 	pushHistorySnapshot();
 	markEditorDirty();
 });
 bindBrandPaletteControls();
 
-autoFillButton.addEventListener("click", runAutofill);
-form.addEventListener("submit", generateDeck);
-form.addEventListener("input", handleFormMutation);
-form.addEventListener("change", handleFormMutation);
-saveAiSettingsButton.addEventListener("click", saveAiSettings);
-characterAssetsInput?.addEventListener("change", handleCharacterAssetsUpload);
-clearCharacterAssetsButton?.addEventListener("click", clearCharacterAssets);
-undoChangeButton?.addEventListener("click", () => {
+autoFillButton.addEventListener('click', runAutofill);
+form.addEventListener('submit', generateDeck);
+form.addEventListener('input', handleFormMutation);
+form.addEventListener('change', handleFormMutation);
+saveAiSettingsButton.addEventListener('click', saveAiSettings);
+characterAssetsInput?.addEventListener('change', handleCharacterAssetsUpload);
+clearCharacterAssetsButton?.addEventListener('click', clearCharacterAssets);
+undoChangeButton?.addEventListener('click', () => {
 	undoChange();
 });
-redoChangeButton?.addEventListener("click", () => {
+redoChangeButton?.addEventListener('click', () => {
 	redoChange();
 });
-document.addEventListener("keydown", handleHistoryHotkeys);
+document.addEventListener('keydown', handleHistoryHotkeys);
 
-openViewerLink.addEventListener("click", (event: MouseEvent) => {
+openViewerLink.addEventListener('click', (event: MouseEvent) => {
 	if (!currentDeckResult?.slideData) {
 		event.preventDefault();
 		return;
@@ -1516,38 +1550,38 @@ openViewerLink.addEventListener("click", (event: MouseEvent) => {
 	});
 });
 
-copyShareLinkButton.addEventListener("click", async () => {
+copyShareLinkButton.addEventListener('click', async () => {
 	if (!currentDeckResult?.shareUrl) return;
 
 	try {
 		await navigator.clipboard.writeText(currentDeckResult.shareUrl);
-		setStatus("Share link copied.");
+		setStatus('Share link copied.');
 	} catch {
-		setStatus("Could not copy link. Copy manually from Open share page.", true);
+		setStatus('Could not copy link. Copy manually from Open share page.', true);
 	}
 });
 
-chatLauncher.addEventListener("click", openChatPanel);
-chatClose.addEventListener("click", closeChatPanel);
-chatSendButton.addEventListener("click", runViewerChat);
-chatInputEl.addEventListener("keydown", (event: KeyboardEvent) => {
-	if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+chatLauncher.addEventListener('click', openChatPanel);
+chatClose.addEventListener('click', closeChatPanel);
+chatSendButton.addEventListener('click', runViewerChat);
+chatInputEl.addEventListener('keydown', (event: KeyboardEvent) => {
+	if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
 		event.preventDefault();
 		runViewerChat();
 	}
 });
 
-window.addEventListener("deck:select-target", (event: Event) => {
+window.addEventListener('deck:select-target', (event: Event) => {
 	if (!(event instanceof CustomEvent)) return;
 	const detail: { target?: string; label?: string } | undefined = event.detail;
-	const field = detail?.target || "global-concept";
+	const field = detail?.target || 'global-concept';
 	const label = detail?.label || field;
 	setChatTarget(field, label);
 	openChatPanel();
 
 	if (!chatMessagesEl.childElementCount) {
 		addChatMessage(
-			"assistant",
+			'assistant',
 			`Selected "${label}". Ask me to rewrite it and apply changes.`,
 		);
 	}
@@ -1555,7 +1589,7 @@ window.addEventListener("deck:select-target", (event: Event) => {
 
 (async function bootstrap(): Promise<void> {
 	setOutputState(null);
-	setSaveIndicator("is-saved");
+	setSaveIndicator('is-saved');
 	syncHistoryButtons();
 
 	try {
@@ -1567,7 +1601,7 @@ window.addEventListener("deck:select-target", (event: Event) => {
 		await hydrateTemplates();
 		await hydrateAiProviders();
 		applyAiSettings(readAiSettings());
-		setChatTarget("global-concept", "Global concept");
+		setChatTarget('global-concept', 'Global concept');
 		updateProjectChrome();
 
 		const restoredDraft = loadDraftFromLocalStorage();
@@ -1583,11 +1617,9 @@ window.addEventListener("deck:select-target", (event: Event) => {
 	} catch (error) {
 		console.error(error);
 		setStatus(
-			error instanceof Error
-				? error.message
-				: "Could not initialize editor.",
+			error instanceof Error ? error.message : 'Could not initialize editor.',
 			true,
 		);
-		setSaveIndicator("is-error");
+		setSaveIndicator('is-error');
 	}
 })();

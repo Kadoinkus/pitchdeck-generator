@@ -5,5 +5,5 @@ export {
 	renderPricingCardPanel,
 	renderSummaryPanel,
 	renderTitlePanel,
-} from "./presets.js";
-export { panelClassName, panelVariantClass } from "./variants.js";
+} from './presets.ts';
+export { panelClassName, panelVariantClass } from './variants.ts';

@@ -18,7 +18,7 @@ No test suite exists yet.
 
 ## Architecture
 
-```
+```text
 Express server (src/server.js)
   └─ API router (src/routes/api.js)
        ├─ AI orchestrator (src/ai/orchestrator.js)
@@ -63,7 +63,7 @@ All responses: `{ success: true, ... }` or `{ success: false, message: "..." }`
 
 - `PORT` (default: 3000)
 - `OPENAI_API_KEY` — for OpenAI autofill
-- `OPENAI_BASE_URL` — custom OpenAI endpoint (default: https://api.openai.com/v1)
+- `OPENAI_BASE_URL` — custom OpenAI endpoint (default: `https://api.openai.com/v1`)
 
 ## Code Style
 

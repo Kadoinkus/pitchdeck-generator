@@ -57,19 +57,19 @@ interface ResolveThemePaletteInput {
 }
 
 export const DEFAULT_THEME_COLORS: ThemeColors = {
-	primaryColor: "#004B49",
-	accentColor: "#30D89E",
-	secondaryColor: "#0B6E6C",
-	backgroundColor: "#F2F4F6",
-	textColor: "#0B1D2E",
+	primaryColor: '#004B49',
+	accentColor: '#30D89E',
+	secondaryColor: '#0B6E6C',
+	backgroundColor: '#F2F4F6',
+	textColor: '#0B1D2E',
 };
 
 export const HARMONY_MODES: readonly string[] = [
-	"complementary",
-	"split-complementary",
-	"analogous",
-	"triad",
-	"monochromatic",
+	'complementary',
+	'split-complementary',
+	'analogous',
+	'triad',
+	'monochromatic',
 ];
 
 const THEME_SAFETY_THRESHOLDS: Readonly<ThemeSafetyMetrics> = {
@@ -114,7 +114,7 @@ const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
 			secondaryS: 0.6,
 		},
 	],
-	"split-complementary": [
+	'split-complementary': [
 		{
 			a: 150,
 			b: 210,
@@ -269,13 +269,14 @@ export function normalizeHexColor(
 	value: unknown,
 	fallback: string = DEFAULT_THEME_COLORS.primaryColor,
 ): string {
-	const raw = String(value || "").trim();
+	const raw = String(value || '').trim();
 	if (/^#?[0-9a-fA-F]{6}$/.test(raw)) {
-		return (raw.startsWith("#") ? raw : `#${raw}`).toUpperCase();
+		return (raw.startsWith('#') ? raw : `#${raw}`).toUpperCase();
 	}
-	if (raw.length === 0 && fallback)
-		return normalizeHexColor(fallback, "#004B49");
-	return "#004B49";
+	if (raw.length === 0 && fallback) {
+		return normalizeHexColor(fallback, '#004B49');
+	}
+	return '#004B49';
 }
 
 function hexToRgb(hex: string): Rgb {
@@ -288,8 +289,7 @@ function hexToRgb(hex: string): Rgb {
 }
 
 function rgbToHex({ r, g, b }: Rgb): string {
-	const toHex = (channel: number): string =>
-		clamp(Math.round(channel), 0, 255).toString(16).padStart(2, "0");
+	const toHex = (channel: number): string => clamp(Math.round(channel), 0, 255).toString(16).padStart(2, '0');
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
@@ -351,9 +351,9 @@ function channelLuminance(channel: number): number {
 function relativeLuminance(hex: string): number {
 	const { r, g, b } = hexToRgb(hex);
 	return (
-		0.2126 * channelLuminance(r) +
-		0.7152 * channelLuminance(g) +
-		0.0722 * channelLuminance(b)
+		0.2126 * channelLuminance(r)
+		+ 0.7152 * channelLuminance(g)
+		+ 0.0722 * channelLuminance(b)
 	);
 }
 
@@ -369,10 +369,10 @@ function adjustForContrast(
 	color: string,
 	fixedColor: string,
 	minContrast: number,
-	direction: "darker" | "lighter" = "darker",
+	direction: 'darker' | 'lighter' = 'darker',
 ): string {
-	const fixed = normalizeHexColor(fixedColor, "#FFFFFF");
-	const start = normalizeHexColor(color, "#000000");
+	const fixed = normalizeHexColor(fixedColor, '#FFFFFF');
+	const start = normalizeHexColor(color, '#000000');
 	let best = start;
 	let bestContrast = contrastRatio(start, fixed);
 	if (bestContrast >= minContrast) return start;
@@ -380,10 +380,9 @@ function adjustForContrast(
 	const hsl = rgbToHsl(hexToRgb(start));
 	for (let step = 1; step <= 50; step += 1) {
 		const amount = (step / 50) * 0.9;
-		const nextL =
-			direction === "lighter"
-				? clamp(hsl.l + amount, 0.02, 0.98)
-				: clamp(hsl.l - amount, 0.02, 0.98);
+		const nextL = direction === 'lighter'
+			? clamp(hsl.l + amount, 0.02, 0.98)
+			: clamp(hsl.l - amount, 0.02, 0.98);
 		const candidate = rgbToHex(hslToRgb({ h: hsl.h, s: hsl.s, l: nextL }));
 		const ratio = contrastRatio(candidate, fixed);
 		if (ratio > bestContrast) {
@@ -422,18 +421,18 @@ function normalizeThemeInput(
 }
 
 function normalizeHarmonyMode(value: unknown): string {
-	const mode = String(value || "")
+	const mode = String(value || '')
 		.trim()
 		.toLowerCase();
 	if (HARMONY_MODES.includes(mode)) return mode;
-	return "complementary";
+	return 'complementary';
 }
 
 function resolveVariant(
 	mode: string,
 	shuffleSeed: unknown,
 ): { variant: HarmonyVariant; index: number; count: number } {
-	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS["complementary"];
+	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS['complementary'];
 	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
 	const index = seed % options.length;
 	return {
@@ -448,7 +447,7 @@ function generateHarmonyTheme(
 	harmonyMode: string,
 	shuffleSeed: unknown,
 ): {
-	theme: Pick<ThemeColors, "primaryColor" | "accentColor" | "secondaryColor">;
+	theme: Pick<ThemeColors, 'primaryColor' | 'accentColor' | 'secondaryColor'>;
 	harmonyMode: string;
 	variantIndex: number;
 	variantCount: number;
@@ -495,7 +494,9 @@ function generateHarmonyTheme(
 	};
 }
 
-export function evaluateTheme(themeInput: Partial<ThemeColors> = {}): ThemeSafetyMetrics {
+export function evaluateTheme(
+	themeInput: Partial<ThemeColors> = {},
+): ThemeSafetyMetrics {
 	const theme = normalizeThemeInput(themeInput);
 	return {
 		textOnBackground: contrastRatio(theme.textColor, theme.backgroundColor),
@@ -504,34 +505,42 @@ export function evaluateTheme(themeInput: Partial<ThemeColors> = {}): ThemeSafet
 			theme.secondaryColor,
 			theme.backgroundColor,
 		),
-		secondaryOnWhite: contrastRatio(theme.secondaryColor, "#FFFFFF"),
+		secondaryOnWhite: contrastRatio(theme.secondaryColor, '#FFFFFF'),
 	};
 }
 
-export function describeThemeSafety(themeInput: Partial<ThemeColors> = {}): string[] {
+export function describeThemeSafety(
+	themeInput: Partial<ThemeColors> = {},
+): string[] {
 	const metrics = evaluateTheme(themeInput);
 	const warnings: string[] = [];
 
 	if (metrics.textOnBackground < THEME_SAFETY_THRESHOLDS.textOnBackground) {
-		warnings.push("Text and background contrast is too low.");
+		warnings.push('Text and background contrast is too low.');
 	}
 	if (metrics.accentOnBackground < THEME_SAFETY_THRESHOLDS.accentOnBackground) {
-		warnings.push("Accent color is too close to the background.");
+		warnings.push('Accent color is too close to the background.');
 	}
 	if (metrics.secondaryOnWhite < THEME_SAFETY_THRESHOLDS.secondaryOnWhite) {
-		warnings.push("Dark-slide color is too light for white text.");
+		warnings.push('Dark-slide color is too light for white text.');
 	}
 
 	return warnings;
 }
 
-export function enforceThemeSafety(
-	themeInput: Partial<ThemeColors> = {},
-): { theme: ThemeColors; adjustments: ThemeAdjustment[]; metrics: ThemeSafetyMetrics } {
+export function enforceThemeSafety(themeInput: Partial<ThemeColors> = {}): {
+	theme: ThemeColors;
+	adjustments: ThemeAdjustment[];
+	metrics: ThemeSafetyMetrics;
+} {
 	const theme = normalizeThemeInput(themeInput);
 	const adjustments: ThemeAdjustment[] = [];
 
-	function applyIfChanged(key: keyof ThemeColors, nextColor: string, reason: string): void {
+	function applyIfChanged(
+		key: keyof ThemeColors,
+		nextColor: string,
+		reason: string,
+	): void {
 		const normalized = normalizeHexColor(nextColor, theme[key]);
 		if (normalized === theme[key]) return;
 		theme[key] = normalized;
@@ -539,58 +548,58 @@ export function enforceThemeSafety(
 	}
 
 	applyIfChanged(
-		"textColor",
+		'textColor',
 		adjustForContrast(
 			theme.textColor,
 			theme.backgroundColor,
 			THEME_SAFETY_THRESHOLDS.textOnBackground,
-			"darker",
+			'darker',
 		),
-		"darkened text for readability",
+		'darkened text for readability',
 	);
 
 	applyIfChanged(
-		"backgroundColor",
+		'backgroundColor',
 		adjustForContrast(
 			theme.backgroundColor,
 			theme.textColor,
 			THEME_SAFETY_THRESHOLDS.textOnBackground,
-			"lighter",
+			'lighter',
 		),
-		"lightened background for readability",
+		'lightened background for readability',
 	);
 
 	applyIfChanged(
-		"accentColor",
+		'accentColor',
 		adjustForContrast(
 			theme.accentColor,
 			theme.backgroundColor,
 			THEME_SAFETY_THRESHOLDS.accentOnBackground,
-			"darker",
+			'darker',
 		),
-		"adjusted accent contrast on background",
+		'adjusted accent contrast on background',
 	);
 
 	applyIfChanged(
-		"secondaryColor",
+		'secondaryColor',
 		adjustForContrast(
 			theme.secondaryColor,
-			"#FFFFFF",
+			'#FFFFFF',
 			THEME_SAFETY_THRESHOLDS.secondaryOnWhite,
-			"darker",
+			'darker',
 		),
-		"darkened dark-slide color for white text",
+		'darkened dark-slide color for white text',
 	);
 
 	applyIfChanged(
-		"secondaryColor",
+		'secondaryColor',
 		adjustForContrast(
 			theme.secondaryColor,
 			theme.backgroundColor,
 			THEME_SAFETY_THRESHOLDS.secondaryOnBackground,
-			"darker",
+			'darker',
 		),
-		"darkened dark-slide color to separate from deck background",
+		'darkened dark-slide color to separate from deck background',
 	);
 
 	return {
@@ -627,8 +636,7 @@ export function resolveThemePalette(input: ResolveThemePaletteInput = {}) {
 	);
 	const harmonyMode = normalizeHarmonyMode(input.harmonyMode);
 	const shuffleSeed = Math.max(0, Math.floor(toFinite(input.shuffleSeed, 0)));
-	const locks =
-		input.locks && typeof input.locks === "object" ? input.locks : {};
+	const locks = input.locks && typeof input.locks === 'object' ? input.locks : {};
 
 	const manualTheme = normalizeThemeInput({
 		primaryColor,

@@ -1,4 +1,4 @@
-import { safeColor, safeFont } from "./utils.js";
+import { safeColor, safeFont } from './utils.ts';
 
 export interface ThemeInput {
 	primaryColor?: string;
@@ -12,13 +12,13 @@ export interface ThemeInput {
 }
 
 export function themeVars(theme: ThemeInput | null | undefined): string {
-	const primary = safeColor(theme?.primaryColor, "#004B49");
-	const accent = safeColor(theme?.accentColor, "#30D89E");
-	const secondary = safeColor(theme?.secondaryColor, "#0B6E6C");
-	const bg = safeColor(theme?.backgroundColor, "#F2F4F6");
-	const text = safeColor(theme?.textColor, "#0B1D2E");
-	const heading = safeFont(theme?.headingFont, "Sora");
-	const body = safeFont(theme?.bodyFont, "Inter");
+	const primary = safeColor(theme?.primaryColor, '#004B49');
+	const accent = safeColor(theme?.accentColor, '#30D89E');
+	const secondary = safeColor(theme?.secondaryColor, '#0B6E6C');
+	const bg = safeColor(theme?.backgroundColor, '#F2F4F6');
+	const text = safeColor(theme?.textColor, '#0B1D2E');
+	const heading = safeFont(theme?.headingFont, 'Sora');
+	const body = safeFont(theme?.bodyFont, 'Inter');
 
 	return [
 		`--deck-primary:${primary}`,
@@ -28,7 +28,7 @@ export function themeVars(theme: ThemeInput | null | undefined): string {
 		`--deck-text:${text}`,
 		`--deck-heading:'${heading}',sans-serif`,
 		`--deck-body:'${body}',sans-serif`,
-	].join(";");
+	].join(';');
 }
 
 interface ThemeSource {
@@ -36,6 +36,9 @@ interface ThemeSource {
 	theme?: ThemeInput;
 }
 
-export function resolveTheme(theme: ThemeInput | null | undefined, deckData: ThemeSource | null | undefined): ThemeInput {
+export function resolveTheme(
+	theme: ThemeInput | null | undefined,
+	deckData: ThemeSource | null | undefined,
+): ThemeInput {
 	return deckData?.deckTheme || theme || deckData?.theme || {};
 }

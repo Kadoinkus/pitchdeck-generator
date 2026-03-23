@@ -1,69 +1,82 @@
-import type { DeckData, SlideData, ThemeData } from "../types.js";
-import { attrTarget, renderFrame } from "../core/components.js";
-import { getTargetField } from "../core/fields.js";
-import { ensureItems, esc, fitText } from "../core/utils.js";
-import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
+import { attrTarget, renderFrame } from '../core/components.ts';
+import { getTargetField } from '../core/fields.ts';
+import { ensureItems, esc, fitText } from '../core/utils.ts';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.ts';
+import type { DeckData, SlideData, ThemeData } from '../types.ts';
 
-export function renderWhatYouGet(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
+export function renderWhatYouGet(
+	slide: SlideData,
+	theme: ThemeData,
+	deckData: DeckData,
+): string {
 	const target = getTargetField(slide);
 	const sections = ensureItems(slide.sections, [
 		{
-			title: "Deployment-ready mascot",
+			title: 'Deployment-ready mascot',
 			bullets: [
-				"Branded character",
-				"Expressive animation",
-				"Launch-ready assets",
+				'Branded character',
+				'Expressive animation',
+				'Launch-ready assets',
 			],
 		},
 		{
-			title: "Multichannel access",
-			bullets: ["Website widget", "Mobile support", "Campaign deployment"],
+			title: 'Multichannel access',
+			bullets: ['Website widget', 'Mobile support', 'Campaign deployment'],
 		},
 		{
-			title: "Performance insights",
-			bullets: ["Live dashboard", "Monthly reports", "Optimization loops"],
+			title: 'Performance insights',
+			bullets: ['Live dashboard', 'Monthly reports', 'Optimization loops'],
 		},
 		{
-			title: "Brand activation media",
-			bullets: ["Social visuals", "Video snippets", "Campaign pack"],
+			title: 'Brand activation media',
+			bullets: ['Social visuals', 'Video snippets', 'Campaign pack'],
 		},
 	]).slice(0, 4);
 
 	const body = `<div class="stack-layout">
-    ${renderTitlePanel({
+    ${
+		renderTitlePanel({
 			slide,
-			kicker: "What You Get",
-			title: "Everything Needed To Launch Fast",
-			accentPhrase: "Launch Fast",
+			kicker: 'What You Get',
+			title: 'Everything Needed To Launch Fast',
+			accentPhrase: 'Launch Fast',
 			target,
-			align: "center",
-			variant: "transparent",
-		})}
+			align: 'center',
+			variant: 'transparent',
+		})
+	}
     <div class="grid-4 deliverable-grid" ${attrTarget(target, `${slide.title} deliverables`)}>
-      ${sections
-				.map(
-					(section, index) => `<article class="panel deliverable-card">
-        ${renderImagePanel({
-					slide,
-					deckData,
-					target: "imagePrompts",
-					label: `${slide.title} image ${index + 1}`,
-					helper: `${section.title} visual`,
-					ratio: "1:1",
-					className: "is-micro",
-					hideTitle: true,
-					hideHint: true,
-				})}
-        <h3>${esc(fitText(section.title || "", 30))}</h3>
+      ${
+		sections
+			.map(
+				(section, index) =>
+					`<article class="panel deliverable-card">
+        ${
+						renderImagePanel({
+							slide,
+							deckData,
+							target: 'imagePrompts',
+							label: `${slide.title} image ${index + 1}`,
+							helper: `${section.title} visual`,
+							ratio: '1:1',
+							className: 'is-micro',
+							hideTitle: true,
+							hideHint: true,
+						})
+					}
+        <h3>${esc(fitText(section.title || '', 30))}</h3>
         <ul>
-          ${ensureItems(section.bullets, [])
-						.slice(0, 3)
-						.map((bullet) => `<li>${esc(fitText(bullet, 48))}</li>`)
-						.join("")}
+          ${
+						ensureItems(section.bullets, [])
+							.slice(0, 3)
+							.map((bullet) => `<li>${esc(fitText(bullet, 48))}</li>`)
+							.join('')
+					}
         </ul>
       </article>`,
-				)
-				.join("")}
+			)
+			.join('')
+	}
     </div>
   </div>`;
 

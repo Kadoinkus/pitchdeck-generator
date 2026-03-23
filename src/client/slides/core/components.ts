@@ -1,15 +1,19 @@
-import { themeVars } from "./theme.js";
-import type { ThemeInput } from "./theme.js";
-import { esc, findAssetForSlide, fitText } from "./utils.js";
-import type { SlideData, DeckData, ImageAssetRef } from "./utils.js";
+import type { ThemeInput } from './theme.ts';
+import { themeVars } from './theme.ts';
+import type { DeckData, ImageAssetRef, SlideData } from './utils.ts';
+import { esc, findAssetForSlide, fitText } from './utils.ts';
 
-export function attrTarget(target: string, label: string, className = "ai-clickable"): string {
+export function attrTarget(
+	target: string,
+	label: string,
+	className = 'ai-clickable',
+): string {
 	return `class="${className}" data-ai-target="${esc(target)}" data-ai-label="${esc(label)}"`;
 }
 
 function highlightTitle(title: unknown, accentPhrase: unknown): string {
-	const t = String(title || "");
-	const phrase = String(accentPhrase || "").trim();
+	const t = String(title || '');
+	const phrase = String(accentPhrase || '').trim();
 	if (!phrase) return esc(t);
 
 	const index = t.toLowerCase().indexOf(phrase.toLowerCase());
@@ -34,12 +38,12 @@ export interface HeadlineOptions {
 }
 
 export function renderHeadline({
-	kicker = "",
-	title = "",
-	accentPhrase = "",
-	subtitle = "",
-	target = "global-concept",
-	align = "left",
+	kicker = '',
+	title = '',
+	accentPhrase = '',
+	subtitle = '',
+	target = 'global-concept',
+	align = 'left',
 	compact = false,
 	maxTitleChars = 58,
 	maxSubtitleChars = 140,
@@ -48,18 +52,28 @@ export function renderHeadline({
 	const safeTitle = fitText(title, maxTitleChars);
 	const safeSubtitle = fitText(subtitle, maxSubtitleChars);
 
-	return `<header class="headline-block ${align === "center" ? "is-center" : "is-left"} ${compact ? "is-compact" : ""}">
-    ${safeKicker ? `<p class="headline-kicker" ${attrTarget(target, `${safeKicker} kicker`)}>${esc(safeKicker)}</p>` : ""}
-    <h1 class="headline-title" ${attrTarget(target, `${safeTitle || "Title"} headline`)}>${highlightTitle(safeTitle, accentPhrase)}</h1>
-    ${safeSubtitle ? `<p class="headline-subtitle" ${attrTarget(target, `${safeTitle || "Title"} subtitle`)}>${esc(safeSubtitle)}</p>` : ""}
+	return `<header class="headline-block ${align === 'center' ? 'is-center' : 'is-left'} ${compact ? 'is-compact' : ''}">
+    ${
+		safeKicker ? `<p class="headline-kicker" ${attrTarget(target, `${safeKicker} kicker`)}>${esc(safeKicker)}</p>` : ''
+	}
+    <h1 class="headline-title" ${attrTarget(target, `${safeTitle || 'Title'} headline`)}>${
+		highlightTitle(safeTitle, accentPhrase)
+	}</h1>
+    ${
+		safeSubtitle
+			? `<p class="headline-subtitle" ${attrTarget(target, `${safeTitle || 'Title'} subtitle`)}>${
+				esc(safeSubtitle)
+			}</p>`
+			: ''
+	}
   </header>`;
 }
 
-function ratioClass(ratio = "16:9"): string {
-	if (ratio === "3:4") return "ratio-3-4";
-	if (ratio === "1:1") return "ratio-1-1";
-	if (ratio === "4:3") return "ratio-4-3";
-	return "ratio-16-9";
+function ratioClass(ratio = '16:9'): string {
+	if (ratio === '3:4') return 'ratio-3-4';
+	if (ratio === '1:1') return 'ratio-1-1';
+	if (ratio === '4:3') return 'ratio-4-3';
+	return 'ratio-16-9';
 }
 
 export interface ImageSlotOptions {
@@ -78,28 +92,27 @@ export interface ImageSlotOptions {
 export function renderImageSlot({
 	slide,
 	deckData,
-	target = "imagePrompts",
-	label = "Slide image",
-	helper = "Add image",
-	ratio = "4:3",
-	className = "",
+	target = 'imagePrompts',
+	label = 'Slide image',
+	helper = 'Add image',
+	ratio = '4:3',
+	className = '',
 	hideTitle = false,
 	hideHint = false,
 	forceVisible = false,
 }: ImageSlotOptions = {}): string {
 	const isHidden = Boolean(slide?.hideImages);
-	if (isHidden && !forceVisible) return "";
+	if (isHidden && !forceVisible) return '';
 
 	const asset = findAssetForSlide(slide, deckData);
 	const activeRatio = slide?.imageRatio || ratio;
-	const modeClass =
-		(slide?.imageMode || "cover") === "contain" ? "mode-contain" : "mode-cover";
+	const modeClass = (slide?.imageMode || 'cover') === 'contain' ? 'mode-contain' : 'mode-cover';
 	const cls = `${ratioClass(activeRatio)} ${modeClass} ${className}`.trim();
 
 	if (asset?.dataUrl) {
 		return `<figure ${attrTarget(target, label, `image-slot ${cls}`)}>
       <div class="image-frame has-image">
-        <img src="${esc(asset.dataUrl)}" alt="${esc(asset.name || "Character reference image")}" loading="lazy" />
+        <img src="${esc(asset.dataUrl)}" alt="${esc(asset.name || 'Character reference image')}" loading="lazy" />
       </div>
     </figure>`;
 	}
@@ -107,8 +120,8 @@ export function renderImageSlot({
 	return `<figure ${attrTarget(target, label, `image-slot ${cls}`)}>
     <div class="image-frame">
       <span class="image-icon">🖼</span>
-      ${hideTitle ? "" : '<p class="image-title">Missing image</p>'}
-      ${hideHint ? "" : `<p class="image-hint">${esc(fitText(helper, 80))}</p>`}
+      ${hideTitle ? '' : '<p class="image-title">Missing image</p>'}
+      ${hideHint ? '' : `<p class="image-hint">${esc(fitText(helper, 80))}</p>`}
     </div>
   </figure>`;
 }
@@ -120,17 +133,17 @@ export interface FrameOptions {
 }
 
 export function renderFrame({ slide, theme, body }: FrameOptions): string {
-	const modeClass =
-		slide?.backgroundMode === "dark" ? "mode-dark" : "mode-light";
-	const textMode =
-		String(slide?.textMode || "fit").toLowerCase() === "clamp"
-			? "text-mode-clamp"
-			: "text-mode-fit";
+	const modeClass = slide?.backgroundMode === 'dark' ? 'mode-dark' : 'mode-light';
+	const textMode = String(slide?.textMode || 'fit').toLowerCase() === 'clamp'
+		? 'text-mode-clamp'
+		: 'text-mode-fit';
 
-	return `<article class="slide-render deck-slide ${modeClass} ${textMode} ${esc(slide?.type || "generic")}-slide" style="${themeVars(theme)}">
+	return `<article class="slide-render deck-slide ${modeClass} ${textMode} ${
+		esc(slide?.type || 'generic')
+	}-slide" style="${themeVars(theme)}">
     <section class="deck-content">
       ${body}
     </section>
-    <footer class="deck-footer">${esc(theme?.brandName || "Notso AI")}</footer>
+    <footer class="deck-footer">${esc(theme?.brandName || 'Notso AI')}</footer>
   </article>`;
 }

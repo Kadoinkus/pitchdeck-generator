@@ -1,20 +1,13 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { Router } from "express";
-import type { Request, Response } from "express";
-import {
-	generateAutofill,
-	getAiProviderDefinitions,
-	runChatAssistant,
-} from "../ai/orchestrator.js";
-import { buildDeck } from "../deck-builder.js";
-import {
-	getEditableFieldDefinitions,
-	getTemplateDefinitions,
-} from "../deck-model.js";
-import { readShare, saveShare } from "../share-store.js";
-import { buildSlideData } from "../slide-data.js";
-import { safeText, sanitizeFilename } from "../utils.js";
+import type { Request, Response } from 'express';
+import { Router } from 'express';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { generateAutofill, getAiProviderDefinitions, runChatAssistant } from '../ai/orchestrator.ts';
+import { buildDeck } from '../deck-builder.ts';
+import { getEditableFieldDefinitions, getTemplateDefinitions } from '../deck-model.ts';
+import { readShare, saveShare } from '../share-store.ts';
+import { buildSlideData } from '../slide-data.ts';
+import { safeText, sanitizeFilename } from '../utils.ts';
 
 interface ShareablePayload extends Record<string, unknown> {
 	aiTextApiKey?: string;
@@ -22,7 +15,7 @@ interface ShareablePayload extends Record<string, unknown> {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
@@ -40,37 +33,37 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 		return rest;
 	}
 
-	router.get("/health", (_req: Request, res: Response): void => {
+	router.get('/health', (_req: Request, res: Response): void => {
 		res.json({ ok: true });
 	});
 
-	router.get("/templates", (_req: Request, res: Response): void => {
+	router.get('/templates', (_req: Request, res: Response): void => {
 		res.json({ success: true, templates: getTemplateDefinitions() });
 	});
 
-	router.get("/editable-fields", (_req: Request, res: Response): void => {
+	router.get('/editable-fields', (_req: Request, res: Response): void => {
 		res.json({ success: true, fields: getEditableFieldDefinitions() });
 	});
 
-	router.get("/ai/providers", (_req: Request, res: Response): void => {
+	router.get('/ai/providers', (_req: Request, res: Response): void => {
 		res.json({ success: true, providers: getAiProviderDefinitions() });
 	});
 
-	router.post("/preview", (req: Request, res: Response): void => {
+	router.post('/preview', (req: Request, res: Response): void => {
 		try {
 			const payload: Record<string, unknown> = req.body || {};
 			const slideData = buildSlideData(payload);
 			res.json({ success: true, slideData });
 		} catch (error: unknown) {
-			console.error("Preview build failed:", error);
+			console.error('Preview build failed:', error);
 			res
 				.status(500)
-				.json({ success: false, message: "Could not build preview." });
+				.json({ success: false, message: 'Could not build preview.' });
 		}
 	});
 
 	router.get(
-		"/share/:token",
+		'/share/:token',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				const token = Array.isArray(req.params.token)
@@ -79,7 +72,7 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 				if (!token) {
 					res
 						.status(400)
-						.json({ success: false, message: "Share token is missing." });
+						.json({ success: false, message: 'Share token is missing.' });
 					return;
 				}
 
@@ -87,7 +80,7 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 				if (!record) {
 					res
 						.status(404)
-						.json({ success: false, message: "Share link not found." });
+						.json({ success: false, message: 'Share link not found.' });
 					return;
 				}
 
@@ -99,33 +92,33 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 					downloadUrl: record.downloadUrl || null,
 				});
 			} catch (error: unknown) {
-				console.error("Share lookup failed:", error);
+				console.error('Share lookup failed:', error);
 				res
 					.status(500)
-					.json({ success: false, message: "Could not load shared deck." });
+					.json({ success: false, message: 'Could not load shared deck.' });
 			}
 		},
 	);
 
 	router.post(
-		"/ai/autofill",
+		'/ai/autofill',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				const payload: Record<string, unknown> = req.body || {};
 				const output = await generateAutofill(payload);
 				res.json({ success: true, ...output });
 			} catch (error: unknown) {
-				console.error("AI autofill failed:", error);
+				console.error('AI autofill failed:', error);
 				res.status(500).json({
 					success: false,
-					message: "Could not generate AI autofill content.",
+					message: 'Could not generate AI autofill content.',
 				});
 			}
 		},
 	);
 
 	router.post(
-		"/ai/chat",
+		'/ai/chat',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				const body: Record<string, unknown> = req.body || {};
@@ -141,61 +134,61 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 				const output = await runChatAssistant(payload, chatRequest);
 				res.json({ success: true, ...output });
 			} catch (error: unknown) {
-				console.error("AI chat failed:", error);
+				console.error('AI chat failed:', error);
 				res.status(500).json({
 					success: false,
-					message: "Could not generate AI chat response.",
+					message: 'Could not generate AI chat response.',
 				});
 			}
 		},
 	);
 
 	router.post(
-		"/draft-text",
+		'/draft-text',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				const payload: Record<string, unknown> = req.body || {};
 				const output = await generateAutofill(payload);
 				res.json({ success: true, draft: output.draft });
 			} catch (error: unknown) {
-				console.error("Text draft generation failed:", error);
+				console.error('Text draft generation failed:', error);
 				res
 					.status(500)
-					.json({ success: false, message: "Could not generate text draft." });
+					.json({ success: false, message: 'Could not generate text draft.' });
 			}
 		},
 	);
 
 	router.post(
-		"/draft-images",
+		'/draft-images',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				const payload: Record<string, unknown> = req.body || {};
 				const output = await generateAutofill(payload);
 				res.json({ success: true, draft: output.imageDraft });
 			} catch (error: unknown) {
-				console.error("Image prompt generation failed:", error);
+				console.error('Image prompt generation failed:', error);
 				res.status(500).json({
 					success: false,
-					message: "Could not generate image prompts.",
+					message: 'Could not generate image prompts.',
 				});
 			}
 		},
 	);
 
 	router.post(
-		"/generate",
+		'/generate',
 		async (req: Request, res: Response): Promise<void> => {
 			try {
 				await fs.mkdir(outputDir, { recursive: true });
 
 				const payload: Record<string, unknown> = req.body || {};
 				const deck = buildDeck(payload);
-				const clientName = safeText(payload.clientName, "client");
-				const projectTitle = safeText(payload.projectTitle, "proposal");
-				const deckVersion = safeText(payload.deckVersion, "v1").replace(
+				const clientName = safeText(payload.clientName, 'client');
+				const projectTitle = safeText(payload.projectTitle, 'proposal');
+				const deckVersion = safeText(payload.deckVersion, 'v1').replace(
 					/[^a-z0-9.-]/gi,
-					"-",
+					'-',
 				);
 				const fileBase = sanitizeFilename(
 					`${clientName}-${projectTitle}-${deckVersion}`,
@@ -223,10 +216,10 @@ export function createApiRouter(outputDir: string): ReturnType<typeof Router> {
 					pdfUrl: `/share/${shareToken}?print=1`,
 				});
 			} catch (error: unknown) {
-				console.error("Deck generation failed:", error);
+				console.error('Deck generation failed:', error);
 				res.status(500).json({
 					success: false,
-					message: "Could not generate the PowerPoint file.",
+					message: 'Could not generate the PowerPoint file.',
 				});
 			}
 		},

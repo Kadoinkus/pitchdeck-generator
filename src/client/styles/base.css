@@ -25,10 +25,10 @@ body {
 	background:
 		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%),
 		radial-gradient(
-			circle at 91% 12%,
-			rgba(125, 42, 232, 0.14),
-			transparent 26%
-		),
+		circle at 91% 12%,
+		rgba(125, 42, 232, 0.14),
+		transparent 26%
+	),
 		linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
 }
 
@@ -203,9 +203,7 @@ body {
 	font: inherit;
 	padding: 9px 10px;
 	outline: none;
-	transition:
-		border-color 0.16s,
-		box-shadow 0.16s;
+	transition: border-color 0.16s, box-shadow 0.16s;
 }
 
 .field input:focus,
@@ -340,9 +338,7 @@ button,
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	transition:
-		transform 0.16s ease,
-		opacity 0.16s ease;
+	transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
 button:hover,

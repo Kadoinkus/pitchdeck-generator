@@ -1,18 +1,22 @@
-import type { DeckData, SlideData, ThemeData } from "../types.js";
-import { attrTarget, renderFrame } from "../core/components.js";
-import { getTargetField } from "../core/fields.js";
-import { ensureItems, esc, fitList, fitText } from "../core/utils.js";
-import { renderImagePanel, renderTitlePanel } from "../panels/index.js";
+import { attrTarget, renderFrame } from '../core/components.ts';
+import { getTargetField } from '../core/fields.ts';
+import { ensureItems, esc, fitList, fitText } from '../core/utils.ts';
+import { renderImagePanel, renderTitlePanel } from '../panels/index.ts';
+import type { DeckData, SlideData, ThemeData } from '../types.ts';
 
-export function renderChatFlow(slide: SlideData, theme: ThemeData, deckData: DeckData): string {
+export function renderChatFlow(
+	slide: SlideData,
+	theme: ThemeData,
+	deckData: DeckData,
+): string {
 	const target = getTargetField(slide);
 	const steps = fitList(
 		ensureItems(slide.steps, [
-			"Greeting",
-			"Discovery",
-			"Suggestions",
-			"Personalization",
-			"Conversion",
+			'Greeting',
+			'Discovery',
+			'Suggestions',
+			'Personalization',
+			'Conversion',
 		]),
 		6,
 		48,
@@ -20,16 +24,18 @@ export function renderChatFlow(slide: SlideData, theme: ThemeData, deckData: Dec
 
 	const body = `<div class="split-layout">
     <article class="text-surface text-panel">
-      ${renderTitlePanel({
-				slide,
-				kicker: "Chat Flow",
-				title: "Conversation Logic That Converts",
-				accentPhrase: "Converts",
-				target,
-				compact: true,
-				asPanel: false,
-				variant: "transparent",
-			})}
+      ${
+		renderTitlePanel({
+			slide,
+			kicker: 'Chat Flow',
+			title: 'Conversation Logic That Converts',
+			accentPhrase: 'Converts',
+			target,
+			compact: true,
+			asPanel: false,
+			variant: 'transparent',
+		})
+	}
       <p class="paragraph">Every conversation follows a clear structure to reduce friction and move users to the right next action.</p>
       <ul class="bullet-list">
         <li>Intent routing with context memory</li>
@@ -39,16 +45,22 @@ export function renderChatFlow(slide: SlideData, theme: ThemeData, deckData: Dec
     </article>
     <article class="panel flow-panel" ${attrTarget(target, `${slide.title} steps`)}>
       <div class="vertical-steps">
-        ${steps.map((step, i) => `<div class="flow-step"><span>${i + 1}</span><p>${esc(fitText(step, 44))}</p></div>`).join("")}
+        ${
+		steps.map((step, i) => `<div class="flow-step"><span>${i + 1}</span><p>${esc(fitText(step, 44))}</p></div>`).join(
+			'',
+		)
+	}
       </div>
-      ${renderImagePanel({
-				slide,
-				deckData,
-				target: "imagePrompts",
-				label: "Chat flow image",
-				helper: "Step-based funnel illustration",
-				ratio: "4:3",
-			})}
+      ${
+		renderImagePanel({
+			slide,
+			deckData,
+			target: 'imagePrompts',
+			label: 'Chat flow image',
+			helper: 'Step-based funnel illustration',
+			ratio: '4:3',
+		})
+	}
     </article>
   </div>`;
 

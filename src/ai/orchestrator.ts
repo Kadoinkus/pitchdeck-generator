@@ -1,13 +1,7 @@
-import { getEditableFieldDefinitions } from "../deck-model.js";
-import { safeText } from "../utils.js";
-import {
-	localChatAssist,
-	localGenerateAutofill,
-} from "./providers/local-provider.js";
-import {
-	openAIAutofill,
-	openAIChatAssist,
-} from "./providers/openai-provider.js";
+import { getEditableFieldDefinitions } from '../deck-model.ts';
+import { safeText } from '../utils.ts';
+import { localChatAssist, localGenerateAutofill } from './providers/local-provider.ts';
+import { openAIAutofill, openAIChatAssist } from './providers/openai-provider.ts';
 
 export interface SuggestedChange {
 	field: string;
@@ -76,7 +70,7 @@ const EDITABLE_FIELDS = new Set(
 );
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null;
+	return typeof value === 'object' && value !== null;
 }
 
 function sanitizeChanges(changes: unknown): SuggestedChange[] {
@@ -93,32 +87,34 @@ function sanitizeChanges(changes: unknown): SuggestedChange[] {
 		})
 		.filter(
 			(change): change is SuggestedChange =>
-				change.field !== "" && EDITABLE_FIELDS.has(change.field) && change.value !== "",
+				change.field !== ''
+				&& EDITABLE_FIELDS.has(change.field)
+				&& change.value !== '',
 		);
 }
 
 function resolveAiConfig(rawData: Record<string, unknown> = {}): AiConfig {
 	return {
-		textProvider: safeText(rawData.aiTextProvider, "local").toLowerCase(),
-		textModel: safeText(rawData.aiTextModel, "gpt-4.1-mini"),
+		textProvider: safeText(rawData.aiTextProvider, 'local').toLowerCase(),
+		textModel: safeText(rawData.aiTextModel, 'gpt-4.1-mini'),
 		textApiKey: safeText(
 			rawData.aiTextApiKey,
-			process.env.OPENAI_API_KEY || "",
+			process.env.OPENAI_API_KEY || '',
 		),
 		textBaseUrl: safeText(
 			rawData.aiTextBaseUrl,
-			process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+			process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
 		),
 
-		imageProvider: safeText(rawData.aiImageProvider, "local").toLowerCase(),
-		imageModel: safeText(rawData.aiImageModel, "gpt-4.1-mini"),
+		imageProvider: safeText(rawData.aiImageProvider, 'local').toLowerCase(),
+		imageModel: safeText(rawData.aiImageModel, 'gpt-4.1-mini'),
 		imageApiKey: safeText(
 			rawData.aiImageApiKey,
-			process.env.OPENAI_API_KEY || "",
+			process.env.OPENAI_API_KEY || '',
 		),
 		imageBaseUrl: safeText(
 			rawData.aiImageBaseUrl,
-			process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+			process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
 		),
 	};
 }
@@ -126,21 +122,23 @@ function resolveAiConfig(rawData: Record<string, unknown> = {}): AiConfig {
 export function getAiProviderDefinitions(): AiProviderDefinitions {
 	return {
 		textProviders: [
-			{ id: "local", label: "Local draft engine (no key)" },
-			{ id: "openai", label: "OpenAI compatible endpoint" },
+			{ id: 'local', label: 'Local draft engine (no key)' },
+			{ id: 'openai', label: 'OpenAI compatible endpoint' },
 		],
 		imageProviders: [
-			{ id: "local", label: "Local prompt engine (no key)" },
-			{ id: "openai", label: "OpenAI compatible endpoint" },
+			{ id: 'local', label: 'Local prompt engine (no key)' },
+			{ id: 'openai', label: 'OpenAI compatible endpoint' },
 		],
 	};
 }
 
-export async function generateAutofill(rawData: Record<string, unknown> = {}): Promise<AutofillResult> {
+export async function generateAutofill(
+	rawData: Record<string, unknown> = {},
+): Promise<AutofillResult> {
 	const config = resolveAiConfig(rawData);
 	let output: AutofillResult | null = null;
 
-	if (config.textProvider === "openai" && config.textApiKey) {
+	if (config.textProvider === 'openai' && config.textApiKey) {
 		try {
 			output = await openAIAutofill(rawData, {
 				apiKey: config.textApiKey,
@@ -150,7 +148,7 @@ export async function generateAutofill(rawData: Record<string, unknown> = {}): P
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
 			console.error(
-				"OpenAI autofill failed, falling back to local engine:",
+				'OpenAI autofill failed, falling back to local engine:',
 				message,
 			);
 		}
@@ -163,15 +161,18 @@ export async function generateAutofill(rawData: Record<string, unknown> = {}): P
 	return {
 		...output,
 		draft: output.draft || {},
-		imageDraft: output.imageDraft || { prompts: [], combinedPromptText: "" },
+		imageDraft: output.imageDraft || { prompts: [], combinedPromptText: '' },
 	};
 }
 
-export async function runChatAssistant(rawData: Record<string, unknown> = {}, chatRequest: ChatRequest = {}): Promise<ChatResult> {
+export async function runChatAssistant(
+	rawData: Record<string, unknown> = {},
+	chatRequest: ChatRequest = {},
+): Promise<ChatResult> {
 	const config = resolveAiConfig(rawData);
 	let response: ChatResult | null = null;
 
-	if (config.textProvider === "openai" && config.textApiKey) {
+	if (config.textProvider === 'openai' && config.textApiKey) {
 		try {
 			response = await openAIChatAssist(rawData, chatRequest, {
 				apiKey: config.textApiKey,
@@ -181,7 +182,7 @@ export async function runChatAssistant(rawData: Record<string, unknown> = {}, ch
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
 			console.error(
-				"OpenAI chat assistant failed, falling back to local engine:",
+				'OpenAI chat assistant failed, falling back to local engine:',
 				message,
 			);
 		}
@@ -192,8 +193,8 @@ export async function runChatAssistant(rawData: Record<string, unknown> = {}, ch
 	}
 
 	return {
-		provider: response.provider || "local",
-		reply: safeText(response.reply, "Suggestions are ready."),
+		provider: response.provider || 'local',
+		reply: safeText(response.reply, 'Suggestions are ready.'),
 		suggestedChanges: sanitizeChanges(response.suggestedChanges),
 	};
 }

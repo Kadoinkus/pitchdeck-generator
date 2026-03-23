@@ -1,4 +1,4 @@
-import { renderSlide } from "./slide-renderers.js";
+import { renderSlide } from './slide-renderers.ts';
 
 interface SlideEntry {
 	type: string;
@@ -25,19 +25,19 @@ interface DragState {
 	moved: boolean;
 }
 
-const viewer = document.getElementById("slide-viewer");
-const page = document.querySelector(".page");
-const slideCanvas = document.getElementById("slide-canvas");
-const slideTrack = document.getElementById("slide-track");
-const thumbnailsEl = document.getElementById("thumbnails");
-const slideCounter = document.getElementById("slide-counter");
+const viewer = document.getElementById('slide-viewer');
+const page = document.querySelector('.page');
+const slideCanvas = document.getElementById('slide-canvas');
+const slideTrack = document.getElementById('slide-track');
+const thumbnailsEl = document.getElementById('thumbnails');
+const slideCounter = document.getElementById('slide-counter');
 
-const downloadPptxBtn = document.getElementById("viewer-download-pptx");
-const downloadPdfBtn = document.getElementById("viewer-download-pdf");
-const shareBtn = document.getElementById("viewer-share-link");
-const copyShareBtn = document.getElementById("viewer-copy-share");
-const shareDropdown = document.getElementById("viewer-share-dropdown");
-const shareToggleBtn = document.getElementById("viewer-share-toggle");
+const downloadPptxBtn = document.getElementById('viewer-download-pptx');
+const downloadPdfBtn = document.getElementById('viewer-download-pdf');
+const shareBtn = document.getElementById('viewer-share-link');
+const copyShareBtn = document.getElementById('viewer-copy-share');
+const shareDropdown = document.getElementById('viewer-share-dropdown');
+const shareToggleBtn = document.getElementById('viewer-share-toggle');
 
 let currentSlide = 0;
 let slideData: DeckData | null = null;
@@ -53,27 +53,28 @@ const drag: DragState = {
 };
 
 function isShareMenuOpen(): boolean {
-	return Boolean(shareDropdown?.classList.contains("open"));
+	return Boolean(shareDropdown?.classList.contains('open'));
 }
 
 function closeShareMenu(): void {
 	if (!shareDropdown || !shareToggleBtn) return;
-	shareDropdown.classList.remove("open");
-	shareToggleBtn.setAttribute("aria-expanded", "false");
+	shareDropdown.classList.remove('open');
+	shareToggleBtn.setAttribute('aria-expanded', 'false');
 }
 
 function toggleShareMenu(): void {
 	if (!shareDropdown || !shareToggleBtn) return;
-	if (shareToggleBtn instanceof HTMLButtonElement && shareToggleBtn.disabled)
+	if (shareToggleBtn instanceof HTMLButtonElement && shareToggleBtn.disabled) {
 		return;
+	}
 	const willOpen = !isShareMenuOpen();
-	shareDropdown.classList.toggle("open", willOpen);
-	shareToggleBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+	shareDropdown.classList.toggle('open', willOpen);
+	shareToggleBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
 }
 
 function resetCopyShareLabel(): void {
 	if (!copyShareBtn) return;
-	copyShareBtn.textContent = "Copy share link";
+	copyShareBtn.textContent = 'Copy share link';
 }
 
 function setToolbarLinks(options: ToolbarOptions = {}): void {
@@ -82,22 +83,25 @@ function setToolbarLinks(options: ToolbarOptions = {}): void {
 	const hasShareUrl = Boolean(options.shareUrl);
 	const hasAnyShareAction = hasDownloadUrl || hasPdfUrl || hasShareUrl;
 
-	if (downloadPptxBtn instanceof HTMLAnchorElement)
-		downloadPptxBtn.href = options.downloadUrl || "#";
-	if (downloadPdfBtn instanceof HTMLAnchorElement)
-		downloadPdfBtn.href = options.pdfUrl || "#";
-	if (shareBtn instanceof HTMLAnchorElement)
-		shareBtn.href = options.shareUrl || "#";
+	if (downloadPptxBtn instanceof HTMLAnchorElement) {
+		downloadPptxBtn.href = options.downloadUrl || '#';
+	}
+	if (downloadPdfBtn instanceof HTMLAnchorElement) {
+		downloadPdfBtn.href = options.pdfUrl || '#';
+	}
+	if (shareBtn instanceof HTMLAnchorElement) {
+		shareBtn.href = options.shareUrl || '#';
+	}
 
-	downloadPptxBtn?.classList.toggle("disabled", !hasDownloadUrl);
-	downloadPdfBtn?.classList.toggle("disabled", !hasPdfUrl);
-	shareBtn?.classList.toggle("disabled", !hasShareUrl);
+	downloadPptxBtn?.classList.toggle('disabled', !hasDownloadUrl);
+	downloadPdfBtn?.classList.toggle('disabled', !hasPdfUrl);
+	shareBtn?.classList.toggle('disabled', !hasShareUrl);
 
 	if (shareToggleBtn) {
 		if (shareToggleBtn instanceof HTMLButtonElement) {
 			shareToggleBtn.disabled = !hasAnyShareAction;
 		}
-		shareToggleBtn.classList.toggle("disabled", !hasAnyShareAction);
+		shareToggleBtn.classList.toggle('disabled', !hasAnyShareAction);
 		if (!hasAnyShareAction) {
 			closeShareMenu();
 		}
@@ -107,7 +111,7 @@ function setToolbarLinks(options: ToolbarOptions = {}): void {
 		if (copyShareBtn instanceof HTMLButtonElement) {
 			copyShareBtn.disabled = !hasShareUrl;
 		}
-		copyShareBtn.classList.toggle("disabled", !hasShareUrl);
+		copyShareBtn.classList.toggle('disabled', !hasShareUrl);
 		resetCopyShareLabel();
 	}
 }
@@ -115,18 +119,21 @@ function setToolbarLinks(options: ToolbarOptions = {}): void {
 function updateTrackPosition({
 	animate = true,
 	offsetPx = 0,
-}: { animate?: boolean; offsetPx?: number } = {}): void {
+}: {
+	animate?: boolean;
+	offsetPx?: number;
+} = {}): void {
 	if (!slideCanvas || !slideTrack) return;
 	const width = slideCanvas.clientWidth || 1;
 	const position = -currentSlide * width + offsetPx;
 	if (!animate) {
-		slideTrack.style.transition = "none";
+		slideTrack.style.transition = 'none';
 	}
 	slideTrack.style.transform = `translate3d(${position}px, 0, 0)`;
 	if (!animate) {
 		requestAnimationFrame(() => {
 			if (!drag.active && slideTrack) {
-				slideTrack.style.transition = "";
+				slideTrack.style.transition = '';
 			}
 		});
 	}
@@ -134,20 +141,20 @@ function updateTrackPosition({
 
 function updateSlidePageStates(): void {
 	if (!slideTrack) return;
-	slideTrack.querySelectorAll(".slide-page").forEach((node, index) => {
-		node.classList.toggle("is-active", index === currentSlide);
-		node.classList.toggle("is-prev", index === currentSlide - 1);
-		node.classList.toggle("is-next", index === currentSlide + 1);
+	slideTrack.querySelectorAll('.slide-page').forEach((node, index) => {
+		node.classList.toggle('is-active', index === currentSlide);
+		node.classList.toggle('is-prev', index === currentSlide - 1);
+		node.classList.toggle('is-next', index === currentSlide + 1);
 	});
 }
 
 function renderSlides(): void {
 	if (!slideTrack || !slideData?.slides?.length) return;
-	slideTrack.innerHTML = "";
+	slideTrack.innerHTML = '';
 
 	slideData.slides.forEach((slide, index) => {
-		const pageNode = document.createElement("section");
-		pageNode.className = "slide-page";
+		const pageNode = document.createElement('section');
+		pageNode.className = 'slide-page';
 		pageNode.dataset.slideIndex = String(index);
 		pageNode.innerHTML = renderSlide(slide, slideData!.theme, slideData!);
 		slideTrack.appendChild(pageNode);
@@ -156,13 +163,15 @@ function renderSlides(): void {
 
 function renderThumbnails(): void {
 	if (!thumbnailsEl || !slideData) return;
-	thumbnailsEl.innerHTML = "";
+	thumbnailsEl.innerHTML = '';
 
 	slideData.slides.forEach((slide, index) => {
-		const thumb = document.createElement("div");
-		thumb.className = `thumb${index === currentSlide ? " active" : ""}`;
-		thumb.innerHTML = `<span class="thumb-number">${index + 1}</span><div class="thumb-inner">${renderSlide(slide, slideData!.theme, slideData!)}</div>`;
-		thumb.addEventListener("click", () => goToSlide(index));
+		const thumb = document.createElement('div');
+		thumb.className = `thumb${index === currentSlide ? ' active' : ''}`;
+		thumb.innerHTML = `<span class="thumb-number">${index + 1}</span><div class="thumb-inner">${
+			renderSlide(slide, slideData!.theme, slideData!)
+		}</div>`;
+		thumb.addEventListener('click', () => goToSlide(index));
 		thumbnailsEl.appendChild(thumb);
 	});
 }
@@ -178,8 +187,8 @@ export function showViewer(data: DeckData, options: ToolbarOptions = {}): void {
 	renderThumbnails();
 	goToSlide(currentSlide, { animate: false });
 
-	page?.classList.add("hidden");
-	viewer?.classList.remove("hidden");
+	page?.classList.add('hidden');
+	viewer?.classList.remove('hidden');
 }
 
 export function updateViewerData(data: DeckData): void {
@@ -194,32 +203,30 @@ export function updateViewerData(data: DeckData): void {
 
 export function hideViewer(): void {
 	closeShareMenu();
-	viewer?.classList.add("hidden");
-	page?.classList.remove("hidden");
+	viewer?.classList.add('hidden');
+	page?.classList.remove('hidden');
 }
 
-function goToSlide(
-	index: number,
-	options: { animate?: boolean } = {},
-): void {
+function goToSlide(index: number, options: { animate?: boolean } = {}): void {
 	if (!slideData || !slideData.slides?.length) return;
 
 	const maxIndex = slideData.slides.length - 1;
 	currentSlide = Math.max(0, Math.min(index, maxIndex));
 
-	if (slideCounter)
+	if (slideCounter) {
 		slideCounter.textContent = `${currentSlide + 1} / ${slideData.slides.length}`;
+	}
 	updateSlidePageStates();
 	updateTrackPosition({ animate: options.animate !== false });
 
 	if (thumbnailsEl) {
-		thumbnailsEl.querySelectorAll(".thumb").forEach((thumb, i) => {
-			thumb.classList.toggle("active", i === currentSlide);
+		thumbnailsEl.querySelectorAll('.thumb').forEach((thumb, i) => {
+			thumb.classList.toggle('active', i === currentSlide);
 		});
 
-		const activeThumb = thumbnailsEl.querySelector(".thumb.active");
+		const activeThumb = thumbnailsEl.querySelector('.thumb.active');
 		if (activeThumb) {
-			activeThumb.scrollIntoView({ block: "nearest", behavior: "smooth" });
+			activeThumb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 		}
 	}
 }
@@ -228,17 +235,18 @@ function startSwipe(event: PointerEvent): void {
 	if (!slideData?.slides?.length || slideData.slides.length < 2) return;
 	if (event.button !== undefined && event.button !== 0) return;
 	if (
-		event.target instanceof HTMLElement &&
-		event.target.closest("a,button,input,textarea,select")
-	)
+		event.target instanceof HTMLElement
+		&& event.target.closest('a,button,input,textarea,select')
+	) {
 		return;
+	}
 
 	drag.active = true;
 	drag.startX = event.clientX;
 	drag.deltaX = 0;
 	drag.width = slideCanvas ? slideCanvas.clientWidth || 1 : 1;
 	drag.moved = false;
-	slideCanvas?.classList.add("is-dragging");
+	slideCanvas?.classList.add('is-dragging');
 	slideCanvas?.setPointerCapture?.(event.pointerId);
 }
 
@@ -250,8 +258,8 @@ function moveSwipe(event: PointerEvent): void {
 	const maxIndex = (slideData?.slides?.length || 1) - 1;
 	let offset = drag.deltaX;
 	if (
-		(currentSlide === 0 && drag.deltaX > 0) ||
-		(currentSlide === maxIndex && drag.deltaX < 0)
+		(currentSlide === 0 && drag.deltaX > 0)
+		|| (currentSlide === maxIndex && drag.deltaX < 0)
 	) {
 		offset *= 0.35;
 	}
@@ -262,7 +270,7 @@ function moveSwipe(event: PointerEvent): void {
 function endSwipe(event: PointerEvent): void {
 	if (!drag.active) return;
 	drag.active = false;
-	slideCanvas?.classList.remove("is-dragging");
+	slideCanvas?.classList.remove('is-dragging');
 	slideCanvas?.releasePointerCapture?.(event.pointerId);
 
 	const threshold = Math.min(140, (drag.width || 1) * 0.16);
@@ -279,12 +287,12 @@ function endSwipe(event: PointerEvent): void {
 	goToSlide(currentSlide);
 }
 
-slideCanvas?.addEventListener("pointerdown", startSwipe);
-slideCanvas?.addEventListener("pointermove", moveSwipe);
-slideCanvas?.addEventListener("pointerup", endSwipe);
-slideCanvas?.addEventListener("pointercancel", endSwipe);
+slideCanvas?.addEventListener('pointerdown', startSwipe);
+slideCanvas?.addEventListener('pointermove', moveSwipe);
+slideCanvas?.addEventListener('pointerup', endSwipe);
+slideCanvas?.addEventListener('pointercancel', endSwipe);
 
-slideCanvas?.addEventListener("click", (event: MouseEvent) => {
+slideCanvas?.addEventListener('click', (event: MouseEvent) => {
 	if (Date.now() < suppressClickUntil) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -292,59 +300,62 @@ slideCanvas?.addEventListener("click", (event: MouseEvent) => {
 	}
 
 	if (!(event.target instanceof HTMLElement)) return;
-	const target = event.target.closest("[data-ai-target]");
+	const target = event.target.closest('[data-ai-target]');
 	if (!target) return;
 
 	const detail = {
-		target: target.getAttribute("data-ai-target"),
-		label:
-			target.getAttribute("data-ai-label") ||
-			target.getAttribute("data-ai-target"),
+		target: target.getAttribute('data-ai-target'),
+		label: target.getAttribute('data-ai-label')
+			|| target.getAttribute('data-ai-target'),
 	};
 
-	window.dispatchEvent(new CustomEvent("deck:select-target", { detail }));
+	window.dispatchEvent(new CustomEvent('deck:select-target', { detail }));
 });
 
-window.addEventListener("resize", () => {
-	if (viewer?.classList.contains("hidden")) return;
+window.addEventListener('resize', () => {
+	if (viewer?.classList.contains('hidden')) return;
 	updateTrackPosition({ animate: false });
 });
 
-document.getElementById("back-to-editor")?.addEventListener("click", hideViewer);
+document
+	.getElementById('back-to-editor')
+	?.addEventListener('click', hideViewer);
 
-document.getElementById("prev-slide")?.addEventListener("click", () => {
+document.getElementById('prev-slide')?.addEventListener('click', () => {
 	goToSlide(currentSlide - 1);
 });
 
-document.getElementById("next-slide")?.addEventListener("click", () => {
+document.getElementById('next-slide')?.addEventListener('click', () => {
 	goToSlide(currentSlide + 1);
 });
 
-shareToggleBtn?.addEventListener("click", (event: MouseEvent) => {
+shareToggleBtn?.addEventListener('click', (event: MouseEvent) => {
 	event.preventDefault();
 	toggleShareMenu();
 });
 
-copyShareBtn?.addEventListener("click", async () => {
+copyShareBtn?.addEventListener('click', async () => {
 	if (
-		!(shareBtn instanceof HTMLAnchorElement) ||
-		!shareBtn.href ||
-		shareBtn.href.endsWith("#")
-	)
+		!(shareBtn instanceof HTMLAnchorElement)
+		|| !shareBtn.href
+		|| shareBtn.href.endsWith('#')
+	) {
 		return;
-	if (copyShareBtn instanceof HTMLButtonElement && copyShareBtn.disabled)
+	}
+	if (copyShareBtn instanceof HTMLButtonElement && copyShareBtn.disabled) {
 		return;
+	}
 
 	try {
 		await navigator.clipboard.writeText(shareBtn.href);
-		copyShareBtn.textContent = "Link copied";
+		copyShareBtn.textContent = 'Link copied';
 		if (copyFeedbackTimer !== null) clearTimeout(copyFeedbackTimer);
 		copyFeedbackTimer = setTimeout(() => {
 			resetCopyShareLabel();
 		}, 1400);
 		closeShareMenu();
 	} catch {
-		copyShareBtn.textContent = "Copy failed";
+		copyShareBtn.textContent = 'Copy failed';
 		if (copyFeedbackTimer !== null) clearTimeout(copyFeedbackTimer);
 		copyFeedbackTimer = setTimeout(() => {
 			resetCopyShareLabel();
@@ -353,26 +364,24 @@ copyShareBtn?.addEventListener("click", async () => {
 });
 
 [downloadPptxBtn, downloadPdfBtn, shareBtn].forEach((item) => {
-	item?.addEventListener("click", () => {
+	item?.addEventListener('click', () => {
 		closeShareMenu();
 	});
 });
 
-document.addEventListener("click", (event: MouseEvent) => {
+document.addEventListener('click', (event: MouseEvent) => {
 	if (!isShareMenuOpen()) return;
-	if (
-		event.target instanceof Node &&
-		shareDropdown?.contains(event.target)
-	)
+	if (event.target instanceof Node && shareDropdown?.contains(event.target)) {
 		return;
+	}
 	closeShareMenu();
 });
 
-document.addEventListener("keydown", (event: KeyboardEvent) => {
-	if (viewer?.classList.contains("hidden") || !slideData) return;
-	if (event.key === "ArrowLeft") goToSlide(currentSlide - 1);
-	if (event.key === "ArrowRight") goToSlide(currentSlide + 1);
-	if (event.key === "Escape") {
+document.addEventListener('keydown', (event: KeyboardEvent) => {
+	if (viewer?.classList.contains('hidden') || !slideData) return;
+	if (event.key === 'ArrowLeft') goToSlide(currentSlide - 1);
+	if (event.key === 'ArrowRight') goToSlide(currentSlide + 1);
+	if (event.key === 'Escape') {
 		if (isShareMenuOpen()) {
 			closeShareMenu();
 			return;
