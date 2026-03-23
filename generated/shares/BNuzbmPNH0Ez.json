@@ -1,0 +1,554 @@
+{
+  "token": "BNuzbmPNH0Ez",
+  "createdAt": "2026-03-23T13:42:32.598Z",
+  "payload": {
+    "templateId": "pitch-proposal",
+    "clientName": "Acme Client",
+    "clientUrl": "https://www.acme-client.com",
+    "brandName": "Notso AI",
+    "deckVersion": "v1.0",
+    "layoutPreset": "sales-deck-v1",
+    "layoutPresetLock": true,
+    "primaryColor": "#004b49",
+    "accentColor": "#30d89e",
+    "secondaryColor": "#0b6e6c",
+    "backgroundColor": "#f2f4f6",
+    "textColor": "#0B1D2E",
+    "headingFont": "Sora",
+    "bodyFont": "Inter",
+    "aiTextProvider": "local",
+    "aiTextModel": "gpt-4.1-mini",
+    "aiTextBaseUrl": "https://api.openai.com/v1",
+    "aiImageProvider": "local",
+    "aiImageModel": "gpt-4.1-mini",
+    "aiImageBaseUrl": "https://api.openai.com/v1",
+    "projectTitle": "Acme Client Animated Chatbot Proposal",
+    "subtitle": "A premium conversational assistant strategy for Acme Client.",
+    "objective": "Design and launch an animated chatbot for acme-client.com that improves response quality, qualification speed, and conversion confidence.",
+    "clientSituation": "Acme Client loses momentum when visitors cannot get instant answers on acme-client.com.\nSupport and pre-sales requests are repeated manually across channels.\nCurrent automated journeys lack distinctive brand voice and visual character.",
+    "conceptPillars": "Build an animated chatbot persona aligned with Notso AI brand expression.\nGuide users through concise decision paths with clear outcomes in each turn.\nMake copy and prompts easy to update so the concept evolves without redesigning slides.",
+    "experienceDesign": "Design language combines high-contrast readability with calm, premium motion.\nPrimary interactions prioritize quick intent routing and obvious next actions.\nComponent system supports future channels while preserving consistent UX behavior.",
+    "conversationDesign": "Opening script establishes value in two exchanges and offers focused intent options.\nMid-flow logic handles FAQs, qualification, and objections with adaptive follow-ups.\nFallback logic escalates to human support with complete conversation context.",
+    "architecture": "Widget layer, orchestration layer, and analytics layer remain cleanly separated.\nPrompt/content management can be updated by non-technical stakeholders.\nTelemetry tracks intent usage, drop-offs, and conversion influence per flow.",
+    "designOptions": "Option A - Brand Mascot :: Friendly character-led interface with expressive motion cues.\nOption B - Premium Concierge :: Elegant assistant aesthetic with restrained animation.\nOption C - Product Specialist :: Utility-first UI with rapid decision support.",
+    "timeline": "Week 1-2 :: Discovery, baseline metrics, and outcome framing.\nWeek 3-4 :: Concept storyboard, visual direction, and scripted prototype.\nWeek 5-6 :: Production implementation, integration, and QA.\nWeek 7 :: Launch preparation, enablement, and optimization backlog.",
+    "pricing": "Starter :: EUR 8.500 :: Core assistant experience, 3 user flows, launch setup.\nGrowth :: EUR 14.500 :: Expanded flows, richer animation system, analytics dashboard.\nScale :: EUR 22.000 :: Multi-language rollout, CRM integrations, optimization loop.",
+    "team": "Strategy Lead :: Owns problem framing, priorities, and decision velocity.\nConversation Designer :: Designs scripts, guardrails, and fallback behavior.\nMotion/UI Designer :: Crafts visual identity and animated interaction language.\nImplementation Engineer :: Delivers integration, release hardening, and monitoring.",
+    "nextSteps": "Confirm direction, package, and decision stakeholders.\nRun kickoff workshop and validate measurable success criteria.\nApprove final scope and begin discovery sprint immediately.",
+    "imagePrompts": "Slide 1 (title) :: Premium SaaS illustration for Animated Chatbot Proposal slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 2 (client-situation) :: Premium SaaS illustration for Client Situation slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 3 (concept) :: Premium SaaS illustration for Concept Direction slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 4 (experience-design) :: Premium SaaS illustration for Experience Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 5 (conversation-design) :: Premium SaaS illustration for Conversation Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 6 (architecture) :: Premium SaaS illustration for Solution Architecture slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 7 (design-options) :: Premium SaaS illustration for Design Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 8 (timeline) :: Premium SaaS illustration for Implementation Timeline slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 9 (pricing) :: Premium SaaS illustration for Pricing Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 10 (team) :: Premium SaaS illustration for Team & Responsibilities slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.\nSlide 11 (next-steps) :: Premium SaaS illustration for Next Steps slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+    "contactName": "Max Kowalski",
+    "contactEmail": "max@notso.ai",
+    "contactPhone": "+31 6 40450599",
+    "excludedSlides": []
+  },
+  "slideData": {
+    "template": {
+      "id": "pitch-proposal",
+      "label": "Pitch Deck Proposal",
+      "description": "Premium proposal deck for chatbot concepts, design, rollout, and commercial discussion.",
+      "version": "1.0.0"
+    },
+    "excludedSlides": [],
+    "availableSlides": [
+      {
+        "id": "title",
+        "label": "Cover",
+        "type": "title",
+        "field": "projectTitle",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "client-situation",
+        "label": "Client Situation",
+        "type": "client-situation",
+        "field": "clientSituation",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "concept",
+        "label": "Concept Direction",
+        "type": "concept",
+        "field": "conceptPillars",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "experience-design",
+        "label": "Experience Design",
+        "type": "experience-design",
+        "field": "experienceDesign",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "conversation-design",
+        "label": "Conversation Design",
+        "type": "conversation-design",
+        "field": "conversationDesign",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "architecture",
+        "label": "Technical Architecture",
+        "type": "architecture",
+        "field": "architecture",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "design-options",
+        "label": "Design Options",
+        "type": "design-options",
+        "field": "designOptions",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "timeline",
+        "label": "Timeline",
+        "type": "timeline",
+        "field": "timeline",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "pricing",
+        "label": "Pricing",
+        "type": "pricing",
+        "field": "pricing",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "team",
+        "label": "Team",
+        "type": "team",
+        "field": "team",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "next-steps",
+        "label": "Next Steps",
+        "type": "next-steps",
+        "field": "nextSteps",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      }
+    ],
+    "project": {
+      "clientName": "Acme Client",
+      "clientUrl": "https://www.acme-client.com",
+      "projectTitle": "Acme Client Animated Chatbot Proposal",
+      "subtitle": "A premium conversational assistant strategy for Acme Client.",
+      "objective": "Design and launch an animated chatbot for acme-client.com that improves response quality, qualification speed, and conversion confidence.",
+      "deckVersion": "v1.0",
+      "contactName": "Max Kowalski",
+      "contactEmail": "max@notso.ai",
+      "contactPhone": "+31 6 40450599"
+    },
+    "content": {
+      "clientSituation": [
+        "Acme Client loses momentum when visitors cannot get instant answers on acme-client.com.",
+        "Support and pre-sales requests are repeated manually across channels.",
+        "Current automated journeys lack distinctive brand voice and visual character."
+      ],
+      "conceptPillars": [
+        "Build an animated chatbot persona aligned with Notso AI brand expression.",
+        "Guide users through concise decision paths with clear outcomes in each turn.",
+        "Make copy and prompts easy to update so the concept evolves without redesigning slides."
+      ],
+      "experienceDesign": [
+        "Design language combines high-contrast readability with calm, premium motion.",
+        "Primary interactions prioritize quick intent routing and obvious next actions.",
+        "Component system supports future channels while preserving consistent UX behavior."
+      ],
+      "conversationDesign": [
+        "Opening script establishes value in two exchanges and offers focused intent options.",
+        "Mid-flow logic handles FAQs, qualification, and objections with adaptive follow-ups.",
+        "Fallback logic escalates to human support with complete conversation context."
+      ],
+      "architecture": [
+        "Widget layer, orchestration layer, and analytics layer remain cleanly separated.",
+        "Prompt/content management can be updated by non-technical stakeholders.",
+        "Telemetry tracks intent usage, drop-offs, and conversion influence per flow."
+      ],
+      "designOptions": [
+        {
+          "title": "Option A - Brand Mascot",
+          "description": "Friendly character-led interface with expressive motion cues."
+        },
+        {
+          "title": "Option B - Premium Concierge",
+          "description": "Elegant assistant aesthetic with restrained animation."
+        },
+        {
+          "title": "Option C - Product Specialist",
+          "description": "Utility-first UI with rapid decision support."
+        }
+      ],
+      "timeline": [
+        {
+          "title": "Week 1-2",
+          "description": "Discovery, baseline metrics, and outcome framing."
+        },
+        {
+          "title": "Week 3-4",
+          "description": "Concept storyboard, visual direction, and scripted prototype."
+        },
+        {
+          "title": "Week 5-6",
+          "description": "Production implementation, integration, and QA."
+        },
+        {
+          "title": "Week 7",
+          "description": "Launch preparation, enablement, and optimization backlog."
+        }
+      ],
+      "pricing": [
+        {
+          "name": "Starter",
+          "price": "EUR 8.500",
+          "description": "Core assistant experience, 3 user flows, launch setup."
+        },
+        {
+          "name": "Growth",
+          "price": "EUR 14.500",
+          "description": "Expanded flows, richer animation system, analytics dashboard."
+        },
+        {
+          "name": "Scale",
+          "price": "EUR 22.000",
+          "description": "Multi-language rollout, CRM integrations, optimization loop."
+        }
+      ],
+      "team": [
+        {
+          "title": "Strategy Lead",
+          "description": "Owns problem framing, priorities, and decision velocity."
+        },
+        {
+          "title": "Conversation Designer",
+          "description": "Designs scripts, guardrails, and fallback behavior."
+        },
+        {
+          "title": "Motion/UI Designer",
+          "description": "Crafts visual identity and animated interaction language."
+        },
+        {
+          "title": "Implementation Engineer",
+          "description": "Delivers integration, release hardening, and monitoring."
+        }
+      ],
+      "nextSteps": [
+        "Confirm direction, package, and decision stakeholders.",
+        "Run kickoff workshop and validate measurable success criteria.",
+        "Approve final scope and begin discovery sprint immediately."
+      ],
+      "imagePrompts": [
+        "Slide 1 (title) :: Premium SaaS illustration for Animated Chatbot Proposal slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 2 (client-situation) :: Premium SaaS illustration for Client Situation slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 3 (concept) :: Premium SaaS illustration for Concept Direction slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 4 (experience-design) :: Premium SaaS illustration for Experience Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 5 (conversation-design) :: Premium SaaS illustration for Conversation Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 6 (architecture) :: Premium SaaS illustration for Solution Architecture slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 7 (design-options) :: Premium SaaS illustration for Design Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 8 (timeline) :: Premium SaaS illustration for Implementation Timeline slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 9 (pricing) :: Premium SaaS illustration for Pricing Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 10 (team) :: Premium SaaS illustration for Team & Responsibilities slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "Slide 11 (next-steps) :: Premium SaaS illustration for Next Steps slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays."
+      ]
+    },
+    "appTheme": {
+      "surfaceTop": "#EAF4FF",
+      "surfaceBottom": "#F8FBFF",
+      "card": "#FFFFFF",
+      "line": "#CFDDFF",
+      "text": "#102347",
+      "muted": "#4F5F83",
+      "primaryColor": "#0B1F4D",
+      "accentColor": "#00C4CC",
+      "secondaryColor": "#7D2AE8"
+    },
+    "deckTheme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "theme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "layout": {
+      "presetId": "sales-deck-v1",
+      "presetLabel": "Sales Deck Pro",
+      "locked": true
+    },
+    "slides": [
+      {
+        "id": "title",
+        "type": "title",
+        "title": "Acme Client Animated Chatbot Proposal",
+        "subtitle": "A premium conversational assistant strategy for Acme Client.",
+        "purpose": "Set context, confidence, and brand fit.",
+        "sourceField": "projectTitle",
+        "clientName": "Acme Client",
+        "clientUrl": "https://www.acme-client.com",
+        "objective": "Design and launch an animated chatbot for acme-client.com that improves response quality, qualification speed, and conversion confidence.",
+        "deckVersion": "v1.0",
+        "imagePrompt": "Slide 1 (title) :: Premium SaaS illustration for Animated Chatbot Proposal slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l1-hero-split",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "client-situation",
+        "type": "client-situation",
+        "title": "Client Situation",
+        "subtitle": "What is blocking growth today.",
+        "purpose": "Create urgency with concrete pain points.",
+        "sourceField": "clientSituation",
+        "points": [
+          "Acme Client loses momentum when visitors cannot get instant answers on acme-client.com.",
+          "Support and pre-sales requests are repeated manually across channels.",
+          "Current automated journeys lack distinctive brand voice and visual character."
+        ],
+        "imagePrompt": "Slide 2 (client-situation) :: Premium SaaS illustration for Client Situation slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l2-problem-insight",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "concept",
+        "type": "concept",
+        "title": "Concept Direction",
+        "subtitle": "The animated chatbot experience we propose.",
+        "purpose": "Define the strategic concept in simple terms.",
+        "sourceField": "conceptPillars",
+        "points": [
+          "Build an animated chatbot persona aligned with Notso AI brand expression.",
+          "Guide users through concise decision paths with clear outcomes in each turn.",
+          "Make copy and prompts easy to update so the concept evolves without redesigning slides."
+        ],
+        "imagePrompt": "Slide 3 (concept) :: Premium SaaS illustration for Concept Direction slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l3-concept-asymmetric",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "experience-design",
+        "type": "experience-design",
+        "title": "Experience Design",
+        "subtitle": "How the assistant should look and feel.",
+        "purpose": "Translate brand into interface and motion.",
+        "sourceField": "experienceDesign",
+        "points": [
+          "Design language combines high-contrast readability with calm, premium motion.",
+          "Primary interactions prioritize quick intent routing and obvious next actions.",
+          "Component system supports future channels while preserving consistent UX behavior."
+        ],
+        "imagePrompt": "Slide 4 (experience-design) :: Premium SaaS illustration for Experience Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l4-experience-panels",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "conversation-design",
+        "type": "conversation-design",
+        "title": "Conversation Design",
+        "subtitle": "How users move through key chatbot journeys.",
+        "purpose": "Show interaction logic and clarity.",
+        "sourceField": "conversationDesign",
+        "points": [
+          "Opening script establishes value in two exchanges and offers focused intent options.",
+          "Mid-flow logic handles FAQs, qualification, and objections with adaptive follow-ups.",
+          "Fallback logic escalates to human support with complete conversation context."
+        ],
+        "imagePrompt": "Slide 5 (conversation-design) :: Premium SaaS illustration for Conversation Design slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l5-conversation-flow",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "architecture",
+        "type": "architecture",
+        "title": "Solution Architecture",
+        "subtitle": "Core system components and integrations.",
+        "purpose": "Prove feasibility and operational ownership.",
+        "sourceField": "architecture",
+        "points": [
+          "Widget layer, orchestration layer, and analytics layer remain cleanly separated.",
+          "Prompt/content management can be updated by non-technical stakeholders.",
+          "Telemetry tracks intent usage, drop-offs, and conversion influence per flow."
+        ],
+        "imagePrompt": "Slide 6 (architecture) :: Premium SaaS illustration for Solution Architecture slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l6-architecture-layers",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "design-options",
+        "type": "design-options",
+        "title": "Design Options",
+        "subtitle": "Three visual directions for the chatbot.",
+        "purpose": "Give clear style choices and trade-offs.",
+        "sourceField": "designOptions",
+        "options": [
+          {
+            "title": "Option A - Brand Mascot",
+            "description": "Friendly character-led interface with expressive motion cues."
+          },
+          {
+            "title": "Option B - Premium Concierge",
+            "description": "Elegant assistant aesthetic with restrained animation."
+          },
+          {
+            "title": "Option C - Product Specialist",
+            "description": "Utility-first UI with rapid decision support."
+          }
+        ],
+        "imagePrompt": "Slide 7 (design-options) :: Premium SaaS illustration for Design Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l7-design-comparison",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "timeline",
+        "type": "timeline",
+        "title": "Implementation Timeline",
+        "subtitle": "From kickoff to launch in clear phases.",
+        "purpose": "Show pace, ownership, and milestones.",
+        "sourceField": "timeline",
+        "phases": [
+          {
+            "title": "Week 1-2",
+            "description": "Discovery, baseline metrics, and outcome framing."
+          },
+          {
+            "title": "Week 3-4",
+            "description": "Concept storyboard, visual direction, and scripted prototype."
+          },
+          {
+            "title": "Week 5-6",
+            "description": "Production implementation, integration, and QA."
+          },
+          {
+            "title": "Week 7",
+            "description": "Launch preparation, enablement, and optimization backlog."
+          }
+        ],
+        "imagePrompt": "Slide 8 (timeline) :: Premium SaaS illustration for Implementation Timeline slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l8-roadmap-horizontal",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "pricing",
+        "type": "pricing",
+        "title": "Pricing Options",
+        "subtitle": "Flexible packages based on scope and velocity.",
+        "purpose": "Make commercial decisions easier.",
+        "sourceField": "pricing",
+        "packages": [
+          {
+            "name": "Starter",
+            "price": "EUR 8.500",
+            "description": "Core assistant experience, 3 user flows, launch setup."
+          },
+          {
+            "name": "Growth",
+            "price": "EUR 14.500",
+            "description": "Expanded flows, richer animation system, analytics dashboard."
+          },
+          {
+            "name": "Scale",
+            "price": "EUR 22.000",
+            "description": "Multi-language rollout, CRM integrations, optimization loop."
+          }
+        ],
+        "imagePrompt": "Slide 9 (pricing) :: Premium SaaS illustration for Pricing Options slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l9-pricing-tiers",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "team",
+        "type": "team",
+        "title": "Team & Responsibilities",
+        "subtitle": "Who does what across delivery.",
+        "purpose": "Build trust in execution capability.",
+        "sourceField": "team",
+        "roles": [
+          {
+            "title": "Strategy Lead",
+            "description": "Owns problem framing, priorities, and decision velocity."
+          },
+          {
+            "title": "Conversation Designer",
+            "description": "Designs scripts, guardrails, and fallback behavior."
+          },
+          {
+            "title": "Motion/UI Designer",
+            "description": "Crafts visual identity and animated interaction language."
+          },
+          {
+            "title": "Implementation Engineer",
+            "description": "Delivers integration, release hardening, and monitoring."
+          }
+        ],
+        "imagePrompt": "Slide 10 (team) :: Premium SaaS illustration for Team & Responsibilities slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l10-team-grid",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "next-steps",
+        "type": "next-steps",
+        "title": "Next Steps",
+        "subtitle": "Decision points and kickoff actions.",
+        "purpose": "Convert alignment into action.",
+        "sourceField": "nextSteps",
+        "steps": [
+          "Confirm direction, package, and decision stakeholders.",
+          "Run kickoff workshop and validate measurable success criteria.",
+          "Approve final scope and begin discovery sprint immediately."
+        ],
+        "contactName": "Max Kowalski",
+        "contactEmail": "max@notso.ai",
+        "contactPhone": "+31 6 40450599",
+        "deckVersion": "v1.0",
+        "imagePrompt": "Slide 11 (next-steps) :: Premium SaaS illustration for Next Steps slide. Animated chatbot context for Acme Client. Brand palette #004B49, #30D89E, #0B6E6C. No text overlays.",
+        "layoutKey": "l11-checklist-cta",
+        "imageRatio": "4:3"
+      }
+    ]
+  },
+  "fileName": "acme-client-acme-client-animated-chatbot-proposal-v1-0-1774273352573.pptx",
+  "downloadUrl": "/generated/acme-client-acme-client-animated-chatbot-proposal-v1-0-1774273352573.pptx"
+}

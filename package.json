@@ -1,0 +1,25 @@
+{
+  "name": "slide-deck-generator",
+  "version": "1.0.0",
+  "description": "Automatic client slide deck generator built with Node.js, Express, and PptxGenJS.",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "keywords": [
+    "powerpoint",
+    "slides",
+    "generator",
+    "pptx",
+    "express"
+  ],
+  "author": "OpenAI",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "pptxgenjs": "^3.12.0"
+  }
+}

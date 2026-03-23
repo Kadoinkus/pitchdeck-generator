@@ -1,0 +1,514 @@
+{
+  "token": "gZXAKfSrKy_3",
+  "createdAt": "2026-03-23T13:42:32.811Z",
+  "payload": {
+    "templateId": "pitch-proposal",
+    "clientName": "Se7en",
+    "layoutPreset": "sales-deck-v1",
+    "layoutPresetLock": true,
+    "clientUrl": "https://www.se7en.com",
+    "brandName": "Notso AI"
+  },
+  "slideData": {
+    "template": {
+      "id": "pitch-proposal",
+      "label": "Pitch Deck Proposal",
+      "description": "Premium proposal deck for chatbot concepts, design, rollout, and commercial discussion.",
+      "version": "1.0.0"
+    },
+    "excludedSlides": [],
+    "availableSlides": [
+      {
+        "id": "title",
+        "label": "Cover",
+        "type": "title",
+        "field": "projectTitle",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "client-situation",
+        "label": "Client Situation",
+        "type": "client-situation",
+        "field": "clientSituation",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "concept",
+        "label": "Concept Direction",
+        "type": "concept",
+        "field": "conceptPillars",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "experience-design",
+        "label": "Experience Design",
+        "type": "experience-design",
+        "field": "experienceDesign",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "conversation-design",
+        "label": "Conversation Design",
+        "type": "conversation-design",
+        "field": "conversationDesign",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "architecture",
+        "label": "Technical Architecture",
+        "type": "architecture",
+        "field": "architecture",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "design-options",
+        "label": "Design Options",
+        "type": "design-options",
+        "field": "designOptions",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "timeline",
+        "label": "Timeline",
+        "type": "timeline",
+        "field": "timeline",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "pricing",
+        "label": "Pricing",
+        "type": "pricing",
+        "field": "pricing",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "team",
+        "label": "Team",
+        "type": "team",
+        "field": "team",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "next-steps",
+        "label": "Next Steps",
+        "type": "next-steps",
+        "field": "nextSteps",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      }
+    ],
+    "project": {
+      "clientName": "Se7en",
+      "clientUrl": "https://www.se7en.com",
+      "projectTitle": "Animated Chatbot Proposal",
+      "subtitle": "A conversational assistant that feels premium, helpful, and on-brand.",
+      "objective": "Design and launch an animated chatbot experience that improves response speed and lead quality.",
+      "deckVersion": "v1.0",
+      "contactName": "Max Kowalski",
+      "contactEmail": "max@notso.ai",
+      "contactPhone": "+31 6 40450599"
+    },
+    "content": {
+      "clientSituation": [
+        "Se7en support and pre-sales requests are handled manually and slowly.",
+        "Users on https://www.se7en.com do not get immediate guided answers for high-intent questions.",
+        "Current chatbot behavior feels static and under-represents the brand quality."
+      ],
+      "conceptPillars": [
+        "An animated assistant that reflects Notso AI's personality and communication style.",
+        "Structured intent paths for discovery, qualification, and support resolution.",
+        "Prompt/content system that can be updated fast without reworking the whole UX."
+      ],
+      "experienceDesign": [
+        "Premium motion language with smooth entrance and clear state transitions.",
+        "Low-cognitive-load layout: concise prompts, progressive disclosure, decisive CTA placement.",
+        "Accessibility-first defaults for contrast, keyboard flow, and reduced motion."
+      ],
+      "conversationDesign": [
+        "Welcome sequence introduces value and routes users in two turns.",
+        "Intent map covers product discovery, pricing qualification, and support triage.",
+        "Escalation path hands over transcript and context to a human operator."
+      ],
+      "architecture": [
+        "Shared conversation layer across website widget and in-product assistant.",
+        "Editable knowledge base and scripted prompts managed through a lightweight CMS.",
+        "Analytics instrumentation for completion rates, escalations, and conversion impact."
+      ],
+      "designOptions": [
+        {
+          "title": "Option A - Playful Guide",
+          "description": "Rounded mascot with expressive gestures and optimistic tone."
+        },
+        {
+          "title": "Option B - Premium Concierge",
+          "description": "Refined avatar, elegant transitions, and restrained palette."
+        },
+        {
+          "title": "Option C - Product Expert",
+          "description": "Utility-first interaction model with speed-focused visuals."
+        }
+      ],
+      "timeline": [
+        {
+          "title": "Week 1-2",
+          "description": "Discovery, benchmarks, and measurable KPI definition."
+        },
+        {
+          "title": "Week 3-4",
+          "description": "Visual direction and conversation prototype sign-off."
+        },
+        {
+          "title": "Week 5-6",
+          "description": "Production build, integrations, and QA hardening."
+        },
+        {
+          "title": "Week 7",
+          "description": "Launch, enablement, and optimization backlog."
+        }
+      ],
+      "pricing": [
+        {
+          "name": "Starter",
+          "price": "EUR 8.500",
+          "description": "Core assistant with 3 high-impact flows and launch support."
+        },
+        {
+          "name": "Growth",
+          "price": "EUR 14.500",
+          "description": "Expanded flow library, richer animation system, analytics dashboard."
+        },
+        {
+          "name": "Scale",
+          "price": "EUR 22.000",
+          "description": "Multi-language, CRM automation, and experimentation framework."
+        }
+      ],
+      "team": [
+        {
+          "title": "Strategy Lead",
+          "description": "Owns problem framing, scope clarity, and success metric alignment."
+        },
+        {
+          "title": "Conversation Designer",
+          "description": "Designs dialogue logic, guardrails, and fallback behavior."
+        },
+        {
+          "title": "Motion/UI Designer",
+          "description": "Defines visual language, animation behavior, and interaction polish."
+        },
+        {
+          "title": "Implementation Engineer",
+          "description": "Delivers integration, deployment, and operational stability."
+        }
+      ],
+      "nextSteps": [
+        "Select preferred concept direction and commercial package.",
+        "Schedule stakeholder kickoff with product, marketing, and support.",
+        "Start discovery sprint and deliver first interactive prototype."
+      ],
+      "imagePrompts": [
+        "Hero visual: premium animated chatbot assistant for Se7en website experience.",
+        "Three-direction moodboard for playful, premium concierge, and expert chatbot styles.",
+        "Implementation roadmap visual from discovery to launch and optimization."
+      ]
+    },
+    "appTheme": {
+      "surfaceTop": "#EAF4FF",
+      "surfaceBottom": "#F8FBFF",
+      "card": "#FFFFFF",
+      "line": "#CFDDFF",
+      "text": "#102347",
+      "muted": "#4F5F83",
+      "primaryColor": "#0B1F4D",
+      "accentColor": "#00C4CC",
+      "secondaryColor": "#7D2AE8"
+    },
+    "deckTheme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "theme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "layout": {
+      "presetId": "sales-deck-v1",
+      "presetLabel": "Sales Deck Pro",
+      "locked": true
+    },
+    "slides": [
+      {
+        "id": "title",
+        "type": "title",
+        "title": "Animated Chatbot Proposal",
+        "subtitle": "A conversational assistant that feels premium, helpful, and on-brand.",
+        "purpose": "Set context, confidence, and brand fit.",
+        "sourceField": "projectTitle",
+        "clientName": "Se7en",
+        "clientUrl": "https://www.se7en.com",
+        "objective": "Design and launch an animated chatbot experience that improves response speed and lead quality.",
+        "deckVersion": "v1.0",
+        "imagePrompt": "Hero visual: premium animated chatbot assistant for Se7en website experience.",
+        "layoutKey": "l1-hero-split",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "client-situation",
+        "type": "client-situation",
+        "title": "Client Situation",
+        "subtitle": "What is blocking growth today.",
+        "purpose": "Create urgency with concrete pain points.",
+        "sourceField": "clientSituation",
+        "points": [
+          "Se7en support and pre-sales requests are handled manually and slowly.",
+          "Users on https://www.se7en.com do not get immediate guided answers for high-intent questions.",
+          "Current chatbot behavior feels static and under-represents the brand quality."
+        ],
+        "imagePrompt": "Three-direction moodboard for playful, premium concierge, and expert chatbot styles.",
+        "layoutKey": "l2-problem-insight",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "concept",
+        "type": "concept",
+        "title": "Concept Direction",
+        "subtitle": "The animated chatbot experience we propose.",
+        "purpose": "Define the strategic concept in simple terms.",
+        "sourceField": "conceptPillars",
+        "points": [
+          "An animated assistant that reflects Notso AI's personality and communication style.",
+          "Structured intent paths for discovery, qualification, and support resolution.",
+          "Prompt/content system that can be updated fast without reworking the whole UX."
+        ],
+        "imagePrompt": "Implementation roadmap visual from discovery to launch and optimization.",
+        "layoutKey": "l3-concept-asymmetric",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "experience-design",
+        "type": "experience-design",
+        "title": "Experience Design",
+        "subtitle": "How the assistant should look and feel.",
+        "purpose": "Translate brand into interface and motion.",
+        "sourceField": "experienceDesign",
+        "points": [
+          "Premium motion language with smooth entrance and clear state transitions.",
+          "Low-cognitive-load layout: concise prompts, progressive disclosure, decisive CTA placement.",
+          "Accessibility-first defaults for contrast, keyboard flow, and reduced motion."
+        ],
+        "imagePrompt": "UI and motion moodboard with clean premium SaaS patterns.",
+        "layoutKey": "l4-experience-panels",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "conversation-design",
+        "type": "conversation-design",
+        "title": "Conversation Design",
+        "subtitle": "How users move through key chatbot journeys.",
+        "purpose": "Show interaction logic and clarity.",
+        "sourceField": "conversationDesign",
+        "points": [
+          "Welcome sequence introduces value and routes users in two turns.",
+          "Intent map covers product discovery, pricing qualification, and support triage.",
+          "Escalation path hands over transcript and context to a human operator."
+        ],
+        "imagePrompt": "Conversation flow visual with intent routing and escalation nodes.",
+        "layoutKey": "l5-conversation-flow",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "architecture",
+        "type": "architecture",
+        "title": "Solution Architecture",
+        "subtitle": "Core system components and integrations.",
+        "purpose": "Prove feasibility and operational ownership.",
+        "sourceField": "architecture",
+        "points": [
+          "Shared conversation layer across website widget and in-product assistant.",
+          "Editable knowledge base and scripted prompts managed through a lightweight CMS.",
+          "Analytics instrumentation for completion rates, escalations, and conversion impact."
+        ],
+        "imagePrompt": "System architecture diagram with chatbot, CMS, and analytics layers.",
+        "layoutKey": "l6-architecture-layers",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "design-options",
+        "type": "design-options",
+        "title": "Design Options",
+        "subtitle": "Three visual directions for the chatbot.",
+        "purpose": "Give clear style choices and trade-offs.",
+        "sourceField": "designOptions",
+        "options": [
+          {
+            "title": "Option A - Playful Guide",
+            "description": "Rounded mascot with expressive gestures and optimistic tone."
+          },
+          {
+            "title": "Option B - Premium Concierge",
+            "description": "Refined avatar, elegant transitions, and restrained palette."
+          },
+          {
+            "title": "Option C - Product Expert",
+            "description": "Utility-first interaction model with speed-focused visuals."
+          }
+        ],
+        "imagePrompt": "Three distinct design directions for chatbot avatar and interaction style.",
+        "layoutKey": "l7-design-comparison",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "timeline",
+        "type": "timeline",
+        "title": "Implementation Timeline",
+        "subtitle": "From kickoff to launch in clear phases.",
+        "purpose": "Show pace, ownership, and milestones.",
+        "sourceField": "timeline",
+        "phases": [
+          {
+            "title": "Week 1-2",
+            "description": "Discovery, benchmarks, and measurable KPI definition."
+          },
+          {
+            "title": "Week 3-4",
+            "description": "Visual direction and conversation prototype sign-off."
+          },
+          {
+            "title": "Week 5-6",
+            "description": "Production build, integrations, and QA hardening."
+          },
+          {
+            "title": "Week 7",
+            "description": "Launch, enablement, and optimization backlog."
+          }
+        ],
+        "imagePrompt": "Roadmap-style timeline visual from discovery to launch.",
+        "layoutKey": "l8-roadmap-horizontal",
+        "imageRatio": "16:9"
+      },
+      {
+        "id": "pricing",
+        "type": "pricing",
+        "title": "Pricing Options",
+        "subtitle": "Flexible packages based on scope and velocity.",
+        "purpose": "Make commercial decisions easier.",
+        "sourceField": "pricing",
+        "packages": [
+          {
+            "name": "Starter",
+            "price": "EUR 8.500",
+            "description": "Core assistant with 3 high-impact flows and launch support."
+          },
+          {
+            "name": "Growth",
+            "price": "EUR 14.500",
+            "description": "Expanded flow library, richer animation system, analytics dashboard."
+          },
+          {
+            "name": "Scale",
+            "price": "EUR 22.000",
+            "description": "Multi-language, CRM automation, and experimentation framework."
+          }
+        ],
+        "imagePrompt": "Commercial tier comparison visual with three clear package cards.",
+        "layoutKey": "l9-pricing-tiers",
+        "imageRatio": "4:3"
+      },
+      {
+        "id": "team",
+        "type": "team",
+        "title": "Team & Responsibilities",
+        "subtitle": "Who does what across delivery.",
+        "purpose": "Build trust in execution capability.",
+        "sourceField": "team",
+        "roles": [
+          {
+            "title": "Strategy Lead",
+            "description": "Owns problem framing, scope clarity, and success metric alignment."
+          },
+          {
+            "title": "Conversation Designer",
+            "description": "Designs dialogue logic, guardrails, and fallback behavior."
+          },
+          {
+            "title": "Motion/UI Designer",
+            "description": "Defines visual language, animation behavior, and interaction polish."
+          },
+          {
+            "title": "Implementation Engineer",
+            "description": "Delivers integration, deployment, and operational stability."
+          }
+        ],
+        "imagePrompt": "Team responsibility visual showing delivery roles and ownership.",
+        "layoutKey": "l10-team-grid",
+        "imageRatio": "1:1"
+      },
+      {
+        "id": "next-steps",
+        "type": "next-steps",
+        "title": "Next Steps",
+        "subtitle": "Decision points and kickoff actions.",
+        "purpose": "Convert alignment into action.",
+        "sourceField": "nextSteps",
+        "steps": [
+          "Select preferred concept direction and commercial package.",
+          "Schedule stakeholder kickoff with product, marketing, and support.",
+          "Start discovery sprint and deliver first interactive prototype."
+        ],
+        "contactName": "Max Kowalski",
+        "contactEmail": "max@notso.ai",
+        "contactPhone": "+31 6 40450599",
+        "deckVersion": "v1.0",
+        "imagePrompt": "Decision and kickoff action visual with clear momentum.",
+        "layoutKey": "l11-checklist-cta",
+        "imageRatio": "4:3"
+      }
+    ]
+  },
+  "fileName": "se7en-proposal-v1-1774273352802.pptx",
+  "downloadUrl": "/generated/se7en-proposal-v1-1774273352802.pptx"
+}

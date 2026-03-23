@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -c src/server.js)",
+      "Bash(node -c src/utils.js)",
+      "Bash(node -c src/deck-builder.js)",
+      "Bash(node -c src/slide-data.js)",
+      "Bash(node -c src/routes/api.js)"
+    ]
+  }
+}

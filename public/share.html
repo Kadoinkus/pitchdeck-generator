@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deck Share</title>
+    <link rel="stylesheet" href="/css/slides.css" />
+    <link rel="stylesheet" href="/css/share.css" />
+  </head>
+  <body>
+    <header class="share-topbar">
+      <div>
+        <p class="share-kicker">Interactive Deck</p>
+        <h1 id="share-title">Loading deck...</h1>
+        <p id="share-subtitle" class="share-subtitle"></p>
+      </div>
+      <div class="share-actions">
+        <a id="share-download-pptx" href="#" download>Download PPTX</a>
+        <button id="share-print" type="button">Download PDF</button>
+      </div>
+    </header>
+
+    <main id="share-deck" class="share-deck"></main>
+
+    <template id="share-slide-template">
+      <section class="share-slide">
+        <div class="share-slide-frame"></div>
+      </section>
+    </template>
+
+    <script type="module" src="/js/share.js"></script>
+  </body>
+</html>

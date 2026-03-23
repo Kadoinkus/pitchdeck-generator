@@ -1,0 +1,847 @@
+{
+  "token": "KGOYEI2RUSmt",
+  "createdAt": "2026-03-23T13:58:59.769Z",
+  "payload": {
+    "templateId": "pitch-proposal",
+    "clientName": "Acme Client",
+    "clientUrl": "https://www.acme-client.com",
+    "brandName": "Notso AI",
+    "deckVersion": "v1.0",
+    "layoutPreset": "sales-deck-v1",
+    "layoutPresetLock": true,
+    "primaryColor": "#004b49",
+    "accentColor": "#30d89e",
+    "secondaryColor": "#0b6e6c",
+    "backgroundColor": "#f2f4f6",
+    "textColor": "#0B1D2E",
+    "headingFont": "Sora",
+    "bodyFont": "Inter",
+    "aiTextProvider": "local",
+    "aiTextModel": "gpt-4.1-mini",
+    "aiTextBaseUrl": "https://api.openai.com/v1",
+    "aiImageProvider": "local",
+    "aiImageModel": "gpt-4.1-mini",
+    "aiImageBaseUrl": "https://api.openai.com/v1",
+    "projectTitle": "AI Mascot for Acme Client",
+    "coverOneLiner": "A playful, animated chatbot experience that feels premium and converts.",
+    "subtitle": "Premium digital buddy strategy for Acme Client.",
+    "proposalDate": "June 2026",
+    "mascotName": "Sven",
+    "problemPoints": "Acme Client loses conversion momentum when visitors do not get instant answers.\nSupport teams repeatedly handle similar questions manually.\nAutomation on acme-client.com feels generic and not brand-distinctive.",
+    "opportunityPoints": "Turn support into guided conversion moments.\nIncrease engagement with a memorable character experience.\nScale conversations while keeping premium brand tone.",
+    "solutionPillars": "Character :: A recognizable mascot with clear brand personality.\nAI :: Context-aware replies and smart routing.\nInteraction :: Clean UI flows that move users to next actions.",
+    "whatNotsoIntro": "Notso AI designs and deploys animated AI assistants that combine personality with measurable business value for Acme Client.",
+    "whatNotsoCards": "Strategy & Personality :: Define voice, role, and emotional behavior.\nDesign & Animation :: Build polished mascot visuals and motion.\nSmart Conversations :: Structure intent flows for conversion and support.\nMeasurable Impact :: Track behavior, trends, and outcomes.",
+    "buddyDescription": "Sven is a helpful, expressive guide designed to keep interactions clear, friendly, and conversion-focused.",
+    "buddyPersonality": "Friendly and confident\nHelpful under pressure\nConsistent brand voice\nFast and clear guidance",
+    "toneSliders": "Friendly :: 88\nProfessional :: 76\nPlayful :: 68\nDirect :: 82",
+    "experienceConcept": "Mascot welcomes users and frames intent quickly.\nContext-aware prompts guide users toward the right path.\nRecommendations adapt with each interaction.\nClear CTA closes each flow with measurable action.",
+    "chatFlow": "Greeting\nDiscovery\nSuggestions\nPersonalization\nConversion",
+    "interactionExample": "User: I need help selecting the right chair.\nSven: Great, do you want ergonomic or lounge style?\nUser: Ergonomic for long work sessions.\nSven: I recommend Comfort LX006, want a quick comparison?",
+    "businessImpact": "Increase conversion\nLower support load\nBoost engagement\nStrengthen brand recall",
+    "analyticsDescription": "Every interaction is tracked and analyzed so teams can improve messaging, product guidance, and conversion outcomes.",
+    "analyticsBullets": "Live dashboard for interactions and conversion\nTop questions and intent trends\nDwell time and drop-off insight\nExportable monthly reports",
+    "deliverables": "Deployment-ready mascot :: Branded character; expressive animations; launch assets\nMultichannel access :: Website widget; mobile support; campaign deployment\nPerformance insights :: Real-time dashboard; monthly reporting; optimization notes\nBrand activation media :: Social visuals; video snippets; campaign-ready pack",
+    "pricing": "Basic - Chat :: EUR 2.600,- :: 3D mascot template;custom chat flows;emotion interactions\nPremium - Chat :: EUR 24.000,- :: custom mascot;40+ animations;advanced LLM integration\nPro - Chat & Voice :: EUR 38.000,- :: voice layer;advanced analytics;pro media package",
+    "timeline": "Month 1 :: Discovery, strategy, concept sign-off.\nMonth 2 :: Design, animation, flow implementation.\nMonth 3 :: Integration, launch, optimization.",
+    "closingText": "Let’s build Sven and launch a premium conversational experience for Acme Client.",
+    "teamCards": "Strategy Lead :: Scope, priorities, and direction\nConversation Designer :: Dialogue logic and quality\nMotion Designer :: Character and visual system\nImplementation Engineer :: Integration and launch",
+    "imagePrompts": "Slide 1 (cover) :: Premium clean slide visual for \"AI Mascot Proposal\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 2 (problem) :: Premium clean slide visual for \"The Problem\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 3 (opportunity) :: Premium clean slide visual for \"The Opportunity\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 4 (solution) :: Premium clean slide visual for \"The Solution\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 5 (what-notso-does) :: Premium clean slide visual for \"What Notso AI Does\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 6 (meet-buddy) :: Premium clean slide visual for \"Meet Sven\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 7 (experience-concept) :: Premium clean slide visual for \"Experience Concept\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 8 (chat-flow) :: Premium clean slide visual for \"Chat Flow\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 9 (example-interaction) :: Premium clean slide visual for \"Example Interaction\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 10 (business-impact) :: Premium clean slide visual for \"Business Impact\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 11 (data-analytics) :: Premium clean slide visual for \"Data & Analytics\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 12 (what-you-get) :: Premium clean slide visual for \"What You Get\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 13 (pricing) :: Premium clean slide visual for \"Pricing\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 14 (timeline) :: Premium clean slide visual for \"Timeline\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.\nSlide 15 (closing) :: Premium clean slide visual for \"Let’s Build This Together\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+    "contactName": "Max Kowalski",
+    "contactEmail": "max@notso.ai",
+    "contactPhone": "+31 6 40450599",
+    "excludedSlides": []
+  },
+  "slideData": {
+    "template": {
+      "id": "pitch-proposal",
+      "label": "Notso Premium Proposal",
+      "description": "15-slide premium pitch deck for animated chatbot proposals.",
+      "version": "2.0.0"
+    },
+    "excludedSlides": [],
+    "availableSlides": [
+      {
+        "id": "cover",
+        "label": "Cover",
+        "type": "cover",
+        "field": "projectTitle",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "problem",
+        "label": "The Problem",
+        "type": "problem",
+        "field": "problemPoints",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "opportunity",
+        "label": "The Opportunity",
+        "type": "opportunity",
+        "field": "opportunityPoints",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "solution",
+        "label": "The Solution",
+        "type": "solution",
+        "field": "solutionPillars",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "what-notso-does",
+        "label": "What Notso AI Does",
+        "type": "what-notso-does",
+        "field": "whatNotsoCards",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "meet-buddy",
+        "label": "Meet The Buddy",
+        "type": "meet-buddy",
+        "field": "buddyDescription",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "experience-concept",
+        "label": "Experience Concept",
+        "type": "experience-concept",
+        "field": "experienceConcept",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "chat-flow",
+        "label": "Chat Flow",
+        "type": "chat-flow",
+        "field": "chatFlow",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "example-interaction",
+        "label": "Example Interaction",
+        "type": "example-interaction",
+        "field": "interactionExample",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "business-impact",
+        "label": "Business Impact",
+        "type": "business-impact",
+        "field": "businessImpact",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "data-analytics",
+        "label": "Data & Analytics",
+        "type": "data-analytics",
+        "field": "analyticsBullets",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "what-you-get",
+        "label": "What You Get",
+        "type": "what-you-get",
+        "field": "deliverables",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "pricing",
+        "label": "Pricing",
+        "type": "pricing",
+        "field": "pricing",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "timeline",
+        "label": "Timeline",
+        "type": "timeline",
+        "field": "timeline",
+        "required": false,
+        "optional": true,
+        "defaultIncluded": true,
+        "included": true
+      },
+      {
+        "id": "closing",
+        "label": "Closing",
+        "type": "closing",
+        "field": "closingText",
+        "required": true,
+        "optional": false,
+        "defaultIncluded": true,
+        "included": true
+      }
+    ],
+    "project": {
+      "clientName": "Acme Client",
+      "clientUrl": "https://www.acme-client.com",
+      "projectTitle": "AI Mascot for Acme Client",
+      "coverOneLiner": "A playful, animated chatbot experience that feels premium and converts.",
+      "subtitle": "Premium digital buddy strategy for Acme Client.",
+      "proposalDate": "June 2026",
+      "mascotName": "Sven",
+      "deckVersion": "v1.0",
+      "contactName": "Max Kowalski",
+      "contactEmail": "max@notso.ai",
+      "contactPhone": "+31 6 40450599"
+    },
+    "content": {
+      "problemPoints": [
+        "Acme Client loses conversion momentum when visitors do not get instant answers.",
+        "Support teams repeatedly handle similar questions manually.",
+        "Automation on acme-client.com feels generic and not brand-distinctive."
+      ],
+      "opportunityPoints": [
+        "Turn support into guided conversion moments.",
+        "Increase engagement with a memorable character experience.",
+        "Scale conversations while keeping premium brand tone."
+      ],
+      "solutionPillars": [
+        {
+          "title": "Character",
+          "description": "A recognizable mascot with clear brand personality."
+        },
+        {
+          "title": "AI",
+          "description": "Context-aware replies and smart routing."
+        },
+        {
+          "title": "Interaction",
+          "description": "Clean UI flows that move users to next actions."
+        }
+      ],
+      "whatNotsoIntro": "Notso AI designs and deploys animated AI assistants that combine personality with measurable business value for Acme Client.",
+      "whatNotsoCards": [
+        {
+          "title": "Strategy & Personality",
+          "description": "Define voice, role, and emotional behavior."
+        },
+        {
+          "title": "Design & Animation",
+          "description": "Build polished mascot visuals and motion."
+        },
+        {
+          "title": "Smart Conversations",
+          "description": "Structure intent flows for conversion and support."
+        },
+        {
+          "title": "Measurable Impact",
+          "description": "Track behavior, trends, and outcomes."
+        }
+      ],
+      "buddyDescription": "Sven is a helpful, expressive guide designed to keep interactions clear, friendly, and conversion-focused.",
+      "buddyPersonality": [
+        "Friendly and confident",
+        "Helpful under pressure",
+        "Consistent brand voice",
+        "Fast and clear guidance"
+      ],
+      "toneSliders": [
+        {
+          "label": "Friendly",
+          "value": 88
+        },
+        {
+          "label": "Professional",
+          "value": 76
+        },
+        {
+          "label": "Playful",
+          "value": 68
+        },
+        {
+          "label": "Direct",
+          "value": 82
+        }
+      ],
+      "experienceConcept": [
+        "Mascot welcomes users and frames intent quickly.",
+        "Context-aware prompts guide users toward the right path.",
+        "Recommendations adapt with each interaction.",
+        "Clear CTA closes each flow with measurable action."
+      ],
+      "chatFlow": [
+        "Greeting",
+        "Discovery",
+        "Suggestions",
+        "Personalization",
+        "Conversion"
+      ],
+      "interactionExample": [
+        "User: I need help selecting the right chair.",
+        "Sven: Great, do you want ergonomic or lounge style?",
+        "User: Ergonomic for long work sessions.",
+        "Sven: I recommend Comfort LX006, want a quick comparison?"
+      ],
+      "businessImpact": [
+        "Increase conversion",
+        "Lower support load",
+        "Boost engagement",
+        "Strengthen brand recall"
+      ],
+      "analyticsDescription": "Every interaction is tracked and analyzed so teams can improve messaging, product guidance, and conversion outcomes.",
+      "analyticsBullets": [
+        "Live dashboard for interactions and conversion",
+        "Top questions and intent trends",
+        "Dwell time and drop-off insight",
+        "Exportable monthly reports"
+      ],
+      "deliverables": [
+        {
+          "title": "Deployment-ready mascot",
+          "bullets": [
+            "Branded character",
+            "expressive animations",
+            "launch assets"
+          ]
+        },
+        {
+          "title": "Multichannel access",
+          "bullets": [
+            "Website widget",
+            "mobile support",
+            "campaign deployment"
+          ]
+        },
+        {
+          "title": "Performance insights",
+          "bullets": [
+            "Real-time dashboard",
+            "monthly reporting",
+            "optimization notes"
+          ]
+        },
+        {
+          "title": "Brand activation media",
+          "bullets": [
+            "Social visuals",
+            "video snippets",
+            "campaign-ready pack"
+          ]
+        }
+      ],
+      "pricing": [
+        {
+          "name": "Basic - Chat",
+          "price": "EUR 2.600,-",
+          "description": "3D mascot template;custom chat flows;emotion interactions"
+        },
+        {
+          "name": "Premium - Chat",
+          "price": "EUR 24.000,-",
+          "description": "custom mascot;40+ animations;advanced LLM integration"
+        },
+        {
+          "name": "Pro - Chat & Voice",
+          "price": "EUR 38.000,-",
+          "description": "voice layer;advanced analytics;pro media package"
+        }
+      ],
+      "timeline": [
+        {
+          "title": "Month 1",
+          "description": "Discovery, strategy, concept sign-off."
+        },
+        {
+          "title": "Month 2",
+          "description": "Design, animation, flow implementation."
+        },
+        {
+          "title": "Month 3",
+          "description": "Integration, launch, optimization."
+        }
+      ],
+      "closingText": "Let’s build Sven and launch a premium conversational experience for Acme Client.",
+      "teamCards": [
+        {
+          "title": "Strategy Lead",
+          "description": "Scope, priorities, and direction"
+        },
+        {
+          "title": "Conversation Designer",
+          "description": "Dialogue logic and quality"
+        },
+        {
+          "title": "Motion Designer",
+          "description": "Character and visual system"
+        },
+        {
+          "title": "Implementation Engineer",
+          "description": "Integration and launch"
+        }
+      ],
+      "imagePrompts": [
+        "Slide 1 (cover) :: Premium clean slide visual for \"AI Mascot Proposal\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 2 (problem) :: Premium clean slide visual for \"The Problem\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 3 (opportunity) :: Premium clean slide visual for \"The Opportunity\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 4 (solution) :: Premium clean slide visual for \"The Solution\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 5 (what-notso-does) :: Premium clean slide visual for \"What Notso AI Does\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 6 (meet-buddy) :: Premium clean slide visual for \"Meet Sven\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 7 (experience-concept) :: Premium clean slide visual for \"Experience Concept\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 8 (chat-flow) :: Premium clean slide visual for \"Chat Flow\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 9 (example-interaction) :: Premium clean slide visual for \"Example Interaction\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 10 (business-impact) :: Premium clean slide visual for \"Business Impact\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 11 (data-analytics) :: Premium clean slide visual for \"Data & Analytics\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 12 (what-you-get) :: Premium clean slide visual for \"What You Get\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 13 (pricing) :: Premium clean slide visual for \"Pricing\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 14 (timeline) :: Premium clean slide visual for \"Timeline\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays.",
+        "Slide 15 (closing) :: Premium clean slide visual for \"Let’s Build This Together\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      ]
+    },
+    "appTheme": {
+      "surfaceTop": "#EAF4FF",
+      "surfaceBottom": "#F8FBFF",
+      "card": "#FFFFFF",
+      "line": "#CFDDFF",
+      "text": "#102347",
+      "muted": "#4F5F83",
+      "primaryColor": "#0B1F4D",
+      "accentColor": "#00C4CC",
+      "secondaryColor": "#7D2AE8"
+    },
+    "deckTheme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "theme": {
+      "brandName": "Notso AI",
+      "primaryColor": "#004B49",
+      "accentColor": "#30D89E",
+      "secondaryColor": "#0B6E6C",
+      "backgroundColor": "#F2F4F6",
+      "textColor": "#0B1D2E",
+      "headingFont": "Sora",
+      "bodyFont": "Inter"
+    },
+    "layout": {
+      "presetId": "notso-premium-v1",
+      "presetLabel": "Notso Premium v1",
+      "locked": true
+    },
+    "slides": [
+      {
+        "id": "cover",
+        "type": "cover",
+        "title": "AI Mascot for Acme Client",
+        "subtitle": "A playful, animated chatbot experience that feels premium and converts.",
+        "purpose": "Create immediate emotional impact and context.",
+        "sourceField": "projectTitle",
+        "oneLiner": "A playful, animated chatbot experience that feels premium and converts.",
+        "proposalDate": "June 2026",
+        "mascotName": "Sven",
+        "clientName": "Acme Client",
+        "layoutKey": "hook-cover",
+        "imageRatio": "16:9",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 1 (cover) :: Premium clean slide visual for \"AI Mascot Proposal\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "problem",
+        "type": "problem",
+        "title": "The Problem",
+        "subtitle": "What is blocking growth today.",
+        "purpose": "Create tension and urgency.",
+        "sourceField": "problemPoints",
+        "points": [
+          "Acme Client loses conversion momentum when visitors do not get instant answers.",
+          "Support teams repeatedly handle similar questions manually.",
+          "Automation on acme-client.com feels generic and not brand-distinctive."
+        ],
+        "layoutKey": "problem-grid",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 2 (problem) :: Premium clean slide visual for \"The Problem\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "opportunity",
+        "type": "opportunity",
+        "title": "The Opportunity",
+        "subtitle": "What becomes possible with the right assistant.",
+        "purpose": "Shift from friction to possibility.",
+        "sourceField": "opportunityPoints",
+        "points": [
+          "Turn support into guided conversion moments.",
+          "Increase engagement with a memorable character experience.",
+          "Scale conversations while keeping premium brand tone."
+        ],
+        "layoutKey": "opportunity-split",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 3 (opportunity) :: Premium clean slide visual for \"The Opportunity\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "solution",
+        "type": "solution",
+        "title": "The Solution",
+        "subtitle": "Character + AI + interaction model.",
+        "purpose": "Provide simple clarity of approach.",
+        "sourceField": "solutionPillars",
+        "pillars": [
+          {
+            "title": "Character",
+            "description": "A recognizable mascot with clear brand personality."
+          },
+          {
+            "title": "AI",
+            "description": "Context-aware replies and smart routing."
+          },
+          {
+            "title": "Interaction",
+            "description": "Clean UI flows that move users to next actions."
+          }
+        ],
+        "layoutKey": "solution-centered",
+        "imageRatio": "1:1",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 4 (solution) :: Premium clean slide visual for \"The Solution\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "what-notso-does",
+        "type": "what-notso-does",
+        "title": "What Notso AI Does",
+        "subtitle": "A productized approach to animated AI assistants.",
+        "purpose": "Build credibility with clear capability blocks.",
+        "sourceField": "whatNotsoCards",
+        "intro": "Notso AI designs and deploys animated AI assistants that combine personality with measurable business value for Acme Client.",
+        "cards": [
+          {
+            "title": "Strategy & Personality",
+            "description": "Define voice, role, and emotional behavior."
+          },
+          {
+            "title": "Design & Animation",
+            "description": "Build polished mascot visuals and motion."
+          },
+          {
+            "title": "Smart Conversations",
+            "description": "Structure intent flows for conversion and support."
+          },
+          {
+            "title": "Measurable Impact",
+            "description": "Track behavior, trends, and outcomes."
+          }
+        ],
+        "layoutKey": "capability-grid",
+        "imageRatio": "1:1",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 5 (what-notso-does) :: Premium clean slide visual for \"What Notso AI Does\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "meet-buddy",
+        "type": "meet-buddy",
+        "title": "Meet Sven",
+        "subtitle": "Personality and tone profile.",
+        "purpose": "Create emotional connection with the mascot.",
+        "sourceField": "buddyDescription",
+        "mascotName": "Sven",
+        "description": "Sven is a helpful, expressive guide designed to keep interactions clear, friendly, and conversion-focused.",
+        "personality": [
+          "Friendly and confident",
+          "Helpful under pressure",
+          "Consistent brand voice",
+          "Fast and clear guidance"
+        ],
+        "toneSliders": [
+          {
+            "label": "Friendly",
+            "value": 88
+          },
+          {
+            "label": "Professional",
+            "value": 76
+          },
+          {
+            "label": "Playful",
+            "value": 68
+          },
+          {
+            "label": "Direct",
+            "value": 82
+          }
+        ],
+        "layoutKey": "buddy-hero",
+        "imageRatio": "1:1",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 6 (meet-buddy) :: Premium clean slide visual for \"Meet Sven\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "experience-concept",
+        "type": "experience-concept",
+        "title": "Experience Concept",
+        "subtitle": "How the assistant moves across product moments.",
+        "purpose": "Show interaction concept and visual journey.",
+        "sourceField": "experienceConcept",
+        "points": [
+          "Mascot welcomes users and frames intent quickly.",
+          "Context-aware prompts guide users toward the right path.",
+          "Recommendations adapt with each interaction.",
+          "Clear CTA closes each flow with measurable action."
+        ],
+        "layoutKey": "concept-split",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 7 (experience-concept) :: Premium clean slide visual for \"Experience Concept\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "chat-flow",
+        "type": "chat-flow",
+        "title": "Chat Flow",
+        "subtitle": "The logic behind each conversation.",
+        "purpose": "Explain the operational conversation steps.",
+        "sourceField": "chatFlow",
+        "steps": [
+          "Greeting",
+          "Discovery",
+          "Suggestions",
+          "Personalization",
+          "Conversion"
+        ],
+        "layoutKey": "flow-split",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 8 (chat-flow) :: Premium clean slide visual for \"Chat Flow\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "example-interaction",
+        "type": "example-interaction",
+        "title": "Example Interaction",
+        "subtitle": "How it feels in a real user moment.",
+        "purpose": "Make the concept tangible with a realistic interaction.",
+        "sourceField": "interactionExample",
+        "messages": [
+          "User: I need help selecting the right chair.",
+          "Sven: Great, do you want ergonomic or lounge style?",
+          "User: Ergonomic for long work sessions.",
+          "Sven: I recommend Comfort LX006, want a quick comparison?"
+        ],
+        "mascotName": "Sven",
+        "layoutKey": "interaction-hero",
+        "imageRatio": "16:9",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 9 (example-interaction) :: Premium clean slide visual for \"Example Interaction\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "business-impact",
+        "type": "business-impact",
+        "title": "Business Impact",
+        "subtitle": "The commercial outcome of this assistant.",
+        "purpose": "Sell business value in one glance.",
+        "sourceField": "businessImpact",
+        "impacts": [
+          "Increase conversion",
+          "Lower support load",
+          "Boost engagement",
+          "Strengthen brand recall"
+        ],
+        "layoutKey": "impact-dark",
+        "imageRatio": "1:1",
+        "backgroundMode": "dark",
+        "imagePrompt": "Slide 10 (business-impact) :: Premium clean slide visual for \"Business Impact\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "data-analytics",
+        "type": "data-analytics",
+        "title": "Data & Analytics",
+        "subtitle": "Insights that improve performance over time.",
+        "purpose": "Show the intelligence and measurable layer.",
+        "sourceField": "analyticsBullets",
+        "description": "Every interaction is tracked and analyzed so teams can improve messaging, product guidance, and conversion outcomes.",
+        "bullets": [
+          "Live dashboard for interactions and conversion",
+          "Top questions and intent trends",
+          "Dwell time and drop-off insight",
+          "Exportable monthly reports"
+        ],
+        "layoutKey": "analytics-split",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 11 (data-analytics) :: Premium clean slide visual for \"Data & Analytics\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "what-you-get",
+        "type": "what-you-get",
+        "title": "What You Get",
+        "subtitle": "Deliverables packaged for deployment and growth.",
+        "purpose": "Clarify exactly what is included.",
+        "sourceField": "deliverables",
+        "sections": [
+          {
+            "title": "Deployment-ready mascot",
+            "bullets": [
+              "Branded character",
+              "expressive animations",
+              "launch assets"
+            ]
+          },
+          {
+            "title": "Multichannel access",
+            "bullets": [
+              "Website widget",
+              "mobile support",
+              "campaign deployment"
+            ]
+          },
+          {
+            "title": "Performance insights",
+            "bullets": [
+              "Real-time dashboard",
+              "monthly reporting",
+              "optimization notes"
+            ]
+          },
+          {
+            "title": "Brand activation media",
+            "bullets": [
+              "Social visuals",
+              "video snippets",
+              "campaign-ready pack"
+            ]
+          }
+        ],
+        "layoutKey": "deliverables-dark",
+        "imageRatio": "1:1",
+        "backgroundMode": "dark",
+        "imagePrompt": "Slide 12 (what-you-get) :: Premium clean slide visual for \"What You Get\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "pricing",
+        "type": "pricing",
+        "title": "Pricing",
+        "subtitle": "Flexible solutions based on ambition and scope.",
+        "purpose": "Make decision-making easy.",
+        "sourceField": "pricing",
+        "packages": [
+          {
+            "name": "Basic - Chat",
+            "price": "EUR 2.600,-",
+            "description": "3D mascot template;custom chat flows;emotion interactions"
+          },
+          {
+            "name": "Premium - Chat",
+            "price": "EUR 24.000,-",
+            "description": "custom mascot;40+ animations;advanced LLM integration"
+          },
+          {
+            "name": "Pro - Chat & Voice",
+            "price": "EUR 38.000,-",
+            "description": "voice layer;advanced analytics;pro media package"
+          }
+        ],
+        "layoutKey": "pricing-3cards",
+        "imageRatio": "4:3",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 13 (pricing) :: Premium clean slide visual for \"Pricing\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "timeline",
+        "type": "timeline",
+        "title": "Timeline",
+        "subtitle": "A clear 3-month execution path.",
+        "purpose": "Reduce risk with transparent phasing.",
+        "sourceField": "timeline",
+        "phases": [
+          {
+            "title": "Month 1",
+            "description": "Discovery, strategy, concept sign-off."
+          },
+          {
+            "title": "Month 2",
+            "description": "Design, animation, flow implementation."
+          },
+          {
+            "title": "Month 3",
+            "description": "Integration, launch, optimization."
+          }
+        ],
+        "layoutKey": "timeline-horizontal",
+        "imageRatio": "16:9",
+        "backgroundMode": "light",
+        "imagePrompt": "Slide 14 (timeline) :: Premium clean slide visual for \"Timeline\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      },
+      {
+        "id": "closing",
+        "type": "closing",
+        "title": "Let’s Build This Together",
+        "subtitle": "From concept to launch-ready experience.",
+        "purpose": "Drive commitment and next action.",
+        "sourceField": "closingText",
+        "headline": "Let's build Sven",
+        "text": "Let’s build Sven and launch a premium conversational experience for Acme Client.",
+        "team": [
+          {
+            "title": "Strategy Lead",
+            "description": "Scope, priorities, and direction"
+          },
+          {
+            "title": "Conversation Designer",
+            "description": "Dialogue logic and quality"
+          },
+          {
+            "title": "Motion Designer",
+            "description": "Character and visual system"
+          },
+          {
+            "title": "Implementation Engineer",
+            "description": "Integration and launch"
+          }
+        ],
+        "contactName": "Max Kowalski",
+        "contactEmail": "max@notso.ai",
+        "contactPhone": "+31 6 40450599",
+        "mascotName": "Sven",
+        "layoutKey": "closing-dark",
+        "imageRatio": "4:3",
+        "backgroundMode": "dark",
+        "imagePrompt": "Slide 15 (closing) :: Premium clean slide visual for \"Let’s Build This Together\". Notso style, mascot-forward, high whitespace, colors #004B49, #30D89E, #0B6E6C, no text overlays."
+      }
+    ]
+  },
+  "fileName": "acme-client-ai-mascot-for-acme-client-v1-0-1774274339754.pptx",
+  "downloadUrl": "/generated/acme-client-ai-mascot-for-acme-client-v1-0-1774274339754.pptx"
+}

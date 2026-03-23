@@ -1,0 +1,266 @@
+.slide-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #e9edf3;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid #d6deea;
+  backdrop-filter: blur(8px);
+}
+
+.toolbar-btn {
+  border-radius: 999px;
+  border: 1px solid #c9d5e7;
+  background: #fff;
+  color: #1c355a;
+  box-shadow: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolbar-btn:hover {
+  background: #f3f6fb;
+  transform: none;
+}
+
+.download-btn {
+  margin-left: auto;
+  background: linear-gradient(120deg, #007f7b, #01b289 62%, #2fd49c);
+  border-color: transparent;
+  color: #fff;
+}
+
+.slide-counter {
+  color: #38587e;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 56px;
+  text-align: center;
+}
+
+.toolbar-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.viewer-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.thumbnails {
+  width: 182px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: rgba(247, 249, 252, 0.96);
+  border-right: 1px solid #d8e0ec;
+}
+
+.thumb {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.16s ease;
+  flex-shrink: 0;
+  box-shadow: 0 8px 18px rgba(15, 32, 58, 0.12);
+}
+
+.thumb.active {
+  border-color: #29c492;
+}
+
+.thumb:hover:not(.active) {
+  border-color: #97abc9;
+}
+
+.thumb-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #2a4469;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  padding: 2px 6px;
+}
+
+.thumb-inner {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+  pointer-events: none;
+}
+
+.thumb-inner > .slide-render {
+  width: 1020px;
+  height: 573.75px;
+  transform: scale(0.158);
+  transform-origin: top left;
+}
+
+.slide-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.slide-canvas {
+  width: min(100%, 1020px);
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
+  position: relative;
+  border: 1px solid #d2dbe9;
+  background: #fff;
+}
+
+.viewer-chat-launcher {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 0.94rem;
+  box-shadow: 0 16px 26px rgba(11, 31, 77, 0.24);
+}
+
+.viewer-chat-panel {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: min(360px, calc(100vw - 24px));
+  max-height: min(560px, calc(100vh - 120px));
+  background: #ffffff;
+  border: 1px solid #d4e1ff;
+  border-radius: 16px;
+  box-shadow: 0 28px 44px rgba(18, 40, 90, 0.28);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-target-line {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #45608f;
+}
+
+.viewer-chat-messages {
+  min-height: 120px;
+  max-height: 190px;
+  overflow-y: auto;
+  border: 1px solid #d4e1ff;
+  background: #f9fbff;
+  border-radius: 10px;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.viewer-chat-suggestions {
+  display: grid;
+  gap: 8px;
+  max-height: 170px;
+  overflow-y: auto;
+}
+
+.chat-message {
+  border-radius: 10px;
+  padding: 7px 9px;
+  line-height: 1.38;
+  font-size: 0.83rem;
+}
+
+.chat-message.user {
+  background: #e9f4ff;
+  border: 1px solid #c7dbff;
+  color: #173d70;
+}
+
+.chat-message.assistant {
+  background: #eff9fb;
+  border: 1px solid #c9eef1;
+  color: #144668;
+}
+
+.viewer-chat-panel textarea {
+  width: 100%;
+  min-height: 78px;
+  resize: vertical;
+  border: 1px solid #cfddff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.suggestion-card {
+  border: 1px solid #d1e0ff;
+  background: #f8fbff;
+  border-radius: 10px;
+  padding: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.suggestion-card strong {
+  font-size: 0.84rem;
+  color: #1c3f73;
+}
+
+.suggestion-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #3a5c8e;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 980px) {
+  .thumbnails {
+    width: 126px;
+  }
+
+  .thumb-inner > .slide-render {
+    transform: scale(0.11);
+  }
+
+  .viewer-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .download-btn {
+    margin-left: 0;
+  }
+}
