@@ -1,5 +1,5 @@
-import { buildDeckModel } from './deck-model.js';
+import { buildDeckModel } from "./deck-model.js";
 
 export function buildSlideData(data) {
-  return buildDeckModel(data);
+	return buildDeckModel(data);
 }

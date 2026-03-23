@@ -1,1 +1,1 @@
-export { renderSlide } from './slides/index.js';
+export { renderSlide } from "./slides/index.js";

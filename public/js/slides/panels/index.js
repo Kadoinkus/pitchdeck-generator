@@ -1,9 +1,9 @@
-export { panelClassName, panelVariantClass } from './variants.js';
 export {
-  renderTitlePanel,
-  renderImagePanel,
-  renderSummaryPanel,
-  renderIconFeaturePanel,
-  renderPricingCardPanel,
-  renderMetricPanel
-} from './presets.js';
+	renderIconFeaturePanel,
+	renderImagePanel,
+	renderMetricPanel,
+	renderPricingCardPanel,
+	renderSummaryPanel,
+	renderTitlePanel,
+} from "./presets.js";
+export { panelClassName, panelVariantClass } from "./variants.js";

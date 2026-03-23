@@ -1,220 +1,248 @@
-import { buildDeckModel, getEditableFieldDefinitions } from '../../deck-model.js';
-import { safeText } from '../../utils.js';
+import {
+	buildDeckModel,
+	getEditableFieldDefinitions,
+} from "../../deck-model.js";
+import { safeText } from "../../utils.js";
 
-const FIELD_LABELS = new Map(getEditableFieldDefinitions().map((field) => [field.name, field.label]));
+const FIELD_LABELS = new Map(
+	getEditableFieldDefinitions().map((field) => [field.name, field.label]),
+);
 
 function domainFromUrl(url) {
-  try {
-    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
-    return parsed.hostname.replace(/^www\./i, '');
-  } catch {
-    return safeText(url, 'client website');
-  }
+	try {
+		const parsed = new URL(url.startsWith("http") ? url : `https://${url}`);
+		return parsed.hostname.replace(/^www\./i, "");
+	} catch {
+		return safeText(url, "client website");
+	}
 }
 
 function listToString(items) {
-  return items.map((item) => String(item).trim()).filter(Boolean).join('\n');
+	return items
+		.map((item) => String(item).trim())
+		.filter(Boolean)
+		.join("\n");
 }
 
 export async function localGenerateAutofill(rawData = {}) {
-  const model = buildDeckModel(rawData);
-  const { project, deckTheme, slides } = model;
-  const domain = domainFromUrl(project.clientUrl);
+	const model = buildDeckModel(rawData);
+	const { project, deckTheme, slides } = model;
+	const domain = domainFromUrl(project.clientUrl);
 
-  const draft = {
-    projectTitle: `AI Mascot for ${project.clientName}`,
-    coverOneLiner: 'A playful, animated chatbot experience that feels premium and converts.',
-    subtitle: `Premium digital buddy strategy for ${project.clientName}.`,
-    proposalDate: 'June 2026',
-    mascotName: project.mascotName || 'Sven',
+	const draft = {
+		projectTitle: `AI Mascot for ${project.clientName}`,
+		coverOneLiner:
+			"A playful, animated chatbot experience that feels premium and converts.",
+		subtitle: `Premium digital buddy strategy for ${project.clientName}.`,
+		proposalDate: "June 2026",
+		mascotName: project.mascotName || "Sven",
 
-    problemPoints: listToString([
-      `${project.clientName} loses conversion momentum when visitors do not get instant answers.`,
-      'Support teams repeatedly handle similar questions manually.',
-      `Automation on ${domain} feels generic and not brand-distinctive.`
-    ]),
-    opportunityPoints: listToString([
-      'Turn support into guided conversion moments.',
-      'Increase engagement with a memorable character experience.',
-      'Scale conversations while keeping premium brand tone.'
-    ]),
-    solutionPillars: listToString([
-      'Character :: A recognizable mascot with clear brand personality.',
-      'AI :: Context-aware replies and smart routing.',
-      'Interaction :: Clean UI flows that move users to next actions.'
-    ]),
-    whatNotsoIntro: `Notso AI designs and deploys animated AI assistants that combine personality with measurable business value for ${project.clientName}.`,
-    whatNotsoCards: listToString([
-      'Strategy & Personality :: Define voice, role, and emotional behavior.',
-      'Design & Animation :: Build polished mascot visuals and motion.',
-      'Smart Conversations :: Structure intent flows for conversion and support.',
-      'Measurable Impact :: Track behavior, trends, and outcomes.'
-    ]),
-    buddyDescription: `${project.mascotName || 'Sven'} is a helpful, expressive guide designed to keep interactions clear, friendly, and conversion-focused.`,
-    buddyPersonality: listToString([
-      'Friendly and confident',
-      'Helpful under pressure',
-      'Consistent brand voice',
-      'Fast and clear guidance'
-    ]),
-    toneSliders: listToString([
-      'Friendly :: 88',
-      'Professional :: 76',
-      'Playful :: 68',
-      'Direct :: 82'
-    ]),
-    experienceConcept: listToString([
-      'Mascot welcomes users and frames intent quickly.',
-      'Context-aware prompts guide users toward the right path.',
-      'Recommendations adapt with each interaction.',
-      'Clear CTA closes each flow with measurable action.'
-    ]),
-    chatFlow: listToString([
-      'Greeting',
-      'Discovery',
-      'Suggestions',
-      'Personalization',
-      'Conversion'
-    ]),
-    interactionExample: listToString([
-      'User: I need help selecting the right chair.',
-      `${project.mascotName || 'Sven'}: Great, do you want ergonomic or lounge style?`,
-      'User: Ergonomic for long work sessions.',
-      `${project.mascotName || 'Sven'}: I recommend Comfort LX006, want a quick comparison?`
-    ]),
-    businessImpact: listToString([
-      'Increase conversion',
-      'Lower support load',
-      'Boost engagement',
-      'Strengthen brand recall'
-    ]),
-    analyticsDescription: 'Every interaction is tracked and analyzed so teams can improve messaging, product guidance, and conversion outcomes.',
-    analyticsBullets: listToString([
-      'Live dashboard for interactions and conversion',
-      'Top questions and intent trends',
-      'Dwell time and drop-off insight',
-      'Exportable monthly reports'
-    ]),
-    deliverables: listToString([
-      'Deployment-ready mascot :: Branded character; expressive animations; launch assets',
-      'Multichannel access :: Website widget; mobile support; campaign deployment',
-      'Performance insights :: Real-time dashboard; monthly reporting; optimization notes',
-      'Brand activation media :: Social visuals; video snippets; campaign-ready pack'
-    ]),
-    pricing: listToString([
-      'Basic - Chat :: EUR 2.600,- :: 3D mascot template;custom chat flows;emotion interactions',
-      'Premium - Chat :: EUR 24.000,- :: custom mascot;40+ animations;advanced LLM integration',
-      'Pro - Chat & Voice :: EUR 38.000,- :: voice layer;advanced analytics;pro media package'
-    ]),
-    timeline: listToString([
-      'Month 1 :: Discovery, strategy, concept sign-off.',
-      'Month 2 :: Design, animation, flow implementation.',
-      'Month 3 :: Integration, launch, optimization.'
-    ]),
-    closingText: `Let’s build ${project.mascotName || 'Sven'} and launch a premium conversational experience for ${project.clientName}.`,
-    teamCards: listToString([
-      'Strategy Lead :: Scope, priorities, and direction',
-      'Conversation Designer :: Dialogue logic and quality',
-      'Motion Designer :: Character and visual system',
-      'Implementation Engineer :: Integration and launch'
-    ])
-  };
+		problemPoints: listToString([
+			`${project.clientName} loses conversion momentum when visitors do not get instant answers.`,
+			"Support teams repeatedly handle similar questions manually.",
+			`Automation on ${domain} feels generic and not brand-distinctive.`,
+		]),
+		opportunityPoints: listToString([
+			"Turn support into guided conversion moments.",
+			"Increase engagement with a memorable character experience.",
+			"Scale conversations while keeping premium brand tone.",
+		]),
+		solutionPillars: listToString([
+			"Character :: A recognizable mascot with clear brand personality.",
+			"AI :: Context-aware replies and smart routing.",
+			"Interaction :: Clean UI flows that move users to next actions.",
+		]),
+		whatNotsoIntro: `Notso AI designs and deploys animated AI assistants that combine personality with measurable business value for ${project.clientName}.`,
+		whatNotsoCards: listToString([
+			"Strategy & Personality :: Define voice, role, and emotional behavior.",
+			"Design & Animation :: Build polished mascot visuals and motion.",
+			"Smart Conversations :: Structure intent flows for conversion and support.",
+			"Measurable Impact :: Track behavior, trends, and outcomes.",
+		]),
+		buddyDescription: `${project.mascotName || "Sven"} is a helpful, expressive guide designed to keep interactions clear, friendly, and conversion-focused.`,
+		buddyPersonality: listToString([
+			"Friendly and confident",
+			"Helpful under pressure",
+			"Consistent brand voice",
+			"Fast and clear guidance",
+		]),
+		toneSliders: listToString([
+			"Friendly :: 88",
+			"Professional :: 76",
+			"Playful :: 68",
+			"Direct :: 82",
+		]),
+		experienceConcept: listToString([
+			"Mascot welcomes users and frames intent quickly.",
+			"Context-aware prompts guide users toward the right path.",
+			"Recommendations adapt with each interaction.",
+			"Clear CTA closes each flow with measurable action.",
+		]),
+		chatFlow: listToString([
+			"Greeting",
+			"Discovery",
+			"Suggestions",
+			"Personalization",
+			"Conversion",
+		]),
+		interactionExample: listToString([
+			"User: I need help selecting the right chair.",
+			`${project.mascotName || "Sven"}: Great, do you want ergonomic or lounge style?`,
+			"User: Ergonomic for long work sessions.",
+			`${project.mascotName || "Sven"}: I recommend Comfort LX006, want a quick comparison?`,
+		]),
+		businessImpact: listToString([
+			"Increase conversion",
+			"Lower support load",
+			"Boost engagement",
+			"Strengthen brand recall",
+		]),
+		analyticsDescription:
+			"Every interaction is tracked and analyzed so teams can improve messaging, product guidance, and conversion outcomes.",
+		analyticsBullets: listToString([
+			"Live dashboard for interactions and conversion",
+			"Top questions and intent trends",
+			"Dwell time and drop-off insight",
+			"Exportable monthly reports",
+		]),
+		deliverables: listToString([
+			"Deployment-ready mascot :: Branded character; expressive animations; launch assets",
+			"Multichannel access :: Website widget; mobile support; campaign deployment",
+			"Performance insights :: Real-time dashboard; monthly reporting; optimization notes",
+			"Brand activation media :: Social visuals; video snippets; campaign-ready pack",
+		]),
+		pricing: listToString([
+			"Basic - Chat :: EUR 2.600,- :: 3D mascot template;custom chat flows;emotion interactions",
+			"Premium - Chat :: EUR 24.000,- :: custom mascot;40+ animations;advanced LLM integration",
+			"Pro - Chat & Voice :: EUR 38.000,- :: voice layer;advanced analytics;pro media package",
+		]),
+		timeline: listToString([
+			"Month 1 :: Discovery, strategy, concept sign-off.",
+			"Month 2 :: Design, animation, flow implementation.",
+			"Month 3 :: Integration, launch, optimization.",
+		]),
+		closingText: `Let’s build ${project.mascotName || "Sven"} and launch a premium conversational experience for ${project.clientName}.`,
+		teamCards: listToString([
+			"Strategy Lead :: Scope, priorities, and direction",
+			"Conversation Designer :: Dialogue logic and quality",
+			"Motion Designer :: Character and visual system",
+			"Implementation Engineer :: Integration and launch",
+		]),
+	};
 
-  const prompts = slides.map((slide, index) => ({
-    slideId: slide.id,
-    slideNumber: index + 1,
-    slideTitle: slide.title,
-    prompt: `Premium clean slide visual for "${slide.title}". Notso style, mascot-forward, high whitespace, colors ${deckTheme.primaryColor}, ${deckTheme.accentColor}, ${deckTheme.secondaryColor}, no text overlays.`
-  }));
+	const prompts = slides.map((slide, index) => ({
+		slideId: slide.id,
+		slideNumber: index + 1,
+		slideTitle: slide.title,
+		prompt: `Premium clean slide visual for "${slide.title}". Notso style, mascot-forward, high whitespace, colors ${deckTheme.primaryColor}, ${deckTheme.accentColor}, ${deckTheme.secondaryColor}, no text overlays.`,
+	}));
 
-  return {
-    provider: 'local',
-    draft,
-    imageDraft: {
-      prompts,
-      combinedPromptText: prompts.map((item) => `Slide ${item.slideNumber} (${item.slideId}) :: ${item.prompt}`).join('\n')
-    }
-  };
+	return {
+		provider: "local",
+		draft,
+		imageDraft: {
+			prompts,
+			combinedPromptText: prompts
+				.map(
+					(item) =>
+						`Slide ${item.slideNumber} (${item.slideId}) :: ${item.prompt}`,
+				)
+				.join("\n"),
+		},
+	};
 }
 
 function rewriteLines(currentValue, message, fallbackLines) {
-  const cleaned = safeText(message, 'improve clarity and conversion focus');
-  const lines = String(currentValue || '')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
+	const cleaned = safeText(message, "improve clarity and conversion focus");
+	const lines = String(currentValue || "")
+		.split("\n")
+		.map((line) => line.trim())
+		.filter(Boolean);
 
-  const seed = lines.length ? lines : fallbackLines;
-  return seed
-    .slice(0, 6)
-    .map((line, index) => (index === 0 ? `${line} (${cleaned})` : line))
-    .join('\n');
+	const seed = lines.length ? lines : fallbackLines;
+	return seed
+		.slice(0, 6)
+		.map((line, index) => (index === 0 ? `${line} (${cleaned})` : line))
+		.join("\n");
 }
 
 function defaultFieldValue(fieldName, model, message) {
-  const seed = safeText(message, 'stronger premium positioning');
-  const mascot = model.project.mascotName || 'Sven';
+	const seed = safeText(message, "stronger premium positioning");
+	const mascot = model.project.mascotName || "Sven";
 
-  switch (fieldName) {
-    case 'subtitle':
-      return `Premium animated assistant concept for ${model.project.clientName}, tuned to ${seed}.`;
-    case 'coverOneLiner':
-      return `A mascot-first chatbot concept focused on ${seed}.`;
-    case 'closingText':
-      return `Let's build ${mascot} and launch a premium experience focused on ${seed}.`;
-    case 'imagePrompts':
-      return model.slides
-        .map((slide, index) => `Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${seed}.`)
-        .join('\n');
-    default:
-      return `${FIELD_LABELS.get(fieldName) || fieldName} updated for ${seed}.`;
-  }
+	switch (fieldName) {
+		case "subtitle":
+			return `Premium animated assistant concept for ${model.project.clientName}, tuned to ${seed}.`;
+		case "coverOneLiner":
+			return `A mascot-first chatbot concept focused on ${seed}.`;
+		case "closingText":
+			return `Let's build ${mascot} and launch a premium experience focused on ${seed}.`;
+		case "imagePrompts":
+			return model.slides
+				.map(
+					(slide, index) =>
+						`Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${seed}.`,
+				)
+				.join("\n");
+		default:
+			return `${FIELD_LABELS.get(fieldName) || fieldName} updated for ${seed}.`;
+	}
 }
 
 export async function localChatAssist(rawData = {}, chatRequest = {}) {
-  const model = buildDeckModel(rawData);
-  const targetField = safeText(chatRequest.targetField, 'global-concept');
-  const message = safeText(chatRequest.message, 'improve premium clarity');
+	const model = buildDeckModel(rawData);
+	const targetField = safeText(chatRequest.targetField, "global-concept");
+	const message = safeText(chatRequest.message, "improve premium clarity");
 
-  if (targetField === 'global-concept') {
-    return {
-      provider: 'local',
-      reply: `Refocused the core narrative toward: ${message}. Apply any suggestion below.`,
-      suggestedChanges: [
-        {
-          field: 'coverOneLiner',
-          label: FIELD_LABELS.get('coverOneLiner'),
-          value: `A premium mascot-powered chatbot concept focused on ${message}.`
-        },
-        {
-          field: 'opportunityPoints',
-          label: FIELD_LABELS.get('opportunityPoints'),
-          value: rewriteLines(rawData.opportunityPoints, message, model.content.opportunityPoints)
-        },
-        {
-          field: 'businessImpact',
-          label: FIELD_LABELS.get('businessImpact'),
-          value: rewriteLines(rawData.businessImpact, message, model.content.businessImpact)
-        }
-      ]
-    };
-  }
+	if (targetField === "global-concept") {
+		return {
+			provider: "local",
+			reply: `Refocused the core narrative toward: ${message}. Apply any suggestion below.`,
+			suggestedChanges: [
+				{
+					field: "coverOneLiner",
+					label: FIELD_LABELS.get("coverOneLiner"),
+					value: `A premium mascot-powered chatbot concept focused on ${message}.`,
+				},
+				{
+					field: "opportunityPoints",
+					label: FIELD_LABELS.get("opportunityPoints"),
+					value: rewriteLines(
+						rawData.opportunityPoints,
+						message,
+						model.content.opportunityPoints,
+					),
+				},
+				{
+					field: "businessImpact",
+					label: FIELD_LABELS.get("businessImpact"),
+					value: rewriteLines(
+						rawData.businessImpact,
+						message,
+						model.content.businessImpact,
+					),
+				},
+			],
+		};
+	}
 
-  const currentValue = safeText(rawData[targetField], '');
-  const fallback = Array.isArray(model.content[targetField]) ? model.content[targetField] : [defaultFieldValue(targetField, model, message)];
-  const nextValue = currentValue
-    ? rewriteLines(currentValue, message, fallback)
-    : defaultFieldValue(targetField, model, message);
+	const currentValue = safeText(rawData[targetField], "");
+	const fallback = Array.isArray(model.content[targetField])
+		? model.content[targetField]
+		: [defaultFieldValue(targetField, model, message)];
+	const nextValue = currentValue
+		? rewriteLines(currentValue, message, fallback)
+		: defaultFieldValue(targetField, model, message);
 
-  return {
-    provider: 'local',
-    reply: `Prepared an update for ${FIELD_LABELS.get(targetField) || targetField}.`,
-    suggestedChanges: [
-      {
-        field: targetField,
-        label: FIELD_LABELS.get(targetField) || targetField,
-        value: nextValue
-      }
-    ]
-  };
+	return {
+		provider: "local",
+		reply: `Prepared an update for ${FIELD_LABELS.get(targetField) || targetField}.`,
+		suggestedChanges: [
+			{
+				field: targetField,
+				label: FIELD_LABELS.get(targetField) || targetField,
+				value: nextValue,
+			},
+		],
+	};
 }
