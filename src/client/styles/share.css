@@ -217,7 +217,7 @@ body {
 
 .print-mode .share-track {
 	display: block;
-	transform: none !important;
+	transform: none;
 }
 
 .print-mode .share-slide {
@@ -283,7 +283,7 @@ body {
 
 	.share-track {
 		display: block;
-		transform: none !important;
+		transform: none;
 	}
 
 	.share-slide {

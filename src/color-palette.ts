@@ -432,7 +432,7 @@ function resolveVariant(
 	mode: string,
 	shuffleSeed: unknown,
 ): { variant: HarmonyVariant; index: number; count: number } {
-	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS['complementary'];
+	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary;
 	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
 	const index = seed % options.length;
 	return {

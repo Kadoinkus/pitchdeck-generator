@@ -20,16 +20,20 @@
 
 body {
 	margin: 0;
+	height: 100%;
+	min-height: 100dvh;
 	font-family: "DM Sans", "Segoe UI", sans-serif;
 	color: var(--text);
 	background:
-		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%),
+		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%)
+		fixed,
 		radial-gradient(
 		circle at 91% 12%,
 		rgba(125, 42, 232, 0.14),
 		transparent 26%
-	),
+	) fixed,
 		linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+	background-repeat: no-repeat;
 }
 
 .hidden {

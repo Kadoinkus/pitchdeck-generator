@@ -4,11 +4,12 @@ import svgToIco from 'vite-svg-to-ico';
 
 export default defineConfig({
 	root: 'src/client',
+	appType: 'mpa',
 	publicDir: false,
 	plugins: [
 		svgToIco({ input: `${import.meta.dirname}/src/client/favicon.svg`, emit: { source: true } }),
 		{
-			name: 'share-page-rewrite',
+			name: 'vite-owns-non-api',
 			configureServer(server) {
 				server.middlewares.use((req, _res, next) => {
 					if (
@@ -17,6 +18,11 @@ export default defineConfig({
 						&& !req.url.startsWith('/share.html')
 					) {
 						req.url = '/share.html';
+					}
+					// Nitro's dev middleware skips requests with _nitroHandled.
+					// Let Vite handle all non-API routes so HMR and source CSS work.
+					if (req.url && !req.url.startsWith('/api/')) {
+						Object.assign(req, { _nitroHandled: true });
 					}
 					next();
 				});
@@ -45,5 +51,8 @@ export default defineConfig({
 				share: `${import.meta.dirname}/src/client/share.html`,
 			},
 		},
+	},
+	resolve: {
+		tsconfigPaths: true,
 	},
 });
