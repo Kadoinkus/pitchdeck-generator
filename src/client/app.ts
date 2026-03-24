@@ -1,6 +1,6 @@
 import './styles.css';
 import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette, type ThemeColors } from './color-palette.ts';
-import { showViewer, updateViewerData } from './viewer.ts';
+import { showViewer, updateViewerData, wasViewerOpen } from './viewer.ts';
 
 interface SlideEntry {
 	type: string;
@@ -1622,6 +1622,14 @@ window.addEventListener('deck:select-target', (event: Event) => {
 			updateProjectChrome();
 		}
 		restoreDeckResultFromLocalStorage();
+
+		if (wasViewerOpen() && currentDeckResult?.slideData) {
+			showViewer(currentDeckResult.slideData, {
+				downloadUrl: currentDeckResult.downloadUrl,
+				pdfUrl: currentDeckResult.pdfUrl,
+				shareUrl: currentDeckResult.shareUrl,
+			});
+		}
 
 		pushHistorySnapshot();
 		autosaveNow({ quiet: true });

@@ -30,6 +30,7 @@ const page = document.querySelector('.page');
 const slideCanvas = document.getElementById('slide-canvas');
 const slideTrack = document.getElementById('slide-track');
 const thumbnailsEl = document.getElementById('thumbnails');
+const thumbResize = document.getElementById('thumb-resize');
 const slideCounter = document.getElementById('slide-counter');
 
 const downloadPptxBtn = document.getElementById('viewer-download-pptx');
@@ -193,6 +194,8 @@ function renderThumbnails(): void {
 	});
 }
 
+const VIEWER_STATE_KEY = 'proposalDeckViewerOpen';
+
 export function showViewer(data: DeckData, options: ToolbarOptions = {}): void {
 	if (!data?.slides?.length) return;
 
@@ -206,6 +209,7 @@ export function showViewer(data: DeckData, options: ToolbarOptions = {}): void {
 
 	page?.classList.add('hidden');
 	viewer?.classList.remove('hidden');
+	sessionStorage.setItem(VIEWER_STATE_KEY, '1');
 	requestAnimationFrame(scaleAllSlides);
 }
 
@@ -224,6 +228,11 @@ export function hideViewer(): void {
 	closeShareMenu();
 	viewer?.classList.add('hidden');
 	page?.classList.remove('hidden');
+	sessionStorage.removeItem(VIEWER_STATE_KEY);
+}
+
+export function wasViewerOpen(): boolean {
+	return sessionStorage.getItem(VIEWER_STATE_KEY) === '1';
 }
 
 function goToSlide(index: number, options: { animate?: boolean } = {}): void {
@@ -396,6 +405,27 @@ document.addEventListener('click', (event: MouseEvent) => {
 		return;
 	}
 	closeShareMenu();
+});
+
+thumbResize?.addEventListener('pointerdown', (event: PointerEvent) => {
+	event.preventDefault();
+	thumbResize.classList.add('is-dragging');
+	thumbResize.setPointerCapture(event.pointerId);
+
+	const onMove = (e: PointerEvent) => {
+		const x = Math.max(100, Math.min(e.clientX, 400));
+		viewer?.style.setProperty('--thumb-w', `${x}px`);
+		scaleAllSlides();
+	};
+
+	const onUp = () => {
+		thumbResize.classList.remove('is-dragging');
+		thumbResize.removeEventListener('pointermove', onMove);
+		thumbResize.removeEventListener('pointerup', onUp);
+	};
+
+	thumbResize.addEventListener('pointermove', onMove);
+	thumbResize.addEventListener('pointerup', onUp);
 });
 
 document.addEventListener('keydown', (event: KeyboardEvent) => {

@@ -281,7 +281,20 @@
 	flex-direction: column;
 	gap: 9px;
 	background: rgba(247, 249, 252, 0.96);
-	border-right: 1px solid #d8e0ec;
+}
+
+.thumb-resize {
+	width: 6px;
+	flex-shrink: 0;
+	cursor: col-resize;
+	background: transparent;
+	border-left: 1px solid #d8e0ec;
+	transition: background 0.15s ease;
+}
+
+.thumb-resize:hover,
+.thumb-resize.is-dragging {
+	background: rgba(41, 196, 146, 0.25);
 }
 
 .thumb {
