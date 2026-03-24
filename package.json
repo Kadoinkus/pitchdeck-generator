@@ -17,7 +17,7 @@
 		"dev": "vite dev",
 		"fmt": "dprint fmt",
 		"lint": "eslint .",
-		"prepare": "bunx --bun svelte-kit sync",
+		"prepare": "svelte-kit sync",
 		"prestart": "bun run build",
 		"start": "vite preview",
 		"test": "bun test:unit --run && bun test:e2e",

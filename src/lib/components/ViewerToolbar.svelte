@@ -246,8 +246,9 @@
 						onclick={closeShare}
 					>Download PPTX</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled
-					>Download PPTX</button>
+					<button class="viewer-share-item" type="button" disabled>
+						Download PPTX
+					</button>
 				{/if}
 
 				{#if shareLinks}
@@ -257,8 +258,9 @@
 						onclick={closeShare}
 					>Download PDF</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled
-					>Download PDF</button>
+					<button class="viewer-share-item" type="button" disabled>
+						Download PDF
+					</button>
 				{/if}
 
 				{#if shareLinks}
@@ -270,8 +272,9 @@
 						onclick={closeShare}
 					>Open share link</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled
-					>Open share link</button>
+					<button class="viewer-share-item" type="button" disabled>
+						Open share link
+					</button>
 				{/if}
 				<button
 					class="viewer-share-item"
