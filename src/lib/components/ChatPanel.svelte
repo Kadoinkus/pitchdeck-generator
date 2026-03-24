@@ -107,33 +107,118 @@
 </script>
 
 {#if isOpen}
-	<div class="viewer-chat-panel">
-		<div class="chat-head">
-			<strong>AI Assistant</strong>
-			<button type="button" onclick={closePanel} aria-label="Close chat">
-				&#10005;
+	<div class="panel">
+		<header class="head">
+			<div class="head-title">
+				<svg class="head-icon" viewBox="0 0 20 20" fill="none">
+					<path
+						d="M10 2a7 7 0 0 0-7 7c0 1.8.7 3.4 1.8 4.6L3.5 17l3.6-1.2A7 7 0 1 0 10 2Z"
+						fill="url(#cg)"
+						stroke="url(#cg)"
+						stroke-width=".6"
+					/>
+					<circle cx="7" cy="10" r="1" fill="#fff" />
+					<circle cx="10" cy="10" r="1" fill="#fff" />
+					<circle cx="13" cy="10" r="1" fill="#fff" />
+					<defs>
+						<linearGradient
+							id="cg"
+							x1="2"
+							y1="3"
+							x2="18"
+							y2="17"
+						><stop stop-color="var(--accent)" /><stop
+								offset="1"
+								stop-color="var(--secondary)"
+							/></linearGradient>
+					</defs>
+				</svg>
+				<span>AI Copilot</span>
+			</div>
+			<button
+				class="icon-btn"
+				type="button"
+				onclick={closePanel}
+				aria-label="Close chat"
+			>
+				<svg viewBox="0 0 16 16" fill="none" width="14" height="14">
+					<path
+						d="M4 4l8 8M12 4l-8 8"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+					/>
+				</svg>
 			</button>
-		</div>
+		</header>
 
 		{#if chatTarget}
-			<p class="chat-target-line">
-				Targeting: <strong>{chatTarget.label}</strong>
-				<button type="button" onclick={clearTarget} aria-label="Clear target">
-					&#10005;
+			<div class="target-pill">
+				<span class="target-dot"></span>
+				<span class="target-label">{chatTarget.label}</span>
+				<button
+					class="icon-btn small"
+					type="button"
+					onclick={clearTarget}
+					aria-label="Clear target"
+				>
+					<svg viewBox="0 0 16 16" fill="none" width="11" height="11">
+						<path
+							d="M4 4l8 8M12 4l-8 8"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+						/>
+					</svg>
 				</button>
-			</p>
+			</div>
 		{/if}
 
-		<div class="viewer-chat-messages">
+		<div class="messages">
 			{#each messages as msg (msg)}
-				<div class="chat-message {msg.role}">{msg.text}</div>
+				<div class="bubble {msg.role}">
+					{#if msg.role === 'assistant'}
+						<svg
+							class="bubble-avatar"
+							viewBox="0 0 18 18"
+							fill="none"
+							width="16"
+							height="16"
+						>
+							<circle cx="9" cy="9" r="9" fill="url(#ba)" />
+							<path
+								d="M6 9.5l2 2 4-4"
+								stroke="#fff"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+							<defs>
+								<linearGradient
+									id="ba"
+									x1="0"
+									y1="0"
+									x2="18"
+									y2="18"
+								><stop stop-color="var(--accent)" /><stop
+										offset="1"
+										stop-color="#1395ff"
+									/></linearGradient>
+							</defs>
+						</svg>
+					{/if}
+					<p>{msg.text}</p>
+				</div>
 				{#if msg.suggestions?.length}
-					<div class="viewer-chat-suggestions">
+					<div class="suggestions">
 						{#each msg.suggestions as suggestion (suggestion.field)}
-							<div class="suggestion-card">
-								<strong>{suggestion.label}</strong>
-								<p>{suggestion.value}</p>
+							<div class="suggestion">
+								<div class="suggestion-head">
+									<strong>{suggestion.label}</strong>
+								</div>
+								<p class="suggestion-text">{suggestion.value}</p>
 								<button
+									class="apply-btn"
 									type="button"
 									onclick={() => applyChange(suggestion.field, suggestion.value)}
 								>
@@ -144,148 +229,471 @@
 					</div>
 				{/if}
 			{/each}
+			{#if sending}
+				<div class="bubble assistant">
+					<svg
+						class="bubble-avatar"
+						viewBox="0 0 18 18"
+						fill="none"
+						width="16"
+						height="16"
+					>
+						<circle cx="9" cy="9" r="9" fill="url(#ba2)" />
+						<defs>
+							<linearGradient
+								id="ba2"
+								x1="0"
+								y1="0"
+								x2="18"
+								y2="18"
+							><stop stop-color="var(--accent)" /><stop
+									offset="1"
+									stop-color="#1395ff"
+								/></linearGradient>
+						</defs>
+					</svg>
+					<div class="typing">
+						<span></span><span></span><span></span>
+					</div>
+				</div>
+			{/if}
 		</div>
 
-		<textarea
-			placeholder="Ask the AI to refine this slide…"
-			bind:value={inputText}
-			onkeydown={handleKeydown}
-			disabled={sending}
-		></textarea>
-		<button
-			type="button"
-			onclick={sendMessage}
-			disabled={sending || !inputText.trim()}
-		>
-			{sending ? 'Sending…' : 'Send'}
-		</button>
+		<div class="input-row">
+			<textarea
+				class="chat-input"
+				placeholder="Ask the AI to refine this slide…"
+				bind:value={inputText}
+				onkeydown={handleKeydown}
+				disabled={sending}
+				rows="2"
+			></textarea>
+			<button
+				class="send-btn"
+				type="button"
+				onclick={sendMessage}
+				disabled={sending || !inputText.trim()}
+				aria-label="Send message"
+			>
+				<svg viewBox="0 0 20 20" fill="none" width="18" height="18">
+					<path
+						d="M3.5 10h9M17 10L3.5 3v5.5l6 1.5-6 1.5V17L17 10Z"
+						fill="currentColor"
+					/>
+				</svg>
+			</button>
+		</div>
 	</div>
 {:else}
 	<button
-		class="viewer-chat-launcher"
+		class="launcher"
 		type="button"
 		onclick={togglePanel}
 		aria-label="Open AI chat"
 	>
-		&#128172;
+		<svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+			<path
+				d="M11 2a8 8 0 0 0-8 8c0 2 .7 3.8 2 5.2L3.5 19l4-1.3A8 8 0 1 0 11 2Z"
+				fill="url(#lg)"
+				stroke="rgba(255,255,255,0.4)"
+				stroke-width=".5"
+			/>
+			<circle cx="7.5" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
+			<circle cx="11" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
+			<circle cx="14.5" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
+			<defs>
+				<linearGradient
+					id="lg"
+					x1="2"
+					y1="3"
+					x2="20"
+					y2="19"
+				><stop stop-color="var(--accent)" /><stop
+						offset=".5"
+						stop-color="#1395ff"
+					/><stop offset="1" stop-color="var(--secondary)" /></linearGradient>
+			</defs>
+		</svg>
 	</button>
 {/if}
 
 <style>
-	.viewer-chat-launcher {
+	/* ── Launcher ── */
+
+	.launcher {
 		position: absolute;
 		right: 20px;
 		bottom: 20px;
 		width: 52px;
 		height: 52px;
-		border: 1px solid rgba(255, 255, 255, 0.3);
-		background: rgba(255, 255, 255, 0.14);
-		color: #f2fbff;
-		backdrop-filter: blur(6px);
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 		border-radius: 50%;
 		padding: 0;
-		font-size: 0.94rem;
-		font-weight: 700;
-		box-shadow: 0 16px 26px rgba(11, 31, 77, 0.24);
+		box-shadow:
+			0 8px 32px rgba(11, 31, 77, 0.22),
+			inset 0 1px 0 rgba(255, 255, 255, 0.15);
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
 	}
 
-	.viewer-chat-panel {
+	.launcher:hover {
+		transform: translateY(-2px) scale(1.05);
+		box-shadow:
+			0 12px 36px rgba(11, 31, 77, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	}
+
+	/* ── Panel ── */
+
+	.panel {
 		position: absolute;
-		right: 20px;
-		bottom: 20px;
-		width: min(360px, calc(100vw - 24px));
-		max-height: min(560px, calc(100vh - 120px));
-		background: #ffffff;
-		border: 1px solid #d4e1ff;
-		border-radius: 16px;
-		box-shadow: 0 28px 44px rgba(18, 40, 90, 0.28);
-		padding: 12px;
-		display: grid;
-		gap: 8px;
+		right: 16px;
+		bottom: 16px;
+		width: min(380px, calc(100vw - 32px));
+		max-height: min(520px, calc(100vh - 100px));
+		background: rgba(255, 255, 255, 0.92);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		border: 1px solid rgba(200, 217, 255, 0.5);
+		border-radius: 20px;
+		box-shadow:
+			0 24px 48px rgba(11, 31, 77, 0.16),
+			0 2px 8px rgba(11, 31, 77, 0.06);
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
 	}
 
-	.chat-head {
+	/* ── Header ── */
+
+	.head {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		padding: 14px 16px 12px;
+		border-bottom: 1px solid rgba(200, 217, 255, 0.35);
 	}
 
-	.chat-target-line {
+	.head-title {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-weight: 700;
+		font-size: 0.92rem;
+		color: var(--primary);
+	}
+
+	.head-icon {
+		width: 22px;
+		height: 22px;
+	}
+
+	/* ── Icon buttons ── */
+
+	.icon-btn {
+		width: 28px;
+		height: 28px;
+		border-radius: 8px;
+		background: rgba(79, 95, 131, 0.08);
+		border: none;
+		color: var(--muted);
+		padding: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: background 0.15s ease, color 0.15s ease;
+	}
+
+	.icon-btn:hover {
+		background: rgba(79, 95, 131, 0.15);
+		color: var(--text);
+		transform: none;
+	}
+
+	.icon-btn.small {
+		width: 20px;
+		height: 20px;
+		border-radius: 6px;
+	}
+
+	/* ── Target pill ── */
+
+	.target-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 8px 16px 0;
+		padding: 5px 8px 5px 10px;
+		background: linear-gradient(
+			135deg,
+			rgba(0, 196, 204, 0.1),
+			rgba(19, 149, 255, 0.08)
+		);
+		border: 1px solid rgba(0, 196, 204, 0.25);
+		border-radius: 20px;
+		width: fit-content;
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: #0e6e72;
+	}
+
+	.target-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--accent);
+		flex-shrink: 0;
+	}
+
+	.target-label {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* ── Messages ── */
+
+	.messages {
+		flex: 1;
+		min-height: 100px;
+		max-height: 240px;
+		overflow-y: auto;
+		padding: 12px 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.messages::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.messages::-webkit-scrollbar-thumb {
+		background: rgba(79, 95, 131, 0.2);
+		border-radius: 4px;
+	}
+
+	.bubble {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		max-width: 92%;
+		animation: fade-in 0.2s ease;
+	}
+
+	.bubble p {
 		margin: 0;
-		font-size: 0.8rem;
-		color: #45608f;
-	}
-
-	.viewer-chat-messages {
-		min-height: 120px;
-		max-height: 190px;
-		overflow-y: auto;
-		border: 1px solid #d4e1ff;
-		background: #f9fbff;
-		border-radius: 10px;
-		padding: 8px;
-		display: grid;
-		gap: 8px;
-	}
-
-	.viewer-chat-suggestions {
-		display: grid;
-		gap: 8px;
-		max-height: 170px;
-		overflow-y: auto;
-	}
-
-	.chat-message {
-		border-radius: 10px;
-		padding: 7px 9px;
-		line-height: 1.38;
 		font-size: 0.83rem;
+		line-height: 1.5;
+		padding: 8px 12px;
+		border-radius: 14px;
 	}
 
-	.chat-message.user {
-		background: #e9f4ff;
-		border: 1px solid #c7dbff;
-		color: #173d70;
+	.bubble.user {
+		align-self: flex-end;
+		flex-direction: row-reverse;
 	}
 
-	.chat-message.assistant {
-		background: #eff9fb;
-		border: 1px solid #c9eef1;
-		color: #144668;
+	.bubble.user p {
+		background: var(--primary);
+		color: #fff;
+		border-bottom-right-radius: 4px;
 	}
 
-	.viewer-chat-panel textarea {
-		width: 100%;
-		min-height: 78px;
-		resize: vertical;
-		border: 1px solid #cfddff;
-		border-radius: 10px;
-		padding: 8px 10px;
-		font: inherit;
+	.bubble.assistant p {
+		background: rgba(79, 95, 131, 0.08);
+		color: var(--text);
+		border-bottom-left-radius: 4px;
 	}
 
-	.suggestion-card {
-		border: 1px solid #d1e0ff;
-		background: #f8fbff;
-		border-radius: 10px;
-		padding: 8px;
-		display: grid;
+	.bubble-avatar {
+		flex-shrink: 0;
+		margin-top: 4px;
+	}
+
+	/* ── Typing indicator ── */
+
+	.typing {
+		display: flex;
+		gap: 4px;
+		padding: 10px 14px;
+		background: rgba(79, 95, 131, 0.08);
+		border-radius: 14px;
+		border-bottom-left-radius: 4px;
+	}
+
+	.typing span {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--muted);
+		opacity: 0.4;
+		animation: typing-dot 1.4s infinite ease-in-out;
+	}
+
+	.typing span:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+
+	.typing span:nth-child(3) {
+		animation-delay: 0.4s;
+	}
+
+	@keyframes typing-dot {
+		0%, 60%, 100% {
+			opacity: 0.3;
+			transform: translateY(0);
+		}
+		30% {
+			opacity: 1;
+			transform: translateY(-3px);
+		}
+	}
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* ── Suggestions ── */
+
+	.suggestions {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding-left: 24px;
+		animation: fade-in 0.2s ease;
+	}
+
+	.suggestion {
+		border: 1px solid rgba(200, 217, 255, 0.5);
+		background: rgba(248, 251, 255, 0.8);
+		border-radius: 12px;
+		padding: 10px 12px;
+		display: flex;
+		flex-direction: column;
 		gap: 6px;
 	}
 
-	.suggestion-card strong {
-		font-size: 0.84rem;
-		color: #1c3f73;
+	.suggestion-head strong {
+		font-size: 0.78rem;
+		color: var(--primary);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
 	}
 
-	.suggestion-card p {
+	.suggestion-text {
 		margin: 0;
-		font-size: 0.8rem;
-		color: #3a5c8e;
+		font-size: 0.82rem;
+		color: var(--muted);
+		line-height: 1.45;
 		white-space: pre-wrap;
+	}
+
+	.apply-btn {
+		align-self: flex-start;
+		padding: 4px 12px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		border-radius: 8px;
+		background: linear-gradient(135deg, var(--accent), #1395ff);
+		color: #fff;
+		border: none;
+		cursor: pointer;
+		transition: transform 0.15s ease, opacity 0.15s ease;
+	}
+
+	.apply-btn:hover {
+		transform: translateY(-1px);
+	}
+
+	/* ── Input row ── */
+
+	.input-row {
+		display: flex;
+		align-items: flex-end;
+		gap: 8px;
+		padding: 10px 12px 12px;
+		border-top: 1px solid rgba(200, 217, 255, 0.35);
+		background: rgba(249, 251, 255, 0.5);
+	}
+
+	.chat-input {
+		flex: 1;
+		min-height: 40px;
+		max-height: 120px;
+		resize: none;
+		border: 1px solid rgba(200, 217, 255, 0.5);
+		border-radius: 12px;
+		padding: 9px 12px;
+		font: inherit;
+		font-size: 0.85rem;
+		line-height: 1.45;
+		background: #fff;
+		color: var(--text);
+		transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	}
+
+	.chat-input::placeholder {
+		color: var(--muted);
+		opacity: 0.6;
+	}
+
+	.chat-input:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.12);
+	}
+
+	.send-btn {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		border-radius: 12px;
+		border: none;
+		background: linear-gradient(135deg, var(--accent), #1395ff);
+		color: #fff;
+		padding: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: transform 0.15s ease, opacity 0.15s ease;
+	}
+
+	.send-btn:hover {
+		transform: translateY(-1px);
+	}
+
+	.send-btn:disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	/* ── Mobile ── */
+
+	@media (max-width: 480px) {
+		.panel {
+			right: 8px;
+			bottom: 8px;
+			width: calc(100vw - 16px);
+			border-radius: 16px;
+		}
 	}
 </style>

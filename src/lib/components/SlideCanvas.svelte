@@ -3,7 +3,6 @@
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
-		goToSlide,
 		nextSlide,
 		prevSlide,
 		setChatTarget,
