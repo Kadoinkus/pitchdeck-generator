@@ -44,6 +44,7 @@
 		position: relative;
 		container-type: inline-size;
 		zoom: tan(atan2(100cqi, var(--ref-w)));
+		text-align: start;
 	}
 
 	.deck-slide {
