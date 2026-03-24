@@ -1,4 +1,4 @@
-import type { ImageRatio } from '$lib/deck/types.ts';
+import type { ImageRatio } from '$lib/deck/types';
 
 export interface CharacterAsset {
 	id: string;

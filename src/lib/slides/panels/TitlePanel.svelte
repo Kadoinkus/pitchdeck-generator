@@ -3,8 +3,8 @@
 	 * Title panel: headline block optionally wrapped in a panel article.
 	 * Replaces `renderTitlePanel()` from presets.ts.
 	 */
-	import Headline from '../core/Headline.svelte';
-	import { panelClassName } from './variants.ts';
+	import Headline from '$lib/slides/core/Headline.svelte';
+	import { panelClassName } from '$lib/slides/panels/variants';
 
 	interface TitlePanelProps {
 		target?: string;

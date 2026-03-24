@@ -1,4 +1,4 @@
-import type { ImageRatio } from '../deck/types.ts';
+import type { ImageRatio } from '$lib/deck/types';
 
 export type { ImageRatio };
 

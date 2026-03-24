@@ -1,6 +1,6 @@
-import { safeText } from '../utils.ts';
-import type { BackgroundMode, LayoutPreset, SlideType } from './types.ts';
-import { RATIO_16_9, RATIO_1_1, RATIO_4_3 } from './types.ts';
+import type { BackgroundMode, LayoutPreset, SlideType } from '$lib/deck/types';
+import { RATIO_16_9, RATIO_1_1, RATIO_4_3 } from '$lib/deck/types';
+import { safeText } from '$lib/utils';
 
 export const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
 

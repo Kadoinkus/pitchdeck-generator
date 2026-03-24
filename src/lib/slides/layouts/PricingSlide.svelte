@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getTargetField } from '../core/fields.ts';
-	import Frame from '../core/Frame.svelte';
-	import { ensureItems } from '../core/utils.ts';
-	import PricingCardPanel from '../panels/PricingCardPanel.svelte';
-	import TitlePanel from '../panels/TitlePanel.svelte';
-	import type { SlideData, ThemeData } from '../types.ts';
+	import { getTargetField } from '$lib/slides/core/fields';
+	import Frame from '$lib/slides/core/Frame.svelte';
+	import { ensureItems } from '$lib/slides/core/utils';
+	import PricingCardPanel from '$lib/slides/panels/PricingCardPanel.svelte';
+	import TitlePanel from '$lib/slides/panels/TitlePanel.svelte';
+	import type { SlideData, ThemeData } from '$lib/slides/types';
 
 	let { slide, theme }: { slide: SlideData; theme: ThemeData } = $props();
 

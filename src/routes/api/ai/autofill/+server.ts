@@ -1,4 +1,4 @@
-import { type AutofillResult, generateAutofill } from '$lib/ai/orchestrator.ts';
+import { type AutofillResult, generateAutofill } from '$lib/ai/orchestrator';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

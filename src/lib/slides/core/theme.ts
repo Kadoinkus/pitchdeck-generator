@@ -1,4 +1,4 @@
-import { safeColor, safeFont } from './utils.ts';
+import { safeColor, safeFont } from '$lib/slides/core/utils';
 
 export interface ThemeInput {
 	primaryColor?: string;

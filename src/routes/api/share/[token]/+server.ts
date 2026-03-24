@@ -1,5 +1,5 @@
-import { getOutputDir } from '$lib/server/storage.ts';
-import { readShare, type ShareRecord } from '$lib/share-store.ts';
+import { getOutputDir } from '$lib/server/storage';
+import { readShare, type ShareRecord } from '$lib/share-store';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

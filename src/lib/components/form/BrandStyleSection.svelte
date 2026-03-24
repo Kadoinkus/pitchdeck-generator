@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HARMONY_MODES } from '$lib/color-palette.ts';
+	import { HARMONY_MODES } from '$lib/color-palette';
 	import {
 		getPaletteStatus,
 		getPayload,
@@ -9,7 +9,7 @@
 		setPayloadField,
 		shufflePalette,
 		syncBrandPalette,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
 	const payload = $derived(getPayload());
 	const paletteStatus = $derived(getPaletteStatus());

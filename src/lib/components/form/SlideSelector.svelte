@@ -6,7 +6,7 @@
 		setExcludedSlides,
 		setStatus,
 		type TemplateSlide,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
 	interface Props {
 		slides: TemplateSlide[];

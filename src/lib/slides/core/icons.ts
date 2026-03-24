@@ -1,4 +1,4 @@
-const HERO_PATHS: Record<string, string> = {
+const HERO_PATHS = {
 	exclamation:
 		'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
 	chat: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
@@ -24,30 +24,30 @@ const HERO_PATHS: Record<string, string> = {
 		'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
 	cash:
 		'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z',
-};
+} as const satisfies Record<string, string>;
 
-const PATHS: Record<string, string> = {
-	'alert-triangle': `<path d="${HERO_PATHS.exclamation}"/>`,
-	'message-circle': `<path d="${HERO_PATHS.chat}"/>`,
-	zap: `<path d="${HERO_PATHS.bolt}"/>`,
-	bot: `<path d="${HERO_PATHS.viewGrid}"/>`,
-	brain: `<path d="${HERO_PATHS.sparkles}"/>`,
-	sparkles: `<path d="${HERO_PATHS.sparkles}"/>`,
-	'chart-bar': `<path d="${HERO_PATHS.chartBar}"/>`,
-	'chart-line': `<path d="${HERO_PATHS.chartSquare}"/>`,
-	target: `<path d="${HERO_PATHS.arrowUpNarrow}"/>`,
-	handshake: `<path d="${HERO_PATHS.users}"/>`,
-	rocket: `<path d="${HERO_PATHS.trendingUp}"/>`,
-	clock: `<path d="${HERO_PATHS.clock}"/>`,
-	users: `<path d="${HERO_PATHS.users}"/>`,
-	palette: `<path d="${HERO_PATHS.colorSwatch}"/>`,
-	'layout-grid': `<path d="${HERO_PATHS.viewGrid}"/>`,
-	'shield-check': `<path d="${HERO_PATHS.shieldCheck}"/>`,
-	'check-circle': `<path d="${HERO_PATHS.checkCircle}"/>`,
-	'arrow-up-right': `<path d="${HERO_PATHS.trendingUp}"/>`,
-	'arrow-down': `<path d="${HERO_PATHS.arrowDown}"/>`,
-	wallet: `<path d="${HERO_PATHS.cash}"/>`,
-};
+const PATHS = {
+	'alert-triangle': [HERO_PATHS.exclamation],
+	'message-circle': [HERO_PATHS.chat],
+	zap: [HERO_PATHS.bolt],
+	bot: [HERO_PATHS.viewGrid],
+	brain: [HERO_PATHS.sparkles],
+	sparkles: [HERO_PATHS.sparkles],
+	'chart-bar': [HERO_PATHS.chartBar],
+	'chart-line': [HERO_PATHS.chartSquare],
+	target: [HERO_PATHS.arrowUpNarrow],
+	handshake: [HERO_PATHS.users],
+	rocket: [HERO_PATHS.trendingUp],
+	clock: [HERO_PATHS.clock],
+	users: [HERO_PATHS.users],
+	palette: [HERO_PATHS.colorSwatch],
+	'layout-grid': [HERO_PATHS.viewGrid],
+	'shield-check': [HERO_PATHS.shieldCheck],
+	'check-circle': [HERO_PATHS.checkCircle],
+	'arrow-up-right': [HERO_PATHS.trendingUp],
+	'arrow-down': [HERO_PATHS.arrowDown],
+	wallet: [HERO_PATHS.cash],
+} as const satisfies Record<string, readonly string[]>;
 
 const SIZE_MAP: Record<'sm' | 'md' | 'lg' | 'xl', number> = {
 	sm: 18,
@@ -69,14 +69,14 @@ function resolveSize(size: string | number): number {
 }
 
 export function hasIcon(name: string): boolean {
-	return Boolean(PATHS[name]);
+	return name in PATHS;
 }
 
-const FALLBACK_PATH = `<path d="${HERO_PATHS.sparkles}"/>`;
+const FALLBACK_PATHS = [HERO_PATHS.sparkles] as const;
 
-/** Returns the raw SVG `<path>` markup for a given icon name. */
-export function getIconPaths(name: string): string {
-	return PATHS[name] ?? FALLBACK_PATH;
+/** Returns SVG path data for a given icon name. */
+export function getIconPaths(name: string): readonly string[] {
+	return PATHS[name as keyof typeof PATHS] ?? FALLBACK_PATHS;
 }
 
 /** Resolves a size key or number to pixels. */

@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { swipeable } from '$lib/actions/swipeable.ts';
+	import { swipeable } from '$lib/actions/swipeable';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
@@ -131,7 +132,7 @@
 	<div class="share-actions">
 		<span class="share-counter">{currentSlide + 1} / {total}</span>
 		<a
-			href={data.downloadUrl ?? undefined}
+			href={resolve('/api/download/[token]', { token: data.token })}
 			download
 			class:disabled={!data.downloadUrl}
 			aria-disabled={!data.downloadUrl}

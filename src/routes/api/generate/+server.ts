@@ -1,8 +1,8 @@
-import { buildDeck } from '$lib/deck-builder.ts';
-import { getOutputDir } from '$lib/server/storage.ts';
-import { saveShare } from '$lib/share-store.ts';
-import { buildSlideData } from '$lib/slide-data.ts';
-import { isRecord, safeText, sanitizeFilename } from '$lib/utils.ts';
+import { buildDeck } from '$lib/deck-builder';
+import { getOutputDir } from '$lib/server/storage';
+import { saveShare } from '$lib/share-store';
+import { buildSlideData } from '$lib/slide-data';
+import { isRecord, safeText, sanitizeFilename } from '$lib/utils';
 import { json } from '@sveltejs/kit';
 import fs from 'node:fs/promises';
 import path from 'node:path';

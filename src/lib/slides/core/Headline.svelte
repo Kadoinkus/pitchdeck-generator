@@ -3,8 +3,8 @@
 	 * Slide headline block with optional kicker, title (with accent), and subtitle.
 	 * Replaces `renderHeadline()` from components.ts.
 	 */
-	import AccentText from './AccentText.svelte';
-	import { fitText } from './utils.ts';
+	import AccentText from '$lib/slides/core/AccentText.svelte';
+	import { fitText } from '$lib/slides/core/utils';
 
 	interface HeadlineProps {
 		kicker?: string;

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
-	import { goToSlide, viewer } from '$lib/stores/viewer.svelte.ts';
+	import { goToSlide, viewer } from '$lib/stores/viewer.svelte';
 
 	let thumbsEl: HTMLDivElement | undefined = $state();
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
-	const deckData = $derived(viewer.slideData);
+	const deckData = $derived(viewer.slideData ?? undefined);
 
 	/** Auto-scroll active thumbnail into view on slide change. */
 	$effect(() => {

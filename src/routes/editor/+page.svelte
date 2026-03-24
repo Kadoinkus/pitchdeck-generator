@@ -17,13 +17,13 @@
 		setTemplates,
 		syncBrandPalette,
 		undo,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 	import {
 		showViewer,
 		viewer,
 		type ViewerDeckData,
 		wasViewerOpen,
-	} from '$lib/stores/viewer.svelte.ts';
+	} from '$lib/stores/viewer.svelte';
 	import { onMount } from 'svelte';
 
 	import DeckForm from '$lib/components/form/DeckForm.svelte';

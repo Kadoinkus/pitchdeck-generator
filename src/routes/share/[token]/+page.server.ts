@@ -1,6 +1,6 @@
-import { getOutputDir } from '$lib/server/storage.ts';
-import { readShare } from '$lib/share-store.ts';
-import type { DeckData, SlideData, ThemeData } from '$lib/slides/types.ts';
+import { getOutputDir } from '$lib/server/storage';
+import { readShare } from '$lib/share-store';
+import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

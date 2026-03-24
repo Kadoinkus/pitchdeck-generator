@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { RATIO_16_9 } from '$lib/deck/types.ts';
-	import Frame from '../core/Frame.svelte';
-	import ImageSlot from '../core/ImageSlot.svelte';
-	import { findAssetForSlide, fitText } from '../core/utils.ts';
-	import TitlePanel from '../panels/TitlePanel.svelte';
-	import type { DeckData, SlideData, ThemeData } from '../types.ts';
+	import { RATIO_16_9 } from '$lib/deck/types';
+	import Frame from '$lib/slides/core/Frame.svelte';
+	import ImageSlot from '$lib/slides/core/ImageSlot.svelte';
+	import { findAssetForSlide, fitText } from '$lib/slides/core/utils';
+	import TitlePanel from '$lib/slides/panels/TitlePanel.svelte';
+	import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 
 	interface Props {
 		slide: SlideData;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { SuggestedChange } from '$lib/ai/orchestrator.ts';
-	import { setChatTarget, viewer } from '$lib/stores/viewer.svelte.ts';
+	import type { SuggestedChange } from '$lib/ai/orchestrator';
+	import { setChatTarget, viewer } from '$lib/stores/viewer.svelte';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */

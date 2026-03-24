@@ -3,7 +3,7 @@ export {
 	EDITABLE_FIELD_DEFINITIONS,
 	getEditableFieldDefinitions,
 	getTemplateDefinitions,
-} from './deck/index.ts';
+} from '$lib/deck/index';
 export type {
 	CharacterAsset,
 	DeckModel,
@@ -15,4 +15,4 @@ export type {
 	SlideWithLayout,
 	ToneSlider,
 	Triple,
-} from './deck/index.ts';
+} from '$lib/deck/index';

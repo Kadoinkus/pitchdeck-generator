@@ -1,4 +1,4 @@
-import { buildSlideData } from '$lib/slide-data.ts';
+import { buildSlideData } from '$lib/slide-data';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

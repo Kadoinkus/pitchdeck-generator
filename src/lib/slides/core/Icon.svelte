@@ -3,7 +3,7 @@
 	 * Renders an inline SVG icon from the icon registry.
 	 * Replaces `renderIcon()` from icons.ts.
 	 */
-	import { getIconPaths, resolveIconSize } from './icons.ts';
+	import { getIconPaths, resolveIconSize } from '$lib/slides/core/icons';
 
 	interface IconProps {
 		name: string;
@@ -34,7 +34,9 @@
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	>
-		{@html paths}
+		{#each paths as pathData, index (`${name}-${index}`)}
+			<path d={pathData} />
+		{/each}
 	</svg>
 </span>
 

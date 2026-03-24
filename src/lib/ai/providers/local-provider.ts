@@ -1,6 +1,6 @@
-import { buildDeckModel, getEditableFieldDefinitions } from '../../deck-model.ts';
-import { isRecord, safeText } from '../../utils.ts';
-import type { AutofillResult, ChatRequest, ChatResult } from '../orchestrator.ts';
+import type { AutofillResult, ChatRequest, ChatResult } from '$lib/ai/orchestrator';
+import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
+import { isRecord, safeText } from '$lib/utils';
 
 const FIELD_LABELS = new Map(
 	getEditableFieldDefinitions().map((field) => [field.name, field.label]),

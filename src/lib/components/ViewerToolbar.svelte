@@ -4,7 +4,7 @@
 		nextSlide,
 		prevSlide,
 		viewer,
-	} from '$lib/stores/viewer.svelte.ts';
+	} from '$lib/stores/viewer.svelte';
 
 	interface Props {
 		projectName?: string;

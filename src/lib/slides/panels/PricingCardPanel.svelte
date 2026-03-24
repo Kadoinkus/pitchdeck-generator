@@ -3,8 +3,8 @@
 	 * Pricing tier card with name, price, and feature list.
 	 * Replaces `renderPricingCardPanel()` from presets.ts.
 	 */
-	import { fitText, splitFeatureLines } from '../core/utils.ts';
-	import { panelClassName } from './variants.ts';
+	import { fitText, splitFeatureLines } from '$lib/slides/core/utils';
+	import { panelClassName } from '$lib/slides/panels/variants';
 
 	interface PricingTier {
 		name?: string;

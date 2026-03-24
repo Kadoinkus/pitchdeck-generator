@@ -1,4 +1,4 @@
-import type { Content, Project, SlideData, SlideType } from './types.ts';
+import type { Content, Project, SlideData, SlideType } from '$lib/deck/types';
 
 /* ------------------------------------------------------------------ */
 /*  SlideSpec — single source of truth for each slide                 */

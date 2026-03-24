@@ -1,5 +1,5 @@
-import type { HarmonyMode } from '../color-palette.ts';
-import type { ImageMode, SlotPolicy, TextMode } from '../slot-policy.ts';
+import type { HarmonyMode } from '$lib/color-palette';
+import type { ImageMode, SlotPolicy, TextMode } from '$lib/slot-policy';
 
 export type { HarmonyMode, ImageMode, SlotPolicy, TextMode };
 

@@ -1,4 +1,4 @@
-import { buildDeckModel } from './deck-model.ts';
+import { buildDeckModel } from '$lib/deck-model';
 
 export function buildSlideData(
 	data: Record<string, unknown>,

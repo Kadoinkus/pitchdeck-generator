@@ -1,9 +1,7 @@
-import { resolveThemePalette } from '../color-palette.ts';
-import { resolveImageModeForSlide, resolveSlotPolicy } from '../slot-policy.ts';
-import { safeText } from '../utils.ts';
-import { resolveLayoutPreset } from './layout.ts';
-import { parseDeckInput } from './schema.ts';
-import { buildSlidesFromSpecs, getDefaultImagePrompt, SLIDE_SPECS } from './slide-registry.ts';
+import { resolveThemePalette } from '$lib/color-palette';
+import { resolveLayoutPreset } from '$lib/deck/layout';
+import { parseDeckInput } from '$lib/deck/schema';
+import { buildSlidesFromSpecs, getDefaultImagePrompt, SLIDE_SPECS } from '$lib/deck/slide-registry';
 import type {
 	AppTheme,
 	AvailableSlide,
@@ -15,7 +13,9 @@ import type {
 	Project,
 	SlideWithLayout,
 	TemplateDefinition,
-} from './types.ts';
+} from '$lib/deck/types';
+import { resolveImageModeForSlide, resolveSlotPolicy } from '$lib/slot-policy';
+import { safeText } from '$lib/utils';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */

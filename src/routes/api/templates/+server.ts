@@ -1,4 +1,4 @@
-import { getTemplateDefinitions } from '$lib/deck-model.ts';
+import { getTemplateDefinitions } from '$lib/deck-model';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

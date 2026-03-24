@@ -1,7 +1,7 @@
-import { getEditableFieldDefinitions } from '../deck-model.ts';
-import { isRecord, safeText } from '../utils.ts';
-import { localChatAssist, localGenerateAutofill } from './providers/local-provider.ts';
-import { openAIAutofill, openAIChatAssist } from './providers/openai-provider.ts';
+import { localChatAssist, localGenerateAutofill } from '$lib/ai/providers/local-provider';
+import { openAIAutofill, openAIChatAssist } from '$lib/ai/providers/openai-provider';
+import { getEditableFieldDefinitions } from '$lib/deck-model';
+import { isRecord, safeText } from '$lib/utils';
 
 export interface SuggestedChange {
 	field: string;

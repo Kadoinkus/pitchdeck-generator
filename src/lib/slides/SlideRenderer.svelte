@@ -2,26 +2,29 @@
 	/**
 	 * Dispatcher: picks the correct layout component based on slide.type.
 	 */
-	import { RATIO_4_3 } from '../deck/types.ts';
-	import Frame from './core/Frame.svelte';
-	import { resolveImageMode, resolveSlotPolicy } from './core/slot-policy.ts';
-	import { resolveTheme } from './core/theme.ts';
-	import BusinessImpactSlide from './layouts/BusinessImpactSlide.svelte';
-	import ChatFlowSlide from './layouts/ChatFlowSlide.svelte';
-	import ClosingSlide from './layouts/ClosingSlide.svelte';
-	import CoverSlide from './layouts/CoverSlide.svelte';
-	import DataAnalyticsSlide from './layouts/DataAnalyticsSlide.svelte';
-	import ExampleInteractionSlide from './layouts/ExampleInteractionSlide.svelte';
-	import ExperienceConceptSlide from './layouts/ExperienceConceptSlide.svelte';
-	import MeetBuddySlide from './layouts/MeetBuddySlide.svelte';
-	import OpportunitySlide from './layouts/OpportunitySlide.svelte';
-	import PricingSlide from './layouts/PricingSlide.svelte';
-	import ProblemSlide from './layouts/ProblemSlide.svelte';
-	import SolutionSlide from './layouts/SolutionSlide.svelte';
-	import TimelineSlide from './layouts/TimelineSlide.svelte';
-	import WhatNotsoDoesSlide from './layouts/WhatNotsoDoesSlide.svelte';
-	import WhatYouGetSlide from './layouts/WhatYouGetSlide.svelte';
-	import type { DeckData, SlideData, ThemeData } from './types.ts';
+	import { RATIO_4_3 } from '$lib/deck/types';
+	import Frame from '$lib/slides/core/Frame.svelte';
+	import {
+		resolveImageMode,
+		resolveSlotPolicy,
+	} from '$lib/slides/core/slot-policy';
+	import { resolveTheme } from '$lib/slides/core/theme';
+	import BusinessImpactSlide from '$lib/slides/layouts/BusinessImpactSlide.svelte';
+	import ChatFlowSlide from '$lib/slides/layouts/ChatFlowSlide.svelte';
+	import ClosingSlide from '$lib/slides/layouts/ClosingSlide.svelte';
+	import CoverSlide from '$lib/slides/layouts/CoverSlide.svelte';
+	import DataAnalyticsSlide from '$lib/slides/layouts/DataAnalyticsSlide.svelte';
+	import ExampleInteractionSlide from '$lib/slides/layouts/ExampleInteractionSlide.svelte';
+	import ExperienceConceptSlide from '$lib/slides/layouts/ExperienceConceptSlide.svelte';
+	import MeetBuddySlide from '$lib/slides/layouts/MeetBuddySlide.svelte';
+	import OpportunitySlide from '$lib/slides/layouts/OpportunitySlide.svelte';
+	import PricingSlide from '$lib/slides/layouts/PricingSlide.svelte';
+	import ProblemSlide from '$lib/slides/layouts/ProblemSlide.svelte';
+	import SolutionSlide from '$lib/slides/layouts/SolutionSlide.svelte';
+	import TimelineSlide from '$lib/slides/layouts/TimelineSlide.svelte';
+	import WhatNotsoDoesSlide from '$lib/slides/layouts/WhatNotsoDoesSlide.svelte';
+	import WhatYouGetSlide from '$lib/slides/layouts/WhatYouGetSlide.svelte';
+	import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 
 	type LayoutComponent = typeof CoverSlide;
 
@@ -46,7 +49,7 @@
 	interface Props {
 		slide?: SlideData | null;
 		theme?: ThemeData;
-		deckData?: DeckData;
+		deckData?: DeckData | null;
 	}
 
 	let { slide = null, theme = undefined, deckData = undefined }: Props =
@@ -82,10 +85,16 @@
 	const Layout = $derived(LAYOUTS[normalised?.type ?? '']);
 </script>
 
-{#if Layout && normalised}
+{#if Layout && normalised && deckData}
 	<Layout slide={normalised} theme={resolvedTheme} {deckData} />
 {:else}
 	<Frame slide={normalised} theme={resolvedTheme}>
-		<p>Unknown slide type: {normalised?.type || 'n/a'}</p>
+		<p>
+			{
+				Layout || !normalised
+				? 'Unable to render slide.'
+				: `Unknown slide type: ${normalised.type}`
+			}
+		</p>
 	</Frame>
 {/if}

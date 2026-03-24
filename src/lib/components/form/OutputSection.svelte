@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getDeckResult, setStatus } from '$lib/stores/editor.svelte.ts';
+	import { resolve } from '$app/paths';
+	import { getDeckResult, setStatus } from '$lib/stores/editor.svelte';
 
 	interface Props {
 		onOpenViewer: () => void;
@@ -8,12 +9,17 @@
 	let { onOpenViewer }: Props = $props();
 
 	const result = $derived(getDeckResult());
-	const hasResult = $derived(Boolean(result?.downloadUrl));
+	const token = $derived(result?.shareToken ?? null);
+	const hasResult = $derived(Boolean(token));
 
 	async function copyShareLink() {
-		if (!result?.shareUrl) return;
+		if (!token) return;
 		try {
-			await navigator.clipboard.writeText(result.shareUrl);
+			const url = new URL(
+				resolve('/share/[token]', { token }),
+				window.location.origin,
+			);
+			await navigator.clipboard.writeText(url.toString());
 			setStatus('Share link copied.');
 		} catch {
 			setStatus(
@@ -47,16 +53,16 @@
 		</button>
 		<a
 			class="ghost-link"
-			class:disabled={!result?.downloadUrl}
-			href={result?.downloadUrl || undefined}
+			class:disabled={!token}
+			href={token ? resolve('/api/download/[token]', { token }) : undefined}
 		>
 			Download .pptx
 		</a>
 
 		<a
 			class="ghost-link"
-			class:disabled={!result?.pdfUrl}
-			href={result?.pdfUrl || undefined}
+			class:disabled={!token}
+			href={token ? `${resolve('/share/[token]', { token })}?print=1` : undefined}
 			target="_blank"
 			rel="noopener"
 		>
@@ -65,8 +71,8 @@
 
 		<a
 			class="ghost-link"
-			class:disabled={!result?.shareUrl}
-			href={result?.shareUrl || undefined}
+			class:disabled={!token}
+			href={token ? resolve('/share/[token]', { token }) : undefined}
 			target="_blank"
 			rel="noopener"
 		>
@@ -75,7 +81,7 @@
 		<button
 			type="button"
 			class="ghost"
-			disabled={!result?.shareUrl}
+			disabled={!token}
 			onclick={copyShareLink}
 		>
 			Copy share link

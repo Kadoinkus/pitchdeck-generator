@@ -1,4 +1,4 @@
-import type { DeckData, SlideData, ThemeData } from '$lib/slides/types.ts';
+import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 
 /* ------------------------------------------------------------------ */
 /*  Viewer state (module-level Svelte 5 runes)                         */

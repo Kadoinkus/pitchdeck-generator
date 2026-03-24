@@ -3,11 +3,11 @@
 	 * Image panel: image slot optionally wrapped in a panel article.
 	 * Replaces `renderImagePanel()` from presets.ts.
 	 */
-	import type { ImageRatio } from '$lib/deck/types.ts';
-	import { RATIO_4_3 } from '$lib/deck/types.ts';
-	import ImageSlot from '../core/ImageSlot.svelte';
-	import type { DeckData, SlideData } from '../types.ts';
-	import { panelClassName } from './variants.ts';
+	import type { ImageRatio } from '$lib/deck/types';
+	import { RATIO_4_3 } from '$lib/deck/types';
+	import ImageSlot from '$lib/slides/core/ImageSlot.svelte';
+	import { panelClassName } from '$lib/slides/panels/variants';
+	import type { DeckData, SlideData } from '$lib/slides/types';
 
 	interface ImagePanelProps {
 		slide?: SlideData | null;

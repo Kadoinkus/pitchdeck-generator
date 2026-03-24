@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { swipeable } from '$lib/actions/swipeable.ts';
+	import { swipeable } from '$lib/actions/swipeable';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
 		nextSlide,
 		prevSlide,
 		setChatTarget,
 		viewer,
-	} from '$lib/stores/viewer.svelte.ts';
+	} from '$lib/stores/viewer.svelte';
 
 	import { onMount } from 'svelte';
 
@@ -15,7 +15,7 @@
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
-	const deckData = $derived(viewer.slideData);
+	const deckData = $derived(viewer.slideData ?? undefined);
 	const current = $derived(viewer.currentSlide);
 
 	const trackTransform = $derived(

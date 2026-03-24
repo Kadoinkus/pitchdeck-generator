@@ -3,8 +3,8 @@
 	 * Summary panel: title + text in a styled panel.
 	 * Replaces `renderSummaryPanel()` from presets.ts.
 	 */
-	import { fitText } from '../core/utils.ts';
-	import { panelClassName } from './variants.ts';
+	import { fitText } from '$lib/slides/core/utils';
+	import { panelClassName } from '$lib/slides/panels/variants';
 
 	interface SummaryPanelProps {
 		target?: string;

@@ -1,1 +1,1 @@
-export { panelClassName, panelVariantClass } from './variants.ts';
+export { panelClassName, panelVariantClass } from '$lib/slides/panels/variants';

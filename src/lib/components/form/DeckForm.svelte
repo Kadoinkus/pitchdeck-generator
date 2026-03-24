@@ -7,14 +7,14 @@
 		setExcludedSlides,
 		setStatus,
 		type TemplateSlide,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
-	import AiSettingsSection from './AiSettingsSection.svelte';
-	import BrandStyleSection from './BrandStyleSection.svelte';
-	import CharacterAssetsSection from './CharacterAssetsSection.svelte';
-	import OutputSection from './OutputSection.svelte';
-	import QuickStartSection from './QuickStartSection.svelte';
-	import SlideSelector from './SlideSelector.svelte';
+	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
+	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
+	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
+	import OutputSection from '$lib/components/form/OutputSection.svelte';
+	import QuickStartSection from '$lib/components/form/QuickStartSection.svelte';
+	import SlideSelector from '$lib/components/form/SlideSelector.svelte';
 
 	interface Props {
 		onOpenViewer: () => void;
@@ -73,6 +73,7 @@
 
 			setDeckResult({
 				slideData: result.slideData,
+				shareToken: result.shareToken ?? null,
 				downloadUrl: downloadUrlAbsolute,
 				pdfUrl: pdfUrlAbsolute,
 				shareUrl: shareUrlAbsolute,

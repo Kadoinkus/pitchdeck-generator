@@ -6,7 +6,7 @@
 		handleFieldChange,
 		saveAiSettings,
 		setPayloadField,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
 	const payload = $derived(getPayload());
 	const textProviders = $derived(getTextProviders());

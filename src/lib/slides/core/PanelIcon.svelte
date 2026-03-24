@@ -3,8 +3,8 @@
 	 * Conditionally renders a hero-sized icon in a panel.
 	 * Replaces `renderPanelIcon()` from icon-policy.ts.
 	 */
-	import { shouldUsePanelIcons } from './icon-policy.ts';
-	import Icon from './Icon.svelte';
+	import { shouldUsePanelIcons } from '$lib/slides/core/icon-policy';
+	import Icon from '$lib/slides/core/Icon.svelte';
 
 	interface PanelIconProps {
 		slideType?: string;

@@ -1,5 +1,3 @@
-import { buildDeckModel, getEditableFieldDefinitions } from '../../deck-model.ts';
-import { isRecord, safeText } from '../../utils.ts';
 import type {
 	AutofillResult,
 	ChatRequest,
@@ -7,7 +5,9 @@ import type {
 	ImagePrompt,
 	ProviderConfig,
 	SuggestedChange,
-} from '../orchestrator.ts';
+} from '$lib/ai/orchestrator';
+import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
+import { isRecord, safeText } from '$lib/utils';
 
 const ALL_FIELDS = getEditableFieldDefinitions().map((field) => field.name);
 const ALLOWED_FIELDS = new Set(ALL_FIELDS);

@@ -3,8 +3,8 @@ export {
 	EDITABLE_FIELD_DEFINITIONS,
 	getEditableFieldDefinitions,
 	getTemplateDefinitions,
-} from './build.ts';
-export { RATIO_16_9, RATIO_1_1, RATIO_3_4, RATIO_4_3, ratioCssClass } from './types.ts';
+} from '$lib/deck/build';
+export { RATIO_16_9, RATIO_1_1, RATIO_3_4, RATIO_4_3, ratioCssClass } from '$lib/deck/types';
 export type {
 	AppTheme,
 	AvailableSlide,
@@ -30,4 +30,4 @@ export type {
 	TextMode,
 	ToneSlider,
 	Triple,
-} from './types.ts';
+} from '$lib/deck/types';

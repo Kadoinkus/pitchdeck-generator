@@ -1,5 +1,5 @@
-import { type ChatRequest, type ChatResult, runChatAssistant } from '$lib/ai/orchestrator.ts';
-import { isRecord } from '$lib/utils.ts';
+import { type ChatRequest, type ChatResult, runChatAssistant } from '$lib/ai/orchestrator';
+import { isRecord } from '$lib/utils';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

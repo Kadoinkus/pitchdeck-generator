@@ -5,8 +5,8 @@
  * getters/functions directly; no writable() stores.
  */
 
-import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette } from '$lib/color-palette.ts';
-import { isRecord } from '$lib/utils.ts';
+import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette } from '$lib/color-palette';
+import { isRecord } from '$lib/utils';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -41,6 +41,7 @@ export interface CharacterAsset {
 
 export interface DeckResult {
 	slideData?: DeckResultSlideData;
+	shareToken?: string | null;
 	downloadUrl?: string | null;
 	pdfUrl?: string | null;
 	shareUrl?: string | null;
@@ -607,7 +608,7 @@ export function restoreDeckResult(): boolean {
 		const parsed: unknown = JSON.parse(raw);
 		if (!isRecord(parsed)) return false;
 
-		const { downloadUrl, pdfUrl, shareUrl, slideData } = parsed;
+		const { downloadUrl, pdfUrl, shareUrl, shareToken, slideData } = parsed;
 		if (!downloadUrl || typeof downloadUrl !== 'string') return false;
 		if (!isRecord(slideData) || !Array.isArray(slideData.slides) || !isRecord(slideData.theme)) return false;
 
@@ -619,6 +620,7 @@ export function restoreDeckResult(): boolean {
 		const project = isRecord(slideData.project) ? slideData.project : undefined;
 
 		_deckResult = {
+			shareToken: typeof shareToken === 'string' ? shareToken : null,
 			downloadUrl,
 			pdfUrl: typeof pdfUrl === 'string' ? pdfUrl : null,
 			shareUrl: typeof shareUrl === 'string' ? shareUrl : null,

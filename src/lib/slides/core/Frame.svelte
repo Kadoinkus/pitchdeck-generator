@@ -1,8 +1,8 @@
 <script lang="ts">
+	import type { ThemeInput } from '$lib/slides/core/theme';
+	import { themeVars } from '$lib/slides/core/theme';
+	import type { SlideData } from '$lib/slides/core/utils';
 	import type { Snippet } from 'svelte';
-	import type { ThemeInput } from './theme.ts';
-	import { themeVars } from './theme.ts';
-	import type { SlideData } from './utils.ts';
 
 	interface FrameProps {
 		slide?: SlideData | null;

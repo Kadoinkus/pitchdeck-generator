@@ -1,4 +1,4 @@
-import { getAiProviderDefinitions } from '$lib/ai/orchestrator.ts';
+import { getAiProviderDefinitions } from '$lib/ai/orchestrator';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

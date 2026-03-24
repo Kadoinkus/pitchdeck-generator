@@ -11,7 +11,7 @@
 		setPayloadField,
 		setStatus,
 		type TemplateEntry,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
 	interface Props {
 		onTemplateChange: (template: TemplateEntry) => void;

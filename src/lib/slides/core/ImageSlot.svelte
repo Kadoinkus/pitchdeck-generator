@@ -3,9 +3,9 @@
 	 * Image slot: shows an uploaded image or a placeholder.
 	 * Replaces `renderImageSlot()` from components.ts.
 	 */
-	import type { ImageRatio } from '$lib/deck/types.ts';
-	import { findAssetForSlide, fitText } from './utils.ts';
-	import type { DeckData, SlideData } from './utils.ts';
+	import type { ImageRatio } from '$lib/deck/types';
+	import { findAssetForSlide, fitText } from '$lib/slides/core/utils';
+	import type { DeckData, SlideData } from '$lib/slides/core/utils';
 
 	interface ImageSlotProps {
 		slide?: SlideData | null;

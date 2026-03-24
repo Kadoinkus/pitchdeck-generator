@@ -9,11 +9,9 @@
 		removeCharacterAsset,
 		setStatus,
 		updateAssetPlacement,
-	} from '$lib/stores/editor.svelte.ts';
+	} from '$lib/stores/editor.svelte';
 
 	const assets = $derived(getCharacterAssets());
-
-	let fileInput: HTMLInputElement | undefined = $state();
 
 	function formatBytes(size: number): string {
 		if (!Number.isFinite(size) || size <= 0) return '0 KB';
@@ -121,7 +119,6 @@
 		<label class="ghost-link upload-btn" for="character-assets-input"
 		>Upload images</label>
 		<input
-			bind:this={fileInput}
 			id="character-assets-input"
 			type="file"
 			accept="image/*"

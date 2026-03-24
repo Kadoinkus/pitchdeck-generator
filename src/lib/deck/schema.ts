@@ -1,5 +1,3 @@
-import { z } from 'zod';
-import { normalizeList, safeText } from '../utils.ts';
 import {
 	asBoolean,
 	isRecord,
@@ -9,8 +7,10 @@ import {
 	parsePairs,
 	parseTone,
 	parseTriples,
-} from './parsers.ts';
-import { SLIDE_SPECS } from './slide-registry.ts';
+} from '$lib/deck/parsers';
+import { SLIDE_SPECS } from '$lib/deck/slide-registry';
+import { normalizeList, safeText } from '$lib/utils';
+import { z } from 'zod';
 
 /* ------------------------------------------------------------------ */
 /*  Reusable field schemas                                             */

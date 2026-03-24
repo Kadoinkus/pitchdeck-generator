@@ -1,6 +1,6 @@
+import { buildDeckModel } from '$lib/deck-model';
+import { isRecord } from '$lib/utils';
 import PptxGenJS from 'pptxgenjs';
-import { buildDeckModel } from './deck-model.ts';
-import { isRecord } from './utils.ts';
 
 type DeckModel = ReturnType<typeof buildDeckModel>;
 type DeckSlide = DeckModel['slides'][number];

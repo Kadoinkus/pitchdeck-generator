@@ -1,5 +1,5 @@
-import { isRecord, normalizeList, safeText } from '../utils.ts';
-import type { CharacterAsset, Deliverable, Pair, ToneSlider, Triple } from './types.ts';
+import type { CharacterAsset, Deliverable, Pair, ToneSlider, Triple } from '$lib/deck/types';
+import { isRecord, normalizeList, safeText } from '$lib/utils';
 
 export { isRecord };
 

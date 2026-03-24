@@ -3,10 +3,10 @@
 	 * Feature card with optional icon, index badge, title, and text.
 	 * Replaces `renderIconFeaturePanel()` from presets.ts.
 	 */
-	import { iconByKeyword } from '../core/icons.ts';
-	import PanelIcon from '../core/PanelIcon.svelte';
-	import { fitText } from '../core/utils.ts';
-	import { panelClassName } from './variants.ts';
+	import { iconByKeyword } from '$lib/slides/core/icons';
+	import PanelIcon from '$lib/slides/core/PanelIcon.svelte';
+	import { fitText } from '$lib/slides/core/utils';
+	import { panelClassName } from '$lib/slides/panels/variants';
 
 	interface IconFeaturePanelProps {
 		slideType?: string;
