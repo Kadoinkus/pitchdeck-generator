@@ -167,6 +167,7 @@
 							{slide}
 							{theme}
 							deckData={data.slideData}
+							slideWidth={1020}
 						/>
 					</div>
 				</section>

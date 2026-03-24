@@ -78,7 +78,7 @@
 					class:is-next={index === current + 1}
 					data-slide-index={index}
 				>
-					<SlideRenderer {slide} {theme} {deckData} />
+					<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
 				</section>
 			{/each}
 		</div>
