@@ -1,9 +1,10 @@
 import { resolve } from '$app/paths';
+import type { ResolvedPathname } from '$app/types';
 
 interface ShareLinks {
-	sharePath: string;
-	pdfPath: string;
-	downloadPath: string;
+	sharePath: ResolvedPathname;
+	pdfPath: ResolvedPathname;
+	downloadPath: ResolvedPathname;
 }
 
 export function getShareLinks(token: string): ShareLinks {
@@ -14,6 +15,6 @@ export function getShareLinks(token: string): ShareLinks {
 	};
 }
 
-export function toAbsoluteUrl(pathname: string, origin: string): string {
+export function toAbsoluteUrl(pathname: ResolvedPathname, origin: string): string {
 	return new URL(pathname, origin).toString();
 }
