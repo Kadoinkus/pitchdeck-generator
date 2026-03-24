@@ -175,18 +175,6 @@ const SLOT_POLICIES: Record<
 	},
 };
 
-function normalizeMode(
-	value: string,
-	fallback: string,
-	allowedModes: string[],
-): string {
-	const candidate = String(value || '')
-		.trim()
-		.toLowerCase();
-	if (allowedModes.includes(candidate)) return candidate;
-	return fallback;
-}
-
 function normalizeImageMode(
 	value: string,
 	fallback: ImageMode,
@@ -236,9 +224,9 @@ export function resolveSlotPolicy(slideType: string = ''): SlotPolicy {
 export function resolveImageModeForSlide(
 	slideType: string = '',
 	requestedMode: string = '',
-): string {
+): ImageMode {
 	const policy = resolveSlotPolicy(slideType);
-	return normalizeMode(
+	return normalizeImageMode(
 		requestedMode,
 		policy.image.defaultMode,
 		policy.image.allowedModes,

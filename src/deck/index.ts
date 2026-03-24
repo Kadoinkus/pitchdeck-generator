@@ -3,16 +3,30 @@ export {
 	EDITABLE_FIELD_DEFINITIONS,
 	getEditableFieldDefinitions,
 	getTemplateDefinitions,
-} from './deck/index.ts';
+} from './build.ts';
 export type {
+	AppTheme,
+	AvailableSlide,
+	BackgroundMode,
 	CharacterAsset,
+	Content,
 	DeckModel,
+	DeckTheme,
+	Deliverable,
 	FieldDefinition,
+	HarmonyMode,
+	ImageMode,
+	ImageRatio,
+	LayoutPreset,
 	Pair,
+	Project,
 	SlideData,
 	SlideDefinition,
 	SlideType,
 	SlideWithLayout,
+	SlotPolicy,
+	TemplateDefinition,
+	TextMode,
 	ToneSlider,
 	Triple,
-} from './deck/index.ts';
+} from './types.ts';

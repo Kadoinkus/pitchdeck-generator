@@ -64,7 +64,14 @@ export const DEFAULT_THEME_COLORS: ThemeColors = {
 	textColor: '#0B1D2E',
 };
 
-export const HARMONY_MODES: readonly string[] = [
+export type HarmonyMode =
+	| 'complementary'
+	| 'split-complementary'
+	| 'analogous'
+	| 'triad'
+	| 'monochromatic';
+
+export const HARMONY_MODES: readonly HarmonyMode[] = [
 	'complementary',
 	'split-complementary',
 	'analogous',
@@ -429,11 +436,15 @@ function normalizeThemeInput(
 	};
 }
 
-function normalizeHarmonyMode(value: unknown): string {
+function isHarmonyMode(value: string): value is HarmonyMode {
+	return (HARMONY_MODES as readonly string[]).includes(value);
+}
+
+function normalizeHarmonyMode(value: unknown): HarmonyMode {
 	const mode = String(value || '')
 		.trim()
 		.toLowerCase();
-	if (HARMONY_MODES.includes(mode)) return mode;
+	if (isHarmonyMode(mode)) return mode;
 	return 'complementary';
 }
 
@@ -458,7 +469,7 @@ function generateHarmonyTheme(
 	shuffleSeed: unknown,
 ): {
 	theme: Pick<ThemeColors, 'primaryColor' | 'accentColor' | 'secondaryColor'>;
-	harmonyMode: string;
+	harmonyMode: HarmonyMode;
 	variantIndex: number;
 	variantCount: number;
 } {
