@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderSlide } from '$lib/slides/index.ts';
+	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { goToSlide, viewer } from '$lib/stores/viewer.svelte.ts';
 	import { tick } from 'svelte';
 
@@ -33,7 +33,7 @@
 		>
 			<span class="thumb-number">{index + 1}</span>
 			<div class="thumb-inner">
-				{@html renderSlide(slide, theme, deckData)}
+				<SlideRenderer {slide} {theme} {deckData} />
 			</div>
 		</button>
 	{/each}

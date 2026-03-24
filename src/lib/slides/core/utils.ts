@@ -50,18 +50,6 @@ export interface DeckData {
 	};
 }
 
-const ESC_MAP: Record<string, string> = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#39;',
-};
-
-export function esc(str: unknown): string {
-	return String(str ?? '').replace(/[&<>"']/g, (ch) => ESC_MAP[ch] ?? ch);
-}
-
 export function safeColor(value: unknown, fallback: string): string {
 	const color = String(value || '').trim();
 	return /^#?[0-9a-fA-F]{6}$/.test(color)

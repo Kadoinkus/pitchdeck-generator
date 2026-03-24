@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { swipeable } from '$lib/actions/swipeable.ts';
-	import { renderSlide } from '$lib/slides/index.ts';
+	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
 		goToSlide,
 		nextSlide,
@@ -62,7 +62,7 @@
 					class:is-next={index === current + 1}
 					data-slide-index={index}
 				>
-					{@html renderSlide(slide, theme, deckData)}
+					<SlideRenderer {slide} {theme} {deckData} />
 				</section>
 			{/each}
 		</div>

@@ -1,93 +1,91 @@
 <script lang="ts">
-	import {
-		getPayload,
-		getTemplateById,
-		getTemplates,
-		setDeckResult,
-		setExcludedSlides,
-		setStatus,
-		type TemplateSlide,
-	} from '$lib/stores/editor.svelte.ts';
+import {
+	getPayload,
+	getTemplateById,
+	getTemplates,
+	setDeckResult,
+	setExcludedSlides,
+	setStatus,
+	type TemplateSlide,
+} from "$lib/stores/editor.svelte.ts";
 
-	import AiSettingsSection from './AiSettingsSection.svelte';
-	import BrandStyleSection from './BrandStyleSection.svelte';
-	import CharacterAssetsSection from './CharacterAssetsSection.svelte';
-	import OutputSection from './OutputSection.svelte';
-	import QuickStartSection from './QuickStartSection.svelte';
-	import SlideSelector from './SlideSelector.svelte';
+import AiSettingsSection from "./AiSettingsSection.svelte";
+import BrandStyleSection from "./BrandStyleSection.svelte";
+import CharacterAssetsSection from "./CharacterAssetsSection.svelte";
+import OutputSection from "./OutputSection.svelte";
+import QuickStartSection from "./QuickStartSection.svelte";
+import SlideSelector from "./SlideSelector.svelte";
 
-	interface Props {
-		onOpenViewer: () => void;
-	}
+interface Props {
+	onOpenViewer: () => void;
+}
 
-	let { onOpenViewer }: Props = $props();
+const { onOpenViewer }: Props = $props();
 
-	const payload = $derived(getPayload());
-	const templates = $derived(getTemplates());
+const payload = $derived(getPayload());
+const templates = $derived(getTemplates());
 
-	const currentTemplate = $derived(
-		getTemplateById(String(payload.templateId || ''))
-			|| templates[0],
-	);
+const currentTemplate = $derived(
+	getTemplateById(String(payload.templateId || "")) || templates[0],
+);
 
-	const currentSlides = $derived<TemplateSlide[]>(
-		currentTemplate?.slides ?? [],
-	);
+const currentSlides = $derived<TemplateSlide[]>(currentTemplate?.slides ?? []);
 
-	function handleTemplateChange() {
-		setExcludedSlides([]);
-	}
+function handleTemplateChange() {
+	setExcludedSlides([]);
+}
 
-	async function handleGenerate() {
-		setStatus('Generating pitch deck...');
+async function handleGenerate() {
+	setStatus("Generating pitch deck...");
 
-		try {
-			const p = getPayload();
-			const totalSlides = currentSlides.length;
-			const excludedCount = Array.isArray(p.excludedSlides)
-				? p.excludedSlides.length
-				: 0;
-			if (excludedCount >= totalSlides) {
-				throw new Error('Include at least one slide before generating.');
-			}
-
-			const response = await fetch('/api/generate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(p),
-			});
-
-			const result = await response.json();
-			if (!response.ok || !result.success) {
-				throw new Error(result.message || 'Could not generate deck.');
-			}
-
-			const shareUrlAbsolute = result.shareUrl
-				? new URL(result.shareUrl, window.location.origin).toString()
-				: null;
-			const pdfUrlAbsolute = result.pdfUrl
-				? new URL(result.pdfUrl, window.location.origin).toString()
-				: null;
-			const downloadUrlAbsolute = result.downloadUrl
-				? new URL(result.downloadUrl, window.location.origin).toString()
-				: null;
-
-			setDeckResult({
-				slideData: result.slideData,
-				downloadUrl: downloadUrlAbsolute,
-				pdfUrl: pdfUrlAbsolute,
-				shareUrl: shareUrlAbsolute,
-			});
-
-			setStatus('Deck generated successfully.');
-		} catch (error) {
-			console.error(error);
-			setStatus(
-				error instanceof Error ? error.message : 'Could not generate deck.',
-				true,
-			);
+	try {
+		const p = getPayload();
+		const totalSlides = currentSlides.length;
+		const excludedCount = Array.isArray(p.excludedSlides)
+			? p.excludedSlides.length
+			: 0;
+		if (excludedCount >= totalSlides) {
+			throw new Error("Include at least one slide before generating.");
 		}
+
+		const response = await fetch("/api/generate", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(p),
+		});
+
+		const result = await response.json();
+		if (!response.ok || !result.success) {
+			throw new Error(result.message || "Could not generate deck.");
+		}
+
+		const shareUrlAbsolute = result.shareUrl
+			? new URL(result.shareUrl, window.location.origin).toString()
+			: null;
+		const pdfUrlAbsolute = result.pdfUrl
+			? new URL(result.pdfUrl, window.location.origin).toString()
+			: null;
+		const downloadUrlAbsolute = result.downloadUrl
+			? new URL(result.downloadUrl, window.location.origin).toString()
+			: null;
+
+		setDeckResult({
+			slideData: result.slideData,
+			downloadUrl: downloadUrlAbsolute,
+			pdfUrl: pdfUrlAbsolute,
+			shareUrl: shareUrlAbsolute,
+		});
+
+		setStatus("Deck generated successfully.");
+		onOpenViewer();
+	} catch (error) {
+		console.error(error);
+		setStatus(
+			error instanceof Error ? error.message : "Could not generate deck.",
+			true,
+		);
 	}
+}
 </script>
 
 <form id="deck-form" class="card form-grid minimal">

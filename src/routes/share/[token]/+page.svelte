@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { swipeable } from '$lib/actions/swipeable.ts';
-	import { renderSlide } from '$lib/slides/index.ts';
+	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { onMount } from 'svelte';
 	import type { PageProps } from './$types';
 
@@ -85,11 +85,12 @@
 	</div>
 	<div class="share-actions">
 		<span class="share-counter">{currentSlide + 1} / {total}</span>
-		{#if data.downloadUrl}
-			<a href={data.downloadUrl} download>Download PPTX</a>
-		{:else}
-			<a href="#" class="disabled">Download PPTX</a>
-		{/if}
+		<a
+			href={data.downloadUrl ?? '/'}
+			download
+			class:disabled={!data.downloadUrl}
+			aria-disabled={!data.downloadUrl}
+		>Download PPTX</a>
 		<button type="button" onclick={() => window.print()}>Download PDF</button>
 	</div>
 </header>
@@ -117,7 +118,7 @@
 			{#each slides as slide, index (index)}
 				<section class="share-slide" class:is-active={index === currentSlide}>
 					<div class="share-slide-frame" aria-label={`Slide ${index + 1}`}>
-						{@html renderSlide(slide, theme, data.slideData)}
+						<SlideRenderer {slide} {theme} deckData={data.slideData} />
 					</div>
 				</section>
 			{/each}

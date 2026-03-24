@@ -68,26 +68,20 @@ function resolveSize(size: string | number): number {
 	return SIZE_MAP.md;
 }
 
-export interface RenderIconOptions {
-	size?: string | number;
-	className?: string;
-	label?: string;
-}
-
 export function hasIcon(name: string): boolean {
 	return Boolean(PATHS[name]);
 }
 
-export function renderIcon(
-	name: string,
-	{ size = 'md', className = '', label = '' }: RenderIconOptions = {},
-): string {
-	const paths = PATHS[name] || PATHS.sparkles;
-	const px = resolveSize(size);
-	const ariaHidden = label ? 'false' : 'true';
-	const ariaLabel = label ? ` aria-label="${label}" role="img"` : '';
+const FALLBACK_PATH = `<path d="${HERO_PATHS.sparkles}"/>`;
 
-	return `<span class="deck-icon ${className}" style="--icon-size:${px}px" aria-hidden="${ariaHidden}"${ariaLabel}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg></span>`;
+/** Returns the raw SVG `<path>` markup for a given icon name. */
+export function getIconPaths(name: string): string {
+	return PATHS[name] ?? FALLBACK_PATH;
+}
+
+/** Resolves a size key or number to pixels. */
+export function resolveIconSize(size: string | number): number {
+	return resolveSize(size);
 }
 
 export function iconByKeyword(keyword = ''): string {

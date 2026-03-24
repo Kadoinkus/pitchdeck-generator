@@ -152,7 +152,7 @@
 <div class="page">
 	<header class="hero">
 		<div class="hero-copy">
-			<p class="eyebrow">Notso AI Studio</p>
+			<p class="eyebrow">Notso Canva</p>
 			<h1>Pitch Deck Generator</h1>
 			<p class="intro">
 				Minimal workflow: set client name + URL, let AI fill the deck, exclude

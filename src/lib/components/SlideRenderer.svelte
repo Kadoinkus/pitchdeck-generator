@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { renderSlide } from '$lib/slides/index.ts';
+	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import type { DeckData, SlideData, ThemeData } from '$lib/slides/types.ts';
 
 	let { slide, theme, deckData }: {
@@ -9,4 +9,4 @@
 	} = $props();
 </script>
 
-{@html renderSlide(slide, theme, deckData)}
+<SlideRenderer {slide} {theme} {deckData} />
