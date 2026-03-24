@@ -6,7 +6,7 @@ A subtle haiku widget that appears across the UI in idle/empty/loading/error sta
 
 ## Data Model
 
-Static TypeScript array in `src/lib/data/haiku.ts`:
+Static TypeScript array in `src/lib/haiku.ts` (co-located in lib root, no new directory):
 
 ```ts
 interface Haiku {
@@ -16,7 +16,7 @@ interface Haiku {
 }
 ```
 
-- ~20-30 haiku's as initial collection
+- ~20-30 haiku's as initial collection (minimum 10 per language)
 - Mix of Dutch and English
 - Classic and original haiku's
 - Easy to extend (just push to array)
@@ -40,9 +40,11 @@ interface Haiku {
 
 ### Behavior
 
-- Selects random haiku on mount
+- Selects random haiku on mount (uniform `Math.random()`, no dedup)
 - Displays 3 lines centered, italic
+- Sets `lang` attribute on haiku text element for screen reader pronunciation
 - Optional author line below in smaller/muted text
+- Falls back to any language if filtered `lang` yields no results
 - No interactivity (pure display)
 
 ## Placement
@@ -51,7 +53,7 @@ Integrate into existing components at these locations:
 
 ### 1. Loading states (AI generation)
 
-In `OutputSection.svelte` or wherever the generation loading spinner lives — show a haiku below the spinner while waiting for AI to complete.
+In `src/lib/components/form/OutputSection.svelte` — show a haiku below the generation loading spinner while waiting for AI to complete.
 
 ### 2. Empty slide preview
 
@@ -59,7 +61,7 @@ In `SlideViewer.svelte` or `SlideCanvas.svelte` — when no deck/slides exist ye
 
 ### 3. Error/404 pages
 
-In `+error.svelte` (SvelteKit error page) — poetic error message alongside the error info.
+Create `src/routes/+error.svelte` (does not exist yet) — poetic error message alongside the error info.
 
 ### 4. Footer
 
@@ -67,7 +69,7 @@ In root `+layout.svelte` or a footer component — subtle haiku that changes per
 
 ## Styling
 
-- Font: inherit from app (`"Sora"` / `"DM Sans"`)
+- Font: inherit from app chrome (`"DM Sans"` — `"Sora"` is only used inside slide frames)
 - Text color: `var(--muted)` for ghost/inline, `var(--text)` for card
 - Text align: center
 - Font style: italic for haiku lines
