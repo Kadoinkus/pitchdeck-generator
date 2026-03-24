@@ -206,6 +206,7 @@
 	<div
 		class="share-deck"
 		bind:this={deckEl}
+		style:--slide-gap={`${SLIDE_GAP}px`}
 		use:swipeable={{
 			onPrev: prev,
 			onNext: next,
@@ -420,7 +421,7 @@
 	.share-track {
 		height: 100%;
 		display: flex;
-		gap: 20px;
+		gap: var(--slide-gap);
 		will-change: transform;
 	}
 
@@ -452,7 +453,6 @@
 		background: var(--card);
 		box-shadow: 0 22px 48px rgba(11, 31, 77, 0.2);
 		user-select: none;
-		-webkit-user-select: none;
 	}
 
 	.share-slide-frame > :global(.slide-render) {

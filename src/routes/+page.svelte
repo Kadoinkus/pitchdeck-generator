@@ -20,7 +20,7 @@
 		syncBrandPalette,
 		undo,
 	} from '$lib/stores/editor.svelte';
-	import { showViewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
+	import { viewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
 	import { onMount } from 'svelte';
 
 	import DeckForm from '$lib/components/form/DeckForm.svelte';
@@ -47,7 +47,7 @@
 		const payload = getViewerDeckData();
 		if (!payload) return;
 
-		showViewer(payload.data, {
+		viewer.show(payload.data, {
 			shareToken: payload.shareToken,
 		});
 		goto(resolve('/editor'));

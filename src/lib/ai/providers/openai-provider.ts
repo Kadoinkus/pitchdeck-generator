@@ -311,7 +311,7 @@ export async function openAIChatAssist(
 	};
 
 	const prompt = `\
-Return JSON only.',
+Return JSON only.
 You are editing one part of a premium proposal deck.
 JSON schema:
 {

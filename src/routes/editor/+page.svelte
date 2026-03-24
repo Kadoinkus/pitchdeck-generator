@@ -16,12 +16,7 @@
 		syncBrandPalette,
 		undo,
 	} from '$lib/stores/editor.svelte';
-	import {
-		showViewer,
-		updateViewerProject,
-		viewer,
-		type ViewerDeckData,
-	} from '$lib/stores/viewer.svelte';
+	import { viewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
 	import { onMount } from 'svelte';
 
 	import SlideViewer from '$lib/components/SlideViewer.svelte';
@@ -32,7 +27,7 @@
 
 	function handleRename(name: string): void {
 		setPayloadField('projectTitle', name);
-		updateViewerProject({ projectTitle: name });
+		viewer.updateProject({ projectTitle: name });
 		pushHistory();
 		markDirty();
 	}
@@ -90,7 +85,7 @@
 			project: sd.project,
 		};
 
-		showViewer(data, {
+		viewer.show(data, {
 			shareToken: result?.shareToken ?? null,
 		});
 	});

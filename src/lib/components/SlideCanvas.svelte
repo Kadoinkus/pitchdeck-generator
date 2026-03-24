@@ -2,12 +2,7 @@
 	import { swipeable } from '$lib/actions/swipeable';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
-	import {
-		nextSlide,
-		prevSlide,
-		setChatTarget,
-		viewer,
-	} from '$lib/stores/viewer.svelte';
+	import { viewer } from '$lib/stores/viewer.svelte';
 	import { Spring } from 'svelte/motion';
 
 	let deckEl: HTMLDivElement | undefined = $state();
@@ -88,7 +83,7 @@
 		const aiTarget = target.getAttribute('data-ai-target');
 		const aiLabel = target.getAttribute('data-ai-label') ?? aiTarget;
 		if (aiTarget) {
-			setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
+			viewer.setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
 		}
 	}
 
@@ -113,8 +108,8 @@
 		class="slide-stage"
 		bind:this={deckEl}
 		use:swipeable={{
-			onPrev: prevSlide,
-			onNext: nextSlide,
+			onPrev: viewer.prevSlide,
+			onNext: viewer.nextSlide,
 			onDrag: handleDrag,
 		}}
 		onclick={handleCanvasClick}

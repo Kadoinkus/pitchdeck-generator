@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SuggestedChange } from '$lib/ai/orchestrator';
-	import { setChatTarget, viewer } from '$lib/stores/viewer.svelte';
+	import { viewer } from '$lib/stores/viewer.svelte';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */
@@ -77,7 +77,7 @@
 	}
 
 	function clearTarget(): void {
-		setChatTarget(null);
+		viewer.setChatTarget(null);
 	}
 
 	async function sendMessage(): Promise<void> {
@@ -434,7 +434,6 @@
 		max-height: calc(100vh - 100px);
 		background: rgba(255, 255, 255, 0.92);
 		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
 		border: 1px solid rgba(200, 217, 255, 0.5);
 		border-radius: 20px;
 		box-shadow:

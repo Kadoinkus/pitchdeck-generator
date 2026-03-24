@@ -2,12 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
-	import {
-		hideViewer,
-		nextSlide,
-		prevSlide,
-		viewer,
-	} from '$lib/stores/viewer.svelte';
+	import { viewer } from '$lib/stores/viewer.svelte';
 
 	interface Props {
 		projectName?: string;
@@ -137,7 +132,7 @@
 	}
 
 	function closeViewer(): void {
-		hideViewer();
+		viewer.hide();
 		goto(resolve('/'));
 	}
 </script>
@@ -230,7 +225,7 @@
 				class="nav-pill-btn"
 				type="button"
 				disabled={atStart}
-				onclick={prevSlide}
+				onclick={viewer.prevSlide}
 				aria-label="Previous slide"
 			>
 				<svg
@@ -254,7 +249,7 @@
 				class="nav-pill-btn"
 				type="button"
 				disabled={atEnd}
-				onclick={nextSlide}
+				onclick={viewer.nextSlide}
 				aria-label="Next slide"
 			>
 				<svg

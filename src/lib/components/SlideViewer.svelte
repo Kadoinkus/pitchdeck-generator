@@ -5,13 +5,7 @@
 	import SlideCanvas from '$lib/components/SlideCanvas.svelte';
 	import ThumbnailStrip from '$lib/components/ThumbnailStrip.svelte';
 	import ViewerToolbar from '$lib/components/ViewerToolbar.svelte';
-	import {
-		goToSlide,
-		hideViewer,
-		nextSlide,
-		prevSlide,
-		viewer,
-	} from '$lib/stores/viewer.svelte';
+	import { viewer } from '$lib/stores/viewer.svelte';
 
 	interface Props {
 		projectName?: string;
@@ -76,28 +70,28 @@
 			case 'ArrowUp':
 			case 'PageUp':
 				event.preventDefault();
-				prevSlide();
+				viewer.prevSlide();
 				return;
 			case 'ArrowRight':
 			case 'ArrowDown':
 			case 'PageDown':
 				event.preventDefault();
-				nextSlide();
+				viewer.nextSlide();
 				return;
 			case 'Home':
 				event.preventDefault();
-				goToSlide(0);
+				viewer.goToSlide(0);
 				return;
 			case 'End':
 				event.preventDefault();
-				goToSlide(viewer.slideCount - 1);
+				viewer.goToSlide(viewer.slideCount - 1);
 				return;
 			case ' ':
 			case 'Spacebar':
 				if (isActionTarget(event.target)) return;
 				event.preventDefault();
-				if (event.shiftKey) prevSlide();
-				else nextSlide();
+				if (event.shiftKey) viewer.prevSlide();
+				else viewer.nextSlide();
 				return;
 		}
 	}
@@ -121,7 +115,7 @@
 	}
 
 	function closeViewer(): void {
-		hideViewer();
+		viewer.hide();
 		goto(resolve('/'));
 	}
 </script>

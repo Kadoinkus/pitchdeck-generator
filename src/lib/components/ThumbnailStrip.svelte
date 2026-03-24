@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
-	import { goToSlide, viewer } from '$lib/stores/viewer.svelte';
+	import { viewer } from '$lib/stores/viewer.svelte';
 
 	let thumbsEl: HTMLDivElement | undefined = $state();
 
@@ -25,7 +25,7 @@
 			class="thumb"
 			class:active={index === viewer.currentSlide}
 			type="button"
-			onclick={() => goToSlide(index)}
+			onclick={() => viewer.goToSlide(index)}
 		>
 			<span class="thumb-number">{index + 1}</span>
 			<div class="thumb-inner">

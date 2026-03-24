@@ -24,7 +24,7 @@ interface WheelState {
 
 /**
  * Svelte action for swipe/drag + wheel slide navigation.
- * Applies a drag offset to `node.style.transform` while dragging,
+ * Emits drag offsets via `onDrag` while dragging,
  * and calls `onPrev`/`onNext` when drag or wheel movement crosses threshold.
  */
 export function swipeable(
