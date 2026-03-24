@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
 	import { getDeckResult, setStatus } from '$lib/stores/editor.svelte';
 
 	interface Props {
@@ -11,15 +11,16 @@
 	const result = $derived(getDeckResult());
 	const token = $derived(result?.shareToken ?? null);
 	const hasResult = $derived(Boolean(token));
+	const shareLinks = $derived(token ? getShareLinks(token) : null);
 
 	async function copyShareLink() {
-		if (!token) return;
+		if (!shareLinks) return;
 		try {
-			const url = new URL(
-				resolve('/share/[token]', { token }),
+			const absoluteUrl = toAbsoluteUrl(
+				shareLinks.sharePath,
 				window.location.origin,
 			);
-			await navigator.clipboard.writeText(url.toString());
+			await navigator.clipboard.writeText(absoluteUrl);
 			setStatus('Share link copied.');
 		} catch {
 			setStatus(
@@ -51,14 +52,15 @@
 		>
 			Open viewer
 		</button>
-		{#if token}
-			<a class="ghost-link" href={resolve('/api/download/[token]', { token })}>
+		<!-- eslint-disable svelte/no-navigation-without-resolve -->
+		{#if shareLinks}
+			<a class="ghost-link" href={shareLinks.downloadPath}>
 				Download .pptx
 			</a>
 
 			<a
 				class="ghost-link"
-				href={resolve('/share/[token]?print=1', { token })}
+				href={shareLinks.pdfPath}
 				target="_blank"
 				rel="noopener"
 			>
@@ -67,23 +69,21 @@
 
 			<a
 				class="ghost-link"
-				href={resolve('/share/[token]', { token })}
+				href={shareLinks.sharePath}
 				target="_blank"
 				rel="noopener"
 			>
 				Open share page
 			</a>
 		{:else}
-			<span class="ghost-link disabled" aria-disabled="true"
-			>Download .pptx</span>
-			<span class="ghost-link disabled" aria-disabled="true">Download PDF</span>
-			<span class="ghost-link disabled" aria-disabled="true"
-			>Open share page</span>
+			<button class="ghost-link" type="button" disabled>Download .pptx</button>
+			<button class="ghost-link" type="button" disabled>Download PDF</button>
+			<button class="ghost-link" type="button" disabled>Open share page</button>
 		{/if}
 		<button
 			type="button"
 			class="ghost"
-			disabled={!token}
+			disabled={!shareLinks}
 			onclick={copyShareLink}
 		>
 			Copy share link

@@ -14,9 +14,7 @@ export interface ViewerDeckData extends DeckData {
 }
 
 interface ToolbarOptions {
-	downloadUrl?: string | null;
-	pdfUrl?: string | null;
-	shareUrl?: string | null;
+	shareToken?: string | null;
 }
 
 interface ChatTarget {

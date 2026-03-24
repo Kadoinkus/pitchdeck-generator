@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
 	import {
 		hideViewer,
 		nextSlide,
@@ -33,34 +33,9 @@
 			: '0 / 0',
 	);
 
-	function extractToken(url: string | null | undefined): string | null {
-		if (!url) return null;
-		try {
-			const path = url.startsWith('/') ? url : new URL(url).pathname;
-			const downloadMatch = /^\/api\/download\/([^/?#]+)/.exec(path);
-			if (downloadMatch?.[1]) return downloadMatch[1];
-			const shareMatch = /^\/share\/([^/?#]+)/.exec(path);
-			if (shareMatch?.[1]) return shareMatch[1];
-			return null;
-		} catch {
-			return null;
-		}
-	}
-
-	const opts = $derived(viewer.toolbarOptions);
-
-	const shareToken = $derived(
-		extractToken(opts.shareUrl)
-			?? extractToken(opts.downloadUrl)
-			?? extractToken(opts.pdfUrl),
-	);
-
-	const hasDownload = $derived(
-		Boolean(opts.downloadUrl) && Boolean(shareToken),
-	);
-	const hasPdf = $derived(Boolean(opts.pdfUrl) && Boolean(shareToken));
-	const hasShare = $derived(Boolean(opts.shareUrl) && Boolean(shareToken));
-	const hasAnyShareAction = $derived(hasDownload || hasPdf || hasShare);
+	const shareToken = $derived(viewer.toolbarOptions.shareToken ?? null);
+	const shareLinks = $derived(shareToken ? getShareLinks(shareToken) : null);
+	const hasAnyShareAction = $derived(Boolean(shareLinks));
 
 	let shareOpen = $state(false);
 	let copyLabel = $state('Copy share link');
@@ -89,12 +64,12 @@
 	}
 
 	async function copyShareLink(): Promise<void> {
-		if (!shareToken || !hasShare) return;
+		if (!shareLinks) return;
 		try {
-			const absoluteShareUrl = new URL(
-				resolve('/share/[token]', { token: shareToken }),
+			const absoluteShareUrl = toAbsoluteUrl(
+				shareLinks.sharePath,
 				window.location.origin,
-			).toString();
+			);
 			await navigator.clipboard.writeText(absoluteShareUrl);
 			copyLabel = 'Link copied';
 		} catch {
@@ -261,46 +236,47 @@
 			>
 				Share <span class="share-caret">&#9660;</span>
 			</button>
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
 			<div class="viewer-share-menu">
-				{#if hasDownload && shareToken}
+				{#if shareLinks}
 					<a
 						class="viewer-share-item"
-						href={resolve('/api/download/[token]', { token: shareToken })}
+						href={shareLinks.downloadPath}
 						download
 						onclick={closeShare}
 					>Download PPTX</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true"
-					>Download PPTX</span>
+					<button class="viewer-share-item" type="button" disabled
+					>Download PPTX</button>
 				{/if}
 
-				{#if hasPdf && shareToken}
+				{#if shareLinks}
 					<a
 						class="viewer-share-item"
-						href={resolve('/share/[token]?print=1', { token: shareToken })}
+						href={shareLinks.pdfPath}
 						onclick={closeShare}
 					>Download PDF</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true"
-					>Download PDF</span>
+					<button class="viewer-share-item" type="button" disabled
+					>Download PDF</button>
 				{/if}
 
-				{#if hasShare && shareToken}
+				{#if shareLinks}
 					<a
 						class="viewer-share-item"
-						href={resolve('/share/[token]', { token: shareToken })}
+						href={shareLinks.sharePath}
 						target="_blank"
 						rel="noopener noreferrer"
 						onclick={closeShare}
 					>Open share link</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true"
-					>Open share link</span>
+					<button class="viewer-share-item" type="button" disabled
+					>Open share link</button>
 				{/if}
 				<button
 					class="viewer-share-item"
 					type="button"
-					disabled={!hasShare}
+					disabled={!shareLinks}
 					onclick={copyShareLink}
 				>
 					{copyLabel}

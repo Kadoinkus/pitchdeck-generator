@@ -41,9 +41,7 @@
 			project: sd.project,
 		};
 		showViewer(data, {
-			downloadUrl: result.downloadUrl ?? null,
-			pdfUrl: result.pdfUrl ?? null,
-			shareUrl: result.shareUrl ?? null,
+			shareToken: result.shareToken ?? null,
 		});
 	}
 
@@ -97,9 +95,7 @@
 						project: result.slideData.project,
 					};
 					showViewer(data, {
-						downloadUrl: result.downloadUrl ?? null,
-						pdfUrl: result.pdfUrl ?? null,
-						shareUrl: result.shareUrl ?? null,
+						shareToken: result.shareToken ?? null,
 					}, prev.slide);
 				}
 			}
