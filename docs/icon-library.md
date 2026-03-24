@@ -20,6 +20,6 @@
 
 ## Source references checked
 
-- https://heroicons.com/
-- https://lucide.dev/
-- https://iconoir.com/docs/introduction
+- `https://heroicons.com/`
+- `https://lucide.dev/`
+- `https://iconoir.com/docs/introduction`

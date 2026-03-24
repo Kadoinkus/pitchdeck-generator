@@ -92,6 +92,11 @@
 		pointer-events: none;
 	}
 
+	/* Hide empty image placeholders — unreadable noise at thumbnail scale */
+	.thumb-inner :global(.image-slot:not(:has(.has-image))) {
+		visibility: hidden;
+	}
+
 	@media (max-width: 680px) {
 		.thumbnails {
 			flex-direction: row;
