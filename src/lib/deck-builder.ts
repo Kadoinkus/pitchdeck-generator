@@ -1164,7 +1164,6 @@ export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 					model,
 					step,
 					getStringArray(slideInfo, 'points'),
-					'4:3',
 				);
 				break;
 			case 'solution':
@@ -1183,7 +1182,6 @@ export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 					model,
 					step,
 					getStringArray(slideInfo, 'points'),
-					'4:3',
 				);
 				break;
 			case 'chat-flow':
@@ -1193,7 +1191,6 @@ export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 					model,
 					step,
 					getStringArray(slideInfo, 'steps'),
-					'4:3',
 				);
 				break;
 			case 'example-interaction':
@@ -1224,7 +1221,6 @@ export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 					model,
 					step,
 					getStringArray(slideInfo, 'points'),
-					'4:3',
 				);
 				break;
 		}

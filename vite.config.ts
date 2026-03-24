@@ -5,14 +5,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
-	server: {
-		host: true,
-		allowedHosts: true,
-	},
-	preview: {
-		host: true,
-		allowedHosts: [],
-	},
+	server: { host: true, allowedHosts: true },
+	resolve: { tsconfigPaths: true },
+	dev: { sourcemap: true },
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

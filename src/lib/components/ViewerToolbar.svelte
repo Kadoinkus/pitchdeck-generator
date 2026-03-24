@@ -215,8 +215,14 @@
 
 	<div class="viewer-toolbar-right">
 		{#if shareOpen}
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="share-backdrop" onclick={closeShare}></div>
+			<button
+				type="button"
+				class="share-backdrop"
+				onclick={closeShare}
+				aria-label="Close share menu"
+				tabindex="-1"
+			>
+			</button>
 		{/if}
 		<div class="viewer-share-dropdown" class:open={shareOpen}>
 			<button
