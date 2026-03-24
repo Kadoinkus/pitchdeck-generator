@@ -100,7 +100,30 @@
 			type="button"
 			onclick={hideViewer}
 		>
-			&#8592; Editor
+			<svg
+				class="home-icon"
+				aria-hidden="true"
+				width="16"
+				height="16"
+				viewBox="0 0 16 16"
+				fill="none"
+			>
+				<path
+					d="M2.5 7L8 2.5L13.5 7"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<path
+					d="M4 8.5V13H6.5V10H9.5V13H12V8.5"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+			<span class="home-label">Editor</span>
 		</button>
 
 		<div class="viewer-project">
@@ -139,30 +162,62 @@
 	</div>
 
 	<div class="viewer-toolbar-middle">
-		<span class="slide-counter">{counter}</span>
-		<div class="toolbar-nav">
+		<div class="slide-nav-pill">
 			<button
-				class="toolbar-btn"
+				class="nav-pill-btn"
 				type="button"
 				disabled={atStart}
 				onclick={prevSlide}
 				aria-label="Previous slide"
 			>
-				&#10094;
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 16 16"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path
+						d="M10 3L5.5 8L10 13"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
 			</button>
+			<span class="slide-counter">{counter}</span>
 			<button
-				class="toolbar-btn"
+				class="nav-pill-btn"
 				type="button"
 				disabled={atEnd}
 				onclick={nextSlide}
 				aria-label="Next slide"
 			>
-				&#10095;
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 16 16"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path
+						d="M6 3L10.5 8L6 13"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
 			</button>
 		</div>
 	</div>
 
 	<div class="viewer-toolbar-right">
+		{#if shareOpen}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="share-backdrop" onclick={closeShare}></div>
+		{/if}
 		<div class="viewer-share-dropdown" class:open={shareOpen}>
 			<button
 				class="toolbar-btn viewer-share-toggle"
@@ -315,6 +370,15 @@
 		padding: 0 12px;
 		font-size: 12px;
 		line-height: 1;
+		gap: 4px;
+	}
+
+	.home-icon {
+		flex-shrink: 0;
+	}
+
+	.home-label {
+		line-height: 1;
 	}
 
 	.history-btn {
@@ -371,18 +435,49 @@
 		border-color: rgba(255, 207, 226, 0.62);
 	}
 
+	.slide-nav-pill {
+		display: inline-flex;
+		align-items: center;
+		border-radius: 999px;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.14);
+		backdrop-filter: blur(6px);
+		overflow: hidden;
+	}
+
+	.nav-pill-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		padding: 0;
+		border: none;
+		border-radius: 0;
+		background: transparent;
+		color: #f2fbff;
+		cursor: pointer;
+		transition: background 0.12s ease;
+	}
+
+	.nav-pill-btn:hover:not(:disabled) {
+		background: rgba(255, 255, 255, 0.18);
+	}
+
+	.nav-pill-btn:disabled {
+		opacity: 0.35;
+		cursor: default;
+	}
+
 	.slide-counter {
 		color: #f5faff;
 		font-size: 12px;
 		font-weight: 700;
-		min-width: 62px;
+		min-width: 48px;
 		text-align: center;
 		letter-spacing: 0.02em;
-	}
-
-	.toolbar-nav {
-		display: flex;
-		gap: 6px;
+		padding: 0 2px;
+		user-select: none;
 	}
 
 	.viewer-share-dropdown {
@@ -424,6 +519,10 @@
 		gap: 4px;
 	}
 
+	.share-backdrop {
+		display: none;
+	}
+
 	.viewer-share-item {
 		display: block;
 		width: 100%;
@@ -450,43 +549,27 @@
 		pointer-events: none;
 	}
 
+	/* ── Tablet (≤980px) ─────────────────────────────── */
 	@media (max-width: 980px) {
 		.viewer-toolbar {
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 8px;
-			padding: 8px;
-		}
-
-		.viewer-toolbar-left,
-		.viewer-toolbar-middle,
-		.viewer-toolbar-right {
-			width: 100%;
-		}
-
-		.viewer-toolbar-left {
-			gap: 8px;
-		}
-
-		.viewer-toolbar-middle,
-		.viewer-toolbar-right {
-			justify-content: flex-start;
-		}
-
-		.viewer-toolbar-right {
-			margin-left: 0;
+			gap: 6px;
+			padding: 6px 8px;
 		}
 
 		.viewer-menu-pills {
 			display: none;
 		}
 
-		.viewer-project {
-			max-width: calc(100vw - 120px);
+		.viewer-project-context {
+			display: none;
 		}
 
-		.viewer-project-context {
-			max-width: 100%;
+		.viewer-project-row strong {
+			max-width: 18vw;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			display: block;
 		}
 
 		.viewer-share-menu {
@@ -495,33 +578,210 @@
 		}
 	}
 
+	/* ── Small screens, any orientation (≤680px) ───── */
 	@media (max-width: 680px) {
-		.viewer-project-context,
-		.save-indicator,
-		.viewer-project {
+		.viewer-toolbar {
+			padding: 4px 6px;
+			gap: 4px;
+		}
+
+		.viewer-project,
+		.save-indicator {
 			display: none;
 		}
 
-		.viewer-toolbar {
-			padding: 6px 8px;
-			gap: 6px;
-			flex-wrap: nowrap;
+		.toolbar-btn,
+		.history-btn {
+			min-height: 44px;
+			min-width: 44px;
+			padding: 6px 10px;
+			font-size: 14px;
 		}
 
-		.viewer-toolbar-left,
-		.viewer-toolbar-middle,
-		.viewer-toolbar-right {
-			width: auto;
+		.viewer-home-btn {
+			min-width: 44px;
+			height: 44px;
+			padding: 0 10px;
 		}
 
 		.viewer-toolbar-middle {
 			flex: 1;
 			justify-content: center;
-			gap: 6px;
+		}
+
+		.slide-counter {
+			font-size: 13px;
+			min-width: 52px;
+		}
+
+		.viewer-share-toggle {
+			min-width: 44px;
+			padding: 6px 10px;
+		}
+
+		.share-caret {
+			display: none;
+		}
+
+		/* bottom-sheet backdrop */
+		.share-backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.35);
+			z-index: 7;
+		}
+
+		.viewer-share-menu {
+			position: fixed;
+			left: 8px;
+			right: 8px;
+			top: auto;
+			bottom: 8px;
+			width: auto;
+			min-width: unset;
+			padding: 10px;
+			border-radius: 16px;
+			box-shadow: 0 -8px 32px rgba(20, 35, 78, 0.28);
+			z-index: 9;
+		}
+
+		.viewer-share-item {
+			padding: 12px;
+			font-size: 0.9rem;
+			min-height: 44px;
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	/* ── Portrait phone (narrow + tall, ≤480px wide) ─ */
+	@media (max-width: 480px) and (orientation: portrait) {
+		.home-label {
+			display: none;
+		}
+
+		.viewer-home-btn {
+			padding: 0;
+			min-width: 44px;
+			justify-content: center;
+		}
+
+		.home-icon {
+			width: 20px;
+			height: 20px;
+		}
+
+		.viewer-toolbar-middle {
+			gap: 2px;
+		}
+
+		.slide-counter {
+			font-size: 12px;
+			min-width: 44px;
 		}
 
 		.toolbar-nav {
-			margin-left: auto;
+			gap: 2px;
+		}
+	}
+
+	/* ── Landscape phone (wide + short, ≤500px tall) ─ */
+	@media (max-height: 500px) and (orientation: landscape) {
+		.viewer-toolbar {
+			padding: 2px 8px;
+			gap: 6px;
+		}
+
+		.toolbar-btn,
+		.history-btn {
+			min-height: 36px;
+			min-width: 36px;
+			padding: 4px 8px;
+		}
+
+		.viewer-home-btn {
+			height: 36px;
+			min-width: auto;
+			padding: 0 10px;
+			font-size: 12px;
+		}
+
+		/* landscape has width — show project name truncated */
+		.viewer-project {
+			display: grid;
+		}
+
+		.viewer-project-row strong {
+			max-width: 20vw;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			display: block;
+			font-size: 0.78rem;
+		}
+
+		.save-indicator {
+			display: inline-flex;
+			font-size: 0.6rem;
+			padding: 2px 6px;
+		}
+
+		.slide-counter {
+			font-size: 12px;
+			min-width: 50px;
+		}
+
+		.viewer-share-toggle {
+			min-width: auto;
+			padding: 4px 10px;
+		}
+
+		.viewer-share-item {
+			padding: 8px;
+			min-height: 36px;
+		}
+	}
+
+	/* ── Tiny screens (≤360px, e.g. SE/mini) ──────── */
+	@media (max-width: 360px) {
+		.viewer-toolbar {
+			padding: 3px 4px;
+			gap: 2px;
+		}
+
+		.home-label {
+			display: none;
+		}
+
+		.viewer-home-btn {
+			min-width: 40px;
+			height: 40px;
+			padding: 0;
+			justify-content: center;
+		}
+
+		.home-icon {
+			width: 18px;
+			height: 18px;
+		}
+
+		.toolbar-btn {
+			min-height: 40px;
+			min-width: 40px;
+			padding: 4px 6px;
+			font-size: 13px;
+		}
+
+		.slide-counter {
+			font-size: 11px;
+			min-width: 40px;
+		}
+
+		.viewer-share-toggle {
+			min-width: 40px;
+			padding: 4px 8px;
+			font-size: 11px;
 		}
 	}
 </style>
