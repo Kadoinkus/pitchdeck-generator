@@ -79,6 +79,15 @@ const THEME_SAFETY_THRESHOLDS: Readonly<ThemeSafetyMetrics> = {
 	secondaryOnWhite: 4.8,
 };
 
+const DEFAULT_VARIANT: HarmonyVariant = {
+	a: 180,
+	b: 160,
+	accentL: 0.5,
+	secondaryL: 0.24,
+	accentS: 0.72,
+	secondaryS: 0.62,
+};
+
 const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
 	complementary: [
 		{
@@ -432,11 +441,12 @@ function resolveVariant(
 	mode: string,
 	shuffleSeed: unknown,
 ): { variant: HarmonyVariant; index: number; count: number } {
-	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary;
+	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary ?? [DEFAULT_VARIANT];
 	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
 	const index = seed % options.length;
+	const variant = options[index] ?? DEFAULT_VARIANT;
 	return {
-		variant: options[index],
+		variant,
 		index,
 		count: options.length,
 	};

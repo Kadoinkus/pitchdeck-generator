@@ -1,4 +1,8 @@
 .slide-viewer {
+	--slide-w: 1020px;
+	--slide-h: calc(var(--slide-w) * 9 / 16);
+	--thumb-w: 182px;
+
 	position: fixed;
 	inset: 0;
 	z-index: 1000;
@@ -268,9 +272,10 @@
 }
 
 .thumbnails {
-	width: 182px;
+	width: var(--thumb-w);
 	flex-shrink: 0;
 	overflow-y: auto;
+	scrollbar-width: none;
 	padding: 14px 8px;
 	display: flex;
 	flex-direction: column;
@@ -319,10 +324,9 @@
 }
 
 .thumb-inner > .slide-render {
-	width: 1020px;
-	height: 573.75px;
-	transform: scale(0.158);
-	transform-origin: top left;
+	width: var(--slide-w);
+	height: var(--slide-h);
+	transform-origin: 0 0;
 }
 
 .slide-stage {
@@ -335,7 +339,7 @@
 }
 
 .slide-canvas {
-	width: min(100%, 1020px);
+	width: min(100%, var(--slide-w));
 	aspect-ratio: 16 / 9;
 	border-radius: 16px;
 	overflow: hidden;
@@ -379,8 +383,9 @@
 }
 
 .slide-page > .slide-render {
-	width: 100%;
-	height: 100%;
+	width: var(--slide-w);
+	height: var(--slide-h);
+	transform-origin: 0 0;
 }
 
 .slide-page.is-active {
@@ -497,12 +502,8 @@
 }
 
 @media (max-width: 980px) {
-	.thumbnails {
-		width: 126px;
-	}
-
-	.thumb-inner > .slide-render {
-		transform: scale(0.11);
+	.slide-viewer {
+		--thumb-w: 126px;
 	}
 
 	.viewer-toolbar {

@@ -187,9 +187,9 @@ export function findAssetForSlide(
 		return (
 			assets.find(
 				(asset) => asset.placement === 'all-mascot' || asset.placement === 'mascot',
-			) || assets[0]
+			) ?? assets[0] ?? null
 		);
 	}
 
-	return assets.find((asset) => asset.placement === 'all') || null;
+	return assets.find((asset) => asset.placement === 'all') ?? null;
 }

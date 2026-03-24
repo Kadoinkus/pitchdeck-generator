@@ -396,7 +396,7 @@ function setSaveIndicator(state = 'is-saved', text = ''): void {
 		'is-error',
 	);
 	saveIndicator.classList.add(state);
-	saveIndicator.textContent = text || labelByState[state] || labelByState['is-saved'];
+	saveIndicator.textContent = text || labelByState[state] || labelByState['is-saved'] || 'All changes saved';
 }
 
 function updateProjectChrome(): void {
@@ -921,8 +921,10 @@ function renderCharacterAssetsPreview(): void {
 			placement.appendChild(option);
 		});
 		placement.addEventListener('change', () => {
+			const current = characterAssets[index];
+			if (!current) return;
 			characterAssets[index] = {
-				...characterAssets[index],
+				...current,
 				placement: placement.value,
 			};
 			syncCharacterAssetsField();
@@ -1158,8 +1160,9 @@ async function hydrateTemplates(): Promise<void> {
 			templateSelect.appendChild(option);
 		});
 
-		if (!templateSelect.value && result.templates.length) {
-			templateSelect.value = result.templates[0].id;
+		const firstTemplate = result.templates[0];
+		if (!templateSelect.value && firstTemplate) {
+			templateSelect.value = firstTemplate.id;
 		}
 
 		renderSlideSelector(templateMap.get(templateSelect.value), false);
@@ -1221,7 +1224,8 @@ function applyAiSettings(settings: Record<string, string> = {}): void {
 	].forEach((fieldName) => {
 		const field = document.getElementById(fieldName);
 		if (!field || !(fieldName in settings)) return;
-		setInputValue(field, settings[fieldName]);
+		const value = settings[fieldName];
+		if (value !== undefined) setInputValue(field, value);
 	});
 }
 

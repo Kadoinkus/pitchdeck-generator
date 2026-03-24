@@ -78,11 +78,20 @@ export const HARMONY_MODES: string[] = [
 	'monochromatic',
 ];
 
-const THEME_SAFETY_THRESHOLDS: Record<string, number> = {
+const THEME_SAFETY_THRESHOLDS = {
 	textOnBackground: 7,
 	accentOnBackground: 2.2,
 	secondaryOnBackground: 3,
 	secondaryOnWhite: 4.8,
+} satisfies Record<string, number>;
+
+const DEFAULT_VARIANT: HarmonyVariant = {
+	a: 180,
+	b: 160,
+	accentL: 0.5,
+	secondaryL: 0.24,
+	accentS: 0.72,
+	secondaryS: 0.62,
 };
 
 const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
@@ -435,11 +444,12 @@ function normalizeHarmonyMode(value: unknown): string {
 }
 
 function resolveVariant(mode: string, shuffleSeed: unknown): ResolvedVariant {
-	const options = HARMONY_VARIANTS[mode] || HARMONY_VARIANTS.complementary;
+	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary ?? [DEFAULT_VARIANT];
 	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
 	const index = seed % options.length;
+	const variant = options[index] ?? DEFAULT_VARIANT;
 	return {
-		variant: options[index],
+		variant,
 		index,
 		count: options.length,
 	};

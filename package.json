@@ -12,8 +12,8 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"bd": "vite build",
-		"dev": "vite",
+		"bd": "nitro build",
+		"dev": "vite dev",
 		"don't redefine commands, or I rape your mother": "",
 		"fmt": "dprint fmt",
 		"lint": "biome lint --write",
@@ -22,7 +22,8 @@
 		"typecheck": "tsgo --noEmit"
 	},
 	"dependencies": {
-		"pptxgenjs": "^4.0.1"
+		"pptxgenjs": "^4.0.1",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.8",

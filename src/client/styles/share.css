@@ -183,6 +183,8 @@ body {
 }
 
 .share-slide-frame {
+	--slide-w: 1020px;
+
 	width: min(94vw, calc((100vh - var(--topbar-h) - 54px) * 1.78));
 	aspect-ratio: 16 / 9;
 	border-radius: 16px;
@@ -190,6 +192,12 @@ body {
 	border: 1px solid var(--line);
 	background: var(--card);
 	box-shadow: 0 22px 48px rgba(11, 31, 77, 0.2);
+}
+
+.share-slide-frame > .slide-render {
+	width: var(--slide-w);
+	height: calc(var(--slide-w) * 9 / 16);
+	transform-origin: 0 0;
 }
 
 .share-slide .ai-clickable {

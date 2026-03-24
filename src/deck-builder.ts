@@ -29,9 +29,6 @@ interface BulletOptions {
 	color?: string;
 }
 
-const _SLIDE_WIDTH = 13.333;
-const _SLIDE_HEIGHT = 7.5;
-
 function toPptColor(hex: unknown, fallback = '0B1D2E'): string {
 	const value = String(hex || '')
 		.replace('#', '')

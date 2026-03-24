@@ -107,6 +107,19 @@ function goToSlide(index: number, options: { animate?: boolean } = {}): void {
 	updateTrackPosition({ animate: options.animate !== false });
 }
 
+const SLIDE_W = 1020;
+
+function scaleShareSlides(): void {
+	if (!trackEl) return;
+	const frames = trackEl.querySelectorAll<HTMLElement>('.share-slide-frame');
+	for (const frame of frames) {
+		const render = frame.querySelector<HTMLElement>('.slide-render');
+		if (!render) continue;
+		const scale = frame.clientWidth / SLIDE_W;
+		render.style.transform = `scale(${scale})`;
+	}
+}
+
 function renderDeck(data: DeckData): void {
 	if (!trackEl) return;
 	trackEl.innerHTML = '';
@@ -124,6 +137,8 @@ function renderDeck(data: DeckData): void {
 		frame.setAttribute('aria-label', `Slide ${index + 1}`);
 		trackEl.appendChild(node);
 	});
+
+	scaleShareSlides();
 }
 
 function startSwipe(event: PointerEvent): void {
@@ -259,6 +274,7 @@ deckEl?.addEventListener('pointerdown', startSwipe);
 window.addEventListener('resize', () => {
 	if (!slideData) return;
 	updateTrackPosition({ animate: false });
+	scaleShareSlides();
 });
 
 document.addEventListener('keydown', (event: KeyboardEvent) => {

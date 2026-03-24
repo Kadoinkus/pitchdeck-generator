@@ -5,14 +5,15 @@
     "": {
       "name": "slide-deck-generator",
       "dependencies": {
-        "nitro": "^3.0.260311-beta",
         "pptxgenjs": "^4.0.1",
+        "zod": "^4.3.6",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.8",
         "@types/node": "^25.5.0",
         "@typescript/native-preview": "^7.0.0-dev.20260323.1",
         "dprint": "^0.53.0",
+        "nitro": "^3.0.260311-beta",
         "typescript": "^6.0.2",
         "vite": "^8.0.2",
         "vite-svg-to-ico": "^2.0.1",
@@ -359,6 +360,8 @@
     "vite": ["vite@8.0.2", "", { "dependencies": { "lightningcss": "^1.32.0", "picomatch": "^4.0.3", "postcss": "^8.5.8", "rolldown": "1.0.0-rc.11", "tinyglobby": "^0.2.15" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.1.0", "esbuild": "^0.27.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-1gFhNi+bHhRE/qKZOJXACm6tX4bA3Isy9KuKF15AgSRuRazNBOJfdDemPBU16/mpMxApDPrWvZ08DcLPEoRnuA=="],
 
     "vite-svg-to-ico": ["vite-svg-to-ico@2.0.1", "", { "dependencies": { "sharp": "^0.34.5" }, "peerDependencies": { "vite": "^6.0.0 || ^7.0.0" } }, "sha512-CudGfPwFrredOq6Nc81bO9lsxDHMuB8iwbhcb0egnThPBiVwqmiItPbh2oleGskS5esOWoJ/sZHXQc3DQ4Ujbg=="],
+
+    "zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
 
     "pptxgenjs/@types/node": ["@types/node@22.19.15", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-F0R/h2+dsy5wJAUe3tAU6oqa2qbWY5TpNfL/RGmo1y38hiyO1w3x2jPtt76wmuaJI4DQnOBu21cNXQ2STIUUWg=="],
 
