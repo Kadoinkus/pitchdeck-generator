@@ -51,33 +51,35 @@
 		>
 			Open viewer
 		</button>
-		<a
-			class="ghost-link"
-			class:disabled={!token}
-			href={token ? resolve('/api/download/[token]', { token }) : undefined}
-		>
-			Download .pptx
-		</a>
+		{#if token}
+			<a class="ghost-link" href={resolve('/api/download/[token]', { token })}>
+				Download .pptx
+			</a>
 
-		<a
-			class="ghost-link"
-			class:disabled={!token}
-			href={token ? `${resolve('/share/[token]', { token })}?print=1` : undefined}
-			target="_blank"
-			rel="noopener"
-		>
-			Download PDF
-		</a>
+			<a
+				class="ghost-link"
+				href={resolve('/share/[token]?print=1', { token })}
+				target="_blank"
+				rel="noopener"
+			>
+				Download PDF
+			</a>
 
-		<a
-			class="ghost-link"
-			class:disabled={!token}
-			href={token ? resolve('/share/[token]', { token }) : undefined}
-			target="_blank"
-			rel="noopener"
-		>
-			Open share page
-		</a>
+			<a
+				class="ghost-link"
+				href={resolve('/share/[token]', { token })}
+				target="_blank"
+				rel="noopener"
+			>
+				Open share page
+			</a>
+		{:else}
+			<span class="ghost-link disabled" aria-disabled="true"
+			>Download .pptx</span>
+			<span class="ghost-link disabled" aria-disabled="true">Download PDF</span>
+			<span class="ghost-link disabled" aria-disabled="true"
+			>Open share page</span>
+		{/if}
 		<button
 			type="button"
 			class="ghost"

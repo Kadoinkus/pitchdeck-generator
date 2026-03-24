@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import {
 		hideViewer,
 		nextSlide,
@@ -32,11 +33,31 @@
 			: '0 / 0',
 	);
 
+	function extractToken(url: string | null | undefined): string | null {
+		if (!url) return null;
+		try {
+			const path = url.startsWith('/') ? url : new URL(url).pathname;
+			const downloadMatch = /^\/api\/download\/([^/?#]+)/.exec(path);
+			if (downloadMatch?.[1]) return downloadMatch[1];
+			const shareMatch = /^\/share\/([^/?#]+)/.exec(path);
+			if (shareMatch?.[1]) return shareMatch[1];
+			return null;
+		} catch {
+			return null;
+		}
+	}
+
 	const opts = $derived(viewer.toolbarOptions);
 
-	const hasDownload = $derived(Boolean(opts.downloadUrl));
-	const hasPdf = $derived(Boolean(opts.pdfUrl));
-	const hasShare = $derived(Boolean(opts.shareUrl));
+	const shareToken = $derived(
+		extractToken(opts.shareUrl)
+			?? extractToken(opts.downloadUrl)
+			?? extractToken(opts.pdfUrl),
+	);
+
+	const hasDownload = $derived(Boolean(opts.downloadUrl) && Boolean(shareToken));
+	const hasPdf = $derived(Boolean(opts.pdfUrl) && Boolean(shareToken));
+	const hasShare = $derived(Boolean(opts.shareUrl) && Boolean(shareToken));
 	const hasAnyShareAction = $derived(hasDownload || hasPdf || hasShare);
 
 	let shareOpen = $state(false);
@@ -66,9 +87,13 @@
 	}
 
 	async function copyShareLink(): Promise<void> {
-		if (!opts.shareUrl) return;
+		if (!shareToken || !hasShare) return;
 		try {
-			await navigator.clipboard.writeText(opts.shareUrl);
+			const absoluteShareUrl = new URL(
+				resolve('/share/[token]', { token: shareToken }),
+				window.location.origin,
+			).toString();
+			await navigator.clipboard.writeText(absoluteShareUrl);
 			copyLabel = 'Link copied';
 		} catch {
 			copyLabel = 'Copy failed';
@@ -235,28 +260,38 @@
 				Share <span class="share-caret">&#9660;</span>
 			</button>
 			<div class="viewer-share-menu">
-				<a
-					class="viewer-share-item"
-					class:disabled={!hasDownload}
-					href={opts.downloadUrl ?? undefined}
-					download
-					onclick={closeShare}
-				>Download PPTX</a>
-				<a
-					class="viewer-share-item"
-					class:disabled={!hasPdf}
-					href={opts.pdfUrl ?? undefined}
-					onclick={closeShare}
-				>Download PDF</a>
+				{#if hasDownload && shareToken}
+					<a
+						class="viewer-share-item"
+						href={resolve('/api/download/[token]', { token: shareToken })}
+						download
+						onclick={closeShare}
+					>Download PPTX</a>
+				{:else}
+					<span class="viewer-share-item disabled" aria-disabled="true">Download PPTX</span>
+				{/if}
 
-				<a
-					class="viewer-share-item"
-					class:disabled={!hasShare}
-					href={opts.shareUrl ?? undefined}
-					target="_blank"
-					rel="noopener noreferrer"
-					onclick={closeShare}
-				>Open share link</a>
+				{#if hasPdf && shareToken}
+					<a
+						class="viewer-share-item"
+						href={resolve('/share/[token]?print=1', { token: shareToken })}
+						onclick={closeShare}
+					>Download PDF</a>
+				{:else}
+					<span class="viewer-share-item disabled" aria-disabled="true">Download PDF</span>
+				{/if}
+
+				{#if hasShare && shareToken}
+					<a
+						class="viewer-share-item"
+						href={resolve('/share/[token]', { token: shareToken })}
+						target="_blank"
+						rel="noopener noreferrer"
+						onclick={closeShare}
+					>Open share link</a>
+				{:else}
+					<span class="viewer-share-item disabled" aria-disabled="true">Open share link</span>
+				{/if}
 				<button
 					class="viewer-share-item"
 					type="button"
