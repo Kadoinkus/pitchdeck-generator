@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { swipeable } from '$lib/actions/swipeable';
+	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
 		nextSlide,
@@ -8,10 +9,8 @@
 		viewer,
 	} from '$lib/stores/viewer.svelte';
 
-	import { onMount } from 'svelte';
-
-	let canvasEl: HTMLDivElement | undefined = $state();
-	let canvasWidth = $state(1);
+	let trackStep = $state(1);
+	let dragOffset = $state(0);
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
@@ -19,19 +18,33 @@
 	const current = $derived(viewer.currentSlide);
 
 	const trackTransform = $derived(
-		`translate3d(${-current * canvasWidth}px, 0, 0)`,
+		`translate3d(${-current * trackStep + dragOffset}px, 0, 0)`,
 	);
 
-	onMount(() => {
-		if (!canvasEl) return;
-		canvasWidth = canvasEl.clientWidth;
+	function updateCanvasMetrics(node: HTMLDivElement): void {
+		const styles = getComputedStyle(node);
+		const peek = Number.parseFloat(styles.getPropertyValue('--slide-peek'))
+			|| 0;
+		const gap = Number.parseFloat(styles.getPropertyValue('--slide-gap')) || 0;
+		const width = node.clientWidth || 1;
 
-		const ro = new ResizeObserver(([entry]) => {
-			if (entry) canvasWidth = entry.contentRect.width;
+		trackStep = Math.max(1, width - (peek * 2) + gap);
+	}
+
+	function canvasMetrics(node: HTMLDivElement): { destroy: () => void } {
+		updateCanvasMetrics(node);
+
+		const ro = new ResizeObserver(() => {
+			updateCanvasMetrics(node);
 		});
-		ro.observe(canvasEl);
-		return () => ro.disconnect();
-	});
+		ro.observe(node);
+
+		return {
+			destroy() {
+				ro.disconnect();
+			},
+		};
+	}
 
 	function resolveAiTarget(origin: EventTarget | null): void {
 		if (!(origin instanceof HTMLElement)) return;
@@ -56,33 +69,45 @@
 	}
 </script>
 
-<div class="slide-stage">
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		class="slide-canvas"
-		bind:this={canvasEl}
-		use:swipeable={{ onPrev: prevSlide, onNext: nextSlide }}
-		onclick={handleCanvasClick}
-		onkeydown={handleCanvasKeydown}
-	>
+{#if slides.length === 0}
+	<div class="slide-stage empty">
+		<Haiku variant="ghost" />
+	</div>
+{:else}
+	<div class="slide-stage">
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="slide-track"
-			style:transform={trackTransform}
+			class="slide-canvas"
+			use:canvasMetrics
+			use:swipeable={{
+				onPrev: prevSlide,
+				onNext: nextSlide,
+				onDrag(delta) {
+					dragOffset = delta;
+				},
+			}}
+			onclick={handleCanvasClick}
+			onkeydown={handleCanvasKeydown}
 		>
-			{#each slides as slide, index (index)}
-				<section
-					class="slide-page"
-					class:is-active={index === current}
-					class:is-prev={index === current - 1}
-					class:is-next={index === current + 1}
-					data-slide-index={index}
-				>
-					<SlideRenderer {slide} {theme} {deckData} />
-				</section>
-			{/each}
+			<div
+				class="slide-track"
+				style:transform={trackTransform}
+			>
+				{#each slides as slide, index (index)}
+					<section
+						class="slide-page"
+						class:is-active={index === current}
+						class:is-prev={index === current - 1}
+						class:is-next={index === current + 1}
+						data-slide-index={index}
+					>
+						<SlideRenderer {slide} {theme} {deckData} />
+					</section>
+				{/each}
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.slide-stage {
@@ -95,14 +120,13 @@
 	}
 
 	.slide-canvas {
+		--slide-gap: 0px;
+		--slide-peek: 0px;
+
 		width: min(94%, calc((100vh - 120px) * 16 / 9));
 		aspect-ratio: 16 / 9;
-		border-radius: 16px;
 		overflow: hidden;
-		box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
 		position: relative;
-		border: 1px solid #d2dbe9;
-		background: #fff;
 		touch-action: pan-y;
 		user-select: none;
 		cursor: grab;
@@ -115,6 +139,9 @@
 	.slide-track {
 		height: 100%;
 		display: flex;
+		gap: var(--slide-gap);
+		padding-inline: 0;
+		box-sizing: border-box;
 		width: 100%;
 		transform: translate3d(0, 0, 0);
 		transition: transform 420ms cubic-bezier(0.2, 0.75, 0.14, 1);
@@ -134,13 +161,10 @@
 		display: flex;
 		align-items: stretch;
 		justify-content: center;
-		opacity: 0.92;
-		transform: scale(0.985);
-		transition: transform 320ms ease, opacity 320ms ease;
-	}
-
-	.slide-page.is-active {
-		opacity: 1;
-		transform: scale(1);
+		border-radius: 0;
+		overflow: hidden;
+		box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
+		border: 1px solid #d2dbe9;
+		background: #fff;
 	}
 </style>
