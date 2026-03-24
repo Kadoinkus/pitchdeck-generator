@@ -1,5 +1,6 @@
 import { safeText } from '../utils.ts';
-import type { BackgroundMode, ImageRatio, LayoutPreset, SlideType } from './types.ts';
+import type { BackgroundMode, LayoutPreset, SlideType } from './types.ts';
+import { RATIO_16_9, RATIO_1_1, RATIO_4_3 } from './types.ts';
 
 export const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
 
@@ -24,22 +25,22 @@ const DEFAULT_PRESET: LayoutPreset = {
 		'closing': 'closing-dark',
 	} satisfies Record<SlideType, string>,
 	imageRatioByType: {
-		'cover': '16:9',
-		'problem': '4:3',
-		'opportunity': '4:3',
-		'solution': '1:1',
-		'what-notso-does': '1:1',
-		'meet-buddy': '1:1',
-		'experience-concept': '4:3',
-		'chat-flow': '4:3',
-		'example-interaction': '16:9',
-		'business-impact': '1:1',
-		'data-analytics': '4:3',
-		'what-you-get': '1:1',
-		'pricing': '4:3',
-		'timeline': '16:9',
-		'closing': '4:3',
-	} satisfies Record<SlideType, ImageRatio>,
+		'cover': RATIO_16_9,
+		'problem': RATIO_4_3,
+		'opportunity': RATIO_4_3,
+		'solution': RATIO_1_1,
+		'what-notso-does': RATIO_1_1,
+		'meet-buddy': RATIO_1_1,
+		'experience-concept': RATIO_4_3,
+		'chat-flow': RATIO_4_3,
+		'example-interaction': RATIO_16_9,
+		'business-impact': RATIO_1_1,
+		'data-analytics': RATIO_4_3,
+		'what-you-get': RATIO_1_1,
+		'pricing': RATIO_4_3,
+		'timeline': RATIO_16_9,
+		'closing': RATIO_4_3,
+	},
 	backgroundModeByType: {
 		'cover': 'light',
 		'problem': 'light',

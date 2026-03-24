@@ -1,3 +1,4 @@
+import { RATIO_4_3 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, esc, fitText } from '../core/utils.ts';
@@ -40,7 +41,7 @@ export function renderWhatNotsoDoes(
 			target: 'imagePrompts',
 			label: 'What Notso does image',
 			helper: 'Mascot capability overview visual',
-			ratio: '4:3',
+			ratio: RATIO_4_3,
 		})
 	}
     </article>

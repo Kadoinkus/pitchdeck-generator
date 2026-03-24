@@ -1,3 +1,4 @@
+import { RATIO_16_9 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { esc, fitText } from '../core/utils.ts';
 import { renderImagePanel, renderTitlePanel } from '../panels/index.ts';
@@ -16,7 +17,7 @@ export function renderCover(
 		target: 'imagePrompts',
 		label: 'Cover image',
 		helper: 'Hero mascot and product UI mockup',
-		ratio: '16:9',
+		ratio: RATIO_16_9,
 		className: 'is-large',
 	});
 	const layoutClass = visual ? 'cover-layout' : 'stack-layout cover-layout';

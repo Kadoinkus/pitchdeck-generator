@@ -1,3 +1,5 @@
+import type { ImageRatio } from '../../../deck/types.ts';
+
 export interface CharacterAsset {
 	id: string;
 	name: string;
@@ -15,7 +17,7 @@ export interface SlideData {
 	type?: string;
 	imageAsset?: ImageAssetRef | null;
 	hideImages?: boolean;
-	imageRatio?: string;
+	imageRatio?: ImageRatio;
 	imageMode?: string;
 	backgroundMode?: string;
 	textMode?: string;

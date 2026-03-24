@@ -1,3 +1,4 @@
+import { RATIO_4_3 } from '../../deck/types.ts';
 import type { SlotPolicy } from './core/slot-policy.ts';
 import { resolveImageMode, resolveSlotPolicy } from './core/slot-policy.ts';
 import { resolveTheme, themeVars } from './core/theme.ts';
@@ -72,11 +73,7 @@ export function renderSlide(
 		slide?.type,
 		toSlotPolicyOverride(slide?.slotPolicy),
 	);
-	const validRatios = ['16:9', '4:3', '3:4', '1:1'];
-	const slideImageRatio = slide?.imageRatio ?? '';
-	const imageRatio = validRatios.includes(slideImageRatio)
-		? slideImageRatio
-		: '4:3';
+	const imageRatio = slide?.imageRatio ?? RATIO_4_3;
 	const rawHide = Boolean(slide?.hideImages);
 	const hideImages = slotPolicy.image.required ? false : rawHide;
 	const imageMode = resolveImageMode(

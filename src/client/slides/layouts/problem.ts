@@ -1,3 +1,4 @@
+import { RATIO_16_9 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, fitList } from '../core/utils.ts';
@@ -26,7 +27,7 @@ export function renderProblem(
 		target: 'imagePrompts',
 		label: 'Problem image',
 		helper: 'Visualize current friction state',
-		ratio: '16:9',
+		ratio: RATIO_16_9,
 	});
 	const bottomLayoutClass = visual ? 'split-layout' : 'stack-layout';
 

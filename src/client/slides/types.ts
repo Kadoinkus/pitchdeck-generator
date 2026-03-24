@@ -1,3 +1,7 @@
+import type { ImageRatio } from '../../deck/types.ts';
+
+export type { ImageRatio };
+
 export interface SlideData {
 	id?: string;
 	type?: string;
@@ -27,7 +31,7 @@ export interface SlideData {
 	contactEmail?: string;
 	contactPhone?: string;
 	imagePrompt?: string;
-	imageRatio?: string;
+	imageRatio?: ImageRatio;
 	imageMode?: string;
 	hideImages?: boolean;
 	sourceField?: string;

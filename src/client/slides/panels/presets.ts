@@ -1,3 +1,5 @@
+import type { ImageRatio } from '../../../deck/types.ts';
+import { RATIO_4_3 } from '../../../deck/types.ts';
 import { attrTarget, renderHeadline, renderImageSlot } from '../core/components.ts';
 import { renderPanelIcon } from '../core/icon-policy.ts';
 import { iconByKeyword } from '../core/icons.ts';
@@ -27,7 +29,7 @@ interface ImagePanelOptions {
 	target?: string;
 	label?: string;
 	helper?: string;
-	ratio?: string;
+	ratio?: ImageRatio;
 	className?: string;
 	variant?: string;
 	hideTitle?: boolean;
@@ -128,7 +130,7 @@ export function renderImagePanel({
 	target = 'imagePrompts',
 	label = 'Slide image',
 	helper = 'Add image',
-	ratio = '4:3',
+	ratio = RATIO_4_3,
 	className = '',
 	variant = '',
 	hideTitle = false,

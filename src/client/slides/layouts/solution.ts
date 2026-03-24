@@ -1,3 +1,4 @@
+import { RATIO_16_9 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems } from '../core/utils.ts';
@@ -58,7 +59,7 @@ export function renderSolution(
 			target: 'imagePrompts',
 			label: 'Solution visual',
 			helper: 'Simple pillar architecture visual',
-			ratio: '16:9',
+			ratio: RATIO_16_9,
 		})
 	}
   </div>`;

@@ -1,3 +1,4 @@
+import { RATIO_16_9 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, fitList } from '../core/utils.ts';
@@ -57,7 +58,7 @@ export function renderBusinessImpact(
 			target: 'imagePrompts',
 			label: 'Business impact image',
 			helper: 'Impact icons and outcome visual',
-			ratio: '16:9',
+			ratio: RATIO_16_9,
 		})
 	}
   </div>`;

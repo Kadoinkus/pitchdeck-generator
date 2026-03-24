@@ -1,3 +1,4 @@
+import type { ImageRatio } from '../../../deck/types.ts';
 import type { ThemeInput } from './theme.ts';
 import { themeVars } from './theme.ts';
 import type { DeckData, SlideData } from './utils.ts';
@@ -69,11 +70,9 @@ export function renderHeadline({
   </header>`;
 }
 
-function ratioClass(ratio = '16:9'): string {
-	if (ratio === '3:4') return 'ratio-3-4';
-	if (ratio === '1:1') return 'ratio-1-1';
-	if (ratio === '4:3') return 'ratio-4-3';
-	return 'ratio-16-9';
+function ratioClass(ratio?: ImageRatio | null): string {
+	if (!ratio) return 'ratio-16-9';
+	return `ratio-${ratio.w}-${ratio.h}`;
 }
 
 export interface ImageSlotOptions {
@@ -82,12 +81,14 @@ export interface ImageSlotOptions {
 	target?: string;
 	label?: string;
 	helper?: string;
-	ratio?: string;
+	ratio?: ImageRatio;
 	className?: string;
 	hideTitle?: boolean;
 	hideHint?: boolean;
 	forceVisible?: boolean;
 }
+
+const FALLBACK_RATIO: ImageRatio = { w: 4, h: 3 };
 
 export function renderImageSlot({
 	slide,
@@ -95,7 +96,7 @@ export function renderImageSlot({
 	target = 'imagePrompts',
 	label = 'Slide image',
 	helper = 'Add image',
-	ratio = '4:3',
+	ratio = FALLBACK_RATIO,
 	className = '',
 	hideTitle = false,
 	hideHint = false,
@@ -105,7 +106,7 @@ export function renderImageSlot({
 	if (isHidden && !forceVisible) return '';
 
 	const asset = findAssetForSlide(slide, deckData);
-	const activeRatio = slide?.imageRatio || ratio;
+	const activeRatio = slide?.imageRatio ?? ratio;
 	const modeClass = (slide?.imageMode || 'cover') === 'contain' ? 'mode-contain' : 'mode-cover';
 	const cls = `${ratioClass(activeRatio)} ${modeClass} ${className}`.trim();
 

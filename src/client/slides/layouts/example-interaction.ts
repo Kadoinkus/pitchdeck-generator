@@ -1,3 +1,4 @@
+import { RATIO_4_3 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, esc, fitList, fitText } from '../core/utils.ts';
@@ -26,7 +27,7 @@ export function renderExampleInteraction(
 		target: 'imagePrompts',
 		label: 'Example interaction image',
 		helper: 'Phone/tablet interaction with mascot',
-		ratio: '4:3',
+		ratio: RATIO_4_3,
 		className: 'is-large',
 	});
 	const interactionLayoutClass = visual

@@ -1,3 +1,4 @@
+import { RATIO_4_3 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, esc, fitText } from '../core/utils.ts';
@@ -51,7 +52,7 @@ export function renderClosing(
 			target: 'imagePrompts',
 			label: 'Closing image',
 			helper: 'Hero mascot CTA visual',
-			ratio: '4:3',
+			ratio: RATIO_4_3,
 			className: 'is-large',
 		})
 	}

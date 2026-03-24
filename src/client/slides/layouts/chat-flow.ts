@@ -1,3 +1,4 @@
+import { RATIO_4_3 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, esc, fitList, fitText } from '../core/utils.ts';
@@ -58,7 +59,7 @@ export function renderChatFlow(
 			target: 'imagePrompts',
 			label: 'Chat flow image',
 			helper: 'Step-based funnel illustration',
-			ratio: '4:3',
+			ratio: RATIO_4_3,
 		})
 	}
     </article>

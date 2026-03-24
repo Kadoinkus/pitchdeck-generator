@@ -1,3 +1,4 @@
+import { RATIO_16_9 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems } from '../core/utils.ts';
@@ -60,7 +61,7 @@ export function renderTimeline(
 			target: 'imagePrompts',
 			label: 'Timeline visual',
 			helper: 'Roadmap flow and milestone markers',
-			ratio: '16:9',
+			ratio: RATIO_16_9,
 		})
 	}
   </div>`;

@@ -26,7 +26,19 @@ export type SlideType =
 
 export type BackgroundMode = 'light' | 'dark';
 
-export type ImageRatio = '16:9' | '4:3' | '1:1';
+export interface ImageRatio {
+	readonly w: number;
+	readonly h: number;
+}
+
+export const RATIO_16_9: ImageRatio = { w: 16, h: 9 };
+export const RATIO_4_3: ImageRatio = { w: 4, h: 3 };
+export const RATIO_1_1: ImageRatio = { w: 1, h: 1 };
+export const RATIO_3_4: ImageRatio = { w: 3, h: 4 };
+
+export function ratioCssClass(ratio: ImageRatio): string {
+	return `ratio-${ratio.w}-${ratio.h}`;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Structured data types                                              */

@@ -1,3 +1,4 @@
+import { RATIO_1_1 } from '../../../deck/types.ts';
 import { attrTarget, renderFrame } from '../core/components.ts';
 import { getTargetField } from '../core/fields.ts';
 import { ensureItems, esc, fitText } from '../core/utils.ts';
@@ -58,7 +59,7 @@ export function renderWhatYouGet(
 							target: 'imagePrompts',
 							label: `${slide.title} image ${index + 1}`,
 							helper: `${section.title} visual`,
-							ratio: '1:1',
+							ratio: RATIO_1_1,
 							className: 'is-micro',
 							hideTitle: true,
 							hideHint: true,
