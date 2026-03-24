@@ -64,5 +64,9 @@
 		"packageManager": {
 			"name": "bun"
 		}
+	},
+	"volta": {
+		"node": "24.14.0",
+		"npm": "11.12.0"
 	}
 }

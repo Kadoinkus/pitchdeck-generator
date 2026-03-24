@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { pushState, replaceState } from '$app/navigation';
+	import { page } from '$app/state';
 	import {
 		applyDraft,
 		applyImageDraft,
@@ -19,6 +21,7 @@
 		undo,
 	} from '$lib/stores/editor.svelte';
 	import {
+		hideViewer,
 		showViewer,
 		viewer,
 		type ViewerDeckData,
@@ -29,21 +32,57 @@
 	import DeckForm from '$lib/components/form/DeckForm.svelte';
 	import SlideViewer from '$lib/components/SlideViewer.svelte';
 
-	function handleOpenViewer() {
+	function getViewerDeckData() {
 		const result = getDeckResult();
-		if (!result) return;
+		if (!result) return null;
 		const sd = result.slideData;
-		if (!sd?.slides?.length) return;
+		if (!sd?.slides?.length) return null;
 
 		const data: ViewerDeckData = {
 			slides: sd.slides.map((s) => ({ ...s })),
 			theme: { ...sd.theme },
 			project: sd.project,
 		};
-		showViewer(data, {
+
+		return {
+			data,
 			shareToken: result.shareToken ?? null,
+		};
+	}
+
+	function handleOpenViewer() {
+		const payload = getViewerDeckData();
+		if (!payload) return;
+
+		pushState('', {
+			...page.state,
+			viewer: { open: true },
 		});
 	}
+
+	const viewerPayload = $derived(getViewerDeckData());
+
+	$effect(() => {
+		const wantsViewerOpen = page.state.viewer?.open === true;
+
+		if (wantsViewerOpen && !viewer.isOpen) {
+			if (!viewerPayload) return;
+			queueMicrotask(() => {
+				if (page.state.viewer?.open !== true || viewer.isOpen) return;
+				showViewer(viewerPayload.data, {
+					shareToken: viewerPayload.shareToken,
+				});
+			});
+			return;
+		}
+
+		if (!wantsViewerOpen && viewer.isOpen) {
+			queueMicrotask(() => {
+				if (page.state.viewer?.open === true || !viewer.isOpen) return;
+				hideViewer();
+			});
+		}
+	});
 
 	function handleKeyboard(event: KeyboardEvent) {
 		if (!event.metaKey && !event.ctrlKey) return;
@@ -87,16 +126,12 @@
 			// Reopen viewer immediately if it was open before reload
 			const prev = wasViewerOpen();
 			if (prev.open) {
-				const result = getDeckResult();
-				if (result?.slideData?.slides?.length) {
-					const data: ViewerDeckData = {
-						slides: result.slideData.slides,
-						theme: result.slideData.theme,
-						project: result.slideData.project,
-					};
-					showViewer(data, {
-						shareToken: result.shareToken ?? null,
-					}, prev.slide);
+				const payload = getViewerDeckData();
+				if (payload) {
+					replaceState('', {
+						...page.state,
+						viewer: { open: true },
+					});
 				}
 			}
 

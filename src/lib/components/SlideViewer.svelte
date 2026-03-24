@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import ChatPanel from '$lib/components/ChatPanel.svelte';
 	import SlideCanvas from '$lib/components/SlideCanvas.svelte';
 	import ThumbnailStrip from '$lib/components/ThumbnailStrip.svelte';
@@ -61,7 +62,7 @@
 
 		if (event.key === 'Escape') {
 			event.preventDefault();
-			hideViewer();
+			closeViewer();
 			return;
 		}
 
@@ -114,6 +115,15 @@
 
 	function endResize(): void {
 		resizing = false;
+	}
+
+	function closeViewer(): void {
+		if (page.state.viewer?.open) {
+			history.back();
+			return;
+		}
+
+		hideViewer();
 	}
 </script>
 

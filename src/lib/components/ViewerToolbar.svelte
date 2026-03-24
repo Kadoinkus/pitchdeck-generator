@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
 	import {
 		hideViewer,
@@ -91,6 +92,15 @@
 		}
 		closeShare();
 	}
+
+	function closeViewer(): void {
+		if (page.state.viewer?.open) {
+			history.back();
+			return;
+		}
+
+		hideViewer();
+	}
 </script>
 
 <svelte:document onclick={handleOutsideClick} />
@@ -100,7 +110,7 @@
 		<button
 			class="toolbar-btn viewer-home-btn"
 			type="button"
-			onclick={hideViewer}
+			onclick={closeViewer}
 		>
 			<svg
 				class="home-icon"

@@ -182,6 +182,7 @@
 		color: var(--muted);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -286,6 +287,7 @@
 	.deck-slide :global(.fit-lines-2) {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -293,6 +295,7 @@
 	.deck-slide :global(.fit-lines-3) {
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
+		line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -308,14 +311,17 @@
 
 	.deck-slide.text-mode-clamp :global(.headline-title) {
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 	}
 
 	.deck-slide.text-mode-clamp :global(.headline-subtitle) {
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 	}
 
 	.deck-slide.text-mode-clamp :global(.paragraph) {
 		-webkit-line-clamp: 5;
+		line-clamp: 5;
 	}
 
 	/* AI clickable */
@@ -345,6 +351,7 @@
 		color: var(--muted);
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
+		line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -375,6 +382,7 @@
 		line-height: 1.1;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -475,6 +483,7 @@
 		color: var(--muted);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -535,6 +544,7 @@
 		line-height: 1.3;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
@@ -578,6 +588,7 @@
 		color: var(--muted);
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
