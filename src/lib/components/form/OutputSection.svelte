@@ -82,3 +82,22 @@
 		</button>
 	</div>
 </section>
+
+<style>
+	.output-section {
+		background: linear-gradient(160deg, #f7fbff, #eef6ff);
+	}
+
+	.output-actions {
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	@media (max-width: 760px) {
+		.output-actions {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>

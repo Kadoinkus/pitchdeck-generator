@@ -1,8 +1,8 @@
 <script lang="ts">
 	/**
 	 * Dispatcher: picks the correct layout component based on slide.type.
-	 * Replaces the old `renderSlide()` function + `{@html}` pattern.
 	 */
+	import { setContext } from 'svelte';
 	import { RATIO_4_3 } from '../deck/types.ts';
 	import Frame from './core/Frame.svelte';
 	import { resolveImageMode, resolveSlotPolicy } from './core/slot-policy.ts';
@@ -48,15 +48,18 @@
 		slide?: SlideData | null;
 		theme?: ThemeData;
 		deckData?: DeckData;
+		slideWidth?: number;
 	}
 
-	let { slide = null, theme = undefined, deckData = undefined }: Props =
-		$props();
+	let {
+		slide = null,
+		theme = undefined,
+		deckData = undefined,
+		slideWidth,
+	}: Props = $props();
 
-	/**
-	 * Resolve theme, slot policies, and image settings exactly as
-	 * the old `renderSlide()` did, producing a normalised slide.
-	 */
+	setContext('slideWidth', slideWidth);
+
 	const resolvedTheme = $derived(resolveTheme(theme, deckData));
 
 	const normalised: SlideData | null = $derived.by(() => {

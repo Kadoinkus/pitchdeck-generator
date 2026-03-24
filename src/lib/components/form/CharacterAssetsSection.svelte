@@ -175,3 +175,76 @@
 		</div>
 	{/if}
 </details>
+
+<style>
+	.asset-tools {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.upload-btn {
+		cursor: pointer;
+	}
+
+	.asset-preview-grid {
+		margin-top: 10px;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	.asset-card {
+		border: 1px solid #d2e0ff;
+		border-radius: 12px;
+		background: #f9fcff;
+		padding: 8px;
+		display: grid;
+		gap: 8px;
+	}
+
+	.asset-card img {
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		border-radius: 9px;
+		border: 1px solid #cfdcff;
+		background: #eef4ff;
+	}
+
+	.asset-meta {
+		display: grid;
+		gap: 6px;
+	}
+
+	.asset-name {
+		margin: 0;
+		font-size: 0.76rem;
+		line-height: 1.35;
+		color: #1f3f6f;
+		word-break: break-word;
+	}
+
+	.asset-meta select {
+		width: 100%;
+		border: 1px solid #c9dbff;
+		border-radius: 8px;
+		background: #fff;
+		font: inherit;
+		font-size: 0.78rem;
+		padding: 6px 8px;
+	}
+
+	@media (max-width: 1050px) {
+		.asset-preview-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 760px) {
+		.asset-preview-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

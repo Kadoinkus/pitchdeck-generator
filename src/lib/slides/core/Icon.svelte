@@ -37,3 +37,43 @@
 		{@html paths}
 	</svg>
 </span>
+
+<style>
+	.deck-icon {
+		--icon-size: 22px;
+		width: var(--icon-size);
+		height: var(--icon-size);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--icon-primary, var(--deck-primary, #004b49));
+		flex: 0 0 auto;
+	}
+
+	.deck-icon :global(svg) {
+		width: 100%;
+		height: 100%;
+	}
+
+	:global(.icon-inline) {
+		margin-right: 7px;
+		color: var(--icon-accent, var(--deck-accent, #30d89e));
+		vertical-align: -3px;
+	}
+
+	:global(.icon-muted) {
+		color: var(
+			--icon-muted,
+			color-mix(in srgb, var(--deck-primary, #004b49) 65%, #7f93aa)
+		);
+	}
+
+	:global(.icon-accent) {
+		color: var(--icon-accent, var(--deck-accent, #30d89e));
+	}
+
+	:global(.icon-panel) {
+		color: var(--icon-accent, var(--deck-accent, #30d89e));
+		--icon-size: clamp(44px, 4.2cqi, 72px);
+	}
+</style>

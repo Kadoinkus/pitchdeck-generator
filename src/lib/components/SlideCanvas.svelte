@@ -62,7 +62,7 @@
 					class:is-next={index === current + 1}
 					data-slide-index={index}
 				>
-					<SlideRenderer {slide} {theme} {deckData} />
+					<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
 				</section>
 			{/each}
 		</div>
@@ -122,12 +122,6 @@
 		opacity: 0.92;
 		transform: scale(0.985);
 		transition: transform 320ms ease, opacity 320ms ease;
-	}
-
-	.slide-page > :global(.slide-render) {
-		width: var(--slide-w);
-		height: var(--slide-h);
-		zoom: tan(atan2(100cqi, var(--slide-w)));
 	}
 
 	.slide-page.is-active {

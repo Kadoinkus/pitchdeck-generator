@@ -33,7 +33,7 @@
 		>
 			<span class="thumb-number">{index + 1}</span>
 			<div class="thumb-inner">
-				<SlideRenderer {slide} {theme} {deckData} />
+				<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
 			</div>
 		</button>
 	{/each}
@@ -53,6 +53,10 @@
 	}
 
 	.thumb {
+		display: block;
+		width: 100%;
+		padding: 0;
+		background: none;
 		position: relative;
 		border-radius: 10px;
 		overflow: hidden;
@@ -90,11 +94,5 @@
 		overflow: hidden;
 		position: relative;
 		pointer-events: none;
-	}
-
-	.thumb-inner > :global(.slide-render) {
-		width: var(--slide-w);
-		height: var(--slide-h);
-		zoom: tan(atan2(100cqi, var(--slide-w)));
 	}
 </style>

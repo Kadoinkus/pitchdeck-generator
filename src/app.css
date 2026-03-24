@@ -1,4 +1,106 @@
-/* base.css: global reset, vars, body, form styles shared across components.
- * slides.css: {@html}-rendered slide content — must stay global. */
-@import "./styles/base.css";
-@import "./styles/slides.css";
+/* Font loading in app.html <link> tags */
+
+:root {
+	--bg-top: #eaf4ff;
+	--bg-bottom: #f8fbff;
+	--card: #ffffff;
+	--text: #102347;
+	--muted: #4f5f83;
+	--line: #cfddff;
+	--primary: #0b1f4d;
+	--accent: #00c4cc;
+	--secondary: #7d2ae8;
+	--danger: #c62a55;
+	--shadow: 0 24px 48px rgba(11, 31, 77, 0.09);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	height: 100%;
+	min-height: 100dvh;
+	font-family: "DM Sans", "Segoe UI", sans-serif;
+	color: var(--text);
+	background:
+		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%)
+		fixed,
+		radial-gradient(
+		circle at 91% 12%,
+		rgba(125, 42, 232, 0.14),
+		transparent 26%
+	) fixed,
+		linear-gradient(180deg, var(--bg-top), var(--bg-bottom)) fixed;
+	background-repeat: no-repeat;
+}
+
+.hidden {
+	display: none !important;
+}
+
+button,
+.toolbar-btn,
+.ghost-link {
+	border: none;
+	border-radius: 999px;
+	background: linear-gradient(
+		120deg,
+		var(--accent),
+		#1395ff 56%,
+		var(--secondary)
+	);
+	color: #fff;
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 700;
+	padding: 10px 14px;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+button:hover,
+.toolbar-btn:hover,
+.ghost-link:hover {
+	transform: translateY(-1px);
+}
+
+button:disabled,
+.toolbar-btn:disabled,
+.ghost-link.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+	pointer-events: none;
+}
+
+.toolbar-btn.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+button.ghost,
+.ghost-link {
+	background: #fff;
+	color: #19457a;
+	border: 1px solid #c8d9ff;
+}
+
+button.small {
+	padding: 6px 10px;
+	font-size: 0.78rem;
+}
+
+.text-btn {
+	background: none;
+	border: none;
+	padding: 0;
+	color: #2d58a3;
+	font-weight: 700;
+	cursor: pointer;
+}

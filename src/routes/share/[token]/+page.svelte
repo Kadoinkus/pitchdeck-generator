@@ -41,10 +41,55 @@
 		goToSlide(currentSlide + 1);
 	}
 
+	function isEditableTarget(target: EventTarget | null): boolean {
+		if (!(target instanceof Element)) return false;
+		return Boolean(
+			target.closest(
+				'input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]',
+			),
+		);
+	}
+
+	function isActionTarget(target: EventTarget | null): boolean {
+		if (!(target instanceof Element)) return false;
+		return Boolean(target.closest('a,button,[role="button"],[role="link"]'));
+	}
+
 	function handleKey(event: KeyboardEvent): void {
 		if (isPrintMode) return;
-		if (event.key === 'ArrowLeft') prev();
-		if (event.key === 'ArrowRight') next();
+		if (event.defaultPrevented) return;
+		if (event.ctrlKey || event.metaKey || event.altKey) return;
+		if (isEditableTarget(event.target)) return;
+
+		switch (event.key) {
+			case 'ArrowLeft':
+			case 'ArrowUp':
+			case 'PageUp':
+				event.preventDefault();
+				prev();
+				return;
+			case 'ArrowRight':
+			case 'ArrowDown':
+			case 'PageDown':
+				event.preventDefault();
+				next();
+				return;
+			case 'Home':
+				event.preventDefault();
+				goToSlide(0);
+				return;
+			case 'End':
+				event.preventDefault();
+				goToSlide(total - 1);
+				return;
+			case ' ':
+			case 'Spacebar':
+				if (isActionTarget(event.target)) return;
+				event.preventDefault();
+				if (event.shiftKey) prev();
+				else next();
+				return;
+		}
 	}
 
 	function handleResize(): void {
@@ -118,7 +163,7 @@
 			{#each slides as slide, index (index)}
 				<section class="share-slide" class:is-active={index === currentSlide}>
 					<div class="share-slide-frame" aria-label={`Slide ${index + 1}`}>
-						<SlideRenderer {slide} {theme} deckData={data.slideData} />
+						<SlideRenderer {slide} {theme} deckData={data.slideData} slideWidth={1020} />
 					</div>
 				</section>
 			{/each}

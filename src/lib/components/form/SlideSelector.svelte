@@ -82,3 +82,30 @@
 		{/each}
 	</div>
 </details>
+
+<style>
+	.slide-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-bottom: 9px;
+	}
+
+	.slide-selector {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 8px;
+	}
+
+	@media (max-width: 1050px) {
+		.slide-selector {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 760px) {
+		.slide-selector {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

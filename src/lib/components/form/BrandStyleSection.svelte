@@ -230,3 +230,41 @@
 		</div>
 	</div>
 </details>
+
+<style>
+	.brand-palette-tools {
+		margin-top: 10px;
+	}
+
+	.palette-toolbar {
+		margin-top: 8px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.palette-status {
+		margin: 8px 0 2px;
+		font-size: 0.82rem;
+	}
+
+	:global(.palette-field) {
+		gap: 4px;
+	}
+
+	.palette-lock {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: #44608f;
+		font-size: 0.76rem;
+		font-weight: 700;
+	}
+
+	.palette-lock input {
+		width: auto;
+		margin: 0;
+		accent-color: var(--secondary);
+	}
+</style>

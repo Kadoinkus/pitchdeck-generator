@@ -64,3 +64,46 @@
 		</p>
 	{/if}
 </header>
+
+<style>
+	.headline-block {
+		display: grid;
+		gap: clamp(4px, 0.5cqi, 7px);
+	}
+
+	.headline-block.is-center {
+		text-align: center;
+		justify-items: center;
+	}
+
+	.headline-block.is-compact {
+		gap: 4px;
+	}
+
+	.headline-kicker {
+		margin: 0 0 0 3px;
+		font-size: 11px;
+		line-height: 1.4;
+		letter-spacing: 0.11em;
+		text-transform: uppercase;
+		font-weight: 700;
+		color: var(--muted);
+	}
+
+	.headline-title {
+		margin: 0;
+		font-family: var(--deck-heading, "Sora", sans-serif);
+		font-size: clamp(30px, 3.8cqi, 52px);
+		line-height: 0.98;
+		letter-spacing: -0.02em;
+		max-width: 18ch;
+	}
+
+	.headline-subtitle {
+		margin: 0;
+		font-size: clamp(13px, 1.12cqi, 18px);
+		line-height: 1.3;
+		color: var(--muted);
+		max-width: 58ch;
+	}
+</style>

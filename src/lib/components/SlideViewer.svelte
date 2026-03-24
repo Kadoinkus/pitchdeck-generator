@@ -4,6 +4,7 @@
 	import ThumbnailStrip from '$lib/components/ThumbnailStrip.svelte';
 	import ViewerToolbar from '$lib/components/ViewerToolbar.svelte';
 	import {
+		goToSlide,
 		hideViewer,
 		nextSlide,
 		prevSlide,
@@ -39,17 +40,61 @@
 	let thumbWidth = $state(182);
 	let resizing = $state(false);
 
+	function isEditableTarget(target: EventTarget | null): boolean {
+		if (!(target instanceof Element)) return false;
+		return Boolean(
+			target.closest(
+				'input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]',
+			),
+		);
+	}
+
+	function isActionTarget(target: EventTarget | null): boolean {
+		if (!(target instanceof Element)) return false;
+		return Boolean(target.closest('a,button,[role="button"],[role="link"]'));
+	}
+
 	function handleKeydown(event: KeyboardEvent): void {
 		if (!viewer.isOpen) return;
-		if (event.key === 'ArrowLeft') {
-			event.preventDefault();
-			prevSlide();
-		} else if (event.key === 'ArrowRight') {
-			event.preventDefault();
-			nextSlide();
-		} else if (event.key === 'Escape') {
+		if (event.defaultPrevented) return;
+		if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+		if (event.key === 'Escape') {
 			event.preventDefault();
 			hideViewer();
+			return;
+		}
+
+		if (isEditableTarget(event.target)) return;
+
+		switch (event.key) {
+			case 'ArrowLeft':
+			case 'ArrowUp':
+			case 'PageUp':
+				event.preventDefault();
+				prevSlide();
+				return;
+			case 'ArrowRight':
+			case 'ArrowDown':
+			case 'PageDown':
+				event.preventDefault();
+				nextSlide();
+				return;
+			case 'Home':
+				event.preventDefault();
+				goToSlide(0);
+				return;
+			case 'End':
+				event.preventDefault();
+				goToSlide(viewer.slideCount - 1);
+				return;
+			case ' ':
+			case 'Spacebar':
+				if (isActionTarget(event.target)) return;
+				event.preventDefault();
+				if (event.shiftKey) prevSlide();
+				else nextSlide();
+				return;
 		}
 	}
 

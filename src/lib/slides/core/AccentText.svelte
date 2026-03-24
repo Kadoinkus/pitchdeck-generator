@@ -43,3 +43,9 @@
 		{seg.value}
 	{/if}
 {/each}
+
+<style>
+	.accent-text {
+		color: var(--deck-accent, #30d89e);
+	}
+</style>

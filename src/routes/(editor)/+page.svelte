@@ -178,3 +178,79 @@
 {#if viewer.isOpen}
 	<SlideViewer />
 {/if}
+
+<style>
+	.page {
+		max-width: 1220px;
+		margin: 0 auto;
+		padding: 32px 18px 48px;
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 320px;
+		gap: 18px;
+		margin-bottom: 18px;
+	}
+
+	.hero-copy h1 {
+		margin: 8px 0 10px;
+		font-family: "Sora", "DM Sans", sans-serif;
+		font-size: clamp(2rem, 3.4vw, 2.8rem);
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+	}
+
+	.eyebrow {
+		margin: 0;
+		color: var(--secondary);
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+
+	.intro {
+		margin: 0;
+		color: var(--muted);
+		line-height: 1.55;
+		max-width: 760px;
+	}
+
+	.hero-card {
+		background: var(--card);
+		border: 1px solid rgba(130, 156, 212, 0.27);
+		border-radius: 18px;
+		box-shadow: var(--shadow);
+		padding: 16px 18px;
+	}
+
+	.hero-card strong {
+		display: block;
+		margin-bottom: 8px;
+		font-family: "Sora", "DM Sans", sans-serif;
+	}
+
+	.hero-card ol {
+		margin: 0;
+		padding-left: 1rem;
+		color: var(--muted);
+		line-height: 1.58;
+	}
+
+	.layout.single {
+		display: block;
+	}
+
+	@media (max-width: 1050px) {
+		.hero {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 760px) {
+		.page {
+			padding: 20px 10px 34px;
+		}
+	}
+</style>
