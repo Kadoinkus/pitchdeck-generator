@@ -77,42 +77,16 @@
 		setSaveState('is-saved');
 
 		try {
+			// Synchronous restores first — no flash of editor form
+			loadAiSettings();
+			const restoredDraft = loadDraft();
 			parseAssetsFromPayload();
 			syncBrandPalette();
-
-			// Load templates
-			const templatesRes = await fetch('/api/templates');
-			const templatesData = await templatesRes.json();
-			if (
-				templatesRes.ok && templatesData.success
-				&& Array.isArray(templatesData.templates)
-			) {
-				setTemplates(templatesData.templates);
-			}
-
-			// Load AI providers
-			const providersRes = await fetch('/api/ai/providers');
-			const providersData = await providersRes.json();
-			if (providersRes.ok && providersData.success && providersData.providers) {
-				setProviders(
-					providersData.providers.textProviders || [],
-					providersData.providers.imageProviders || [],
-				);
-			}
-
-			loadAiSettings();
-
-			const restoredDraft = loadDraft();
-			if (!restoredDraft) {
-				// Run autofill on fresh start
-				await runInitialAutofill();
-			}
-
 			restoreDeckResult();
 			pushHistory();
 			saveDraft(true);
 
-			// Reopen viewer at the same slide if it was open before reload
+			// Reopen viewer immediately if it was open before reload
 			const prev = wasViewerOpen();
 			if (prev.open) {
 				const result = getDeckResult();
@@ -128,6 +102,32 @@
 						shareUrl: result.shareUrl ?? null,
 					}, prev.slide);
 				}
+			}
+
+			// Async fetches — happen in background, don't block UI
+			const [templatesRes, providersRes] = await Promise.all([
+				fetch('/api/templates'),
+				fetch('/api/ai/providers'),
+			]);
+
+			const templatesData = await templatesRes.json();
+			if (
+				templatesRes.ok && templatesData.success
+				&& Array.isArray(templatesData.templates)
+			) {
+				setTemplates(templatesData.templates);
+			}
+
+			const providersData = await providersRes.json();
+			if (providersRes.ok && providersData.success && providersData.providers) {
+				setProviders(
+					providersData.providers.textProviders || [],
+					providersData.providers.imageProviders || [],
+				);
+			}
+
+			if (!restoredDraft) {
+				await runInitialAutofill();
 			}
 		} catch (error) {
 			console.error(error);

@@ -12,7 +12,9 @@
 
 	let { slide = null, theme = null, children }: FrameProps = $props();
 
-	const getSlideWidth = getContext<(() => number | undefined) | undefined>('slideWidth');
+	const getSlideWidth = getContext<(() => number | undefined) | undefined>(
+		'slideWidth',
+	);
 	const slideWidth = $derived(getSlideWidth?.());
 
 	const modeClass = $derived(
@@ -27,16 +29,22 @@
 	const themeStyle = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
 
-	const sizeStyle = $derived(
-		slideWidth
-			? `width:${slideWidth}px;height:${Math.round(slideWidth * 9 / 16)}px;zoom:tan(atan2(100cqi,${slideWidth}px))`
-			: '',
-	);
+	const combinedStyle = $derived.by(() => {
+		const parts = [themeStyle];
+		if (slideWidth) {
+			parts.push(
+				`width:${slideWidth}px;height:${
+					Math.round(slideWidth * 9 / 16)
+				}px;zoom:tan(atan2(100cqi,${slideWidth}px))`,
+			);
+		}
+		return parts.join(';');
+	});
 </script>
 
 <article
 	class="slide-render deck-slide {modeClass} {textMode} {slideType}-slide"
-	style="{themeStyle};{sizeStyle}"
+	style={combinedStyle}
 >
 	<section class="deck-content">
 		{@render children()}
@@ -58,7 +66,11 @@
 		--line: rgba(10, 26, 46, 0.12);
 		--muted: rgba(11, 29, 46, 0.74);
 		--shadow: 0 12px 30px rgba(13, 27, 47, 0.08);
-		--icon-primary: color-mix(in srgb, var(--deck-primary, #004b49) 80%, #6f8298);
+		--icon-primary: color-mix(
+			in srgb,
+			var(--deck-primary, #004b49) 80%,
+			#6f8298
+		);
 		--icon-accent: var(--deck-accent, #30d89e);
 		--icon-muted: color-mix(in srgb, var(--deck-primary, #004b49) 58%, #889ab0);
 

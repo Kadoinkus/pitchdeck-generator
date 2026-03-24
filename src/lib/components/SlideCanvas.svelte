@@ -9,24 +9,30 @@
 		viewer,
 	} from '$lib/stores/viewer.svelte.ts';
 
+	import { onMount } from 'svelte';
+
 	let canvasEl: HTMLDivElement | undefined = $state();
+	let canvasWidth = $state(1);
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
 	const deckData = $derived(viewer.slideData);
 	const current = $derived(viewer.currentSlide);
 
-	function trackTransform(): string {
-		if (!canvasEl) return 'translate3d(0, 0, 0)';
-		const width = canvasEl.clientWidth || 1;
-		return `translate3d(${-current * width}px, 0, 0)`;
-	}
+	const trackTransform = $derived(
+		`translate3d(${-current * canvasWidth}px, 0, 0)`,
+	);
 
-	/** Recompute track position on resize. */
-	function handleResize(): void {
-		// Trigger reactivity — the template re-reads trackTransform()
-		goToSlide(current);
-	}
+	onMount(() => {
+		if (!canvasEl) return;
+		canvasWidth = canvasEl.clientWidth;
+
+		const ro = new ResizeObserver(([entry]) => {
+			if (entry) canvasWidth = entry.contentRect.width;
+		});
+		ro.observe(canvasEl);
+		return () => ro.disconnect();
+	});
 
 	function resolveAiTarget(origin: EventTarget | null): void {
 		if (!(origin instanceof HTMLElement)) return;
@@ -51,8 +57,6 @@
 	}
 </script>
 
-<svelte:window onresize={handleResize} />
-
 <div class="slide-stage">
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
@@ -64,7 +68,7 @@
 	>
 		<div
 			class="slide-track"
-			style:transform={trackTransform()}
+			style:transform={trackTransform}
 		>
 			{#each slides as slide, index (index)}
 				<section
@@ -74,7 +78,7 @@
 					class:is-next={index === current + 1}
 					data-slide-index={index}
 				>
-					<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
+					<SlideRenderer {slide} {theme} {deckData} />
 				</section>
 			{/each}
 		</div>
