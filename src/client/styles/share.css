@@ -197,7 +197,6 @@ body {
 .share-slide-frame > .slide-render {
 	width: var(--slide-w);
 	height: calc(var(--slide-w) * 9 / 16);
-	transform-origin: 0 0;
 }
 
 .share-slide .ai-clickable {

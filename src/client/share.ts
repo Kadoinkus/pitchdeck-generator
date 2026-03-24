@@ -111,12 +111,10 @@ const SLIDE_W = 1020;
 
 function scaleShareSlides(): void {
 	if (!trackEl) return;
-	const frames = trackEl.querySelectorAll<HTMLElement>('.share-slide-frame');
-	for (const frame of frames) {
+	for (const frame of trackEl.querySelectorAll<HTMLElement>('.share-slide-frame')) {
 		const render = frame.querySelector<HTMLElement>('.slide-render');
 		if (!render) continue;
-		const scale = frame.clientWidth / SLIDE_W;
-		render.style.transform = `scale(${scale})`;
+		render.style.zoom = `${frame.clientWidth / SLIDE_W}`;
 	}
 }
 

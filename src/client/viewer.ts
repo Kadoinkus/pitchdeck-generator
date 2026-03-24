@@ -152,14 +152,14 @@ const SLIDE_W = 1020;
 
 function scaleAllSlides(): void {
 	if (!slideCanvas || !slideTrack || !thumbnailsEl) return;
-	const canvasScale = slideCanvas.clientWidth / SLIDE_W;
+	const canvasZoom = slideCanvas.clientWidth / SLIDE_W;
 	for (const render of slideTrack.querySelectorAll<HTMLElement>('.slide-render')) {
-		render.style.transform = `scale(${canvasScale})`;
+		render.style.zoom = `${canvasZoom}`;
 	}
 	for (const inner of thumbnailsEl.querySelectorAll<HTMLElement>('.thumb-inner')) {
 		const render = inner.querySelector<HTMLElement>('.slide-render');
 		if (!render) continue;
-		render.style.transform = `scale(${inner.clientWidth / SLIDE_W})`;
+		render.style.zoom = `${inner.clientWidth / SLIDE_W}`;
 	}
 }
 
