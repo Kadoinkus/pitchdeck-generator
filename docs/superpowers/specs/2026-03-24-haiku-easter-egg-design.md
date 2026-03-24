@@ -86,6 +86,10 @@ Haiku collection should include:
 - Maintain authentic 5-7-5 syllable structure where possible
 - Prioritize quality and genuine poetic feeling over strict form
 
+## Feature Flag
+
+Gated behind `PUBLIC_FEATURE_HAIKU` env var (SvelteKit `$env/static/public`). When falsy/absent, `<Haiku />` renders nothing. All integration points check the flag — no haiku code paths execute when disabled.
+
 ## Out of Scope
 
 - AI generation of haiku's
