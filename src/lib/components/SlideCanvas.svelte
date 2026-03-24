@@ -2,7 +2,6 @@
 	import { swipeable } from '$lib/actions/swipeable.ts';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
-		goToSlide,
 		nextSlide,
 		prevSlide,
 		setChatTarget,
@@ -78,7 +77,7 @@
 					class:is-next={index === current + 1}
 					data-slide-index={index}
 				>
-					<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
+					<SlideRenderer {slide} {theme} {deckData} />
 				</section>
 			{/each}
 		</div>

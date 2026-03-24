@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext, type Snippet } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import type { ThemeInput } from './theme.ts';
 	import { themeVars } from './theme.ts';
 	import type { SlideData } from './utils.ts';
@@ -12,11 +12,6 @@
 
 	let { slide = null, theme = null, children }: FrameProps = $props();
 
-	const getSlideWidth = getContext<(() => number | undefined) | undefined>(
-		'slideWidth',
-	);
-	const slideWidth = $derived(getSlideWidth?.());
-
 	const modeClass = $derived(
 		slide?.backgroundMode === 'dark' ? 'mode-dark' : 'mode-light',
 	);
@@ -26,25 +21,13 @@
 			: 'text-mode-fit',
 	);
 	const slideType = $derived(slide?.type || 'generic');
-	const themeStyle = $derived(themeVars(theme));
+	const style = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
-
-	const combinedStyle = $derived.by(() => {
-		const parts = [themeStyle];
-		if (slideWidth) {
-			parts.push(
-				`width:${slideWidth}px;height:${
-					Math.round(slideWidth * 9 / 16)
-				}px;zoom:tan(atan2(100cqi,${slideWidth}px))`,
-			);
-		}
-		return parts.join(';');
-	});
 </script>
 
 <article
 	class="slide-render deck-slide {modeClass} {textMode} {slideType}-slide"
-	style={combinedStyle}
+	{style}
 >
 	<section class="deck-content">
 		{@render children()}
@@ -54,10 +37,13 @@
 
 <style>
 	.slide-render {
-		width: 100%;
-		height: 100%;
+		--ref-w: 1020px;
+
+		width: var(--ref-w);
+		height: calc(var(--ref-w) * 9 / 16);
 		position: relative;
 		container-type: inline-size;
+		zoom: tan(atan2(100cqi, var(--ref-w)));
 	}
 
 	.deck-slide {

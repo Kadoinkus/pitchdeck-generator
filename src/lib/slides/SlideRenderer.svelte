@@ -2,7 +2,6 @@
 	/**
 	 * Dispatcher: picks the correct layout component based on slide.type.
 	 */
-	import { setContext } from 'svelte';
 	import { RATIO_4_3 } from '../deck/types.ts';
 	import Frame from './core/Frame.svelte';
 	import { resolveImageMode, resolveSlotPolicy } from './core/slot-policy.ts';
@@ -48,17 +47,10 @@
 		slide?: SlideData | null;
 		theme?: ThemeData;
 		deckData?: DeckData;
-		slideWidth?: number;
 	}
 
-	let {
-		slide = null,
-		theme = undefined,
-		deckData = undefined,
-		slideWidth,
-	}: Props = $props();
-
-	setContext('slideWidth', () => slideWidth);
+	let { slide = null, theme = undefined, deckData = undefined }: Props =
+		$props();
 
 	const resolvedTheme = $derived(resolveTheme(theme, deckData));
 

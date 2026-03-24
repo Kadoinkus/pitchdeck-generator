@@ -29,7 +29,7 @@
 		>
 			<span class="thumb-number">{index + 1}</span>
 			<div class="thumb-inner">
-				<SlideRenderer {slide} {theme} {deckData} slideWidth={1020} />
+				<SlideRenderer {slide} {theme} {deckData} />
 			</div>
 		</button>
 	{/each}

@@ -163,12 +163,7 @@
 			{#each slides as slide, index (index)}
 				<section class="share-slide" class:is-active={index === currentSlide}>
 					<div class="share-slide-frame" aria-label={`Slide ${index + 1}`}>
-						<SlideRenderer
-							{slide}
-							{theme}
-							deckData={data.slideData}
-							slideWidth={1020}
-						/>
+						<SlideRenderer {slide} {theme} deckData={data.slideData} />
 					</div>
 				</section>
 			{/each}
