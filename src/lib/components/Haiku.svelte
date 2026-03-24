@@ -18,7 +18,7 @@
 {#if haiku}
 	<figure class="haiku {variant}" lang={haiku.lang}>
 		<blockquote>
-			{#each haiku.lines as line}
+			{#each haiku.lines as line, i (i)}
 				<p>{line}</p>
 			{/each}
 		</blockquote>

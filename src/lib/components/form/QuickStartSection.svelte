@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Haiku from '$lib/components/Haiku.svelte';
 	import {
 		applyDraft,
 		applyImageDraft,
@@ -169,4 +170,7 @@
 		</button>
 		<p class="status" class:error={status.isError}>{status.text}</p>
 	</div>
+	{#if autofilling}
+		<Haiku variant="inline" />
+	{/if}
 </section>
