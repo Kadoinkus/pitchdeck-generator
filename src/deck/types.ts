@@ -201,7 +201,7 @@ export interface Content {
 	closingText: string;
 	teamCards: Pair[];
 	characterAssets: CharacterAsset[];
-	imagePrompts: string[];
+	imagePrompts: Partial<Record<string, string>>;
 }
 
 export interface AvailableSlide extends SlideDefinition {

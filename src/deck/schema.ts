@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { normalizeList, safeText } from '../utils.ts';
 import {
 	asBoolean,
+	isRecord,
 	parseCharacterAssets,
 	parseDeliverables,
 	parseExcludedSlides,
@@ -9,6 +10,7 @@ import {
 	parseTone,
 	parseTriples,
 } from './parsers.ts';
+import { SLIDE_SPECS } from './slide-registry.ts';
 
 /* ------------------------------------------------------------------ */
 /*  Reusable field schemas                                             */
@@ -224,7 +226,25 @@ const RawDeckSchema = z.looseObject({
 	opportunityPoints: listField(),
 	buddyDescription: textField(''),
 	closingText: textField(''),
-	imagePrompts: listField(),
+	imagePrompts: z.unknown().optional().transform((v): Partial<Record<string, string>> => {
+		if (isRecord(v)) {
+			const result: Record<string, string> = {};
+			for (const [key, val] of Object.entries(v)) {
+				const text = safeText(val);
+				if (text) result[key] = text;
+			}
+			return result;
+		}
+		const list = normalizeList(v);
+		if (!list.length) return {};
+		const result: Record<string, string> = {};
+		for (let i = 0; i < SLIDE_SPECS.length && i < list.length; i++) {
+			const spec = SLIDE_SPECS[i];
+			const text = list[i];
+			if (spec && text) result[spec.id] = text;
+		}
+		return result;
+	}),
 });
 
 export type ParsedDeckInput = z.output<typeof RawDeckSchema>;

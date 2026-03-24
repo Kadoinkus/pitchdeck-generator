@@ -3,6 +3,7 @@ import { resolveImageModeForSlide, resolveSlotPolicy } from '../slot-policy.ts';
 import { safeText } from '../utils.ts';
 import { resolveLayoutPreset } from './layout.ts';
 import { parseDeckInput } from './schema.ts';
+import { buildSlidesFromSpecs, getDefaultImagePrompt, SLIDE_SPECS } from './slide-registry.ts';
 import type {
 	AppTheme,
 	AvailableSlide,
@@ -12,8 +13,6 @@ import type {
 	DeckTheme,
 	FieldDefinition,
 	Project,
-	SlideData,
-	SlideType,
 	SlideWithLayout,
 	TemplateDefinition,
 } from './types.ts';
@@ -30,143 +29,15 @@ const TEMPLATE_DEFINITIONS: Record<string, TemplateDefinition> = {
 		label: 'Notso Premium Proposal',
 		description: '15-slide premium pitch deck for animated chatbot proposals.',
 		version: '2.0.0',
-		slides: [
-			{
-				id: 'cover',
-				label: 'Cover',
-				type: 'cover',
-				field: 'projectTitle',
-				required: true,
-				optional: false,
-				defaultIncluded: true,
-			},
-			{
-				id: 'problem',
-				label: 'The Problem',
-				type: 'problem',
-				field: 'problemPoints',
-				required: true,
-				optional: false,
-				defaultIncluded: true,
-			},
-			{
-				id: 'opportunity',
-				label: 'The Opportunity',
-				type: 'opportunity',
-				field: 'opportunityPoints',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'solution',
-				label: 'The Solution',
-				type: 'solution',
-				field: 'solutionPillars',
-				required: true,
-				optional: false,
-				defaultIncluded: true,
-			},
-			{
-				id: 'what-notso-does',
-				label: 'What Notso AI Does',
-				type: 'what-notso-does',
-				field: 'whatNotsoCards',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'meet-buddy',
-				label: 'Meet The Buddy',
-				type: 'meet-buddy',
-				field: 'buddyDescription',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'experience-concept',
-				label: 'Experience Concept',
-				type: 'experience-concept',
-				field: 'experienceConcept',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'chat-flow',
-				label: 'Chat Flow',
-				type: 'chat-flow',
-				field: 'chatFlow',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'example-interaction',
-				label: 'Example Interaction',
-				type: 'example-interaction',
-				field: 'interactionExample',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'business-impact',
-				label: 'Business Impact',
-				type: 'business-impact',
-				field: 'businessImpact',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'data-analytics',
-				label: 'Data & Analytics',
-				type: 'data-analytics',
-				field: 'analyticsBullets',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'what-you-get',
-				label: 'What You Get',
-				type: 'what-you-get',
-				field: 'deliverables',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'pricing',
-				label: 'Pricing',
-				type: 'pricing',
-				field: 'pricing',
-				required: true,
-				optional: false,
-				defaultIncluded: true,
-			},
-			{
-				id: 'timeline',
-				label: 'Timeline',
-				type: 'timeline',
-				field: 'timeline',
-				required: false,
-				optional: true,
-				defaultIncluded: true,
-			},
-			{
-				id: 'closing',
-				label: 'Closing',
-				type: 'closing',
-				field: 'closingText',
-				required: true,
-				optional: false,
-				defaultIncluded: true,
-			},
-		],
+		slides: SLIDE_SPECS.map(({ id, label, type, field, required, optional, defaultIncluded }) => ({
+			id,
+			label,
+			type,
+			field,
+			required,
+			optional,
+			defaultIncluded,
+		})),
 	},
 };
 
@@ -242,59 +113,6 @@ function resolveImageAssetForSlide(
 	}
 
 	return assets.find((asset) => asset.placement === 'all') ?? null;
-}
-
-function withSlide(
-	id: string,
-	type: SlideType,
-	title: string,
-	subtitle: string,
-	purpose: string,
-	sourceField: string,
-	extra: Record<string, unknown> = {},
-): SlideData {
-	return { id, type, title, subtitle, purpose, sourceField, ...extra };
-}
-
-function defaultImagePrompt(
-	type: SlideType,
-	project: Project,
-	mascotName: string,
-): string {
-	switch (type) {
-		case 'cover':
-			return `Hero composition with ${mascotName} overlapping device UI for ${project.clientName}.`;
-		case 'problem':
-			return `Clean problem-state visual showing friction in support journey for ${project.clientName}.`;
-		case 'opportunity':
-			return `Optimistic before/after visual of user support improvement with ${mascotName}.`;
-		case 'solution':
-			return 'Three-block solution visual: character, AI intelligence, interaction layer.';
-		case 'what-notso-does':
-			return '2x2 capability card visual with product-style iconography and mascot accents.';
-		case 'meet-buddy':
-			return `${mascotName} full-body hero render with expressive personality variations.`;
-		case 'experience-concept':
-			return `Concept diagram with ${mascotName} moving between key product moments.`;
-		case 'chat-flow':
-			return 'Structured chat funnel visual with simple step transitions.';
-		case 'example-interaction':
-			return 'Large phone/tablet mockup with realistic chat bubbles and mascot overlap.';
-		case 'business-impact':
-			return 'Bold dark-slide impact icons for conversion, support, engagement, and brand lift.';
-		case 'data-analytics':
-			return 'Dashboard mockup with clean charts and mascot helper element.';
-		case 'what-you-get':
-			return 'Four-column product deliverable visual with icons and concise labels.';
-		case 'pricing':
-			return 'Premium SaaS three-tier pricing card visual with highlighted recommended tier.';
-		case 'timeline':
-			return 'Horizontal three-phase timeline visual with milestones.';
-		case 'closing':
-			return `${mascotName} closing hero visual with confident CTA atmosphere.`;
-		default:
-			return `Premium visual for ${project.clientName} proposal slide.`;
-	}
 }
 
 function resolveTemplateId(templateId: string): string {
@@ -410,25 +228,7 @@ export function buildDeckModel(rawData: unknown = {}): DeckModel {
 	const closingText = d.closingText
 		|| `Let's build ${project.mascotName} together and launch a premium conversational experience.`;
 
-	const imagePrompts = d.imagePrompts.length
-		? d.imagePrompts.slice(0, 30)
-		: [
-			`Cover hero visual with ${project.mascotName} and tablet mockup for ${project.clientName}.`,
-			'Problem-state visual with fragmented customer support journey.',
-			'Opportunity visual showing before/after support transformation.',
-			'Solution visual with 3 modular pillars: character, AI, interaction.',
-			'Capability grid visual with icon-based cards and mascot accents.',
-			`${project.mascotName} full character hero render with expressions.`,
-			'Experience concept visual flow with mascot between touchpoints.',
-			'Chat funnel visual with step-by-step conversation blocks.',
-			'Large interaction mockup with realistic chat bubbles and mascot.',
-			'Dark impact slide with bold conversion/support/engagement icons.',
-			'Analytics dashboard visual with clean charts and KPIs.',
-			'Four-column deliverables visual with productized sections.',
-			'Premium SaaS pricing comparison cards with highlighted tier.',
-			'Horizontal 3-phase timeline with milestones.',
-			`Closing hero visual for ${project.mascotName} with confident CTA.`,
-		];
+	const imagePrompts = d.imagePrompts;
 
 	const content: Content = {
 		problemPoints,
@@ -454,190 +254,9 @@ export function buildDeckModel(rawData: unknown = {}): DeckModel {
 		imagePrompts,
 	};
 
-	const allSlides: SlideData[] = [
-		withSlide(
-			'cover',
-			'cover',
-			project.projectTitle,
-			project.coverOneLiner,
-			'Create immediate emotional impact and context.',
-			'projectTitle',
-			{
-				oneLiner: project.coverOneLiner,
-				proposalDate: project.proposalDate,
-				mascotName: project.mascotName,
-				clientName: project.clientName,
-			},
-		),
-		withSlide(
-			'problem',
-			'problem',
-			'The Problem',
-			'What is blocking growth today.',
-			'Create tension and urgency.',
-			'problemPoints',
-			{
-				points: content.problemPoints,
-			},
-		),
-		withSlide(
-			'opportunity',
-			'opportunity',
-			'The Opportunity',
-			'What becomes possible with the right assistant.',
-			'Shift from friction to possibility.',
-			'opportunityPoints',
-			{
-				points: content.opportunityPoints,
-			},
-		),
-		withSlide(
-			'solution',
-			'solution',
-			'The Solution',
-			'Character + AI + interaction model.',
-			'Provide simple clarity of approach.',
-			'solutionPillars',
-			{
-				pillars: content.solutionPillars,
-			},
-		),
-		withSlide(
-			'what-notso-does',
-			'what-notso-does',
-			'What Notso AI Does',
-			'A productized approach to animated AI assistants.',
-			'Build credibility with clear capability blocks.',
-			'whatNotsoCards',
-			{
-				intro: content.whatNotsoIntro,
-				cards: content.whatNotsoCards,
-			},
-		),
-		withSlide(
-			'meet-buddy',
-			'meet-buddy',
-			`Meet ${project.mascotName}`,
-			'Personality and tone profile.',
-			'Create emotional connection with the mascot.',
-			'buddyDescription',
-			{
-				mascotName: project.mascotName,
-				description: content.buddyDescription,
-				personality: content.buddyPersonality,
-				toneSliders: content.toneSliders,
-			},
-		),
-		withSlide(
-			'experience-concept',
-			'experience-concept',
-			'Experience Concept',
-			'How the assistant moves across product moments.',
-			'Show interaction concept and visual journey.',
-			'experienceConcept',
-			{
-				points: content.experienceConcept,
-			},
-		),
-		withSlide(
-			'chat-flow',
-			'chat-flow',
-			'Chat Flow',
-			'The logic behind each conversation.',
-			'Explain the operational conversation steps.',
-			'chatFlow',
-			{
-				steps: content.chatFlow,
-			},
-		),
-		withSlide(
-			'example-interaction',
-			'example-interaction',
-			'Example Interaction',
-			'How it feels in a real user moment.',
-			'Make the concept tangible with a realistic interaction.',
-			'interactionExample',
-			{
-				messages: content.interactionExample,
-				mascotName: project.mascotName,
-			},
-		),
-		withSlide(
-			'business-impact',
-			'business-impact',
-			'Business Impact',
-			'The commercial outcome of this assistant.',
-			'Sell business value in one glance.',
-			'businessImpact',
-			{
-				impacts: content.businessImpact,
-			},
-		),
-		withSlide(
-			'data-analytics',
-			'data-analytics',
-			'Data & Analytics',
-			'Insights that improve performance over time.',
-			'Show the intelligence and measurable layer.',
-			'analyticsBullets',
-			{
-				description: content.analyticsDescription,
-				bullets: content.analyticsBullets,
-			},
-		),
-		withSlide(
-			'what-you-get',
-			'what-you-get',
-			'What You Get',
-			'Deliverables packaged for deployment and growth.',
-			'Clarify exactly what is included.',
-			'deliverables',
-			{
-				sections: content.deliverables,
-			},
-		),
-		withSlide(
-			'pricing',
-			'pricing',
-			'Pricing',
-			'Flexible solutions based on ambition and scope.',
-			'Make decision-making easy.',
-			'pricing',
-			{
-				packages: content.pricing,
-			},
-		),
-		withSlide(
-			'timeline',
-			'timeline',
-			'Timeline',
-			'A clear 3-month execution path.',
-			'Reduce risk with transparent phasing.',
-			'timeline',
-			{
-				phases: content.timeline,
-			},
-		),
-		withSlide(
-			'closing',
-			'closing',
-			"Let's Build This Together",
-			'From concept to launch-ready experience.',
-			'Drive commitment and next action.',
-			'closingText',
-			{
-				headline: `Let's build ${project.mascotName}`,
-				text: content.closingText,
-				team: content.teamCards,
-				contactName: project.contactName,
-				contactEmail: project.contactEmail,
-				contactPhone: project.contactPhone,
-				mascotName: project.mascotName,
-			},
-		),
-	];
+	const allSlides = buildSlidesFromSpecs(project, content);
 
-	const slidesWithLayout: SlideWithLayout[] = allSlides.map((slide, index) => {
+	const slidesWithLayout: SlideWithLayout[] = allSlides.map((slide) => {
 		const lockedLayout = layoutPreset.slideLayoutByType[slide.type];
 		const imageRatio = layoutPreset.imageRatioByType[slide.type];
 		const backgroundMode = layoutPreset.backgroundModeByType[slide.type];
@@ -652,8 +271,8 @@ export function buildDeckModel(rawData: unknown = {}): DeckModel {
 			layoutKey,
 			imageRatio,
 			backgroundMode,
-			imagePrompt: content.imagePrompts[index]
-				|| defaultImagePrompt(slide.type, project, project.mascotName),
+			imagePrompt: content.imagePrompts[slide.id]
+				|| getDefaultImagePrompt(slide.id, project),
 			imageAsset: resolveImageAssetForSlide(slide.id, content.characterAssets),
 			slotPolicy,
 			imageMode,
