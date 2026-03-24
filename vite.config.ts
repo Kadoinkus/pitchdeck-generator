@@ -1,28 +1,35 @@
-import { nitro } from 'nitro/vite';
-import { defineConfig } from 'vite';
-import svgToIco from 'vite-svg-to-ico';
-import { viteOwnsNonApi } from './vite-owns-non-api';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { playwright } from '@vitest/browser-playwright';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	root: 'src/client',
-	appType: 'mpa',
-	publicDir: false,
-	plugins: [
-		svgToIco({ input: `${import.meta.dirname}/src/client/favicon.svg`, emit: { source: true } }),
-		nitro({ rootDir: import.meta.dirname }),
-		viteOwnsNonApi(),
-	],
-	build: {
-		outDir: `${import.meta.dirname}/dist/client`,
-		emptyOutDir: true,
-		rollupOptions: {
-			input: {
-				main: `${import.meta.dirname}/src/client/index.html`,
-				share: `${import.meta.dirname}/src/client/share.html`,
+	plugins: [sveltekit()],
+	test: {
+		expect: { requireAssertions: true },
+		projects: [
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'client',
+					browser: {
+						enabled: true,
+						provider: playwright(),
+						instances: [{ browser: 'chromium', headless: true }],
+					},
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					exclude: ['src/lib/server/**'],
+				},
 			},
-		},
-	},
-	resolve: {
-		tsconfigPaths: true,
+
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'server',
+					environment: 'node',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+				},
+			},
+		],
 	},
 });

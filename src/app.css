@@ -1,0 +1,4 @@
+/* base.css: global reset, vars, body, form styles shared across components.
+ * slides.css: {@html}-rendered slide content — must stay global. */
+@import "./styles/base.css";
+@import "./styles/slides.css";

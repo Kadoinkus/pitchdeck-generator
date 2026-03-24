@@ -225,3 +225,6 @@ Temporary Items
 *.icloud
 
 # End of https://gitignore.kjanat.com/api/node,linux,windows,macos
+build/
+# Playwright
+test-results

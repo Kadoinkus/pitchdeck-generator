@@ -3,9 +3,7 @@
 		"opensrc": {
 			"type": "stdio",
 			"command": "bunx",
-			"args": [
-				"opensrc-mcp"
-			],
+			"args": ["opensrc-mcp"],
 			"env": {}
 		},
 		"gh_grep": {
@@ -15,6 +13,10 @@
 		"context7": {
 			"type": "http",
 			"url": "https://mcp.context7.com/mcp"
+		},
+		"svelte": {
+			"type": "http",
+			"url": "https://mcp.svelte.dev/mcp"
 		}
 	}
 }

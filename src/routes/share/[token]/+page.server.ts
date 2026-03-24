@@ -1,0 +1,39 @@
+import { getOutputDir } from '$lib/server/storage.ts';
+import { readShare } from '$lib/share-store.ts';
+import type { DeckData, SlideData, ThemeData } from '$lib/slides/types.ts';
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+/** Shape of the deck blob persisted inside a share record. */
+interface ShareDeckPayload extends DeckData {
+	slides: SlideData[];
+	theme: ThemeData;
+}
+
+function isShareDeckPayload(value: unknown): value is ShareDeckPayload {
+	if (typeof value !== 'object' || value === null) return false;
+	return (
+		'slides' in value
+		&& 'theme' in value
+		&& Array.isArray(value.slides)
+		&& typeof value.theme === 'object'
+		&& value.theme !== null
+	);
+}
+
+export const load: PageServerLoad = async ({ params }) => {
+	const { token } = params;
+	if (!token) error(404, 'Token required');
+
+	const record = await readShare(getOutputDir(), token);
+	if (!record) error(404, 'Share link not found');
+
+	const raw: unknown = record.slideData;
+	if (!isShareDeckPayload(raw)) error(404, 'Deck data missing');
+
+	return {
+		token,
+		slideData: raw,
+		downloadUrl: `/api/download/${token}`,
+	};
+};
