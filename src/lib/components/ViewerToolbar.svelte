@@ -55,7 +55,9 @@
 			?? extractToken(opts.pdfUrl),
 	);
 
-	const hasDownload = $derived(Boolean(opts.downloadUrl) && Boolean(shareToken));
+	const hasDownload = $derived(
+		Boolean(opts.downloadUrl) && Boolean(shareToken),
+	);
 	const hasPdf = $derived(Boolean(opts.pdfUrl) && Boolean(shareToken));
 	const hasShare = $derived(Boolean(opts.shareUrl) && Boolean(shareToken));
 	const hasAnyShareAction = $derived(hasDownload || hasPdf || hasShare);
@@ -268,7 +270,8 @@
 						onclick={closeShare}
 					>Download PPTX</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true">Download PPTX</span>
+					<span class="viewer-share-item disabled" aria-disabled="true"
+					>Download PPTX</span>
 				{/if}
 
 				{#if hasPdf && shareToken}
@@ -278,7 +281,8 @@
 						onclick={closeShare}
 					>Download PDF</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true">Download PDF</span>
+					<span class="viewer-share-item disabled" aria-disabled="true"
+					>Download PDF</span>
 				{/if}
 
 				{#if hasShare && shareToken}
@@ -290,7 +294,8 @@
 						onclick={closeShare}
 					>Open share link</a>
 				{:else}
-					<span class="viewer-share-item disabled" aria-disabled="true">Open share link</span>
+					<span class="viewer-share-item disabled" aria-disabled="true"
+					>Open share link</span>
 				{/if}
 				<button
 					class="viewer-share-item"
