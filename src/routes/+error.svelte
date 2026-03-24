@@ -7,6 +7,7 @@
 	<h1>{page.status}</h1>
 	<p>{page.error?.message ?? 'Something went wrong.'}</p>
 	<Haiku variant="card" />
+	<!-- eslint-disable svelte/no-navigation-without-resolve -->
 	<a href="/">Go home</a>
 </div>
 
