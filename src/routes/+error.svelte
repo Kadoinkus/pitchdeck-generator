@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import Haiku from '$lib/components/Haiku.svelte';
 </script>
@@ -7,8 +8,7 @@
 	<h1>{page.status}</h1>
 	<p>{page.error?.message ?? 'Something went wrong.'}</p>
 	<Haiku variant="card" />
-	<!-- eslint-disable svelte/no-navigation-without-resolve -->
-	<a href="/">Go home</a>
+	<a href={resolve('/')}>Go home</a>
 </div>
 
 <style>

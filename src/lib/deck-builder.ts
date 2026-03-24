@@ -20,6 +20,12 @@ interface ImagePlaceholderOptions {
 	h?: number;
 }
 
+interface PptxImageSource {
+	altText: string;
+	data?: string;
+	path?: string;
+}
+
 interface BulletOptions {
 	x?: number;
 	y?: number;
@@ -44,6 +50,35 @@ function fontByDensity(size: number, density: unknown, min = 7): number {
 
 function bg(slide: PptxSlide, color: unknown): void {
 	slide.background = { color: toPptColor(color, 'F2F4F6') };
+}
+
+function toPptImageSource(asset: DeckSlide['imageAsset'] | null | undefined): PptxImageSource | null {
+	if (!asset || typeof asset.dataUrl !== 'string') return null;
+
+	const rawSource = asset.dataUrl.trim();
+	if (rawSource === '') return null;
+
+	const altText = typeof asset.name === 'string' && asset.name.trim() !== ''
+		? asset.name.trim()
+		: 'Slide visual';
+
+	if (rawSource.startsWith('data:image/')) {
+		return {
+			altText,
+			data: rawSource.startsWith('data:')
+				? rawSource.slice('data:'.length)
+				: rawSource,
+		};
+	}
+
+	if (/^https?:\/\//i.test(rawSource) || rawSource.startsWith('/')) {
+		return {
+			altText,
+			path: rawSource,
+		};
+	}
+
+	return null;
 }
 
 function addFooter(
@@ -133,9 +168,53 @@ function imagePlaceholder(
 
 	const hideImages = Boolean(slideInfo?.hideImages);
 	if (hideImages && optional) return;
-	const activeMode = String(slideInfo?.imageMode || mode || 'cover').toLowerCase() === 'contain'
+	const activeMode: 'contain' | 'cover' = String(slideInfo?.imageMode || mode || 'cover').toLowerCase() === 'contain'
 		? 'contain'
 		: 'cover';
+	const imageSource = toPptImageSource(slideInfo?.imageAsset);
+
+	if (imageSource) {
+		slide.addShape('roundRect', {
+			x,
+			y,
+			w,
+			h,
+			rectRadius: 0.08,
+			fill: { color: 'F7FAFD' },
+			line: { color: 'C8D7EA', pt: 1 },
+		});
+
+		const imageLayout = {
+			x,
+			y,
+			w,
+			h,
+			altText: imageSource.altText,
+			sizing: {
+				type: activeMode,
+				x,
+				y,
+				w,
+				h,
+			},
+		};
+
+		if (typeof imageSource.data === 'string') {
+			slide.addImage({
+				data: imageSource.data,
+				...imageLayout,
+			});
+			return;
+		}
+
+		if (typeof imageSource.path === 'string') {
+			slide.addImage({
+				path: imageSource.path,
+				...imageLayout,
+			});
+			return;
+		}
+	}
 
 	slide.addShape('roundRect', {
 		x,

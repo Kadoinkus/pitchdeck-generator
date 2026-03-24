@@ -10,6 +10,11 @@
 	--secondary: #7d2ae8;
 	--danger: #c62a55;
 	--shadow: 0 24px 48px rgba(11, 31, 77, 0.09);
+	--brand-gradient:
+		radial-gradient(ellipse 60% 120% at 10% 70%, #00c4cc 0%, transparent 60%),
+		radial-gradient(ellipse 50% 100% at 85% 30%, #6420ff 0%, transparent 50%),
+		radial-gradient(ellipse 40% 90% at 45% 90%, #6420ff 0%, transparent 50%),
+		linear-gradient(135deg, #7d2ae7, #6420ff);
 }
 
 * {

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
 	import {
 		hideViewer,
@@ -136,12 +137,8 @@
 	}
 
 	function closeViewer(): void {
-		if (page.state.viewer?.open) {
-			history.back();
-			return;
-		}
-
 		hideViewer();
+		goto(resolve('/'));
 	}
 </script>
 
@@ -152,13 +149,13 @@
 		<button
 			class="toolbar-btn viewer-home-btn"
 			type="button"
+			aria-label="Home"
 			onclick={closeViewer}
 		>
 			<svg
-				class="home-icon"
 				aria-hidden="true"
-				width="16"
-				height="16"
+				width="18"
+				height="18"
 				viewBox="0 0 16 16"
 				fill="none"
 			>
@@ -177,11 +174,13 @@
 					stroke-linejoin="round"
 				/>
 			</svg>
-			<span class="home-label">Editor</span>
 		</button>
 
 		<div class="viewer-project">
-			<div class="viewer-project-row">
+			<div
+				class="viewer-project-row"
+				data-value={titleEditing ? editableProjectName : projectName}
+			>
 				<input
 					class="viewer-project-name-input"
 					type="text"
@@ -405,25 +404,35 @@
 	}
 
 	.viewer-project-row {
-		display: flex;
+		display: inline-grid;
 		align-items: center;
-		gap: 8px;
-		flex-wrap: wrap;
+	}
+
+	.viewer-project-row::after {
+		content: attr(data-value) "\00a0";
+		visibility: hidden;
+		white-space: pre;
+		grid-area: 1 / 1;
+		font-family: "Sora", "DM Sans", sans-serif;
+		font-size: 0.88rem;
+		font-weight: 700;
+		line-height: 1.2;
+		padding: 1px 4px;
 	}
 
 	.viewer-project-name-input {
+		grid-area: 1 / 1;
 		font-family: "Sora", "DM Sans", sans-serif;
 		font-size: 0.88rem;
 		line-height: 1.2;
 		color: #ffffff;
 		background: transparent;
 		border: none;
-		min-width: 0;
+		min-width: 4ch;
 		width: 100%;
 		outline: none;
 		border-radius: 4px;
 		padding: 1px 4px;
-		margin: -1px -4px;
 		font-weight: 700;
 	}
 
@@ -473,21 +482,10 @@
 	}
 
 	.viewer-home-btn {
-		min-width: 72px;
-		height: 32px;
-		border-radius: 999px;
-		padding: 0 12px;
-		font-size: 12px;
-		line-height: 1;
-		gap: 4px;
-	}
-
-	.home-icon {
-		flex-shrink: 0;
-	}
-
-	.home-label {
-		line-height: 1;
+		width: 34px;
+		height: 34px;
+		border-radius: 10px;
+		padding: 0;
 	}
 
 	.history-btn {
@@ -708,9 +706,9 @@
 		}
 
 		.viewer-home-btn {
-			min-width: 44px;
+			width: 44px;
 			height: 44px;
-			padding: 0 10px;
+			padding: 0;
 		}
 
 		.viewer-toolbar-middle {
@@ -766,21 +764,6 @@
 
 	/* ── Portrait phone (narrow + tall, ≤480px wide) ─ */
 	@media (max-width: 480px) and (orientation: portrait) {
-		.home-label {
-			display: none;
-		}
-
-		.viewer-home-btn {
-			padding: 0;
-			min-width: 44px;
-			justify-content: center;
-		}
-
-		.home-icon {
-			width: 20px;
-			height: 20px;
-		}
-
 		.viewer-toolbar-middle {
 			gap: 2px;
 		}
@@ -810,10 +793,9 @@
 		}
 
 		.viewer-home-btn {
+			width: 36px;
 			height: 36px;
-			min-width: auto;
-			padding: 0 10px;
-			font-size: 12px;
+			padding: 0;
 		}
 
 		/* landscape has width — show project name truncated */
@@ -859,20 +841,10 @@
 			gap: 2px;
 		}
 
-		.home-label {
-			display: none;
-		}
-
 		.viewer-home-btn {
-			min-width: 40px;
+			width: 40px;
 			height: 40px;
 			padding: 0;
-			justify-content: center;
-		}
-
-		.home-icon {
-			width: 18px;
-			height: 18px;
 		}
 
 		.toolbar-btn {

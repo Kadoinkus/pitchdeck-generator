@@ -55,3 +55,23 @@ export async function readShare(
 		return null;
 	}
 }
+
+export async function updateShare(
+	outputDir: string,
+	token: string,
+	patch: SharePayload,
+): Promise<boolean> {
+	const current = await readShare(outputDir, token);
+	if (!current) return false;
+
+	const filePath = sharePath(outputDir, token);
+	const updated: ShareRecord = {
+		...current,
+		...patch,
+		token: current.token,
+		createdAt: current.createdAt,
+	};
+
+	await fs.writeFile(filePath, JSON.stringify(updated, null, 2), 'utf8');
+	return true;
+}

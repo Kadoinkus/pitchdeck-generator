@@ -78,6 +78,14 @@ export function updateViewerData(data: ViewerDeckData): void {
 	_currentSlide = Math.max(0, Math.min(_currentSlide, data.slides.length - 1));
 }
 
+export function updateViewerProject(patch: Partial<NonNullable<ViewerDeckData['project']>>): void {
+	if (!_slideData) return;
+	_slideData = {
+		..._slideData,
+		project: { ..._slideData.project, ...patch },
+	};
+}
+
 export function hideViewer(): void {
 	_isOpen = false;
 	_chatTarget = null;

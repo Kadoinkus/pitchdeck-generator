@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import ChatPanel from '$lib/components/ChatPanel.svelte';
 	import SlideCanvas from '$lib/components/SlideCanvas.svelte';
 	import ThumbnailStrip from '$lib/components/ThumbnailStrip.svelte';
@@ -120,12 +121,8 @@
 	}
 
 	function closeViewer(): void {
-		if (page.state.viewer?.open) {
-			history.back();
-			return;
-		}
-
 		hideViewer();
+		goto(resolve('/'));
 	}
 </script>
 
