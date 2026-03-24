@@ -185,6 +185,7 @@ body {
 .share-slide-frame {
 	--slide-w: 1020px;
 
+	container-type: inline-size;
 	width: min(94vw, calc((100vh - var(--topbar-h) - 54px) * 1.78));
 	aspect-ratio: 16 / 9;
 	border-radius: 16px;
@@ -197,6 +198,7 @@ body {
 .share-slide-frame > .slide-render {
 	width: var(--slide-w);
 	height: calc(var(--slide-w) * 9 / 16);
+	zoom: tan(atan2(100cqi, var(--slide-w)));
 }
 
 .share-slide .ai-clickable {

@@ -330,6 +330,7 @@
 }
 
 .thumb-inner {
+	container-type: inline-size;
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
 	position: relative;
@@ -339,6 +340,7 @@
 .thumb-inner > .slide-render {
 	width: var(--slide-w);
 	height: var(--slide-h);
+	zoom: tan(atan2(100cqi, var(--slide-w)));
 }
 
 .slide-stage {
@@ -382,6 +384,7 @@
 }
 
 .slide-page {
+	container-type: inline-size;
 	flex: 0 0 100%;
 	width: 100%;
 	height: 100%;
@@ -397,6 +400,7 @@
 .slide-page > .slide-render {
 	width: var(--slide-w);
 	height: var(--slide-h);
+	zoom: tan(atan2(100cqi, var(--slide-w)));
 }
 
 .slide-page.is-active {

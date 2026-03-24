@@ -149,21 +149,6 @@ function updateSlidePageStates(): void {
 	});
 }
 
-const SLIDE_W = 1020;
-
-function scaleAllSlides(): void {
-	if (!slideCanvas || !slideTrack || !thumbnailsEl) return;
-	const canvasZoom = slideCanvas.clientWidth / SLIDE_W;
-	for (const render of slideTrack.querySelectorAll<HTMLElement>('.slide-render')) {
-		render.style.zoom = `${canvasZoom}`;
-	}
-	for (const inner of thumbnailsEl.querySelectorAll<HTMLElement>('.thumb-inner')) {
-		const render = inner.querySelector<HTMLElement>('.slide-render');
-		if (!render) continue;
-		render.style.zoom = `${inner.clientWidth / SLIDE_W}`;
-	}
-}
-
 function renderSlides(): void {
 	const data = slideData;
 	if (!slideTrack || !data?.slides?.length) return;
@@ -210,7 +195,6 @@ export function showViewer(data: DeckData, options: ToolbarOptions = {}): void {
 	page?.classList.add('hidden');
 	viewer?.classList.remove('hidden');
 	sessionStorage.setItem(VIEWER_STATE_KEY, '1');
-	requestAnimationFrame(scaleAllSlides);
 }
 
 export function updateViewerData(data: DeckData): void {
@@ -221,7 +205,6 @@ export function updateViewerData(data: DeckData): void {
 	renderSlides();
 	renderThumbnails();
 	goToSlide(currentSlide, { animate: false });
-	scaleAllSlides();
 }
 
 export function hideViewer(): void {
@@ -344,7 +327,6 @@ slideCanvas?.addEventListener('click', (event: MouseEvent) => {
 window.addEventListener('resize', () => {
 	if (viewer?.classList.contains('hidden')) return;
 	updateTrackPosition({ animate: false });
-	scaleAllSlides();
 });
 
 document
@@ -415,7 +397,6 @@ thumbResize?.addEventListener('pointerdown', (event: PointerEvent) => {
 	const onMove = (e: PointerEvent) => {
 		const x = Math.max(100, Math.min(e.clientX, 400));
 		viewer?.style.setProperty('--thumb-w', `${x}px`);
-		scaleAllSlides();
 	};
 
 	const onUp = () => {
