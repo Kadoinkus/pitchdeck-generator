@@ -53,7 +53,7 @@ Integrate into existing components at these locations:
 
 ### 1. Loading states (AI generation)
 
-In `src/lib/components/form/OutputSection.svelte` — show a haiku below the generation loading spinner while waiting for AI to complete.
+In `src/lib/components/form/QuickStartSection.svelte` — show a haiku below the status text while AI autofill is running (`autofilling` state).
 
 ### 2. Empty slide preview
 
