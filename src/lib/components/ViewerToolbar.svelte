@@ -14,6 +14,7 @@
 		saveState?: 'saved' | 'dirty' | 'saving' | 'error';
 		onUndo?: () => void;
 		onRedo?: () => void;
+		onRename?: (name: string) => void;
 		canUndo?: boolean;
 		canRedo?: boolean;
 	}
@@ -24,9 +25,38 @@
 		saveState = 'saved',
 		onUndo,
 		onRedo,
+		onRename,
 		canUndo = false,
 		canRedo = false,
 	}: Props = $props();
+
+	let titleEl: HTMLElement | undefined = $state();
+
+	function commitRename(): void {
+		if (!titleEl || !onRename) return;
+		const text = (titleEl.textContent ?? '').trim();
+		if (text && text !== projectName) onRename(text);
+		else if (titleEl.textContent !== projectName) {
+			titleEl.textContent = projectName;
+		}
+	}
+
+	function handleTitleKeydown(event: KeyboardEvent): void {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			titleEl?.blur();
+		}
+		if (event.key === 'Escape') {
+			if (titleEl) titleEl.textContent = projectName;
+			titleEl?.blur();
+		}
+	}
+
+	$effect(() => {
+		if (titleEl && document.activeElement !== titleEl) {
+			titleEl.textContent = projectName;
+		}
+	});
 
 	const counter = $derived(
 		viewer.slideCount > 0
@@ -140,7 +170,14 @@
 
 		<div class="viewer-project">
 			<div class="viewer-project-row">
-				<strong>{projectName}</strong>
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<strong
+					bind:this={titleEl}
+					contenteditable="true"
+					spellcheck="false"
+					onblur={commitRename}
+					onkeydown={handleTitleKeydown}
+				>{projectName}</strong>
 			</div>
 			{#if projectContext}
 				<p class="viewer-project-context">{projectContext}</p>
@@ -364,6 +401,20 @@
 		font-size: 0.88rem;
 		line-height: 1.2;
 		color: #ffffff;
+		cursor: text;
+		outline: none;
+		border-radius: 4px;
+		padding: 1px 4px;
+		margin: -1px -4px;
+	}
+
+	.viewer-project-row strong:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.viewer-project-row strong:focus {
+		background: rgba(255, 255, 255, 0.18);
+		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
 	}
 
 	.viewer-project-context {

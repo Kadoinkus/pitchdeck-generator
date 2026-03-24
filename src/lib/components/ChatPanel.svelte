@@ -21,8 +21,52 @@
 	let messages = $state<ChatMessage[]>([]);
 	let inputText = $state('');
 	let sending = $state(false);
+	let panelWidth = $state(380);
+	let panelHeight = $state(480);
+	let resizeAxis = $state<'left' | 'top' | 'corner' | null>(null);
+	let resizeStart = $state({ x: 0, y: 0, w: 0, h: 0 });
+
+	const MIN_W = 300;
+	const MAX_W = 700;
+	const MIN_H = 320;
+	const MAX_H = 800;
 
 	const chatTarget = $derived(viewer.chatTarget);
+
+	function beginResize(
+		axis: 'left' | 'top' | 'corner',
+		event: PointerEvent,
+	): void {
+		event.preventDefault();
+		resizeAxis = axis;
+		resizeStart = {
+			x: event.clientX,
+			y: event.clientY,
+			w: panelWidth,
+			h: panelHeight,
+		};
+		const target = event.currentTarget;
+		if (target instanceof HTMLElement) {
+			target.setPointerCapture(event.pointerId);
+		}
+	}
+
+	function moveResize(event: PointerEvent): void {
+		if (!resizeAxis) return;
+		const dx = resizeStart.x - event.clientX;
+		const dy = resizeStart.y - event.clientY;
+
+		if (resizeAxis === 'left' || resizeAxis === 'corner') {
+			panelWidth = Math.max(MIN_W, Math.min(resizeStart.w + dx, MAX_W));
+		}
+		if (resizeAxis === 'top' || resizeAxis === 'corner') {
+			panelHeight = Math.max(MIN_H, Math.min(resizeStart.h + dy, MAX_H));
+		}
+	}
+
+	function endResize(): void {
+		resizeAxis = null;
+	}
 
 	function togglePanel(): void {
 		isOpen = !isOpen;
@@ -107,7 +151,46 @@
 </script>
 
 {#if isOpen}
-	<div class="panel">
+	<div
+		class="panel"
+		class:is-resizing={resizeAxis !== null}
+		style:width="{panelWidth}px"
+		style:height="{panelHeight}px"
+	>
+		<!-- resize handles -->
+		<div
+			class="resize-handle left"
+			role="separator"
+			aria-orientation="horizontal"
+			tabindex="-1"
+			onpointerdown={(e) => beginResize('left', e)}
+			onpointermove={moveResize}
+			onpointerup={endResize}
+			onpointercancel={endResize}
+		>
+		</div>
+		<div
+			class="resize-handle top"
+			role="separator"
+			aria-orientation="vertical"
+			tabindex="-1"
+			onpointerdown={(e) => beginResize('top', e)}
+			onpointermove={moveResize}
+			onpointerup={endResize}
+			onpointercancel={endResize}
+		>
+		</div>
+		<div
+			class="resize-handle corner"
+			role="separator"
+			tabindex="-1"
+			onpointerdown={(e) => beginResize('corner', e)}
+			onpointermove={moveResize}
+			onpointerup={endResize}
+			onpointercancel={endResize}
+		>
+		</div>
+
 		<header class="head">
 			<div class="head-title">
 				<svg class="head-icon" viewBox="0 0 20 20" fill="none">
@@ -355,8 +438,8 @@
 		position: absolute;
 		right: 16px;
 		bottom: 16px;
-		width: min(380px, calc(100vw - 32px));
-		max-height: min(520px, calc(100vh - 100px));
+		max-width: calc(100vw - 32px);
+		max-height: calc(100vh - 100px);
 		background: rgba(255, 255, 255, 0.92);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
@@ -369,6 +452,41 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+	}
+
+	.panel.is-resizing {
+		user-select: none;
+	}
+
+	/* ── Resize handles ── */
+
+	.resize-handle {
+		position: absolute;
+		z-index: 1;
+	}
+
+	.resize-handle.left {
+		top: 12px;
+		bottom: 12px;
+		left: -4px;
+		width: 8px;
+		cursor: ew-resize;
+	}
+
+	.resize-handle.top {
+		left: 12px;
+		right: 12px;
+		top: -4px;
+		height: 8px;
+		cursor: ns-resize;
+	}
+
+	.resize-handle.corner {
+		top: -6px;
+		left: -6px;
+		width: 16px;
+		height: 16px;
+		cursor: nwse-resize;
 	}
 
 	/* ── Header ── */
@@ -464,8 +582,7 @@
 
 	.messages {
 		flex: 1;
-		min-height: 100px;
-		max-height: 240px;
+		min-height: 80px;
 		overflow-y: auto;
 		padding: 12px 16px;
 		display: flex;
@@ -692,8 +809,12 @@
 		.panel {
 			right: 8px;
 			bottom: 8px;
-			width: calc(100vw - 16px);
+			width: calc(100vw - 16px) !important;
 			border-radius: 16px;
+		}
+
+		.resize-handle {
+			display: none;
 		}
 	}
 </style>

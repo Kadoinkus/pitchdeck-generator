@@ -18,6 +18,7 @@
 		saveState?: 'saved' | 'dirty' | 'saving' | 'error';
 		onUndo?: () => void;
 		onRedo?: () => void;
+		onRename?: (name: string) => void;
 		canUndo?: boolean;
 		canRedo?: boolean;
 		/** Current form payload for the chat panel. */
@@ -32,6 +33,7 @@
 		saveState = 'saved',
 		onUndo,
 		onRedo,
+		onRename,
 		canUndo = false,
 		canRedo = false,
 		chatPayload = {},
@@ -140,6 +142,7 @@
 			{saveState}
 			{onUndo}
 			{onRedo}
+			{onRename}
 			{canUndo}
 			{canRedo}
 		/>

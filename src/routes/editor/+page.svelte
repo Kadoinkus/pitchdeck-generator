@@ -8,11 +8,13 @@
 		getPayload,
 		loadAiSettings,
 		loadDraft,
+		markDirty,
 		parseAssetsFromPayload,
 		pushHistory,
 		redo,
 		restoreDeckResult,
 		saveDraft,
+		setPayloadField,
 		setProviders,
 		setSaveState,
 		setStatus,
@@ -61,6 +63,15 @@
 	}
 
 	const viewerPayload = $derived(getViewerDeckData());
+	const projectName = $derived(
+		(getPayload().projectTitle as string | undefined) || 'Untitled Deck',
+	);
+
+	function handleRename(name: string): void {
+		setPayloadField('projectTitle', name);
+		pushHistory();
+		markDirty();
+	}
 
 	$effect(() => {
 		const wantsViewerOpen = page.state.viewer?.open === true;
@@ -226,7 +237,7 @@
 </div>
 
 {#if viewer.isOpen}
-	<SlideViewer />
+	<SlideViewer {projectName} onRename={handleRename} />
 {/if}
 
 <style>

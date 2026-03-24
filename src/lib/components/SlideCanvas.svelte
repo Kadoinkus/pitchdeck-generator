@@ -12,6 +12,7 @@
 	let deckEl: HTMLDivElement | undefined = $state();
 	let deckWidth = $state(0);
 	let dragOffset = $state(0);
+	let isResizing = $state(false);
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
@@ -27,12 +28,23 @@
 		}px, 0, 0)`;
 	});
 
-	function handleResize(): void {
-		if (deckEl) deckWidth = deckEl.clientWidth;
-	}
-
 	$effect(() => {
-		if (deckEl) deckWidth = deckEl.clientWidth;
+		if (!deckEl) return;
+		deckWidth = deckEl.clientWidth;
+		let resizeTimer: ReturnType<typeof setTimeout>;
+		const ro = new ResizeObserver(([entry]) => {
+			deckWidth = entry.contentRect.width;
+			isResizing = true;
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => {
+				isResizing = false;
+			}, 150);
+		});
+		ro.observe(deckEl);
+		return () => {
+			ro.disconnect();
+			clearTimeout(resizeTimer);
+		};
 	});
 
 	function resolveAiTarget(origin: EventTarget | null): void {
@@ -58,8 +70,6 @@
 	}
 </script>
 
-<svelte:window onresize={handleResize} />
-
 {#if slides.length === 0}
 	<div class="slide-stage empty">
 		<Haiku variant="ghost" />
@@ -68,6 +78,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-stage"
+		class:is-resizing={isResizing}
 		bind:this={deckEl}
 		use:swipeable={{
 			onPrev: prevSlide,
@@ -125,7 +136,8 @@
 		will-change: transform;
 	}
 
-	.slide-stage:global(.is-dragging) .slide-track {
+	.slide-stage:global(.is-dragging) .slide-track,
+	.slide-stage.is-resizing .slide-track {
 		transition: none;
 	}
 
