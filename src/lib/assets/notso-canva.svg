@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 50">
+	<defs>
+		<radialGradient
+			id="nc-a"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="matrix(.21 -.67353 .2545 .07935 .512 1.109)">
+			<stop stop-color="#6420FF" />
+			<stop offset="1" stop-color="#6420FF" stop-opacity="0" />
+		</radialGradient>
+		<radialGradient
+			id="nc-b"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="matrix(.584 .16215 -.3771 1.3582 .024 .666)">
+			<stop offset=".25" stop-color="#00C4CC" />
+			<stop offset="1" stop-color="#00C4CC" stop-opacity="0" />
+		</radialGradient>
+		<radialGradient
+			id="nc-c"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="matrix(.29425 -.739 .3555 .14155 .427 1)">
+			<stop stop-color="#6420FF" />
+			<stop offset="1" stop-color="#6420FF" stop-opacity="0" />
+		</radialGradient>
+		<radialGradient
+			id="nc-d"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="matrix(.3915 -.59869 .4743 .31016 .028 1)">
+			<stop stop-color="#6420FF" />
+			<stop offset="1" stop-color="#6420FF" stop-opacity="0" />
+		</radialGradient>
+		<radialGradient
+			id="nc-e"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="rotate(34.593 -.1 .2) scale(1.03255 2.80688)">
+			<stop stop-color="#00C4CC" />
+			<stop offset="1" stop-color="#00C4CC" stop-opacity="0" />
+		</radialGradient>
+		<pattern id="nc-fill" width="1" height="1" patternContentUnits="objectBoundingBox">
+			<path d="M0 0h1v1H0z" fill="#7D2AE7" />
+			<path d="M0 0h1v1H0z" fill="url(#nc-a)" />
+			<path d="M0 0h1v1H0z" fill="url(#nc-b)" />
+			<path d="M0 0h1v1H0z" fill="url(#nc-c)" />
+			<path d="M0 0h1v1H0z" fill="url(#nc-d)" />
+			<path d="M0 0h1v1H0z" fill="url(#nc-e)" />
+		</pattern>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Pacifico&amp;display=swap');
+		</style>
+	</defs>
+	<text
+		x="140"
+		y="38"
+		fill="url(#nc-fill)"
+		font-family="Pacifico, cursive"
+		font-size="36"
+		text-anchor="middle">
+		Notso Canva
+	</text>
+</svg>

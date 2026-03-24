@@ -374,28 +374,17 @@
 		onclick={togglePanel}
 		aria-label="Open AI chat"
 	>
-		<svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+		<svg viewBox="0 0 24 24" width="24" height="24">
 			<path
-				d="M11 2a8 8 0 0 0-8 8c0 2 .7 3.8 2 5.2L3.5 19l4-1.3A8 8 0 1 0 11 2Z"
-				fill="url(#lg)"
-				stroke="rgba(255,255,255,0.4)"
-				stroke-width=".5"
+				d="M12 3C7.03 3 3 6.58 3 11c0 2.42 1.33 4.58 3.4 6.03L5 21l4.2-2.08c.9.2 1.84.33 2.8.33 4.97 0 9-3.58 9-8s-4.03-8-9-8Z"
+				fill="none"
+				stroke="#fff"
+				stroke-width="1.8"
+				stroke-linejoin="round"
 			/>
-			<circle cx="7.5" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
-			<circle cx="11" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
-			<circle cx="14.5" cy="11" r="1.1" fill="rgba(255,255,255,0.9)" />
-			<defs>
-				<linearGradient
-					id="lg"
-					x1="2"
-					y1="3"
-					x2="20"
-					y2="19"
-				><stop stop-color="var(--accent)" /><stop
-						offset=".5"
-						stop-color="#1395ff"
-					/><stop offset="1" stop-color="var(--secondary)" /></linearGradient>
-			</defs>
+			<circle cx="8.5" cy="11" r="1.2" fill="#fff" />
+			<circle cx="12" cy="11" r="1.2" fill="#fff" />
+			<circle cx="15.5" cy="11" r="1.2" fill="#fff" />
 		</svg>
 	</button>
 {/if}
@@ -409,15 +398,18 @@
 		bottom: 20px;
 		width: 52px;
 		height: 52px;
-		border: 1px solid rgba(255, 255, 255, 0.25);
-		background: rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
+		border: none;
+		background: linear-gradient(
+			135deg,
+			var(--accent),
+			#1395ff 60%,
+			var(--secondary)
+		);
 		border-radius: 50%;
 		padding: 0;
 		box-shadow:
-			0 8px 32px rgba(11, 31, 77, 0.22),
-			inset 0 1px 0 rgba(255, 255, 255, 0.15);
+			0 6px 20px rgba(0, 196, 204, 0.35),
+			0 2px 6px rgba(11, 31, 77, 0.12);
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
@@ -428,8 +420,8 @@
 	.launcher:hover {
 		transform: translateY(-2px) scale(1.05);
 		box-shadow:
-			0 12px 36px rgba(11, 31, 77, 0.3),
-			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+			0 10px 28px rgba(0, 196, 204, 0.4),
+			0 2px 8px rgba(11, 31, 77, 0.15);
 	}
 
 	/* ── Panel ── */

@@ -56,10 +56,23 @@ test('share page renders seeded deck', async ({ page }) => {
 		'href',
 		`/api/download/${shareToken}`,
 	);
+	await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveAttribute(
+		'href',
+		`/api/pdf/${shareToken}`,
+	);
 });
 
 test('missing share token returns 404', async ({ page }) => {
 	const response = await page.goto('/share/does-not-exist-e2e');
 	expect(response).not.toBeNull();
 	expect(response?.status()).toBe(404);
+});
+
+test('pdf endpoint returns deck pdf', async ({ request }) => {
+	const response = await request.get(`/api/pdf/${shareToken}`);
+	expect(response.status()).toBe(200);
+	expect(response.headers()['content-type']).toContain('application/pdf');
+
+	const bytes = await response.body();
+	expect(bytes.subarray(0, 4).toString('utf8')).toBe('%PDF');
 });

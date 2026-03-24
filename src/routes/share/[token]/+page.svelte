@@ -4,6 +4,7 @@
 	import { swipeable } from '$lib/actions/swipeable';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { onMount } from 'svelte';
+	import { Spring } from 'svelte/motion';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -12,6 +13,8 @@
 	let deckEl: HTMLDivElement | undefined = $state();
 	let deckWidth = $state(0);
 	let dragOffset = $state(0);
+	let dragging = $state(false);
+	let isResizing = $state(false);
 	let isPrintMode = $state(false);
 
 	const slides = $derived(data.slideData.slides);
@@ -26,6 +29,13 @@
 
 	const atStart = $derived(currentSlide <= 0);
 	const atEnd = $derived(currentSlide >= total - 1);
+
+	const SLIDE_GAP = 20;
+	const trackSpring = new Spring(0, { stiffness: 0.14, damping: 0.72 });
+
+	function slideBase(): number {
+		return -currentSlide * ((deckWidth || 1) + SLIDE_GAP);
+	}
 
 	function clampSlide(index: number): number {
 		return Math.max(0, Math.min(index, total - 1));
@@ -42,6 +52,56 @@
 	function next(): void {
 		goToSlide(currentSlide + 1);
 	}
+
+	/** Animate or jump to the correct slide offset. */
+	$effect(() => {
+		const target = slideBase();
+		if (dragging) return;
+		if (isResizing) {
+			trackSpring.set(target, { instant: true });
+		} else {
+			trackSpring.target = target;
+		}
+	});
+
+	const trackTransform = $derived.by(() => {
+		if (dragging) {
+			return `translate3d(${slideBase() + dragOffset}px, 0, 0)`;
+		}
+		return `translate3d(${trackSpring.current}px, 0, 0)`;
+	});
+
+	function handleDrag(delta: number): void {
+		if (delta !== 0) {
+			dragging = true;
+			dragOffset = delta;
+		} else if (dragging) {
+			trackSpring.set(slideBase() + dragOffset, { instant: true });
+			dragOffset = 0;
+			dragging = false;
+		}
+	}
+
+	$effect(() => {
+		if (!deckEl) return;
+		deckWidth = deckEl.clientWidth;
+		let resizeTimer: ReturnType<typeof setTimeout>;
+		const ro = new ResizeObserver((entries) => {
+			const entry = entries[0];
+			if (!entry) return;
+			deckWidth = entry.contentRect.width;
+			isResizing = true;
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => {
+				isResizing = false;
+			}, 150);
+		});
+		ro.observe(deckEl);
+		return () => {
+			ro.disconnect();
+			clearTimeout(resizeTimer);
+		};
+	});
 
 	function isEditableTarget(target: EventTarget | null): boolean {
 		if (!(target instanceof Element)) return false;
@@ -94,22 +154,7 @@
 		}
 	}
 
-	function handleResize(): void {
-		if (deckEl) deckWidth = deckEl.clientWidth;
-	}
-
-	const SLIDE_GAP = 20;
-
-	const trackTransform = $derived.by(() => {
-		const width = deckWidth || 1;
-		return `translate3d(${
-			-currentSlide * (width + SLIDE_GAP) + dragOffset
-		}px, 0, 0)`;
-	});
-
 	onMount(() => {
-		if (deckEl) deckWidth = deckEl.clientWidth;
-
 		isPrintMode = page.url.searchParams.get('print') === '1';
 		if (isPrintMode) {
 			document.body.classList.add('print-mode');
@@ -122,7 +167,7 @@
 	});
 </script>
 
-<svelte:window onkeydown={handleKey} onresize={handleResize} />
+<svelte:window onkeydown={handleKey} />
 
 <svelte:head>
 	<title>{title} — Deck Share</title>
@@ -142,7 +187,8 @@
 			class:disabled={!data.downloadUrl}
 			aria-disabled={!data.downloadUrl}
 		>Download PPTX</a>
-		<button type="button" onclick={() => window.print()}>Download PDF</button>
+		<a href={resolve('/api/pdf/[token]', { token: data.token })}
+		>Download PDF</a>
 	</div>
 </header>
 
@@ -163,9 +209,7 @@
 		use:swipeable={{
 			onPrev: prev,
 			onNext: next,
-			onDrag(delta) {
-				dragOffset = delta;
-			},
+			onDrag: handleDrag,
 		}}
 	>
 		<div
@@ -318,13 +362,18 @@
 	.share-main {
 		height: calc(100vh - var(--topbar-h));
 		display: grid;
-		grid-template-columns: auto 1fr auto;
+		grid-template-columns: 1fr;
 		align-items: center;
-		gap: 10px;
-		padding: 0 10px;
+	}
+
+	.share-main > * {
+		grid-row: 1;
+		grid-column: 1;
 	}
 
 	.share-nav-btn {
+		z-index: 2;
+		align-self: center;
 		width: 42px;
 		height: 42px;
 		border-radius: 999px;
@@ -335,6 +384,16 @@
 		font-weight: 700;
 		cursor: pointer;
 		box-shadow: 0 8px 18px rgba(11, 31, 77, 0.14);
+	}
+
+	.share-nav-btn:first-child {
+		justify-self: start;
+		margin-left: 16px;
+	}
+
+	.share-nav-btn:last-child {
+		justify-self: end;
+		margin-right: 16px;
 	}
 
 	.share-nav-btn:hover {
@@ -362,13 +421,7 @@
 		height: 100%;
 		display: flex;
 		gap: 20px;
-		transform: translate3d(0, 0, 0);
-		transition: transform 420ms cubic-bezier(0.2, 0.75, 0.14, 1);
 		will-change: transform;
-	}
-
-	.share-deck:global(.is-dragging) .share-track {
-		transition: none;
 	}
 
 	.share-slide {

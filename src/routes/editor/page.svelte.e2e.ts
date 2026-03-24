@@ -7,7 +7,7 @@ const VIEWER_SLIDE_KEY = 'proposalDeckViewerSlide';
 const SEEDED_RESULT = {
 	shareToken: 'tok123',
 	downloadUrl: '/api/download/tok123',
-	pdfUrl: '/share/tok123?print=1',
+	pdfUrl: '/api/pdf/tok123',
 	shareUrl: '/share/tok123',
 	slideData: {
 		slides: [{ type: 'cover', title: 'E2E Deck' }],
@@ -70,7 +70,7 @@ test('output actions are enabled with a stored deck result', async ({ page }) =>
 	);
 	await expect(output.getByRole('link', { name: 'Download PDF' })).toHaveAttribute(
 		'href',
-		/\/share\/tok123\?print=1$/,
+		/\/api\/pdf\/tok123$/,
 	);
 	await expect(output.getByRole('link', { name: 'Open share page' })).toHaveAttribute(
 		'href',
@@ -123,7 +123,7 @@ test('viewer share menu routes are token-based', async ({ page }) => {
 	);
 	await expect(menu.getByRole('link', { name: 'Download PDF' })).toHaveAttribute(
 		'href',
-		/\/share\/tok123\?print=1$/,
+		/\/api\/pdf\/tok123$/,
 	);
 	await expect(menu.getByRole('link', { name: 'Open share link' })).toHaveAttribute(
 		'href',

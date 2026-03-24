@@ -264,17 +264,15 @@
 
 	.eyebrow {
 		margin: 0;
-		color: var(--secondary);
 		font-family: "Pacifico", cursive;
-		font-size: 18px;
+		font-size: 24px;
 		font-weight: 400;
 		letter-spacing: 0.02em;
-		background: linear-gradient(
-			90deg,
-			var(--accent),
-			#1395ff 50%,
-			var(--secondary)
-		);
+		background:
+			radial-gradient(ellipse 60% 120% at 10% 70%, #00c4cc 0%, transparent 60%),
+			radial-gradient(ellipse 50% 100% at 85% 30%, #6420ff 0%, transparent 50%),
+			radial-gradient(ellipse 40% 90% at 45% 90%, #6420ff 0%, transparent 50%),
+			linear-gradient(135deg, #7d2ae7, #6420ff);
 		background-clip: text;
 		-webkit-background-clip: text;
 		color: transparent;

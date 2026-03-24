@@ -66,6 +66,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		slideData,
 		shareToken,
 		shareUrl: `/share/${shareToken}`,
-		pdfUrl: `/share/${shareToken}?print=1`,
+		pdfUrl: `/api/pdf/${shareToken}`,
 	});
 };

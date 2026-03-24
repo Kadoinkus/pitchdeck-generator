@@ -8,10 +8,12 @@
 		setChatTarget,
 		viewer,
 	} from '$lib/stores/viewer.svelte';
+	import { Spring } from 'svelte/motion';
 
 	let deckEl: HTMLDivElement | undefined = $state();
 	let deckWidth = $state(0);
 	let dragOffset = $state(0);
+	let dragging = $state(false);
 	let isResizing = $state(false);
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
@@ -20,19 +22,50 @@
 	const current = $derived(viewer.currentSlide);
 
 	const SLIDE_GAP = 24;
+	const trackSpring = new Spring(0, { stiffness: 0.14, damping: 0.72 });
+
+	function slideBase(): number {
+		return -current * ((deckWidth || 1) + SLIDE_GAP);
+	}
+
+	/** Animate or jump to the correct slide offset. */
+	$effect(() => {
+		const target = slideBase();
+		if (dragging) return;
+		if (isResizing) {
+			trackSpring.set(target, { instant: true });
+		} else {
+			trackSpring.target = target;
+		}
+	});
 
 	const trackTransform = $derived.by(() => {
-		const width = deckWidth || 1;
-		return `translate3d(${
-			-current * (width + SLIDE_GAP) + dragOffset
-		}px, 0, 0)`;
+		if (dragging) {
+			return `translate3d(${slideBase() + dragOffset}px, 0, 0)`;
+		}
+		return `translate3d(${trackSpring.current}px, 0, 0)`;
 	});
+
+	function handleDrag(delta: number): void {
+		if (delta !== 0) {
+			dragging = true;
+			dragOffset = delta;
+		} else if (dragging) {
+			// Seed spring at the visual drag-end position so the
+			// animation to the final slide is seamless (no jump).
+			trackSpring.set(slideBase() + dragOffset, { instant: true });
+			dragOffset = 0;
+			dragging = false;
+		}
+	}
 
 	$effect(() => {
 		if (!deckEl) return;
 		deckWidth = deckEl.clientWidth;
 		let resizeTimer: ReturnType<typeof setTimeout>;
-		const ro = new ResizeObserver(([entry]) => {
+		const ro = new ResizeObserver((entries) => {
+			const entry = entries[0];
+			if (!entry) return;
 			deckWidth = entry.contentRect.width;
 			isResizing = true;
 			clearTimeout(resizeTimer);
@@ -78,14 +111,11 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-stage"
-		class:is-resizing={isResizing}
 		bind:this={deckEl}
 		use:swipeable={{
 			onPrev: prevSlide,
 			onNext: nextSlide,
-			onDrag(delta) {
-				dragOffset = delta;
-			},
+			onDrag: handleDrag,
 		}}
 		onclick={handleCanvasClick}
 		onkeydown={handleCanvasKeydown}
@@ -131,14 +161,7 @@
 		height: 100%;
 		display: flex;
 		gap: 24px;
-		transform: translate3d(0, 0, 0);
-		transition: transform 420ms cubic-bezier(0.2, 0.75, 0.14, 1);
 		will-change: transform;
-	}
-
-	.slide-stage:global(.is-dragging) .slide-track,
-	.slide-stage.is-resizing .slide-track {
-		transition: none;
 	}
 
 	.slide-page {
@@ -147,6 +170,12 @@
 		padding: 18px 8px;
 		display: grid;
 		place-items: center;
+		content-visibility: auto;
+		contain-intrinsic-size: auto 100% auto 100%;
+	}
+
+	.slide-page.is-active {
+		content-visibility: visible;
 	}
 
 	.slide-frame {

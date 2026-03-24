@@ -10,7 +10,7 @@ interface ShareLinks {
 export function getShareLinks(token: string): ShareLinks {
 	return {
 		sharePath: resolve('/share/[token]', { token }),
-		pdfPath: resolve('/share/[token]?print=1', { token }),
+		pdfPath: resolve('/api/pdf/[token]', { token }),
 		downloadPath: resolve('/api/download/[token]', { token }),
 	};
 }

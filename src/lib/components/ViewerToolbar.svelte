@@ -30,33 +30,45 @@
 		canRedo = false,
 	}: Props = $props();
 
-	let titleEl: HTMLElement | undefined = $state();
+	let editableProjectName = $state('');
+	let titleEditing = $state(false);
 
 	function commitRename(): void {
-		if (!titleEl || !onRename) return;
-		const text = (titleEl.textContent ?? '').trim();
-		if (text && text !== projectName) onRename(text);
-		else if (titleEl.textContent !== projectName) {
-			titleEl.textContent = projectName;
+		titleEditing = false;
+		const text = editableProjectName.trim();
+		if (onRename && text !== '' && text !== projectName) {
+			onRename(text);
+			return;
 		}
+		editableProjectName = projectName;
+	}
+
+	function handleTitleFocus(): void {
+		titleEditing = true;
+		editableProjectName = projectName;
+	}
+
+	function handleTitleInput(event: Event): void {
+		const target = event.currentTarget;
+		if (!(target instanceof HTMLInputElement)) return;
+		editableProjectName = target.value;
 	}
 
 	function handleTitleKeydown(event: KeyboardEvent): void {
+		const target = event.currentTarget;
+		if (!(target instanceof HTMLInputElement)) return;
+
 		if (event.key === 'Enter') {
 			event.preventDefault();
-			titleEl?.blur();
+			target.blur();
+			return;
 		}
+
 		if (event.key === 'Escape') {
-			if (titleEl) titleEl.textContent = projectName;
-			titleEl?.blur();
+			editableProjectName = projectName;
+			target.blur();
 		}
 	}
-
-	$effect(() => {
-		if (titleEl && document.activeElement !== titleEl) {
-			titleEl.textContent = projectName;
-		}
-	});
 
 	const counter = $derived(
 		viewer.slideCount > 0
@@ -170,14 +182,17 @@
 
 		<div class="viewer-project">
 			<div class="viewer-project-row">
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<strong
-					bind:this={titleEl}
-					contenteditable="true"
-					spellcheck="false"
+				<input
+					class="viewer-project-name-input"
+					type="text"
+					value={titleEditing ? editableProjectName : projectName}
+					aria-label="Project name"
+					autocomplete="off"
+					onfocus={handleTitleFocus}
+					oninput={handleTitleInput}
 					onblur={commitRename}
 					onkeydown={handleTitleKeydown}
-				>{projectName}</strong>
+				>
 			</div>
 			{#if projectContext}
 				<p class="viewer-project-context">{projectContext}</p>
@@ -396,25 +411,33 @@
 		flex-wrap: wrap;
 	}
 
-	.viewer-project-row strong {
+	.viewer-project-name-input {
 		font-family: "Sora", "DM Sans", sans-serif;
 		font-size: 0.88rem;
 		line-height: 1.2;
 		color: #ffffff;
-		cursor: text;
+		background: transparent;
+		border: none;
+		min-width: 0;
+		width: 100%;
 		outline: none;
 		border-radius: 4px;
 		padding: 1px 4px;
 		margin: -1px -4px;
+		font-weight: 700;
 	}
 
-	.viewer-project-row strong:hover {
+	.viewer-project-name-input:hover {
 		background: rgba(255, 255, 255, 0.1);
 	}
 
-	.viewer-project-row strong:focus {
+	.viewer-project-name-input:focus {
 		background: rgba(255, 255, 255, 0.18);
 		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+	}
+
+	.viewer-project-name-input::placeholder {
+		color: rgba(255, 255, 255, 0.72);
 	}
 
 	.viewer-project-context {
@@ -650,7 +673,7 @@
 			display: none;
 		}
 
-		.viewer-project-row strong {
+		.viewer-project-name-input {
 			max-width: 18vw;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -798,7 +821,7 @@
 			display: grid;
 		}
 
-		.viewer-project-row strong {
+		.viewer-project-name-input {
 			max-width: 20vw;
 			overflow: hidden;
 			text-overflow: ellipsis;
