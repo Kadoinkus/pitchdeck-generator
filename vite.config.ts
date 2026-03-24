@@ -6,7 +6,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [enhancedImages(), sveltekit(), devtoolsJson()],
-	server: { host: true, allowedHosts: true },
+	server: {
+		host: true,
+		allowedHosts: true,
+		// watch: { ignored: ['**/*.e2e.ts'] },
+	},
 	resolve: { tsconfigPaths: true },
 	dev: { sourcemap: true },
 	test: {

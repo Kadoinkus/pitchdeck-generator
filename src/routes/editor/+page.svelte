@@ -27,7 +27,7 @@
 		type ViewerDeckData,
 		wasViewerOpen,
 	} from '$lib/stores/viewer.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	import DeckForm from '$lib/components/form/DeckForm.svelte';
 	import SlideViewer from '$lib/components/SlideViewer.svelte';
@@ -128,6 +128,9 @@
 			if (prev.open) {
 				const payload = getViewerDeckData();
 				if (payload) {
+					// Defer until after SvelteKit's router has finished initializing —
+					// onMount fires before start() sets router.initialized = true.
+					await tick();
 					replaceState('', {
 						...page.state,
 						viewer: { open: true },
@@ -251,10 +254,19 @@
 	.eyebrow {
 		margin: 0;
 		color: var(--secondary);
-		font-size: 12px;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		font-family: "Pacifico", cursive;
+		font-size: 18px;
+		font-weight: 400;
+		letter-spacing: 0.02em;
+		background: linear-gradient(
+			90deg,
+			var(--accent),
+			#1395ff 50%,
+			var(--secondary)
+		);
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
 	}
 
 	.intro {

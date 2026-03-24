@@ -1,6 +1,8 @@
 export interface SwipeableOptions {
 	onPrev: () => void;
 	onNext: () => void;
+	/** Called with the current horizontal drag offset (px) during a swipe. */
+	onDrag?: (deltaX: number) => void;
 	threshold?: number;
 	wheelThreshold?: number;
 	wheelCooldownMs?: number;
@@ -63,7 +65,6 @@ export function swipeable(
 		drag.moved = false;
 
 		node.classList.add('is-dragging');
-		node.style.transition = 'none';
 
 		document.addEventListener('pointermove', onPointerMove);
 		document.addEventListener('pointerup', onPointerUp);
@@ -124,7 +125,7 @@ export function swipeable(
 		drag.deltaX = event.clientX - drag.startX;
 		if (Math.abs(drag.deltaX) > 6) drag.moved = true;
 
-		node.style.transform = `translate3d(${drag.deltaX}px, 0, 0)`;
+		opts.onDrag?.(drag.deltaX);
 	}
 
 	function onPointerUp(): void {
@@ -132,8 +133,7 @@ export function swipeable(
 		drag.active = false;
 
 		node.classList.remove('is-dragging');
-		node.style.transition = '';
-		node.style.transform = '';
+		opts.onDrag?.(0);
 
 		document.removeEventListener('pointermove', onPointerMove);
 		document.removeEventListener('pointerup', onPointerUp);

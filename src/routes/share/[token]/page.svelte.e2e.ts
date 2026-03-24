@@ -1,0 +1,65 @@
+import { expect, test } from '@playwright/test';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const outputDir = process.env.PITCHDECK_OUTPUT_DIR || path.join('/tmp', 'pitchdeck-generator');
+const shareDir = path.join(outputDir, 'shares');
+const shareToken = 'e2e-share-token';
+const sharePath = path.join(shareDir, `${shareToken}.json`);
+
+async function seedShareRecord(): Promise<void> {
+	await fs.mkdir(shareDir, { recursive: true });
+	await fs.writeFile(
+		sharePath,
+		JSON.stringify({
+			token: shareToken,
+			createdAt: new Date('2026-01-01T00:00:00.000Z').toISOString(),
+			slideData: {
+				slides: [{ type: 'cover', title: 'Seeded Share Deck' }],
+				theme: {},
+				project: {
+					projectTitle: 'Seeded Share Deck',
+					clientName: 'E2E Client',
+				},
+			},
+		}),
+		'utf8',
+	);
+}
+
+async function removeShareRecord(): Promise<void> {
+	await fs.rm(sharePath, { force: true });
+}
+
+test.beforeEach(async () => {
+	await seedShareRecord();
+});
+
+test.afterEach(async () => {
+	await removeShareRecord();
+});
+
+test('share page renders seeded deck', async ({ page }) => {
+	const response = await page.goto(`/share/${shareToken}`);
+	expect(response).not.toBeNull();
+	expect(response?.status()).toBe(200);
+
+	await expect(
+		page.getByRole('banner').getByRole('heading', { name: 'Seeded Share Deck' }),
+	).toBeVisible();
+	await expect(page.getByText('1 / 1')).toBeVisible();
+
+	await expect(page.getByRole('button', { name: 'Previous slide' })).toBeDisabled();
+	await expect(page.getByRole('button', { name: 'Next slide' })).toBeDisabled();
+
+	await expect(page.getByRole('link', { name: 'Download PPTX' })).toHaveAttribute(
+		'href',
+		`/api/download/${shareToken}`,
+	);
+});
+
+test('missing share token returns 404', async ({ page }) => {
+	const response = await page.goto('/share/does-not-exist-e2e');
+	expect(response).not.toBeNull();
+	expect(response?.status()).toBe(404);
+});

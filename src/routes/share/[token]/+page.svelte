@@ -11,6 +11,7 @@
 	let currentSlide = $state(0);
 	let deckEl: HTMLDivElement | undefined = $state();
 	let deckWidth = $state(0);
+	let dragOffset = $state(0);
 	let isPrintMode = $state(false);
 
 	const slides = $derived(data.slideData.slides);
@@ -97,9 +98,13 @@
 		if (deckEl) deckWidth = deckEl.clientWidth;
 	}
 
+	const SLIDE_GAP = 20;
+
 	const trackTransform = $derived.by(() => {
 		const width = deckWidth || 1;
-		return `translate3d(${-currentSlide * width}px, 0, 0)`;
+		return `translate3d(${
+			-currentSlide * (width + SLIDE_GAP) + dragOffset
+		}px, 0, 0)`;
 	});
 
 	onMount(() => {
@@ -155,7 +160,13 @@
 	<div
 		class="share-deck"
 		bind:this={deckEl}
-		use:swipeable={{ onPrev: prev, onNext: next }}
+		use:swipeable={{
+			onPrev: prev,
+			onNext: next,
+			onDrag(delta) {
+				dragOffset = delta;
+			},
+		}}
 	>
 		<div
 			class="share-track"
@@ -350,9 +361,14 @@
 	.share-track {
 		height: 100%;
 		display: flex;
+		gap: 20px;
 		transform: translate3d(0, 0, 0);
 		transition: transform 420ms cubic-bezier(0.2, 0.75, 0.14, 1);
 		will-change: transform;
+	}
+
+	.share-deck:global(.is-dragging) .share-track {
+		transition: none;
 	}
 
 	.share-slide {
@@ -382,12 +398,18 @@
 		border: 1px solid var(--line);
 		background: var(--card);
 		box-shadow: 0 22px 48px rgba(11, 31, 77, 0.2);
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.share-slide-frame > :global(.slide-render) {
 		width: var(--slide-w);
 		height: calc(var(--slide-w) * 9 / 16);
 		zoom: tan(atan2(100cqi, var(--slide-w)));
+	}
+
+	.share-slide :global(.image-slot:not(:has(.has-image))) {
+		visibility: hidden;
 	}
 
 	.share-slide :global(.ai-clickable) {

@@ -310,24 +310,23 @@ export async function openAIChatAssist(
 		allowedFields: CHAT_FIELDS,
 	};
 
-	const prompt = [
-		'Return JSON only.',
-		'You are editing one part of a premium proposal deck.',
-		'JSON schema:',
-		'{',
-		'  "reply": "Short guidance reply",',
-		'  "suggestedChanges": [',
-		'    {"field":"coverOneLiner","label":"Cover one-liner","value":"..."}',
-		'  ]',
-		'}',
-		'',
-		`Context: ${JSON.stringify(context)}`,
-		'',
-		'Rules:',
-		'- suggestedChanges.field must be from allowedFields.',
-		'- If targetField is "global-concept", suggest up to 3 high-impact fields.',
-		'- Keep wording concise, premium, and implementation-ready.',
-	].join('\n');
+	const prompt = `\
+Return JSON only.',
+You are editing one part of a premium proposal deck.
+JSON schema:
+{
+  "reply": "Short guidance reply",
+  "suggestedChanges": [
+    {"field":"coverOneLiner","label":"Cover one-liner","value":"..."}
+  ]
+}
+
+Context: ${JSON.stringify(context)}
+
+Rules:
+- suggestedChanges.field must be from allowedFields.
+- If targetField is "global-concept", suggest up to 3 high-impact fields.
+- Keep wording concise, premium, and implementation-ready.`;
 
 	const content = await callOpenAIChat({
 		apiKey: config.apiKey,
