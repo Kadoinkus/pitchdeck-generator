@@ -199,4 +199,14 @@
 			--thumb-w: 126px;
 		}
 	}
+
+	@media (max-width: 680px) {
+		.viewer-body {
+			flex-direction: column;
+		}
+
+		.thumb-resize {
+			display: none;
+		}
+	}
 </style>

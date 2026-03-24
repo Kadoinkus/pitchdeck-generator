@@ -91,4 +91,20 @@
 		position: relative;
 		pointer-events: none;
 	}
+
+	@media (max-width: 680px) {
+		.thumbnails {
+			flex-direction: row;
+			width: 100%;
+			height: 72px;
+			padding: 6px;
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+
+		.thumb {
+			flex: 0 0 auto;
+			width: 108px;
+		}
+	}
 </style>

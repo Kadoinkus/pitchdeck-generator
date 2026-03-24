@@ -497,14 +497,27 @@
 
 	@media (max-width: 680px) {
 		.viewer-project-context,
-		.save-indicator {
+		.save-indicator,
+		.viewer-project {
 			display: none;
 		}
 
+		.viewer-toolbar {
+			padding: 6px 8px;
+			gap: 6px;
+			flex-wrap: nowrap;
+		}
+
+		.viewer-toolbar-left,
+		.viewer-toolbar-middle,
+		.viewer-toolbar-right {
+			width: auto;
+		}
+
 		.viewer-toolbar-middle {
-			flex-wrap: wrap;
-			justify-content: space-between;
-			gap: 8px;
+			flex: 1;
+			justify-content: center;
+			gap: 6px;
 		}
 
 		.toolbar-nav {
