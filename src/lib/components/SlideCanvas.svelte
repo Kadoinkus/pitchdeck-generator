@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { swipeable } from '$lib/actions/swipeable';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
@@ -9,83 +10,31 @@
 		viewer,
 	} from '$lib/stores/viewer.svelte';
 
-	let canvasEl: HTMLDivElement | undefined = $state();
+	let deckEl: HTMLDivElement | undefined = $state();
+	let deckWidth = $state(0);
+	let dragOffset = $state(0);
 
 	const slides = $derived(viewer.slideData?.slides ?? []);
 	const theme = $derived(viewer.slideData?.theme);
 	const deckData = $derived(viewer.slideData ?? undefined);
 	const current = $derived(viewer.currentSlide);
 
-	/* ── Sync store → scroll position ─────────────────────────── */
+	const SLIDE_GAP = 24;
 
-	let programmaticScroll = false;
-
-	$effect(() => {
-		const el = canvasEl;
-		if (!el) return;
-
-		const target = current * el.clientWidth;
-		if (Math.abs(el.scrollLeft - target) > 2) {
-			programmaticScroll = true;
-			el.scrollTo({ left: target, behavior: 'smooth' });
-		}
+	const trackTransform = $derived.by(() => {
+		const width = deckWidth || 1;
+		return `translate3d(${
+			-current * (width + SLIDE_GAP) + dragOffset
+		}px, 0, 0)`;
 	});
 
-	/* ── Sync scroll position → store ─────────────────────────── */
-
-	let scrollTimer: ReturnType<typeof setTimeout> | undefined;
-
-	function handleScroll(): void {
-		if (programmaticScroll) return;
-		const el = canvasEl;
-		if (!el || !el.clientWidth) return;
-
-		clearTimeout(scrollTimer);
-		scrollTimer = setTimeout(() => {
-			const idx = Math.round(el.scrollLeft / el.clientWidth);
-			if (idx !== current && idx >= 0 && idx < slides.length) {
-				goToSlide(idx);
-			}
-		}, 60);
+	function handleResize(): void {
+		if (deckEl) deckWidth = deckEl.clientWidth;
 	}
 
-	function handleScrollEnd(): void {
-		programmaticScroll = false;
-	}
-
-	/* ── Mouse-wheel → horizontal navigation ─────────────────── */
-
-	let wheelAccum = 0;
-	let wheelLastAt = 0;
-	let wheelCooldownUntil = 0;
-
-	function handleWheel(event: WheelEvent): void {
-		if (event.ctrlKey || event.metaKey || event.altKey) return;
-
-		const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
-			? event.deltaX
-			: event.deltaY;
-		if (Math.abs(delta) < 2) return;
-
-		event.preventDefault();
-
-		const now = performance.now();
-		if (now < wheelCooldownUntil) return;
-		if (now - wheelLastAt > 260) wheelAccum = 0;
-		if (Math.sign(wheelAccum) !== Math.sign(delta)) wheelAccum = 0;
-
-		wheelLastAt = now;
-		wheelAccum += delta;
-
-		if (Math.abs(wheelAccum) >= 115) {
-			if (wheelAccum > 0) nextSlide();
-			else prevSlide();
-			wheelAccum = 0;
-			wheelCooldownUntil = now + 380;
-		}
-	}
-
-	/* ── AI target click ─────────────────────────────────────── */
+	$effect(() => {
+		if (deckEl) deckWidth = deckEl.clientWidth;
+	});
 
 	function resolveAiTarget(origin: EventTarget | null): void {
 		if (!(origin instanceof HTMLElement)) return;
@@ -110,29 +59,39 @@
 	}
 </script>
 
+<svelte:window onresize={handleResize} />
+
 {#if slides.length === 0}
 	<div class="slide-stage empty">
 		<Haiku variant="ghost" />
 	</div>
 {:else}
-	<div class="slide-stage">
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="slide-stage"
+		bind:this={deckEl}
+		use:swipeable={{
+			onPrev: prevSlide,
+			onNext: nextSlide,
+			onDrag(delta) {
+				dragOffset = delta;
+			},
+		}}
+		onclick={handleCanvasClick}
+		onkeydown={handleCanvasKeydown}
+	>
 		<div
-			class="slide-canvas"
-			bind:this={canvasEl}
-			onscroll={handleScroll}
-			onscrollend={handleScrollEnd}
-			onwheel={handleWheel}
-			onclick={handleCanvasClick}
-			onkeydown={handleCanvasKeydown}
+			class="slide-track"
+			style:transform={trackTransform}
 		>
 			{#each slides as slide, index (index)}
 				<section
-					class="slide-portal"
+					class="slide-page"
 					class:is-active={index === current}
-					data-slide-index={index}
 				>
-					<SlideRenderer {slide} {theme} {deckData} />
+					<div class="slide-frame" data-slide-index={index}>
+						<SlideRenderer {slide} {theme} {deckData} />
+					</div>
 				</section>
 			{/each}
 		</div>
@@ -142,47 +101,51 @@
 <style>
 	.slide-stage {
 		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 20px;
 		overflow: hidden;
+		touch-action: pan-y;
+		cursor: grab;
 	}
 
 	.slide-stage.empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		opacity: 0.5;
 	}
 
-	.slide-canvas {
-		width: min(94%, calc((100vh - 120px) * 16 / 9));
-		aspect-ratio: 16 / 9;
-		position: relative;
-
-		display: flex;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scroll-behavior: smooth;
-		-webkit-overflow-scrolling: touch;
-
-		/* hide scrollbar */
-		scrollbar-width: none;
-		-ms-overflow-style: none;
+	.slide-stage:global(.is-dragging) {
+		cursor: grabbing;
 	}
 
-	.slide-canvas::-webkit-scrollbar {
-		display: none;
-	}
-
-	.slide-portal {
-		scroll-snap-align: start;
-		flex-shrink: 0;
-		width: 100%;
+	.slide-track {
 		height: 100%;
+		display: flex;
+		gap: 24px;
+		transform: translate3d(0, 0, 0);
+		transition: transform 420ms cubic-bezier(0.2, 0.75, 0.14, 1);
+		will-change: transform;
+	}
 
+	.slide-stage:global(.is-dragging) .slide-track {
+		transition: none;
+	}
+
+	.slide-page {
+		flex: 0 0 100%;
+		min-height: 100%;
+		padding: 18px 8px;
+		display: grid;
+		place-items: center;
+	}
+
+	.slide-frame {
 		container-type: inline-size;
+		width: min(94%, calc((100% - 36px) * 1));
+		aspect-ratio: 16 / 9;
 		overflow: hidden;
 		background: #fff;
-		box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
 		border: 1px solid #d2dbe9;
+		box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
+		user-select: none;
 	}
 </style>

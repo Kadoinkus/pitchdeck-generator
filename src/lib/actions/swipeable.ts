@@ -162,9 +162,14 @@ export function swipeable(
 		}
 	}
 
+	function onDragStart(event: Event): void {
+		if (drag.active) event.preventDefault();
+	}
+
 	node.addEventListener('pointerdown', onPointerDown);
 	node.addEventListener('click', onClickCapture, true);
 	node.addEventListener('wheel', onWheel, { passive: false });
+	node.addEventListener('dragstart', onDragStart);
 
 	return {
 		update(newOpts: SwipeableOptions) {
@@ -174,6 +179,7 @@ export function swipeable(
 			node.removeEventListener('pointerdown', onPointerDown);
 			node.removeEventListener('click', onClickCapture, true);
 			node.removeEventListener('wheel', onWheel);
+			node.removeEventListener('dragstart', onDragStart);
 			document.removeEventListener('pointermove', onPointerMove);
 			document.removeEventListener('pointerup', onPointerUp);
 			document.removeEventListener('pointercancel', onPointerUp);
