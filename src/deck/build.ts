@@ -1,16 +1,8 @@
 import { resolveThemePalette } from '../color-palette.ts';
 import { resolveImageModeForSlide, resolveSlotPolicy } from '../slot-policy.ts';
-import { normalizeList, safeText } from '../utils.ts';
+import { safeText } from '../utils.ts';
 import { resolveLayoutPreset } from './layout.ts';
-import {
-	asBoolean,
-	parseCharacterAssets,
-	parseDeliverables,
-	parseExcludedSlides,
-	parsePairs,
-	parseTone,
-	parseTriples,
-} from './parsers.ts';
+import { parseDeckInput } from './schema.ts';
 import type {
 	AppTheme,
 	AvailableSlide,
@@ -224,71 +216,13 @@ export const EDITABLE_FIELD_DEFINITIONS: readonly FieldDefinition[] = [
 /*  Internal helpers                                                   */
 /* ------------------------------------------------------------------ */
 
-interface RawDeckInput {
-	templateId?: unknown;
-	excludedSlides?: unknown;
-	layoutPreset?: unknown;
-	layoutPresetLock?: unknown;
-	primaryColor?: unknown;
-	harmonyMode?: unknown;
-	paletteShuffleSeed?: unknown;
-	lockAccentColor?: unknown;
-	lockSecondaryColor?: unknown;
-	deckAccentColor?: unknown;
-	accentColor?: unknown;
-	deckSecondaryColor?: unknown;
-	secondaryColor?: unknown;
-	deckBackgroundColor?: unknown;
-	backgroundColor?: unknown;
-	deckTextColor?: unknown;
-	textColor?: unknown;
-	brandName?: unknown;
-	deckHeadingFont?: unknown;
-	headingFont?: unknown;
-	deckBodyFont?: unknown;
-	bodyFont?: unknown;
-	clientName?: unknown;
-	clientUrl?: unknown;
-	projectTitle?: unknown;
-	coverOneLiner?: unknown;
-	subtitle?: unknown;
-	proposalDate?: unknown;
-	mascotName?: unknown;
-	deckVersion?: unknown;
-	contactName?: unknown;
-	contactEmail?: unknown;
-	contactPhone?: unknown;
-	characterAssets?: unknown;
-	problemPoints?: unknown;
-	opportunityPoints?: unknown;
-	solutionPillars?: unknown;
-	whatNotsoIntro?: unknown;
-	whatNotsoCards?: unknown;
-	buddyDescription?: unknown;
-	buddyPersonality?: unknown;
-	toneSliders?: unknown;
-	experienceConcept?: unknown;
-	chatFlow?: unknown;
-	interactionExample?: unknown;
-	businessImpact?: unknown;
-	analyticsDescription?: unknown;
-	analyticsBullets?: unknown;
-	deliverables?: unknown;
-	pricing?: unknown;
-	timeline?: unknown;
-	closingText?: unknown;
-	teamCards?: unknown;
-	imagePrompts?: unknown;
-	[key: string]: unknown;
-}
-
 function resolveImageAssetForSlide(
 	slideId: string,
 	assets: CharacterAsset[] = [],
 ): CharacterAsset | null {
 	if (!Array.isArray(assets) || !assets.length) return null;
 
-	const id = safeText(slideId, '').toLowerCase();
+	const id = slideId.toLowerCase();
 	const mascotSlides = new Set([
 		'cover',
 		'meet-buddy',
@@ -363,11 +297,8 @@ function defaultImagePrompt(
 	}
 }
 
-function resolveTemplateId(rawTemplateId: unknown): string {
-	const candidate = safeText(rawTemplateId, TEMPLATE_PREMIUM_PROPOSAL);
-	return TEMPLATE_DEFINITIONS[candidate]
-		? candidate
-		: TEMPLATE_PREMIUM_PROPOSAL;
+function resolveTemplateId(templateId: string): string {
+	return TEMPLATE_DEFINITIONS[templateId] ? templateId : TEMPLATE_PREMIUM_PROPOSAL;
 }
 
 /* ------------------------------------------------------------------ */
@@ -388,34 +319,31 @@ export function getEditableFieldDefinitions(): readonly FieldDefinition[] {
 	return EDITABLE_FIELD_DEFINITIONS;
 }
 
-export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
-	const templateId = resolveTemplateId(rawData.templateId);
+export function buildDeckModel(rawData: unknown = {}): DeckModel {
+	const d = parseDeckInput(rawData);
+
+	const templateId = resolveTemplateId(d.templateId);
 	const template = TEMPLATE_DEFINITIONS[templateId];
 	if (!template) {
 		throw new Error(`Unknown template: ${templateId}`);
 	}
-	const excludedSlides = new Set(parseExcludedSlides(rawData.excludedSlides));
-	const layoutPreset = resolveLayoutPreset(rawData.layoutPreset);
-	const layoutPresetLock = asBoolean(rawData.layoutPresetLock, true);
+
+	const excludedSlides = new Set(d.excludedSlides);
+	const layoutPreset = resolveLayoutPreset(d.layoutPreset);
+
 	const paletteResult = resolveThemePalette({
-		primaryColor: safeText(rawData.primaryColor, '#004B49'),
-		harmonyMode: safeText(rawData.harmonyMode, ''),
-		shuffleSeed: rawData.paletteShuffleSeed,
+		primaryColor: d.primaryColor,
+		harmonyMode: d.harmonyMode,
+		shuffleSeed: d.paletteShuffleSeed,
 		locks: {
-			accentColor: asBoolean(rawData.lockAccentColor, false),
-			secondaryColor: asBoolean(rawData.lockSecondaryColor, false),
+			accentColor: d.lockAccentColor,
+			secondaryColor: d.lockSecondaryColor,
 		},
 		manualColors: {
-			accentColor: safeText(rawData.deckAccentColor || rawData.accentColor, ''),
-			secondaryColor: safeText(
-				rawData.deckSecondaryColor || rawData.secondaryColor,
-				'',
-			),
-			backgroundColor: safeText(
-				rawData.deckBackgroundColor || rawData.backgroundColor,
-				'',
-			),
-			textColor: safeText(rawData.deckTextColor || rawData.textColor, ''),
+			accentColor: d.deckAccentColor || d.accentColor,
+			secondaryColor: d.deckSecondaryColor || d.secondaryColor,
+			backgroundColor: d.deckBackgroundColor || d.backgroundColor,
+			textColor: d.deckTextColor || d.textColor,
 		},
 	});
 
@@ -432,7 +360,7 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 	};
 
 	const deckTheme: DeckTheme = {
-		brandName: safeText(rawData.brandName, 'Notso AI'),
+		brandName: d.brandName,
 		primaryColor: paletteResult.theme.primaryColor,
 		accentColor: paletteResult.theme.accentColor,
 		secondaryColor: paletteResult.theme.secondaryColor,
@@ -440,159 +368,51 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 		textColor: paletteResult.theme.textColor,
 		harmonyMode: paletteResult.harmonyMode,
 		paletteShuffleSeed: paletteResult.shuffleSeed,
-		headingFont: safeText(
-			rawData.deckHeadingFont || rawData.headingFont,
-			'Sora',
-		),
-		bodyFont: safeText(rawData.deckBodyFont || rawData.bodyFont, 'Inter'),
+		headingFont: d.deckHeadingFont || d.headingFont || 'Sora',
+		bodyFont: d.deckBodyFont || d.bodyFont || 'Inter',
 	};
 
 	const project: Project = {
-		clientName: safeText(rawData.clientName, 'Acme Client'),
-		clientUrl: safeText(rawData.clientUrl, 'https://www.acme-client.com'),
-		projectTitle: safeText(rawData.projectTitle, 'AI Mascot Proposal'),
-		coverOneLiner: safeText(
-			rawData.coverOneLiner,
-			'A playful, premium chatbot experience that converts and delights.',
-		),
-		subtitle: safeText(
-			rawData.subtitle,
-			'A reusable digital buddy concept tailored to your brand.',
-		),
-		proposalDate: safeText(rawData.proposalDate, 'June 2026'),
-		mascotName: safeText(rawData.mascotName, 'Sven'),
-		deckVersion: safeText(rawData.deckVersion, 'v1.0'),
-		contactName: safeText(rawData.contactName, 'Max Kowalski'),
-		contactEmail: safeText(rawData.contactEmail, 'max@notso.ai'),
-		contactPhone: safeText(rawData.contactPhone, '+31 6 40450599'),
-		characterAssets: parseCharacterAssets(rawData.characterAssets),
+		clientName: d.clientName,
+		clientUrl: d.clientUrl,
+		projectTitle: d.projectTitle,
+		coverOneLiner: d.coverOneLiner,
+		subtitle: d.subtitle,
+		proposalDate: d.proposalDate,
+		mascotName: d.mascotName,
+		deckVersion: d.deckVersion,
+		contactName: d.contactName,
+		contactEmail: d.contactEmail,
+		contactPhone: d.contactPhone,
+		characterAssets: d.characterAssets,
 	};
 
-	const content: Content = {
-		problemPoints: normalizeList(rawData.problemPoints, [
+	/* Project-dependent content defaults ------------------------------- */
+	const problemPoints = d.problemPoints.length
+		? d.problemPoints.slice(0, 4)
+		: [
 			`${project.clientName} loses momentum when visitors do not get instant answers.`,
 			'Support teams repeat the same pre-sales and service responses manually.',
 			'Current automation lacks brand personality and emotional connection.',
-		]).slice(0, 4),
-		opportunityPoints: normalizeList(rawData.opportunityPoints, [
+		];
+
+	const opportunityPoints = d.opportunityPoints.length
+		? d.opportunityPoints.slice(0, 4)
+		: [
 			'Convert static support into guided, interactive discovery.',
 			'Reduce service load with intelligent first-line responses.',
 			`Create a memorable branded assistant with ${project.mascotName}.`,
-		]).slice(0, 4),
-		solutionPillars: parsePairs(
-			rawData.solutionPillars,
-			[
-				'Character :: A custom digital buddy with recognizable personality.',
-				'AI :: Smart intent handling and dynamic guidance.',
-				'Interaction :: Conversational UI for web, mobile, and campaign touchpoints.',
-			],
-			'::',
-			3,
-		),
-		whatNotsoIntro: safeText(
-			rawData.whatNotsoIntro,
-			'At Notso AI, we design and deploy animated AI characters that turn support and sales conversations into premium experiences.',
-		),
-		whatNotsoCards: parsePairs(
-			rawData.whatNotsoCards,
-			[
-				'Strategy & Personality :: We define tone, role, and emotional behavior.',
-				'Design & Animation :: High-quality mascot animation and motion direction.',
-				'Smart Conversations :: Structured chat logic with conversion intent.',
-				'Measurable Impact :: Analytics visibility for performance and optimization.',
-			],
-			'::',
-			4,
-		),
-		buddyDescription: safeText(
-			rawData.buddyDescription,
-			`${project.mascotName} is a playful but practical assistant that guides users with empathy, clarity, and speed.`,
-		),
-		buddyPersonality: normalizeList(rawData.buddyPersonality, [
-			'Friendly and professional tone',
-			'Emotion-aware replies',
-			'Brand-consistent language',
-			'Conversion-focused prompts',
-		]).slice(0, 5),
-		toneSliders: parseTone(rawData.toneSliders, [
-			'Friendly :: 88',
-			'Professional :: 74',
-			'Playful :: 69',
-			'Direct :: 82',
-		]),
-		experienceConcept: normalizeList(rawData.experienceConcept, [
-			'User starts on website, greeted by mascot assistant.',
-			'Assistant routes intent to product, support, or booking path.',
-			'Recommendations adapt to user behavior and preference.',
-			'Outcome-driven CTA closes loop with conversion or handoff.',
-		]).slice(0, 6),
-		chatFlow: normalizeList(rawData.chatFlow, [
-			'Greeting',
-			'Discovery',
-			'Suggestions',
-			'Personalization',
-			'Conversion',
-		]).slice(0, 6),
-		interactionExample: normalizeList(rawData.interactionExample, [
-			'User: I need help picking the best chair.',
-			'Buddy: Great, do you prefer ergonomic or lounge style?',
-			'User: Ergonomic for long work sessions.',
-			'Buddy: I recommend Comfort LX006, would you like a quick comparison?',
-		]).slice(0, 8),
-		businessImpact: normalizeList(rawData.businessImpact, [
-			'Increase conversion rate',
-			'Reduce support load',
-			'Improve engagement',
-			'Strengthen branded recall',
-		]).slice(0, 4),
-		analyticsDescription: safeText(
-			rawData.analyticsDescription,
-			'Every interaction is tracked and analyzed to improve messaging, product guidance, and conversion outcomes.',
-		),
-		analyticsBullets: normalizeList(rawData.analyticsBullets, [
-			'Live dashboard for conversation and conversion metrics',
-			'Top questions and topic trends',
-			'Interaction volume and dwell-time tracking',
-			'Exportable monthly reports',
-		]).slice(0, 7),
-		deliverables: parseDeliverables(rawData.deliverables, [
-			'Deployment-ready mascot :: Branded character; 40+ expressions; campaign-ready assets',
-			'Multichannel access :: Website widget; mobile support; campaign microsites',
-			'Performance insights :: Dashboard access; reporting cadence; optimization recommendations',
-			'Brand activation media :: Social visuals; video loops; launch pack templates',
-		]),
-		pricing: parseTriples(rawData.pricing, [
-			'Basic - Chat :: EUR 2.600,- :: 3D mascot based on template;Template rig;Emotion based',
-			'Premium - Chat :: EUR 24.000,- :: Custom-designed mascot;Full rig 40+ animations;Advanced LLM integration',
-			'Pro - Chat & Voice :: EUR 38.000,- :: Custom mascot;Voice support;Advanced analytics',
-		]),
-		timeline: parsePairs(
-			rawData.timeline,
-			[
-				'Month 1 :: Discovery, concept alignment, and storyboard.',
-				'Month 2 :: Design production, conversation flow build.',
-				'Month 3 :: Integration, launch readiness, optimization kickoff.',
-			],
-			'::',
-			3,
-		),
-		closingText: safeText(
-			rawData.closingText,
-			`Let's build ${project.mascotName} together and launch a premium conversational experience.`,
-		),
-		teamCards: parsePairs(
-			rawData.teamCards,
-			[
-				'Strategy Lead :: Vision, scope, and decision alignment',
-				'Conversation Designer :: Dialog logic and flow quality',
-				'Motion Designer :: Character and animation polish',
-				'Implementation Engineer :: Integration and launch delivery',
-			],
-			'::',
-			4,
-		),
-		characterAssets: project.characterAssets,
-		imagePrompts: normalizeList(rawData.imagePrompts, [
+		];
+
+	const buddyDescription = d.buddyDescription
+		|| `${project.mascotName} is a playful but practical assistant that guides users with empathy, clarity, and speed.`;
+
+	const closingText = d.closingText
+		|| `Let's build ${project.mascotName} together and launch a premium conversational experience.`;
+
+	const imagePrompts = d.imagePrompts.length
+		? d.imagePrompts.slice(0, 30)
+		: [
 			`Cover hero visual with ${project.mascotName} and tablet mockup for ${project.clientName}.`,
 			'Problem-state visual with fragmented customer support journey.',
 			'Opportunity visual showing before/after support transformation.',
@@ -608,7 +428,30 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 			'Premium SaaS pricing comparison cards with highlighted tier.',
 			'Horizontal 3-phase timeline with milestones.',
 			`Closing hero visual for ${project.mascotName} with confident CTA.`,
-		]).slice(0, 30),
+		];
+
+	const content: Content = {
+		problemPoints,
+		opportunityPoints,
+		solutionPillars: d.solutionPillars,
+		whatNotsoIntro: d.whatNotsoIntro,
+		whatNotsoCards: d.whatNotsoCards,
+		buddyDescription,
+		buddyPersonality: d.buddyPersonality,
+		toneSliders: d.toneSliders,
+		experienceConcept: d.experienceConcept,
+		chatFlow: d.chatFlow,
+		interactionExample: d.interactionExample,
+		businessImpact: d.businessImpact,
+		analyticsDescription: d.analyticsDescription,
+		analyticsBullets: d.analyticsBullets,
+		deliverables: d.deliverables,
+		pricing: d.pricing,
+		timeline: d.timeline,
+		closingText,
+		teamCards: d.teamCards,
+		characterAssets: project.characterAssets,
+		imagePrompts,
 	};
 
 	const allSlides: SlideData[] = [
@@ -798,9 +641,9 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 		const lockedLayout = layoutPreset.slideLayoutByType[slide.type];
 		const imageRatio = layoutPreset.imageRatioByType[slide.type];
 		const backgroundMode = layoutPreset.backgroundModeByType[slide.type];
-		const layoutKey = layoutPresetLock
+		const layoutKey = d.layoutPresetLock
 			? lockedLayout || slide.type
-			: safeText(rawData[`layout_${slide.id}`], lockedLayout || slide.type);
+			: safeText(d[`layout_${slide.id}`], lockedLayout || slide.type);
 		const slotPolicy = resolveSlotPolicy(slide.type);
 		const imageMode = resolveImageModeForSlide(slide.type, '');
 
@@ -847,7 +690,7 @@ export function buildDeckModel(rawData: RawDeckInput = {}): DeckModel {
 		layout: {
 			presetId: layoutPreset.id,
 			presetLabel: layoutPreset.label,
-			locked: layoutPresetLock,
+			locked: d.layoutPresetLock,
 		},
 		slides,
 	};
