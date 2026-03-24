@@ -58,7 +58,7 @@
 		slideWidth,
 	}: Props = $props();
 
-	setContext('slideWidth', slideWidth);
+	setContext('slideWidth', () => slideWidth);
 
 	const resolvedTheme = $derived(resolveTheme(theme, deckData));
 

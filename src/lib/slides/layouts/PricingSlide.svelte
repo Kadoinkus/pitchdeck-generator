@@ -4,7 +4,7 @@
 	import { ensureItems } from '../core/utils.ts';
 	import PricingCardPanel from '../panels/PricingCardPanel.svelte';
 	import TitlePanel from '../panels/TitlePanel.svelte';
-	import type { DeckData, SlideData, ThemeData } from '../types.ts';
+	import type { SlideData, ThemeData } from '../types.ts';
 
 	let { slide, theme }: { slide: SlideData; theme: ThemeData } = $props();
 

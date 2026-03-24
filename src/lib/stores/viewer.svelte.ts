@@ -5,6 +5,7 @@ import type { DeckData, SlideData, ThemeData } from '$lib/slides/types.ts';
 /* ------------------------------------------------------------------ */
 
 const VIEWER_STATE_KEY = 'proposalDeckViewerOpen';
+const VIEWER_SLIDE_KEY = 'proposalDeckViewerSlide';
 
 /** Deck data with the resolved slide array required by the viewer. */
 export interface ViewerDeckData extends DeckData {
@@ -23,7 +24,14 @@ interface ChatTarget {
 	label: string;
 }
 
-let _currentSlide = $state(0);
+// Snapshot saved state before effects can clear it
+const _savedOpen = typeof sessionStorage !== 'undefined'
+	&& sessionStorage.getItem(VIEWER_STATE_KEY) === '1';
+const _savedSlide = typeof sessionStorage !== 'undefined'
+	? parseInt(sessionStorage.getItem(VIEWER_SLIDE_KEY) ?? '0', 10) || 0
+	: 0;
+
+let _currentSlide = $state(_savedSlide);
 let _isOpen = $state(false);
 let _slideData = $state<ViewerDeckData | null>(null);
 let _toolbarOptions = $state<ToolbarOptions>({});
@@ -55,12 +63,13 @@ export function prevSlide(): void {
 /*  Lifecycle                                                          */
 /* ------------------------------------------------------------------ */
 
-export function showViewer(data: ViewerDeckData, options: ToolbarOptions = {}): void {
+export function showViewer(data: ViewerDeckData, options: ToolbarOptions = {}, startSlide?: number): void {
 	if (!data.slides.length) return;
 
 	_slideData = data;
 	_toolbarOptions = options;
-	_currentSlide = Math.max(0, Math.min(_currentSlide, data.slides.length - 1));
+	const target = startSlide ?? _currentSlide;
+	_currentSlide = Math.max(0, Math.min(target, data.slides.length - 1));
 	_isOpen = true;
 }
 
@@ -92,11 +101,13 @@ $effect.root(() => {
 			sessionStorage.removeItem(VIEWER_STATE_KEY);
 		}
 	});
+	$effect(() => {
+		sessionStorage.setItem(VIEWER_SLIDE_KEY, String(_currentSlide));
+	});
 });
 
-export function wasViewerOpen(): boolean {
-	if (typeof sessionStorage === 'undefined') return false;
-	return sessionStorage.getItem(VIEWER_STATE_KEY) === '1';
+export function wasViewerOpen(): { open: boolean; slide: number } {
+	return { open: _savedOpen, slide: _savedSlide };
 }
 
 /* ------------------------------------------------------------------ */

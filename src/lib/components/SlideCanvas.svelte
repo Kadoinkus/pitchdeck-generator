@@ -28,9 +28,9 @@
 		goToSlide(current);
 	}
 
-	function handleCanvasClick(event: MouseEvent): void {
-		if (!(event.target instanceof HTMLElement)) return;
-		const target = event.target.closest('[data-ai-target]');
+	function resolveAiTarget(origin: EventTarget | null): void {
+		if (!(origin instanceof HTMLElement)) return;
+		const target = origin.closest('[data-ai-target]');
 		if (!target) return;
 
 		const aiTarget = target.getAttribute('data-ai-target');
@@ -39,16 +39,28 @@
 			setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
 		}
 	}
+
+	function handleCanvasClick(event: MouseEvent): void {
+		resolveAiTarget(event.target);
+	}
+
+	function handleCanvasKeydown(event: KeyboardEvent): void {
+		if (event.key !== 'Enter' && event.key !== ' ') return;
+		event.preventDefault();
+		resolveAiTarget(event.target);
+	}
 </script>
 
 <svelte:window onresize={handleResize} />
 
 <div class="slide-stage">
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-canvas"
 		bind:this={canvasEl}
 		use:swipeable={{ onPrev: prevSlide, onNext: nextSlide }}
 		onclick={handleCanvasClick}
+		onkeydown={handleCanvasKeydown}
 	>
 		<div
 			class="slide-track"

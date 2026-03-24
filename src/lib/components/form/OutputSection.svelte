@@ -48,7 +48,7 @@
 		<a
 			class="ghost-link"
 			class:disabled={!result?.downloadUrl}
-			href={result?.downloadUrl || '#'}
+			href={result?.downloadUrl || undefined}
 		>
 			Download .pptx
 		</a>
@@ -56,7 +56,7 @@
 		<a
 			class="ghost-link"
 			class:disabled={!result?.pdfUrl}
-			href={result?.pdfUrl || '#'}
+			href={result?.pdfUrl || undefined}
 			target="_blank"
 			rel="noopener"
 		>
@@ -66,7 +66,7 @@
 		<a
 			class="ghost-link"
 			class:disabled={!result?.shareUrl}
-			href={result?.shareUrl || '#'}
+			href={result?.shareUrl || undefined}
 			target="_blank"
 			rel="noopener"
 		>

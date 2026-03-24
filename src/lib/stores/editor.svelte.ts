@@ -605,10 +605,35 @@ export function restoreDeckResult(): boolean {
 		if (!raw) return false;
 
 		const parsed: unknown = JSON.parse(raw);
-		if (!isRecord(parsed) || !('downloadUrl' in parsed) || !('slideData' in parsed)) return false;
-		if (!parsed.downloadUrl || !parsed.slideData) return false;
+		if (!isRecord(parsed)) return false;
 
-		_deckResult = parsed as DeckResult;
+		const { downloadUrl, pdfUrl, shareUrl, slideData } = parsed;
+		if (!downloadUrl || typeof downloadUrl !== 'string') return false;
+		if (!isRecord(slideData) || !Array.isArray(slideData.slides) || !isRecord(slideData.theme)) return false;
+
+		const slides = slideData.slides.filter(
+			(s: unknown): s is DeckResultSlideData['slides'][number] => isRecord(s) && typeof s.type === 'string',
+		);
+		if (slides.length === 0) return false;
+
+		const project = isRecord(slideData.project) ? slideData.project : undefined;
+
+		_deckResult = {
+			downloadUrl,
+			pdfUrl: typeof pdfUrl === 'string' ? pdfUrl : null,
+			shareUrl: typeof shareUrl === 'string' ? shareUrl : null,
+			slideData: {
+				...slideData,
+				slides,
+				theme: slideData.theme,
+				project: project
+					? {
+						projectTitle: typeof project.projectTitle === 'string' ? project.projectTitle : undefined,
+						clientName: typeof project.clientName === 'string' ? project.clientName : undefined,
+					}
+					: undefined,
+			},
+		};
 		return true;
 	} catch (error) {
 		console.error(error);

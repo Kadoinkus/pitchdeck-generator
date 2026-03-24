@@ -131,7 +131,7 @@
 	<div class="share-actions">
 		<span class="share-counter">{currentSlide + 1} / {total}</span>
 		<a
-			href={data.downloadUrl ?? '/'}
+			href={data.downloadUrl ?? undefined}
 			download
 			class:disabled={!data.downloadUrl}
 			aria-disabled={!data.downloadUrl}

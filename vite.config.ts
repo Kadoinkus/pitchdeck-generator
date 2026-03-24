@@ -5,6 +5,14 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
+	server: {
+		host: true,
+		allowedHosts: true,
+	},
+	preview: {
+		host: true,
+		allowedHosts: [],
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

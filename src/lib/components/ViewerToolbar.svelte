@@ -177,21 +177,21 @@
 				<a
 					class="viewer-share-item"
 					class:disabled={!hasDownload}
-					href={opts.downloadUrl ?? '#'}
+					href={opts.downloadUrl ?? undefined}
 					download
 					onclick={closeShare}
 				>Download PPTX</a>
 				<a
 					class="viewer-share-item"
 					class:disabled={!hasPdf}
-					href={opts.pdfUrl ?? '#'}
+					href={opts.pdfUrl ?? undefined}
 					onclick={closeShare}
 				>Download PDF</a>
 
 				<a
 					class="viewer-share-item"
 					class:disabled={!hasShare}
-					href={opts.shareUrl ?? '#'}
+					href={opts.shareUrl ?? undefined}
 					target="_blank"
 					rel="noopener noreferrer"
 					onclick={closeShare}

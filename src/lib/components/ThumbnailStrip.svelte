@@ -1,7 +1,6 @@
 <script lang="ts">
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { goToSlide, viewer } from '$lib/stores/viewer.svelte.ts';
-	import { tick } from 'svelte';
 
 	let thumbsEl: HTMLDivElement | undefined = $state();
 
@@ -11,15 +10,12 @@
 
 	/** Auto-scroll active thumbnail into view on slide change. */
 	$effect(() => {
-		const _index = viewer.currentSlide;
-		void _index;
-		tick().then(() => {
-			if (!thumbsEl) return;
-			const active = thumbsEl.querySelector('.thumb.active');
-			if (active) {
-				active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-			}
-		});
+		void viewer.currentSlide;
+		if (!thumbsEl) return;
+		const active = thumbsEl.querySelector('.thumb.active');
+		if (active) {
+			active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		}
 	});
 </script>
 

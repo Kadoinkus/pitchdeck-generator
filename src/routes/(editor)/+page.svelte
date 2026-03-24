@@ -22,6 +22,7 @@
 		showViewer,
 		viewer,
 		type ViewerDeckData,
+		wasViewerOpen,
 	} from '$lib/stores/viewer.svelte.ts';
 	import { onMount } from 'svelte';
 
@@ -69,12 +70,7 @@
 	}
 
 	onMount(() => {
-		document.addEventListener('keydown', handleKeyboard);
 		bootstrap();
-
-		return () => {
-			document.removeEventListener('keydown', handleKeyboard);
-		};
 	});
 
 	async function bootstrap() {
@@ -115,6 +111,24 @@
 			restoreDeckResult();
 			pushHistory();
 			saveDraft(true);
+
+			// Reopen viewer at the same slide if it was open before reload
+			const prev = wasViewerOpen();
+			if (prev.open) {
+				const result = getDeckResult();
+				if (result?.slideData?.slides?.length) {
+					const data: ViewerDeckData = {
+						slides: result.slideData.slides,
+						theme: result.slideData.theme,
+						project: result.slideData.project,
+					};
+					showViewer(data, {
+						downloadUrl: result.downloadUrl ?? null,
+						pdfUrl: result.pdfUrl ?? null,
+						shareUrl: result.shareUrl ?? null,
+					}, prev.slide);
+				}
+			}
 		} catch (error) {
 			console.error(error);
 			setStatus(
@@ -144,6 +158,8 @@
 		}
 	}
 </script>
+
+<svelte:window onkeydown={handleKeyboard} />
 
 <svelte:head>
 	<title>Notso AI Pitch Deck Studio</title>
