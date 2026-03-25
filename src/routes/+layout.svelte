@@ -1,7 +1,13 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	import favicon from '$lib/assets/favicon.svg';
 	import Haiku from '$lib/components/Haiku.svelte';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 	import '../app.css';
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
+	injectSpeedInsights();
 
 	let { children } = $props();
 </script>
