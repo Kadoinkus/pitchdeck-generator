@@ -45,6 +45,11 @@ export interface DeckResult {
 	downloadUrl?: string | null;
 	pdfUrl?: string | null;
 	shareUrl?: string | null;
+	/** Server-side SHA-256 hash — used for idempotent dedup, NOT for client comparison. */
+	payloadHash?: string | null;
+	publishedAt?: string | null;
+	/** Client-side payloadSignature snapshot at publish time — used for stale detection. */
+	publishedSignature?: string | null;
 }
 
 export interface DeckResultSlideData {
@@ -624,6 +629,9 @@ export function restoreDeckResult(): boolean {
 			downloadUrl,
 			pdfUrl: typeof pdfUrl === 'string' ? pdfUrl : null,
 			shareUrl: typeof shareUrl === 'string' ? shareUrl : null,
+			payloadHash: typeof parsed.payloadHash === 'string' ? parsed.payloadHash : null,
+			publishedAt: typeof parsed.publishedAt === 'string' ? parsed.publishedAt : null,
+			publishedSignature: typeof parsed.publishedSignature === 'string' ? parsed.publishedSignature : null,
 			slideData: {
 				...slideData,
 				slides,
@@ -641,6 +649,37 @@ export function restoreDeckResult(): boolean {
 		console.error(error);
 		return false;
 	}
+}
+
+/**
+ * Returns true when the current form payload has diverged from the
+ * last-published snapshot, meaning the share links are stale.
+ */
+export function isPublishStale(): boolean {
+	const result = _deckResult;
+	if (!result?.publishedSignature) return false;
+	return payloadSignature(_payload) !== result.publishedSignature;
+}
+
+/**
+ * Clears publish-related fields from the deck result when user edits
+ * make the published snapshot outdated. Keeps slideData for the viewer.
+ */
+export function markPublishStale(): void {
+	if (!_deckResult) return;
+	_deckResult = {
+		..._deckResult,
+		publishedSignature: null,
+		publishedAt: null,
+	};
+}
+
+/**
+ * Captures the current payload signature for stale detection.
+ * Call this immediately after a successful publish.
+ */
+export function snapshotPublishSignature(): string {
+	return payloadSignature(_payload);
 }
 
 // ---------------------------------------------------------------------------
