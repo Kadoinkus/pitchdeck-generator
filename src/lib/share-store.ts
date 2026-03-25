@@ -75,3 +75,31 @@ export async function updateShare(
 	await fs.writeFile(filePath, JSON.stringify(updated, null, 2), 'utf8');
 	return true;
 }
+
+export async function findShareByHash(
+	outputDir: string,
+	payloadHash: string,
+): Promise<string | null> {
+	const dir = shareDir(outputDir);
+	let entries: string[];
+	try {
+		entries = await fs.readdir(dir);
+	} catch {
+		return null;
+	}
+
+	for (const entry of entries) {
+		if (!entry.endsWith('.json')) continue;
+		try {
+			const filePath = path.join(dir, entry);
+			const content = await fs.readFile(filePath, 'utf8');
+			const record: ShareRecord = JSON.parse(content);
+			if (record.payloadHash === payloadHash) {
+				return record.token;
+			}
+		} catch {
+			continue;
+		}
+	}
+	return null;
+}
