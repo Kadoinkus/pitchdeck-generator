@@ -12,6 +12,7 @@
 		setDeckResult,
 		setExcludedSlides,
 		setStatus,
+		snapshotPublishSignature,
 		type TemplateSlide,
 	} from '$lib/stores/editor.svelte';
 
@@ -36,8 +37,8 @@
 		setExcludedSlides([]);
 	}
 
-	async function handleGenerate() {
-		setStatus('Generating pitch deck...');
+	async function handlePublish() {
+		setStatus('Publishing deck...');
 
 		try {
 			const p = getPayload();
@@ -76,9 +77,12 @@
 				downloadUrl: downloadUrlAbsolute,
 				pdfUrl: pdfUrlAbsolute,
 				shareUrl: shareUrlAbsolute,
+				payloadHash: result.payloadHash ?? null,
+				publishedAt: new Date().toISOString(),
+				publishedSignature: snapshotPublishSignature(),
 			});
 
-			setStatus('Deck generated successfully.');
+			setStatus('Deck published.');
 			onOpenViewer();
 		} catch (error) {
 			console.error(error);
@@ -97,7 +101,7 @@
 >
 	<QuickStartSection
 		onTemplateChange={handleTemplateChange}
-		onGenerate={handleGenerate}
+		onPublish={handlePublish}
 	/>
 
 	<SlideSelector slides={currentSlides} />

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
-	import { getDeckResult, setStatus } from '$lib/stores/editor.svelte';
+	import {
+		getDeckResult,
+		isPublishStale,
+		setStatus,
+	} from '$lib/stores/editor.svelte';
 
 	interface Props {
 		onOpenViewer: () => void;
@@ -11,6 +15,7 @@
 	const result = $derived(getDeckResult());
 	const token = $derived(result?.shareToken ?? null);
 	const hasResult = $derived(Boolean(token));
+	const stale = $derived(hasResult && isPublishStale());
 	const shareLinks = $derived(token ? getShareLinks(token) : null);
 
 	async function copyShareLink() {
@@ -35,10 +40,12 @@
 	<div class="section-head compact">
 		<h2>Output</h2>
 		<p>
-			{#if hasResult}
-				Deck ready. Open viewer, export files, or share web link.
+			{#if stale}
+				Content changed since last publish. Republish to update links.
+			{:else if hasResult}
+				Deck published. Open viewer, export files, or share web link.
 			{:else}
-				Generate a deck to unlock links and exports.
+				Publish a deck to unlock links and exports.
 			{/if}
 		</p>
 	</div>

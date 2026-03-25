@@ -16,10 +16,10 @@
 
 	interface Props {
 		onTemplateChange: (template: TemplateEntry) => void;
-		onGenerate: () => void;
+		onPublish: () => void;
 	}
 
-	let { onTemplateChange, onGenerate }: Props = $props();
+	let { onTemplateChange, onPublish }: Props = $props();
 
 	let autofilling = $state(false);
 	let generating = $state(false);
@@ -84,7 +84,7 @@
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		generating = true;
-		onGenerate();
+		onPublish();
 		generating = false;
 	}
 </script>
@@ -161,12 +161,12 @@
 			AI Autofill
 		</button>
 		<button
-			id="generate-button"
+			id="publish-button"
 			type="button"
 			disabled={generating}
 			onclick={handleSubmit}
 		>
-			Generate Deck
+			Publish
 		</button>
 		<p class="status" class:error={status.isError}>{status.text}</p>
 	</div>
