@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { swipeable } from '$lib/actions/swipeable';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
@@ -22,11 +22,19 @@
 	const slides = $derived(data.slideData.slides);
 	const theme = $derived(data.slideData.theme);
 	const total = $derived(slides.length);
+	const clientName = $derived(data.slideData.project?.clientName ?? 'Client');
 	const title = $derived(data.slideData.project?.projectTitle ?? 'Pitch Deck');
+	const pageTitle = $derived(`${title} — Deck Share`);
+	const previewDescription = $derived(
+		`View ${clientName}'s shared pitch deck with ${total} slides in Notso AI Deck Studio.`,
+	);
+	const canonicalUrl = $derived(`${page.url.origin}${page.url.pathname}`);
+	const previewImageUrl = $derived(
+		new URL(asset('/social/deck-share-card.png'), page.url).href,
+	);
+	const siteName = 'Notso AI Deck Studio';
 	const subtitle = $derived(
-		`Prepared for ${
-			data.slideData.project?.clientName ?? 'Client'
-		} \u00b7 ${total} slides`,
+		`Prepared for ${clientName} \u00b7 ${total} slides`,
 	);
 
 	const atStart = $derived(currentSlide <= 0);
@@ -177,7 +185,9 @@
 			try {
 				await navigator.clipboard.writeText(window.location.href);
 				shareButtonLabel = 'Link copied!';
-				setTimeout(() => (shareButtonLabel = 'Share'), 2000);
+				setTimeout(() => {
+					shareButtonLabel = 'Share';
+				}, 2000);
 			} catch {
 				// Last resort: prompt the user
 				prompt('Copy this link to share:', window.location.href);
@@ -202,7 +212,23 @@
 <svelte:window onkeydown={handleKey} />
 
 <svelte:head>
-	<title>{title} — Deck Share</title>
+	<title>{pageTitle}</title>
+	<meta name="description" content={previewDescription}>
+	<link rel="canonical" href={canonicalUrl}>
+
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content={siteName}>
+	<meta property="og:title" content={pageTitle}>
+	<meta property="og:description" content={previewDescription}>
+	<meta property="og:url" content={canonicalUrl}>
+	<meta property="og:image" content={previewImageUrl}>
+	<meta property="og:image:alt" content={`Preview card for ${pageTitle}`}>
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content={pageTitle}>
+	<meta name="twitter:description" content={previewDescription}>
+	<meta name="twitter:image" content={previewImageUrl}>
+	<meta name="twitter:image:alt" content={`Preview card for ${pageTitle}`}>
 </svelte:head>
 
 <header class="share-topbar">
