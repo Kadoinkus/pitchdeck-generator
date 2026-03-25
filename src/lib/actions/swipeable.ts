@@ -64,11 +64,12 @@ export function swipeable(
 		drag.width = node.clientWidth || 1;
 		drag.moved = false;
 
+		node.setPointerCapture(event.pointerId);
 		node.classList.add('is-dragging');
 
-		document.addEventListener('pointermove', onPointerMove);
-		document.addEventListener('pointerup', onPointerUp);
-		document.addEventListener('pointercancel', onPointerUp);
+		node.addEventListener('pointermove', onPointerMove);
+		node.addEventListener('pointerup', onPointerUp);
+		node.addEventListener('pointercancel', onPointerUp);
 	}
 
 	function normalizeWheelDelta(event: WheelEvent): number {
@@ -135,9 +136,9 @@ export function swipeable(
 		node.classList.remove('is-dragging');
 		opts.onDrag?.(0);
 
-		document.removeEventListener('pointermove', onPointerMove);
-		document.removeEventListener('pointerup', onPointerUp);
-		document.removeEventListener('pointercancel', onPointerUp);
+		node.removeEventListener('pointermove', onPointerMove);
+		node.removeEventListener('pointerup', onPointerUp);
+		node.removeEventListener('pointercancel', onPointerUp);
 
 		const threshold = Math.min(
 			opts.threshold ?? 140,
@@ -166,6 +167,9 @@ export function swipeable(
 		if (drag.active) event.preventDefault();
 	}
 
+	const prevTouchAction = node.style.touchAction;
+	node.style.touchAction = 'pan-y';
+
 	node.addEventListener('pointerdown', onPointerDown);
 	node.addEventListener('click', onClickCapture, true);
 	node.addEventListener('wheel', onWheel, { passive: false });
@@ -176,13 +180,14 @@ export function swipeable(
 			opts = newOpts;
 		},
 		destroy() {
+			node.style.touchAction = prevTouchAction;
 			node.removeEventListener('pointerdown', onPointerDown);
 			node.removeEventListener('click', onClickCapture, true);
 			node.removeEventListener('wheel', onWheel);
 			node.removeEventListener('dragstart', onDragStart);
-			document.removeEventListener('pointermove', onPointerMove);
-			document.removeEventListener('pointerup', onPointerUp);
-			document.removeEventListener('pointercancel', onPointerUp);
+			node.removeEventListener('pointermove', onPointerMove);
+			node.removeEventListener('pointerup', onPointerUp);
+			node.removeEventListener('pointercancel', onPointerUp);
 		},
 	};
 }

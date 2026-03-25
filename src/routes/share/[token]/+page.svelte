@@ -627,6 +627,34 @@
 		}
 	}
 
+	/* ── Small screens (≤680px) ───── */
+	@media (max-width: 680px) {
+		.share-topbar {
+			padding: 8px 10px;
+			gap: 6px;
+		}
+
+		.share-topbar h1 {
+			font-size: 0.92rem;
+		}
+
+		.share-subtitle {
+			display: none;
+		}
+
+		.share-actions {
+			gap: 4px;
+		}
+
+		.share-counter {
+			display: none;
+		}
+
+		.share-main {
+			padding: 4px;
+		}
+	}
+
 	@media print {
 		:global(body) {
 			background: #fff;

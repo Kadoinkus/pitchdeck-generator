@@ -67,10 +67,12 @@ button,
 	transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
-button:hover,
-.toolbar-btn:hover,
-.ghost-link:hover {
-	transform: translateY(-1px);
+@media (hover: hover) {
+	button:hover,
+	.toolbar-btn:hover,
+	.ghost-link:hover {
+		transform: translateY(-1px);
+	}
 }
 
 button:disabled,

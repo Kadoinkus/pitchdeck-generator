@@ -26,12 +26,9 @@
 		canRedo = false,
 	}: Props = $props();
 
-	let titleValue = $state(projectName);
+	let titleValue = $state('');
 	let titleEditing = $state(false);
-
-	$effect(() => {
-		if (!titleEditing) titleValue = projectName;
-	});
+	const displayedTitle = $derived(titleEditing ? titleValue : projectName);
 
 	function commitRename(): void {
 		titleEditing = false;
@@ -44,13 +41,22 @@
 	}
 
 	function handleTitleKeydown(event: KeyboardEvent): void {
+		const target = event.currentTarget;
+		if (!(target instanceof HTMLInputElement)) return;
+
 		if (event.key === 'Enter') {
 			event.preventDefault();
-			(event.currentTarget as HTMLElement).blur();
+			target.blur();
 		} else if (event.key === 'Escape') {
 			titleValue = projectName;
-			(event.currentTarget as HTMLElement).blur();
+			target.blur();
 		}
+	}
+
+	function handleTitleInput(
+		event: Event & { currentTarget: EventTarget & HTMLInputElement },
+	): void {
+		titleValue = event.currentTarget.value;
 	}
 
 	const counter = $derived(
@@ -159,14 +165,16 @@
 		</button>
 
 		<div class="viewer-project">
-			<div class="viewer-project-row" data-value={titleValue}>
+			<div class="viewer-project-row" data-value={displayedTitle}>
 				<input
 					class="viewer-project-name-input"
 					type="text"
-					bind:value={titleValue}
+					value={displayedTitle}
 					aria-label="Project name"
 					autocomplete="off"
+					oninput={handleTitleInput}
 					onfocus={() => {
+						titleValue = projectName;
 						titleEditing = true;
 					}}
 					onblur={commitRename}
@@ -336,7 +344,8 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 14px;
-		padding: 8px 12px;
+		padding: 8px max(12px, env(safe-area-inset-right)) 8px
+			max(12px, env(safe-area-inset-left));
 		background: linear-gradient(
 			96deg,
 			#0fa7c9 0%,
@@ -731,7 +740,7 @@
 			left: 8px;
 			right: 8px;
 			top: auto;
-			bottom: 8px;
+			bottom: max(8px, env(safe-area-inset-bottom));
 			width: auto;
 			min-width: unset;
 			padding: 10px;

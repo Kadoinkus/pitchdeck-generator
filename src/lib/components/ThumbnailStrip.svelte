@@ -8,13 +8,52 @@
 	const theme = $derived(viewer.slideData?.theme);
 	const deckData = $derived(viewer.slideData ?? undefined);
 
-	/** Auto-scroll active thumbnail into view on slide change. */
+	/**
+	 * Auto-scroll active thumbnail into view on slide change.
+	 * Uses scrollTo instead of scrollIntoView so the container's
+	 * padding is always visible around the active thumbnail.
+	 */
 	$effect(() => {
 		void viewer.currentSlide;
 		if (!thumbsEl) return;
-		const active = thumbsEl.querySelector('.thumb.active');
-		if (active) {
-			active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		const el = thumbsEl.querySelector<HTMLElement>('.thumb.active');
+		if (!el) return;
+
+		const cs = getComputedStyle(thumbsEl);
+		const isVertical = cs.flexDirection === 'column';
+
+		if (isVertical) {
+			const padTop = parseFloat(cs.paddingTop);
+			const padBottom = parseFloat(cs.paddingBottom);
+			const elTop = el.offsetTop - thumbsEl.offsetTop;
+			const elBottom = elTop + el.offsetHeight;
+			const viewTop = thumbsEl.scrollTop;
+			const viewBottom = viewTop + thumbsEl.clientHeight;
+
+			if (elTop - padTop < viewTop) {
+				thumbsEl.scrollTo({ top: elTop - padTop, behavior: 'smooth' });
+			} else if (elBottom + padBottom > viewBottom) {
+				thumbsEl.scrollTo({
+					top: elBottom + padBottom - thumbsEl.clientHeight,
+					behavior: 'smooth',
+				});
+			}
+		} else {
+			const padLeft = parseFloat(cs.paddingLeft);
+			const padRight = parseFloat(cs.paddingRight);
+			const elLeft = el.offsetLeft - thumbsEl.offsetLeft;
+			const elRight = elLeft + el.offsetWidth;
+			const viewLeft = thumbsEl.scrollLeft;
+			const viewRight = viewLeft + thumbsEl.clientWidth;
+
+			if (elLeft - padLeft < viewLeft) {
+				thumbsEl.scrollTo({ left: elLeft - padLeft, behavior: 'smooth' });
+			} else if (elRight + padRight > viewRight) {
+				thumbsEl.scrollTo({
+					left: elRight + padRight - thumbsEl.clientWidth,
+					behavior: 'smooth',
+				});
+			}
 		}
 	});
 </script>
@@ -105,11 +144,21 @@
 			padding: 6px;
 			overflow-x: auto;
 			overflow-y: hidden;
+			scroll-snap-type: x mandatory;
 		}
 
 		.thumb {
 			flex: 0 0 auto;
 			width: 108px;
+			scroll-snap-align: center;
+		}
+
+		.thumb:first-child {
+			scroll-snap-align: start;
+		}
+
+		.thumb:last-child {
+			scroll-snap-align: end;
 		}
 	}
 </style>

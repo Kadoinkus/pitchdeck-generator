@@ -30,6 +30,19 @@
 	const MAX_W = 700;
 	const MIN_H = 320;
 	const MAX_H = 800;
+	const MOBILE_QUERY = '(max-width: 480px)';
+
+	let isMobile = $state(false);
+
+	$effect(() => {
+		const mql = window.matchMedia(MOBILE_QUERY);
+		isMobile = mql.matches;
+		function onChange(e: MediaQueryListEvent): void {
+			isMobile = e.matches;
+		}
+		mql.addEventListener('change', onChange);
+		return () => mql.removeEventListener('change', onChange);
+	});
 
 	const chatTarget = $derived(viewer.chatTarget);
 
@@ -154,8 +167,8 @@
 	<div
 		class="panel"
 		class:is-resizing={resizeAxis !== null}
-		style:width="{panelWidth}px"
-		style:height="{panelHeight}px"
+		style:width={isMobile ? undefined : `${panelWidth}px`}
+		style:height={isMobile ? undefined : `${panelHeight}px`}
 	>
 		<!-- resize handles -->
 		<div
@@ -799,8 +812,9 @@
 	@media (max-width: 480px) {
 		.panel {
 			right: 8px;
-			bottom: 8px;
-			width: calc(100vw - 16px) !important;
+			bottom: max(8px, env(safe-area-inset-bottom));
+			width: calc(100vw - 16px);
+			max-height: calc(100dvh - 24px);
 			border-radius: 16px;
 		}
 
