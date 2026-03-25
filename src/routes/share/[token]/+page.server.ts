@@ -10,6 +10,9 @@ interface ShareDeckPayload extends DeckData {
 	theme: ThemeData;
 }
 
+const TTL_DAYS = 30;
+const TTL_MS = TTL_DAYS * 24 * 60 * 60 * 1000;
+
 function isShareDeckPayload(value: unknown): value is ShareDeckPayload {
 	if (typeof value !== 'object' || value === null) return false;
 	return (
@@ -27,6 +30,13 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const record = await readShare(getOutputDir(), token);
 	if (!record) error(404, 'Share link not found');
+
+	if (typeof record.createdAt === 'string') {
+		const age = Date.now() - new Date(record.createdAt).getTime();
+		if (age > TTL_MS) {
+			error(410, 'This shared deck has expired.');
+		}
+	}
 
 	const raw: unknown = record.slideData;
 	if (!isShareDeckPayload(raw)) error(404, 'Deck data missing');
