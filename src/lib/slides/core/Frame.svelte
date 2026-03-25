@@ -10,9 +10,6 @@
 		children: Snippet;
 	}
 
-	const REFERENCE_WIDTH = 1020;
-	const REFERENCE_HEIGHT = (REFERENCE_WIDTH * 9) / 16;
-
 	let { slide = null, theme = null, children }: FrameProps = $props();
 
 	const modeClass = $derived(
@@ -26,48 +23,9 @@
 	const slideType = $derived(slide?.type || 'generic');
 	const style = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
-
-	let frameEl: HTMLElement | undefined = $state();
-	let parentWidth = $state(REFERENCE_WIDTH);
-	let parentHeight = $state(REFERENCE_HEIGHT);
-
-	const slideScale = $derived.by(() => {
-		if (parentWidth <= 0 || parentHeight <= 0) return 1;
-		return Math.min(
-			parentWidth / REFERENCE_WIDTH,
-			parentHeight / REFERENCE_HEIGHT,
-		);
-	});
-
-	$effect(() => {
-		if (!frameEl) return;
-		const parent = frameEl.parentElement;
-		if (!parent) return;
-
-		parentWidth = parent.clientWidth;
-		parentHeight = parent.clientHeight;
-		if (typeof ResizeObserver === 'undefined') return;
-
-		const ro = new ResizeObserver((entries) => {
-			const entry = entries[0];
-			if (!entry) return;
-			parentWidth = entry.contentRect.width;
-			parentHeight = entry.contentRect.height;
-		});
-
-		ro.observe(parent);
-		return () => {
-			ro.disconnect();
-		};
-	});
 </script>
 
-<article
-	class="slide-render"
-	bind:this={frameEl}
-	{style}
-	style:--slide-scale={slideScale}
->
+<article class="slide-render" {style}>
 	<div class="deck-slide {modeClass} {textMode} {slideType}-slide">
 		<section class="deck-content">
 			{@render children()}
@@ -89,6 +47,8 @@
 	}
 
 	.deck-slide {
+		--ref-w: 1020px;
+		--ref-h: calc(var(--ref-w) * 9 / 16);
 		--surface: #ffffff;
 		--surface-soft: #f4f7fa;
 		--line: rgba(10, 26, 46, 0.12);
@@ -110,10 +70,9 @@
 		display: grid;
 		grid-template-rows: 1fr auto;
 		gap: clamp(10px, 1.1cqi, 16px);
-		width: 1020px;
-		height: 573.75px;
-		transform-origin: top left;
-		transform: scale(var(--slide-scale));
+		width: var(--ref-w);
+		height: var(--ref-h);
+		zoom: calc(100cqi / var(--ref-w));
 	}
 
 	.deck-slide.mode-dark {

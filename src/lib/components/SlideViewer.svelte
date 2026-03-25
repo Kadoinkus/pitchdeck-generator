@@ -123,7 +123,7 @@
 				role="separator"
 				aria-orientation="vertical"
 				tabindex="-1"
-				use:resizable={{ min: 100, max: 560, target: '.slide-viewer' }}
+				use:resizable={{ min: 140, max: 560, target: '.slide-viewer' }}
 			>
 			</div>
 
