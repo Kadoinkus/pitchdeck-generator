@@ -300,6 +300,9 @@
 	<div
 		class="share-deck"
 		bind:this={deckEl}
+		role="region"
+		aria-roledescription="carousel"
+		aria-label="{title} — {total} slides"
 		style:--slide-gap={`${SLIDE_GAP}px`}
 		use:swipeable={{
 			onPrev: prev,
@@ -312,8 +315,15 @@
 			style:transform={trackTransform}
 		>
 			{#each slides as slide, index (index)}
-				<section class="share-slide" class:is-active={index === currentSlide}>
-					<div class="share-slide-frame" aria-label={`Slide ${index + 1}`}>
+				<section
+					class="share-slide"
+					class:is-active={index === currentSlide}
+					aria-roledescription="slide"
+					aria-label={`Slide ${index + 1} of ${total}`}
+					aria-hidden={index !== currentSlide}
+					inert={index !== currentSlide ? true : undefined}
+				>
+					<div class="share-slide-frame">
 						<SlideRenderer {slide} {theme} deckData={data.slideData} />
 					</div>
 				</section>

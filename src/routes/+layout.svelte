@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { page } from '$app/state';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
@@ -53,9 +54,11 @@
 
 {@render children()}
 
-<footer class="haiku-footer">
-	<Haiku variant="ghost" />
-</footer>
+{#if page.status < 400}
+	<footer class="haiku-footer">
+		<Haiku variant="ghost" />
+	</footer>
+{/if}
 
 <style>
 	.haiku-footer {

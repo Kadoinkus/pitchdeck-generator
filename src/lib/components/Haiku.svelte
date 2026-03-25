@@ -58,7 +58,7 @@
 	}
 
 	.ghost figcaption {
-		opacity: 0.7;
+		font-size: 0.75rem;
 	}
 
 	.inline {
