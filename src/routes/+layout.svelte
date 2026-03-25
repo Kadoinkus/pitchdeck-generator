@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
-	import favicon from '$lib/assets/favicon.svg';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
@@ -14,7 +13,7 @@
 
 <svelte:head>
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="icon" href={favicon}>
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 	<link
