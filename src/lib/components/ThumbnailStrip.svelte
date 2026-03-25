@@ -152,13 +152,5 @@
 			width: 108px;
 			scroll-snap-align: center;
 		}
-
-		.thumb:first-child {
-			scroll-snap-align: start;
-		}
-
-		.thumb:last-child {
-			scroll-snap-align: end;
-		}
 	}
 </style>
