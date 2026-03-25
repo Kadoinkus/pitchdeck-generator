@@ -162,7 +162,7 @@
 		</button>
 		<button
 			id="generate-button"
-			type="submit"
+			type="button"
 			disabled={generating}
 			onclick={handleSubmit}
 		>

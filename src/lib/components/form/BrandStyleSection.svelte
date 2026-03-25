@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { HARMONY_MODES } from '$lib/color-palette';
+	import {
+		DEFAULT_THEME_COLORS,
+		HARMONY_MODES,
+		normalizeHexColor,
+	} from '$lib/color-palette';
 	import {
 		getPaletteStatus,
 		getPayload,
@@ -13,12 +17,42 @@
 
 	const payload = $derived(getPayload());
 	const paletteStatus = $derived(getPaletteStatus());
+	const primaryColor = $derived(
+		normalizeHexColor(payload.primaryColor, DEFAULT_THEME_COLORS.primaryColor),
+	);
+	const accentColor = $derived(
+		normalizeHexColor(payload.accentColor, DEFAULT_THEME_COLORS.accentColor),
+	);
+	const secondaryColor = $derived(
+		normalizeHexColor(
+			payload.secondaryColor,
+			DEFAULT_THEME_COLORS.secondaryColor,
+		),
+	);
+	const backgroundColor = $derived(
+		normalizeHexColor(
+			payload.backgroundColor,
+			DEFAULT_THEME_COLORS.backgroundColor,
+		),
+	);
+	const textColor = $derived(
+		normalizeHexColor(payload.textColor, DEFAULT_THEME_COLORS.textColor),
+	);
 
 	function handleColorChange(field: string) {
 		return (event: Event) => {
 			const target = event.target;
 			if (target instanceof HTMLInputElement) {
-				setPayloadField(field, target.value);
+				const fallback = field === 'primaryColor'
+					? DEFAULT_THEME_COLORS.primaryColor
+					: field === 'accentColor'
+					? DEFAULT_THEME_COLORS.accentColor
+					: field === 'secondaryColor'
+					? DEFAULT_THEME_COLORS.secondaryColor
+					: field === 'backgroundColor'
+					? DEFAULT_THEME_COLORS.backgroundColor
+					: DEFAULT_THEME_COLORS.textColor;
+				setPayloadField(field, normalizeHexColor(target.value, fallback));
 				syncBrandPalette();
 				handleFieldChange(event.type === 'input');
 			}
@@ -104,7 +138,7 @@
 				id="primaryColor"
 				name="primaryColor"
 				type="color"
-				value={String(payload.primaryColor || '#004B49')}
+				value={primaryColor}
 				oninput={handleColorChange('primaryColor')}
 				onchange={handleColorChange('primaryColor')}
 			>
@@ -168,7 +202,7 @@
 				id="accentColor"
 				name="accentColor"
 				type="color"
-				value={String(payload.accentColor || '#30D89E')}
+				value={accentColor}
 				disabled={!payload.lockAccentColor}
 				oninput={handleColorChange('accentColor')}
 				onchange={handleColorChange('accentColor')}
@@ -180,7 +214,7 @@
 				id="secondaryColor"
 				name="secondaryColor"
 				type="color"
-				value={String(payload.secondaryColor || '#0B6E6C')}
+				value={secondaryColor}
 				disabled={!payload.lockSecondaryColor}
 				oninput={handleColorChange('secondaryColor')}
 				onchange={handleColorChange('secondaryColor')}
@@ -192,7 +226,7 @@
 				id="backgroundColor"
 				name="backgroundColor"
 				type="color"
-				value={String(payload.backgroundColor || '#F2F4F6')}
+				value={backgroundColor}
 				oninput={handleColorChange('backgroundColor')}
 				onchange={handleColorChange('backgroundColor')}
 			>
@@ -203,7 +237,7 @@
 				id="textColor"
 				name="textColor"
 				type="color"
-				value={String(payload.textColor || '#0B1D2E')}
+				value={textColor}
 				oninput={handleColorChange('textColor')}
 				onchange={handleColorChange('textColor')}
 			>

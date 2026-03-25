@@ -145,6 +145,8 @@
 		background: transparent;
 		box-shadow: none;
 		padding: 0;
+		border-radius: 0;
+		overflow: visible;
 	}
 
 	/* Text surface */
@@ -326,12 +328,47 @@
 
 	/* AI clickable */
 	.deck-slide :global(.ai-clickable) {
-		transition: box-shadow 120ms ease;
+		transition: outline-color 120ms ease;
+		outline: 2px solid transparent;
+		outline-offset: -2px;
 	}
 
 	.deck-slide :global(.ai-clickable:hover) {
-		box-shadow: 0 0 0 2px
-			color-mix(in srgb, var(--deck-accent, #30d89e) 55%, transparent);
+		outline-color: color-mix(
+			in srgb,
+			var(--deck-accent, #30d89e) 55%,
+			transparent
+		);
+	}
+
+	/* Summary panel — accent callout style */
+	.deck-slide :global(.summary-panel) {
+		border-left: 3px solid var(--deck-accent, #30d89e);
+		display: grid;
+		align-content: center;
+		gap: clamp(4px, 0.5cqi, 8px);
+	}
+
+	.deck-slide :global(.summary-panel h3) {
+		margin: 0;
+		font-size: clamp(9px, 0.7cqi, 12px);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--deck-accent, #30d89e);
+	}
+
+	.deck-slide :global(.summary-panel p) {
+		margin: 0;
+		font-family: var(--deck-heading, "Sora", sans-serif);
+		font-size: clamp(15px, 1.15cqi, 22px);
+		line-height: 1.28;
+		color: var(--text);
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	/* Short card */
@@ -340,7 +377,6 @@
 	}
 
 	.deck-slide :global(.short-card p),
-	.deck-slide :global(.summary-panel p),
 	.deck-slide :global(.feature-card p),
 	.deck-slide :global(.team-card p),
 	.deck-slide :global(.timeline-card p),
@@ -370,8 +406,7 @@
 		padding: 4px 7px;
 	}
 
-	/* Panel h3 shared across summary/feature/deliverable/pricing/timeline */
-	.deck-slide :global(.summary-panel h3),
+	/* Panel h3 shared across feature/deliverable/pricing/timeline */
 	.deck-slide :global(.feature-card h3),
 	.deck-slide :global(.deliverable-card h3),
 	.deck-slide :global(.pricing-card h3),
@@ -595,28 +630,86 @@
 
 	/* Pricing */
 	.deck-slide :global(.pricing-grid) {
-		align-items: stretch;
+		align-items: start;
 	}
 
 	.deck-slide :global(.pricing-grid .pricing-card) {
+		position: relative;
 		min-height: 0;
 		display: grid;
-		grid-template-rows: auto auto 1fr;
+		grid-template-rows: auto auto auto;
 		align-content: start;
-		gap: 10px;
-		padding: clamp(14px, 1.4cqi, 22px);
+		gap: clamp(6px, 0.6cqi, 10px);
+		padding: clamp(12px, 1.2cqi, 18px);
+		padding-top: clamp(16px, 1.4cqi, 22px);
+	}
+
+	.deck-slide :global(.pricing-card .pricing-accent) {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		border-radius: clamp(12px, 1.2cqi, 18px) clamp(12px, 1.2cqi, 18px) 0 0;
+		background: linear-gradient(
+			90deg,
+			var(--deck-accent, #30d89e),
+			color-mix(
+				in srgb,
+				var(--deck-primary, #004b49) 60%,
+				var(--deck-accent, #30d89e)
+			)
+		);
+		opacity: 0.5;
+	}
+
+	.deck-slide :global(.pricing-card.is-featured .pricing-accent) {
+		height: 5px;
+		opacity: 1;
+	}
+
+	.deck-slide :global(.pricing-card.is-dark .pricing-accent) {
+		background: linear-gradient(
+			90deg,
+			var(--deck-accent, #30d89e),
+			rgba(255, 255, 255, 0.4)
+		);
+		opacity: 0.6;
+	}
+
+	.deck-slide :global(.pricing-badge) {
+		position: absolute;
+		top: clamp(10px, 1cqi, 14px);
+		right: clamp(10px, 1cqi, 14px);
+		font-size: clamp(8px, 0.6cqi, 10px);
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		padding: 3px 8px;
+		border-radius: 999px;
+		background: linear-gradient(
+			135deg,
+			var(--deck-accent, #30d89e),
+			color-mix(
+				in srgb,
+				var(--deck-primary, #004b49) 50%,
+				var(--deck-accent, #30d89e)
+			)
+		);
+		color: #fff;
+		line-height: 1.3;
 	}
 
 	.deck-slide :global(.pricing-card .price) {
 		margin: 0;
 		border: 1px solid var(--line);
-		border-radius: 10px;
+		border-radius: 8px;
 		background: var(--surface-soft);
-		padding: 12px 14px;
+		padding: 8px 12px;
 		font-family: var(--deck-heading, "Sora", sans-serif);
-		font-size: clamp(24px, 2cqi, 36px);
+		font-size: clamp(18px, 1.6cqi, 28px);
 		font-weight: 700;
-		line-height: 1;
+		line-height: 1.1;
 		letter-spacing: -0.02em;
 	}
 
@@ -647,7 +740,27 @@
 	}
 
 	.deck-slide :global(.pricing-card li) {
-		display: list-item;
+		display: flex;
+		align-items: baseline;
+		gap: clamp(4px, 0.4cqi, 7px);
+		list-style: none;
+	}
+
+	.deck-slide :global(.pricing-card ul) {
+		padding-left: 0;
+		gap: clamp(3px, 0.3cqi, 5px);
+		margin-top: clamp(2px, 0.3cqi, 4px);
+	}
+
+	.deck-slide :global(.pricing-card .check-icon) {
+		flex-shrink: 0;
+		width: clamp(11px, 0.85cqi, 14px);
+		height: clamp(11px, 0.85cqi, 14px);
+		color: var(--deck-accent, #30d89e);
+	}
+
+	.deck-slide :global(.pricing-card.is-dark .check-icon) {
+		color: var(--deck-accent, #30d89e);
 	}
 
 	/* Timeline */

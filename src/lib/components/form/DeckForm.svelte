@@ -1,4 +1,10 @@
 <script lang="ts">
+	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
+	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
+	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
+	import OutputSection from '$lib/components/form/OutputSection.svelte';
+	import QuickStartSection from '$lib/components/form/QuickStartSection.svelte';
+	import SlideSelector from '$lib/components/form/SlideSelector.svelte';
 	import {
 		getPayload,
 		getTemplateById,
@@ -8,13 +14,6 @@
 		setStatus,
 		type TemplateSlide,
 	} from '$lib/stores/editor.svelte';
-
-	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
-	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
-	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
-	import OutputSection from '$lib/components/form/OutputSection.svelte';
-	import QuickStartSection from '$lib/components/form/QuickStartSection.svelte';
-	import SlideSelector from '$lib/components/form/SlideSelector.svelte';
 
 	interface Props {
 		onOpenViewer: () => void;
@@ -91,7 +90,11 @@
 	}
 </script>
 
-<form id="deck-form" class="card form-grid minimal">
+<form
+	id="deck-form"
+	class="card form-grid minimal"
+	onsubmit={(e) => e.preventDefault()}
+>
 	<QuickStartSection
 		onTemplateChange={handleTemplateChange}
 		onGenerate={handleGenerate}

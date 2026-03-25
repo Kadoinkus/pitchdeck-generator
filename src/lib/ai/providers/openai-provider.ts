@@ -205,37 +205,36 @@ export async function openAIAutofill(
 		return `- ${fieldName}: ${formatHint}`;
 	}).join('\n');
 
-	const prompt = [
-		'Return JSON only. No markdown.',
-		'Create premium sales-deck copy for an animated AI chatbot proposal.',
-		`Template: ${template.label}`,
-		`Client: ${project.clientName}`,
-		`Client URL: ${project.clientUrl}`,
-		`Included slides: ${includedSlides.join(', ')}`,
-		'',
-		'Field requirements:',
-		fieldGuide,
-		'',
-		'Multiline formatting rules:',
-		'- Use one item per line for list-like fields.',
-		'- For structured lists use "Title :: Description" per line.',
-		'- Keep all lines concise, persuasive, and client-ready.',
-		'',
-		'Output JSON schema:',
-		'{',
-		'  "draft": { "...": "..." },',
-		'  "imageDraft": {',
-		'    "prompts": [',
-		'      {"slideId":"cover","slideTitle":"Cover","prompt":"..."}',
-		'    ]',
-		'  }',
-		'}',
-		'',
-		'Image prompt rules:',
-		'- One prompt per included slide id.',
-		'- No text overlays in image prompts.',
-		'- Describe composition, mood, subject, and style clearly.',
-	].join('\n');
+	const prompt = `\
+Return JSON only. No markdown.
+Create premium sales-deck copy for an animated AI chatbot proposal.
+Template: ${template.label}
+Client: ${project.clientName}
+Client URL: ${project.clientUrl}
+Included slides: ${includedSlides.join(', ')}
+
+Field requirements:
+${fieldGuide}
+
+Multiline formatting rules:
+- Use one item per line for list-like fields.
+- For structured lists use "Title :: Description" per line.
+- Keep all lines concise, persuasive, and client-ready.
+
+Output JSON schema:
+{
+  "draft": { "...": "..." },
+  "imageDraft": {
+    "prompts": [
+      {"slideId":"cover","slideTitle":"Cover","prompt":"..."}
+    ]
+  }
+}
+
+Image prompt rules:
+- One prompt per included slide id.
+- No text overlays in image prompts.
+- Describe composition, mood, subject, and style clearly.`;
 
 	const content = await callOpenAIChat({
 		apiKey: config.apiKey,

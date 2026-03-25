@@ -50,11 +50,31 @@
 	data-ai-target={titleTarget}
 	data-ai-label="{tier.name || 'Tier'} pricing card"
 >
+	<div class="pricing-accent"></div>
+	{#if index === 1}
+		<span class="pricing-badge">Recommended</span>
+	{/if}
 	<h3>{safeName}</h3>
 	<p class="price">{safePrice}</p>
 	<ul>
 		{#each features as feature (feature)}
-			<li>{fitText(feature, maxFeatureChars)}</li>
+			<li>
+				<svg
+					class="check-icon"
+					viewBox="0 0 16 16"
+					fill="none"
+					aria-hidden="true"
+				>
+					<path
+						d="M3.5 8.5L6.5 11.5L12.5 4.5"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+				<span>{fitText(feature, maxFeatureChars)}</span>
+			</li>
 		{/each}
 	</ul>
 </article>

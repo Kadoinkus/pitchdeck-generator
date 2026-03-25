@@ -26,43 +26,30 @@
 		canRedo = false,
 	}: Props = $props();
 
-	let editableProjectName = $state('');
+	let titleValue = $state(projectName);
 	let titleEditing = $state(false);
+
+	$effect(() => {
+		if (!titleEditing) titleValue = projectName;
+	});
 
 	function commitRename(): void {
 		titleEditing = false;
-		const text = editableProjectName.trim();
+		const text = titleValue.trim();
 		if (onRename && text !== '' && text !== projectName) {
 			onRename(text);
-			return;
+		} else {
+			titleValue = projectName;
 		}
-		editableProjectName = projectName;
-	}
-
-	function handleTitleFocus(): void {
-		titleEditing = true;
-		editableProjectName = projectName;
-	}
-
-	function handleTitleInput(event: Event): void {
-		const target = event.currentTarget;
-		if (!(target instanceof HTMLInputElement)) return;
-		editableProjectName = target.value;
 	}
 
 	function handleTitleKeydown(event: KeyboardEvent): void {
-		const target = event.currentTarget;
-		if (!(target instanceof HTMLInputElement)) return;
-
 		if (event.key === 'Enter') {
 			event.preventDefault();
-			target.blur();
-			return;
-		}
-
-		if (event.key === 'Escape') {
-			editableProjectName = projectName;
-			target.blur();
+			(event.currentTarget as HTMLElement).blur();
+		} else if (event.key === 'Escape') {
+			titleValue = projectName;
+			(event.currentTarget as HTMLElement).blur();
 		}
 	}
 
@@ -172,18 +159,16 @@
 		</button>
 
 		<div class="viewer-project">
-			<div
-				class="viewer-project-row"
-				data-value={titleEditing ? editableProjectName : projectName}
-			>
+			<div class="viewer-project-row" data-value={titleValue}>
 				<input
 					class="viewer-project-name-input"
 					type="text"
-					value={titleEditing ? editableProjectName : projectName}
+					bind:value={titleValue}
 					aria-label="Project name"
 					autocomplete="off"
-					onfocus={handleTitleFocus}
-					oninput={handleTitleInput}
+					onfocus={() => {
+						titleEditing = true;
+					}}
 					onblur={commitRename}
 					onkeydown={handleTitleKeydown}
 				>
@@ -393,7 +378,9 @@
 	}
 
 	.viewer-project {
+		flex: 0 1 auto;
 		min-width: 0;
+		max-width: 100%;
 		display: grid;
 		gap: 1px;
 	}
@@ -401,6 +388,8 @@
 	.viewer-project-row {
 		display: inline-grid;
 		align-items: center;
+		max-width: 100%;
+		overflow: hidden;
 	}
 
 	.viewer-project-row::after {
@@ -413,6 +402,7 @@
 		font-weight: 700;
 		line-height: 1.2;
 		padding: 1px 4px;
+		pointer-events: none;
 	}
 
 	.viewer-project-name-input {
@@ -423,7 +413,7 @@
 		color: #ffffff;
 		background: transparent;
 		border: none;
-		min-width: 4ch;
+		min-width: 0;
 		width: 100%;
 		outline: none;
 		border-radius: 4px;

@@ -75,27 +75,39 @@
 		};
 	});
 
-	function resolveAiTarget(origin: EventTarget | null): void {
-		if (!(origin instanceof HTMLElement)) return;
-		const target = origin.closest('[data-ai-target]');
-		if (!target) return;
+	/** Delegate click/keydown on [data-ai-target] children imperatively
+	 *  so the parent div stays non-interactive in the template. */
+	$effect(() => {
+		if (!deckEl) return;
+		const el = deckEl;
 
-		const aiTarget = target.getAttribute('data-ai-target');
-		const aiLabel = target.getAttribute('data-ai-label') ?? aiTarget;
-		if (aiTarget) {
-			viewer.setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
+		function resolve(origin: EventTarget | null): void {
+			if (!(origin instanceof HTMLElement)) return;
+			const hit = origin.closest('[data-ai-target]');
+			if (!hit) return;
+			const aiTarget = hit.getAttribute('data-ai-target');
+			const aiLabel = hit.getAttribute('data-ai-label') ?? aiTarget;
+			if (aiTarget) {
+				viewer.setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
+			}
 		}
-	}
 
-	function handleCanvasClick(event: MouseEvent): void {
-		resolveAiTarget(event.target);
-	}
+		function onClick(e: MouseEvent): void {
+			resolve(e.target);
+		}
+		function onKeydown(e: KeyboardEvent): void {
+			if (e.key !== 'Enter' && e.key !== ' ') return;
+			e.preventDefault();
+			resolve(e.target);
+		}
 
-	function handleCanvasKeydown(event: KeyboardEvent): void {
-		if (event.key !== 'Enter' && event.key !== ' ') return;
-		event.preventDefault();
-		resolveAiTarget(event.target);
-	}
+		el.addEventListener('click', onClick);
+		el.addEventListener('keydown', onKeydown);
+		return () => {
+			el.removeEventListener('click', onClick);
+			el.removeEventListener('keydown', onKeydown);
+		};
+	});
 </script>
 
 {#if slides.length === 0}
@@ -103,7 +115,6 @@
 		<Haiku variant="ghost" />
 	</div>
 {:else}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-stage"
 		bind:this={deckEl}
@@ -112,8 +123,6 @@
 			onNext: viewer.nextSlide,
 			onDrag: handleDrag,
 		}}
-		onclick={handleCanvasClick}
-		onkeydown={handleCanvasKeydown}
 	>
 		<div
 			class="slide-track"

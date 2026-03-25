@@ -138,7 +138,7 @@
 			{canRedo}
 		/>
 
-		<div class="viewer-body">
+		<main class="viewer-body">
 			<ThumbnailStrip />
 
 			<div
@@ -160,7 +160,7 @@
 				payload={chatPayload}
 				onApply={onApplySuggestion}
 			/>
-		</div>
+		</main>
 	</div>
 {/if}
 
