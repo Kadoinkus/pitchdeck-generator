@@ -32,6 +32,7 @@
 		"@sparticuz/chromium": "^143.0.4",
 		"@vercel/analytics": "^2.0.1",
 		"@vercel/speed-insights": "^2.0.0",
+		"hex-to-oklch": "^3.2.0",
 		"playwright-core": "^1.58.2",
 		"pptxgenjs": "^4.0.1",
 		"zod": "^4.3.6"

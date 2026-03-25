@@ -1,3 +1,5 @@
+import { formatOklch, hexToOklch, type Oklch } from 'hex-to-oklch';
+
 export interface Rgb {
 	r: number;
 	g: number;
@@ -16,6 +18,67 @@ export interface ThemeColors {
 	secondaryColor: string;
 	backgroundColor: string;
 	textColor: string;
+}
+
+interface Oklab {
+	l: number;
+	a: number;
+	b: number;
+}
+
+interface OklchColor {
+	l: number;
+	c: number;
+	h: number;
+}
+
+interface ThemeSwatchScience {
+	hex: string;
+	oklch: string;
+}
+
+export type PalettePresetId =
+	| 'balanced-brand'
+	| 'vivid-campaign'
+	| 'editorial-contrast'
+	| 'soft-product';
+
+interface PalettePresetRecipe {
+	id: PalettePresetId;
+	label: string;
+	description: string;
+	harmonyMode: HarmonyMode;
+	accentHueShift: number;
+	secondaryHueShift: number;
+	accentLightness: number;
+	secondaryLightness: number;
+	accentChromaScale: number;
+	secondaryChromaScale: number;
+	accentMix: number;
+	secondaryMix: number;
+	backgroundMix: number;
+	backgroundAccentMix: number;
+	backgroundLightness: number;
+	backgroundChromaScale: number;
+	backgroundLift: number;
+	textLightness: number;
+	textChromaScale: number;
+	textHueShift: number;
+}
+
+export interface PalettePresetSuggestion {
+	id: PalettePresetId;
+	label: string;
+	description: string;
+	harmonyMode: HarmonyMode;
+	theme: ThemeColors;
+	science: {
+		primary: ThemeSwatchScience;
+		accent: ThemeSwatchScience;
+		secondary: ThemeSwatchScience;
+		background: ThemeSwatchScience;
+		text: ThemeSwatchScience;
+	};
 }
 
 interface HarmonyVariant {
@@ -69,6 +132,8 @@ export type HarmonyMode =
 	| 'split-complementary'
 	| 'analogous'
 	| 'triad'
+	| 'square'
+	| 'tetradic'
 	| 'monochromatic';
 
 export const HARMONY_MODES: readonly HarmonyMode[] = [
@@ -76,7 +141,107 @@ export const HARMONY_MODES: readonly HarmonyMode[] = [
 	'split-complementary',
 	'analogous',
 	'triad',
+	'square',
+	'tetradic',
 	'monochromatic',
+];
+
+export const PALETTE_PRESET_IDS: readonly PalettePresetId[] = [
+	'balanced-brand',
+	'vivid-campaign',
+	'editorial-contrast',
+	'soft-product',
+];
+
+const PALETTE_PRESET_RECIPES: readonly PalettePresetRecipe[] = [
+	{
+		id: 'balanced-brand',
+		label: 'Balanced Brand',
+		description: 'Natural accents with high readability for everyday decks.',
+		harmonyMode: 'complementary',
+		accentHueShift: 158,
+		secondaryHueShift: 208,
+		accentLightness: 0.68,
+		secondaryLightness: 0.31,
+		accentChromaScale: 1.2,
+		secondaryChromaScale: 0.96,
+		accentMix: 0.68,
+		secondaryMix: 0.78,
+		backgroundMix: 0.12,
+		backgroundAccentMix: 0.08,
+		backgroundLightness: 0.95,
+		backgroundChromaScale: 0.55,
+		backgroundLift: 0.055,
+		textLightness: 0.22,
+		textChromaScale: 0.32,
+		textHueShift: 0,
+	},
+	{
+		id: 'vivid-campaign',
+		label: 'Vivid Campaign',
+		description: 'Punchier campaign palette with stronger accent separation.',
+		harmonyMode: 'split-complementary',
+		accentHueShift: 182,
+		secondaryHueShift: 298,
+		accentLightness: 0.74,
+		secondaryLightness: 0.27,
+		accentChromaScale: 1.75,
+		secondaryChromaScale: 1.3,
+		accentMix: 0.9,
+		secondaryMix: 0.9,
+		backgroundMix: 0.08,
+		backgroundAccentMix: 0.2,
+		backgroundLightness: 0.93,
+		backgroundChromaScale: 1,
+		backgroundLift: 0.06,
+		textLightness: 0.18,
+		textChromaScale: 0.55,
+		textHueShift: -8,
+	},
+	{
+		id: 'editorial-contrast',
+		label: 'Editorial Contrast',
+		description: 'Sharper dark-slide contrast and cleaner neutral background.',
+		harmonyMode: 'triad',
+		accentHueShift: 24,
+		secondaryHueShift: 214,
+		accentLightness: 0.59,
+		secondaryLightness: 0.2,
+		accentChromaScale: 0.72,
+		secondaryChromaScale: 0.65,
+		accentMix: 0.62,
+		secondaryMix: 0.88,
+		backgroundMix: 0.04,
+		backgroundAccentMix: 0.02,
+		backgroundLightness: 0.97,
+		backgroundChromaScale: 0.2,
+		backgroundLift: 0.07,
+		textLightness: 0.14,
+		textChromaScale: 0.12,
+		textHueShift: 0,
+	},
+	{
+		id: 'soft-product',
+		label: 'Soft Product',
+		description: 'Subtle product-style tones with calmer chroma.',
+		harmonyMode: 'analogous',
+		accentHueShift: 40,
+		secondaryHueShift: -40,
+		accentLightness: 0.76,
+		secondaryLightness: 0.39,
+		accentChromaScale: 0.88,
+		secondaryChromaScale: 0.82,
+		accentMix: 0.74,
+		secondaryMix: 0.7,
+		backgroundMix: 0.18,
+		backgroundAccentMix: 0.16,
+		backgroundLightness: 0.94,
+		backgroundChromaScale: 0.9,
+		backgroundLift: 0.05,
+		textLightness: 0.24,
+		textChromaScale: 0.22,
+		textHueShift: 6,
+	},
 ];
 
 const THEME_SAFETY_THRESHOLDS: Readonly<ThemeSafetyMetrics> = {
@@ -85,6 +250,8 @@ const THEME_SAFETY_THRESHOLDS: Readonly<ThemeSafetyMetrics> = {
 	secondaryOnBackground: 3,
 	secondaryOnWhite: 4.8,
 };
+
+const OKLCH_EPSILON = 0.000004;
 
 const DEFAULT_VARIANT: HarmonyVariant = {
 	a: 180,
@@ -95,7 +262,7 @@ const DEFAULT_VARIANT: HarmonyVariant = {
 	secondaryS: 0.62,
 };
 
-const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
+const HARMONY_VARIANTS: Record<HarmonyMode, HarmonyVariant[]> = {
 	complementary: [
 		{
 			a: 180,
@@ -232,6 +399,74 @@ const HARMONY_VARIANTS: Record<string, HarmonyVariant[]> = {
 			secondaryS: 0.6,
 		},
 	],
+	square: [
+		{
+			a: 90,
+			b: 270,
+			accentL: 0.54,
+			secondaryL: 0.24,
+			accentS: 0.74,
+			secondaryS: 0.64,
+		},
+		{
+			a: 84,
+			b: 264,
+			accentL: 0.58,
+			secondaryL: 0.28,
+			accentS: 0.68,
+			secondaryS: 0.56,
+		},
+		{
+			a: 96,
+			b: 276,
+			accentL: 0.49,
+			secondaryL: 0.21,
+			accentS: 0.78,
+			secondaryS: 0.68,
+		},
+		{
+			a: 88,
+			b: 268,
+			accentL: 0.56,
+			secondaryL: 0.26,
+			accentS: 0.72,
+			secondaryS: 0.6,
+		},
+	],
+	tetradic: [
+		{
+			a: 60,
+			b: 180,
+			accentL: 0.56,
+			secondaryL: 0.24,
+			accentS: 0.72,
+			secondaryS: 0.64,
+		},
+		{
+			a: 50,
+			b: 180,
+			accentL: 0.52,
+			secondaryL: 0.26,
+			accentS: 0.78,
+			secondaryS: 0.58,
+		},
+		{
+			a: 70,
+			b: 200,
+			accentL: 0.58,
+			secondaryL: 0.22,
+			accentS: 0.68,
+			secondaryS: 0.66,
+		},
+		{
+			a: 40,
+			b: 220,
+			accentL: 0.5,
+			secondaryL: 0.24,
+			accentS: 0.74,
+			secondaryS: 0.62,
+		},
+	],
 	monochromatic: [
 		{
 			a: 0,
@@ -309,53 +544,115 @@ function rgbToHex({ r, g, b }: Rgb): string {
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
-function rgbToHsl({ r, g, b }: Rgb): Hsl {
-	const rn = r / 255;
-	const gn = g / 255;
-	const bn = b / 255;
-	const max = Math.max(rn, gn, bn);
-	const min = Math.min(rn, gn, bn);
-	const delta = max - min;
-
-	let h = 0;
-	const l = (max + min) / 2;
-	const s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-	if (delta !== 0) {
-		if (max === rn) h = ((gn - bn) / delta) % 6;
-		else if (max === gn) h = (bn - rn) / delta + 2;
-		else h = (rn - gn) / delta + 4;
-		h *= 60;
-	}
-
-	if (h < 0) h += 360;
-	return { h, s, l };
+function linearToSrgb(channel: number): number {
+	if (channel <= 0.0031308) return channel * 12.92;
+	return 1.055 * channel ** (1 / 2.4) - 0.055;
 }
 
-function hslToRgb({ h, s, l }: Hsl): Rgb {
-	const hue = wrapHue(h);
-	const sat = clamp(s, 0, 1);
-	const light = clamp(l, 0, 1);
-	const c = (1 - Math.abs(2 * light - 1)) * sat;
-	const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
-	const m = light - c / 2;
+function oklchToOklab(color: OklchColor): Oklab {
+	const normalizedHue = wrapHue(color.h) * (Math.PI / 180);
+	return {
+		l: color.l,
+		a: color.c * Math.cos(normalizedHue),
+		b: color.c * Math.sin(normalizedHue),
+	};
+}
 
-	let r1: number;
-	let g1: number;
-	let b1: number;
+function oklabToOklch(color: Oklab): OklchColor {
+	const chroma = Math.sqrt(color.a * color.a + color.b * color.b);
+	const hue = chroma <= OKLCH_EPSILON
+		? 0
+		: wrapHue((Math.atan2(color.b, color.a) * 180) / Math.PI);
+	return { l: color.l, c: chroma, h: hue };
+}
 
-	if (hue < 60) [r1, g1, b1] = [c, x, 0];
-	else if (hue < 120) [r1, g1, b1] = [x, c, 0];
-	else if (hue < 180) [r1, g1, b1] = [0, c, x];
-	else if (hue < 240) [r1, g1, b1] = [0, x, c];
-	else if (hue < 300) [r1, g1, b1] = [x, 0, c];
-	else [r1, g1, b1] = [c, 0, x];
+function hexToOklchColor(hex: string): OklchColor {
+	const converted = hexToOklch(normalizeHexColor(hex));
+	return {
+		l: clamp(converted.l, 0, 1),
+		c: Math.max(0, converted.c),
+		h: wrapHue(converted.h),
+	};
+}
+
+function oklabToLinearRgb(color: Oklab): { r: number; g: number; b: number } {
+	const l = color.l + 0.3963377774 * color.a + 0.2158037573 * color.b;
+	const m = color.l - 0.1055613458 * color.a - 0.0638541728 * color.b;
+	const s = color.l - 0.0894841775 * color.a - 1.291485548 * color.b;
+
+	const l3 = l * l * l;
+	const m3 = m * m * m;
+	const s3 = s * s * s;
 
 	return {
-		r: (r1 + m) * 255,
-		g: (g1 + m) * 255,
-		b: (b1 + m) * 255,
+		r: 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3,
+		g: -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3,
+		b: -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3,
 	};
+}
+
+function linearRgbInGamut(rgb: { r: number; g: number; b: number }): boolean {
+	return rgb.r >= 0 && rgb.r <= 1 && rgb.g >= 0 && rgb.g <= 1 && rgb.b >= 0 && rgb.b <= 1;
+}
+
+function linearRgbToHex(rgb: { r: number; g: number; b: number }): string {
+	return rgbToHex({
+		r: linearToSrgb(clamp(rgb.r, 0, 1)) * 255,
+		g: linearToSrgb(clamp(rgb.g, 0, 1)) * 255,
+		b: linearToSrgb(clamp(rgb.b, 0, 1)) * 255,
+	});
+}
+
+function oklchToHex(color: OklchColor): string {
+	const normalized: OklchColor = {
+		l: clamp(color.l, 0, 1),
+		c: clamp(color.c, 0, 0.4),
+		h: wrapHue(color.h),
+	};
+
+	const directLinear = oklabToLinearRgb(oklchToOklab(normalized));
+	if (linearRgbInGamut(directLinear)) return linearRgbToHex(directLinear);
+
+	let low = 0;
+	let high = normalized.c;
+	let bestLinear = oklabToLinearRgb(oklchToOklab({
+		l: normalized.l,
+		c: 0,
+		h: normalized.h,
+	}));
+
+	for (let step = 0; step < 22; step += 1) {
+		const mid = (low + high) / 2;
+		const candidateLinear = oklabToLinearRgb(oklchToOklab({
+			l: normalized.l,
+			c: mid,
+			h: normalized.h,
+		}));
+		if (linearRgbInGamut(candidateLinear)) {
+			bestLinear = candidateLinear;
+			low = mid;
+		} else {
+			high = mid;
+		}
+	}
+
+	return linearRgbToHex(bestLinear);
+}
+
+function hexToOklabColor(hex: string): Oklab {
+	return oklchToOklab(hexToOklchColor(hex));
+}
+
+function mixHexInOklab(fromHex: string, toHex: string, ratio: number): string {
+	const t = clamp(ratio, 0, 1);
+	const from = hexToOklabColor(fromHex);
+	const to = hexToOklabColor(toHex);
+	const mixed: Oklab = {
+		l: from.l * (1 - t) + to.l * t,
+		a: from.a * (1 - t) + to.a * t,
+		b: from.b * (1 - t) + to.b * t,
+	};
+	return oklchToHex(oklabToOklch(mixed));
 }
 
 function channelLuminance(channel: number): number {
@@ -393,13 +690,20 @@ function adjustForContrast(
 	let bestContrast = contrastRatio(start, fixed);
 	if (bestContrast >= minContrast) return start;
 
-	const hsl = rgbToHsl(hexToRgb(start));
-	for (let step = 1; step <= 50; step += 1) {
-		const amount = (step / 50) * 0.9;
+	const startOklch = hexToOklchColor(start);
+	for (let step = 1; step <= 70; step += 1) {
+		const amount = (step / 70) * 0.92;
 		const nextL = direction === 'lighter'
-			? clamp(hsl.l + amount, 0.02, 0.98)
-			: clamp(hsl.l - amount, 0.02, 0.98);
-		const candidate = rgbToHex(hslToRgb({ h: hsl.h, s: hsl.s, l: nextL }));
+			? clamp(startOklch.l + amount, 0.02, 0.99)
+			: clamp(startOklch.l - amount, 0.02, 0.99);
+		const chromaScale = direction === 'lighter'
+			? 1 - amount * 0.45
+			: 1 - amount * 0.28;
+		const candidate = oklchToHex({
+			l: nextL,
+			c: Math.max(0, startOklch.c * chromaScale),
+			h: startOklch.h,
+		});
 		const ratio = contrastRatio(candidate, fixed);
 		if (ratio > bestContrast) {
 			best = candidate;
@@ -449,7 +753,7 @@ function normalizeHarmonyMode(value: unknown): HarmonyMode {
 }
 
 function resolveVariant(
-	mode: string,
+	mode: HarmonyMode,
 	shuffleSeed: unknown,
 ): { variant: HarmonyVariant; index: number; count: number } {
 	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary ?? [DEFAULT_VARIANT];
@@ -477,31 +781,25 @@ function generateHarmonyTheme(
 		primaryColor,
 		DEFAULT_THEME_COLORS.primaryColor,
 	);
-	const { h, s, l } = rgbToHsl(hexToRgb(primary));
+	const primaryOklch = hexToOklchColor(primary);
 	const mode = normalizeHarmonyMode(harmonyMode);
 	const variantData = resolveVariant(mode, shuffleSeed);
 	const v = variantData.variant;
 
-	const accentHue = wrapHue(h + v.a);
-	const secondaryHue = wrapHue(h + v.b);
-	const baseSat = clamp(s, 0.2, 0.88);
-	const baseLight = clamp(l, 0.16, 0.72);
+	const accentTarget = oklchToHex({
+		l: clamp(primaryOklch.l * 0.34 + v.accentL * 0.66, 0.42, 0.79),
+		c: clamp(primaryOklch.c * 0.5 + v.accentS * 0.11, 0.03, 0.27),
+		h: wrapHue(primaryOklch.h + v.a),
+	});
 
-	const accentColor = rgbToHex(
-		hslToRgb({
-			h: accentHue,
-			s: clamp(baseSat * 0.55 + v.accentS * 0.45, 0.35, 0.9),
-			l: clamp(baseLight * 0.25 + v.accentL * 0.75, 0.38, 0.66),
-		}),
-	);
+	const secondaryTarget = oklchToHex({
+		l: clamp(primaryOklch.l * 0.2 + v.secondaryL * 0.8, 0.16, 0.38),
+		c: clamp(primaryOklch.c * 0.46 + v.secondaryS * 0.095, 0.025, 0.24),
+		h: wrapHue(primaryOklch.h + v.b),
+	});
 
-	const secondaryColor = rgbToHex(
-		hslToRgb({
-			h: secondaryHue,
-			s: clamp(baseSat * 0.45 + v.secondaryS * 0.55, 0.35, 0.9),
-			l: clamp(baseLight * 0.2 + v.secondaryL * 0.8, 0.16, 0.36),
-		}),
-	);
+	const accentColor = mixHexInOklab(primary, accentTarget, 0.46);
+	const secondaryColor = mixHexInOklab(primary, secondaryTarget, 0.62);
 
 	return {
 		theme: {
@@ -701,5 +999,164 @@ export function resolveThemePalette(input: ResolveThemePaletteInput = {}) {
 		adjustments: enforced.adjustments,
 		metrics: enforced.metrics,
 		warnings: describeThemeSafety(enforced.theme),
+	};
+}
+
+function normalizePalettePresetId(value: unknown): PalettePresetId {
+	const raw = String(value || '')
+		.trim()
+		.toLowerCase();
+	const match = PALETTE_PRESET_IDS.find((presetId) => presetId === raw);
+	return match ?? 'balanced-brand';
+}
+
+function getPresetRecipe(presetId: unknown): PalettePresetRecipe {
+	const id = normalizePalettePresetId(presetId);
+	const recipe = PALETTE_PRESET_RECIPES.find((candidate) => candidate.id === id);
+	return recipe ?? PALETTE_PRESET_RECIPES[0] ?? {
+		id: 'balanced-brand',
+		label: 'Balanced Brand',
+		description: 'Natural accents with high readability for everyday decks.',
+		harmonyMode: 'complementary',
+		accentHueShift: 158,
+		secondaryHueShift: 208,
+		accentLightness: 0.68,
+		secondaryLightness: 0.31,
+		accentChromaScale: 1.2,
+		secondaryChromaScale: 0.96,
+		accentMix: 0.68,
+		secondaryMix: 0.78,
+		backgroundMix: 0.12,
+		backgroundAccentMix: 0.08,
+		backgroundLightness: 0.95,
+		backgroundChromaScale: 0.55,
+		backgroundLift: 0.055,
+		textLightness: 0.22,
+		textChromaScale: 0.32,
+		textHueShift: 0,
+	};
+}
+
+function buildPresetTheme(primaryColor: string, recipe: PalettePresetRecipe): ThemeColors {
+	const primary = normalizeHexColor(primaryColor, DEFAULT_THEME_COLORS.primaryColor);
+	const primaryOklch = hexToOklchColor(primary);
+
+	const accentTarget = oklchToHex({
+		l: clamp(recipe.accentLightness * 0.78 + primaryOklch.l * 0.22, 0.38, 0.86),
+		c: clamp(primaryOklch.c * recipe.accentChromaScale + 0.045, 0.03, 0.32),
+		h: wrapHue(primaryOklch.h + recipe.accentHueShift),
+	});
+	const secondaryTarget = oklchToHex({
+		l: clamp(recipe.secondaryLightness * 0.85 + primaryOklch.l * 0.15, 0.12, 0.46),
+		c: clamp(primaryOklch.c * recipe.secondaryChromaScale + 0.03, 0.018, 0.26),
+		h: wrapHue(primaryOklch.h + recipe.secondaryHueShift),
+	});
+
+	const accentColor = mixHexInOklab(primary, accentTarget, recipe.accentMix);
+	const secondaryColor = mixHexInOklab(primary, secondaryTarget, recipe.secondaryMix);
+
+	const baseBackground = mixHexInOklab('#FFFFFF', primary, recipe.backgroundMix);
+	const backgroundSeed = mixHexInOklab(
+		baseBackground,
+		accentTarget,
+		recipe.backgroundAccentMix,
+	);
+	const backgroundOklch = hexToOklchColor(backgroundSeed);
+	const backgroundColor = oklchToHex({
+		l: clamp(
+			recipe.backgroundLightness + recipe.backgroundLift * 0.5,
+			0.86,
+			0.985,
+		),
+		c: clamp(backgroundOklch.c * recipe.backgroundChromaScale, 0, 0.09),
+		h: backgroundOklch.h,
+	});
+
+	const textColor = oklchToHex({
+		l: clamp(recipe.textLightness, 0.12, 0.34),
+		c: clamp(primaryOklch.c * recipe.textChromaScale + 0.004, 0.004, 0.1),
+		h: wrapHue(primaryOklch.h + recipe.textHueShift),
+	});
+
+	const enforced = enforceThemeSafety({
+		primaryColor: primary,
+		accentColor,
+		secondaryColor,
+		backgroundColor,
+		textColor,
+	});
+
+	return enforced.theme;
+}
+
+function toScienceSwatch(hex: string): ThemeSwatchScience {
+	return {
+		hex,
+		oklch: toOklchCss(hex),
+	};
+}
+
+export function toOklchCss(hex: string): string {
+	const color = hexToOklchColor(hex);
+	const cssColor: Oklch = {
+		l: Number(color.l.toFixed(4)),
+		c: Number(color.c.toFixed(4)),
+		h: Number(color.h.toFixed(2)),
+	};
+	return formatOklch(cssColor);
+}
+
+export function getPalettePresetSuggestions(input: {
+	primaryColor?: string;
+	baseColor?: string;
+} = {}): PalettePresetSuggestion[] {
+	const primaryColor = normalizeHexColor(
+		input.primaryColor || input.baseColor,
+		DEFAULT_THEME_COLORS.primaryColor,
+	);
+
+	return PALETTE_PRESET_RECIPES.map((recipe) => {
+		const theme = buildPresetTheme(primaryColor, recipe);
+		return {
+			id: recipe.id,
+			label: recipe.label,
+			description: recipe.description,
+			harmonyMode: recipe.harmonyMode,
+			theme,
+			science: {
+				primary: toScienceSwatch(theme.primaryColor),
+				accent: toScienceSwatch(theme.accentColor),
+				secondary: toScienceSwatch(theme.secondaryColor),
+				background: toScienceSwatch(theme.backgroundColor),
+				text: toScienceSwatch(theme.textColor),
+			},
+		};
+	});
+}
+
+export function getPalettePresetSuggestionById(
+	presetId: unknown,
+	input: { primaryColor?: string; baseColor?: string } = {},
+): PalettePresetSuggestion {
+	const primaryColor = normalizeHexColor(
+		input.primaryColor || input.baseColor,
+		DEFAULT_THEME_COLORS.primaryColor,
+	);
+	const recipe = getPresetRecipe(presetId);
+	const theme = buildPresetTheme(primaryColor, recipe);
+
+	return {
+		id: recipe.id,
+		label: recipe.label,
+		description: recipe.description,
+		harmonyMode: recipe.harmonyMode,
+		theme,
+		science: {
+			primary: toScienceSwatch(theme.primaryColor),
+			accent: toScienceSwatch(theme.accentColor),
+			secondary: toScienceSwatch(theme.secondaryColor),
+			background: toScienceSwatch(theme.backgroundColor),
+			text: toScienceSwatch(theme.textColor),
+		},
 	};
 }

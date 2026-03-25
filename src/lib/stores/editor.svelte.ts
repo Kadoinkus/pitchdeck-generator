@@ -174,7 +174,7 @@ let _textProviders = $state<ProviderOption[]>([]);
 let _imageProviders = $state<ProviderOption[]>([]);
 let _characterAssets = $state<CharacterAsset[]>([]);
 let _paletteStatus = $state<{ text: string; tone: string }>({
-	text: 'Colors 2 and 3 are generated from the harmony mode. Use Shuffle to try variants.',
+	text: 'Choose a preset or harmony mode. Shuffle explores safe color variants.',
 	tone: '',
 });
 

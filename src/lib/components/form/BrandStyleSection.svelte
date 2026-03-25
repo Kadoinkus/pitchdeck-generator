@@ -1,16 +1,21 @@
 <script lang="ts">
 	import {
 		DEFAULT_THEME_COLORS,
+		getPalettePresetSuggestions,
 		HARMONY_MODES,
 		normalizeHexColor,
+		toOklchCss,
 	} from '$lib/color-palette';
+	import type { PalettePresetSuggestion } from '$lib/color-palette';
 	import {
 		getPaletteStatus,
 		getPayload,
 		handleFieldChange,
 		markDirty,
 		pushHistory,
+		setPaletteStatus,
 		setPayloadField,
+		setPayloadFields,
 		shufflePalette,
 		syncBrandPalette,
 	} from '$lib/stores/editor.svelte';
@@ -38,6 +43,30 @@
 	const textColor = $derived(
 		normalizeHexColor(payload.textColor, DEFAULT_THEME_COLORS.textColor),
 	);
+	const primaryOklch = $derived(toOklchCss(primaryColor));
+	const palettePresets = $derived(
+		getPalettePresetSuggestions({ primaryColor }),
+	);
+
+	function applyPreset(preset: PalettePresetSuggestion): void {
+		setPayloadFields({
+			harmonyMode: preset.harmonyMode,
+			accentColor: preset.theme.accentColor,
+			secondaryColor: preset.theme.secondaryColor,
+			backgroundColor: preset.theme.backgroundColor,
+			textColor: preset.theme.textColor,
+		});
+		setPaletteStatus(`${preset.label} \u00b7 ${preset.description}`);
+		pushHistory();
+		markDirty();
+	}
+
+	function isPresetActive(preset: PalettePresetSuggestion): boolean {
+		return accentColor === preset.theme.accentColor
+			&& secondaryColor === preset.theme.secondaryColor
+			&& backgroundColor === preset.theme.backgroundColor
+			&& textColor === preset.theme.textColor;
+	}
 
 	function handleColorChange(field: string) {
 		return (event: Event) => {
@@ -158,6 +187,31 @@
 				{/each}
 			</select>
 		</div>
+	</div>
+	<p class="status palette-science">
+		Primary in OKLCH: {primaryOklch}
+	</p>
+	<div class="preset-grid">
+		{#each palettePresets as preset (preset.id)}
+			<button
+				type="button"
+				class="preset-card"
+				class:is-active={isPresetActive(preset)}
+				onclick={() => applyPreset(preset)}
+			>
+				<span class="preset-label">{preset.label}</span>
+				<span class="preset-description">{preset.description}</span>
+				<span class="preset-swatches" aria-hidden="true">
+					<span style:background={preset.theme.accentColor}></span>
+					<span style:background={preset.theme.secondaryColor}></span>
+					<span style:background={preset.theme.backgroundColor}></span>
+					<span style:background={preset.theme.textColor}></span>
+				</span>
+				<span class="preset-metric">
+					{preset.harmonyMode} · Accent {preset.science.accent.oklch}
+				</span>
+			</button>
+		{/each}
 	</div>
 	<div class="palette-toolbar">
 		<input
@@ -283,6 +337,66 @@
 		font-size: 0.82rem;
 	}
 
+	.palette-science {
+		margin: 8px 0 6px;
+		font-size: 0.77rem;
+		color: #3f5a86;
+	}
+
+	.preset-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
+		margin-top: 6px;
+	}
+
+	.preset-card {
+		display: grid;
+		gap: 6px;
+		align-content: start;
+		text-align: start;
+		border: 1px solid rgba(126, 151, 205, 0.42);
+		border-radius: 10px;
+		padding: 10px;
+		background: linear-gradient(180deg, #ffffff, #f4f8ff);
+		color: #183968;
+		cursor: pointer;
+	}
+
+	.preset-card.is-active {
+		border-color: #2e77e8;
+		box-shadow: 0 0 0 2px rgba(46, 119, 232, 0.18);
+	}
+
+	.preset-label {
+		font-size: 0.82rem;
+		font-weight: 800;
+	}
+
+	.preset-description {
+		font-size: 0.74rem;
+		color: #506791;
+	}
+
+	.preset-swatches {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 4px;
+	}
+
+	.preset-swatches span {
+		height: 12px;
+		border-radius: 999px;
+		border: 1px solid rgba(255, 255, 255, 0.72);
+		box-shadow: inset 0 0 0 1px rgba(11, 28, 44, 0.08);
+	}
+
+	.preset-metric {
+		font-size: 0.68rem;
+		color: #6a7ea0;
+		font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+	}
+
 	:global(.palette-field) {
 		gap: 4px;
 	}
@@ -300,5 +414,11 @@
 		width: auto;
 		margin: 0;
 		accent-color: var(--secondary);
+	}
+
+	@media (max-width: 900px) {
+		.preset-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
