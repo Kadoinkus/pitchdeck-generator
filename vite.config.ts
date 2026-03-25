@@ -5,11 +5,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
-	server: {
-		host: true,
-		allowedHosts: true,
-		// watch: { ignored: ['**/*.e2e.ts'] },
-	},
+	ssr: { noExternal: ['pptxgenjs'] },
+	server: { host: true, allowedHosts: true },
 	resolve: { tsconfigPaths: true },
 	dev: { sourcemap: true },
 	test: {
