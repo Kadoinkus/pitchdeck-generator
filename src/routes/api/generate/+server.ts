@@ -1,5 +1,6 @@
+import { hashPayload } from '$lib/payload-hash';
 import { getOutputDir } from '$lib/server/storage';
-import { saveShare } from '$lib/share-store';
+import { findShareByHash, readShare, saveShare } from '$lib/share-store';
 import { buildSlideData } from '$lib/slide-data';
 import { isRecord, safeText, sanitizeFilename } from '$lib/utils';
 import { json } from '@sveltejs/kit';
@@ -31,6 +32,26 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
+		const payloadHash = hashPayload(raw);
+
+		// Idempotent: return existing snapshot if payload unchanged
+		const existingToken = await findShareByHash(outputDir, payloadHash);
+		if (existingToken) {
+			const existing = await readShare(outputDir, existingToken);
+			if (existing) {
+				return json({
+					success: true,
+					fileName: typeof existing.fileName === 'string' ? existing.fileName : `pitchdeck-${existingToken}.pptx`,
+					downloadUrl: `/api/download/${existingToken}`,
+					slideData: existing.slideData,
+					shareToken: existingToken,
+					shareUrl: `/share/${existingToken}`,
+					pdfUrl: `/api/pdf/${existingToken}`,
+					payloadHash,
+				});
+			}
+		}
+
 		await fs.mkdir(outputDir, { recursive: true });
 
 		const clientName = safeText(raw.clientName, 'client');
@@ -50,6 +71,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			slideData,
 			fileName,
 			pptxBase64: '',
+			payloadHash,
+			publishedAt: new Date().toISOString(),
 		});
 
 		return json({
@@ -60,6 +83,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			shareToken,
 			shareUrl: `/share/${shareToken}`,
 			pdfUrl: `/api/pdf/${shareToken}`,
+			payloadHash,
 		});
 	} catch (error) {
 		console.error('Deck generation failed unexpectedly.', error);

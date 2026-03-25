@@ -82,3 +82,21 @@ test('generate endpoint returns compact pptx download', async ({ request }) => {
 	expect(bytes.subarray(0, 2).toString('utf8')).toBe('PK');
 	expect(bytes.length).toBeLessThan(12 * 1024 * 1024);
 });
+
+test('same payload returns same token (idempotent)', async ({ request }) => {
+	const payload = {
+		templateId: 'pitch-proposal',
+		clientName: 'IdempotencyTest',
+		projectTitle: 'Repeat',
+		deckVersion: 'v1',
+	};
+
+	const res1 = await request.post('/api/generate', { data: payload });
+	const body1 = await res1.json();
+
+	const res2 = await request.post('/api/generate', { data: payload });
+	const body2 = await res2.json();
+
+	expect(body1.shareToken).toBe(body2.shareToken);
+	expect(body1.payloadHash).toBe(body2.payloadHash);
+});
