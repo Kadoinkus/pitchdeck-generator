@@ -87,6 +87,7 @@
 		align-self: stretch;
 		min-height: 0;
 		display: block;
+		border-radius: clamp(12px, 1.1cqi, 16px);
 	}
 
 	:global(.split-layout) .image-slot,

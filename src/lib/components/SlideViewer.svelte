@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { resizable } from '$lib/actions/resizable';
 	import ChatPanel from '$lib/components/ChatPanel.svelte';
 	import SlideCanvas from '$lib/components/SlideCanvas.svelte';
 	import ThumbnailStrip from '$lib/components/ThumbnailStrip.svelte';
@@ -34,9 +35,6 @@
 		chatPayload = {},
 		onApplySuggestion,
 	}: Props = $props();
-
-	let thumbWidth = $state(182);
-	let resizing = $state(false);
 
 	function isEditableTarget(target: EventTarget | null): boolean {
 		if (!(target instanceof Element)) return false;
@@ -96,24 +94,6 @@
 		}
 	}
 
-	function startResize(event: PointerEvent): void {
-		event.preventDefault();
-		resizing = true;
-		const target = event.currentTarget;
-		if (target instanceof HTMLElement) {
-			target.setPointerCapture(event.pointerId);
-		}
-	}
-
-	function moveResize(event: PointerEvent): void {
-		if (!resizing) return;
-		thumbWidth = Math.max(100, Math.min(event.clientX, 400));
-	}
-
-	function endResize(): void {
-		resizing = false;
-	}
-
 	function closeViewer(): void {
 		viewer.hide();
 		goto(resolve('/'));
@@ -123,10 +103,7 @@
 <svelte:window onkeydown={handleKeydown} />
 
 {#if viewer.isOpen}
-	<div
-		class="slide-viewer"
-		style:--thumb-w="{thumbWidth}px"
-	>
+	<div class="slide-viewer">
 		<ViewerToolbar
 			{projectName}
 			{projectContext}
@@ -143,14 +120,10 @@
 
 			<div
 				class="thumb-resize"
-				class:is-dragging={resizing}
 				role="separator"
 				aria-orientation="vertical"
 				tabindex="-1"
-				onpointerdown={startResize}
-				onpointermove={moveResize}
-				onpointerup={endResize}
-				onpointercancel={endResize}
+				use:resizable={{ min: 100, max: 560, target: '.slide-viewer' }}
 			>
 			</div>
 
@@ -194,7 +167,7 @@
 	}
 
 	.thumb-resize:hover,
-	.thumb-resize.is-dragging {
+	.thumb-resize:global(.is-dragging) {
 		background: rgba(41, 196, 146, 0.25);
 	}
 

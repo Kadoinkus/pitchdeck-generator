@@ -16,6 +16,8 @@
 	let dragging = $state(false);
 	let isResizing = $state(false);
 	let isPrintMode = $state(false);
+	let canNativeShare = $state(false);
+	let shareButtonLabel = $state('Share');
 
 	const slides = $derived(data.slideData.slides);
 	const theme = $derived(data.slideData.theme);
@@ -154,7 +156,37 @@
 		}
 	}
 
+	async function handleShare(): Promise<void> {
+		const shareData: ShareData = {
+			title: title,
+			text: `Check out this pitch deck: ${title}`,
+			url: window.location.href,
+		};
+
+		if (navigator.share && navigator.canShare(shareData)) {
+			try {
+				await navigator.share(shareData);
+			} catch (err) {
+				// User cancelled the share — not an error
+				if (err instanceof Error && err.name !== 'AbortError') {
+					console.error('Share failed:', err);
+				}
+			}
+		} else {
+			// Clipboard fallback for unsupported browsers
+			try {
+				await navigator.clipboard.writeText(window.location.href);
+				shareButtonLabel = 'Link copied!';
+				setTimeout(() => (shareButtonLabel = 'Share'), 2000);
+			} catch {
+				// Last resort: prompt the user
+				prompt('Copy this link to share:', window.location.href);
+			}
+		}
+	}
+
 	onMount(() => {
+		canNativeShare = typeof navigator.share === 'function';
 		isPrintMode = page.url.searchParams.get('print') === '1';
 		if (isPrintMode) {
 			document.body.classList.add('print-mode');
@@ -181,6 +213,36 @@
 	</div>
 	<div class="share-actions">
 		<span class="share-counter">{currentSlide + 1} / {total}</span>
+		<button
+			type="button"
+			class="share-cta"
+			onclick={handleShare}
+			aria-label="Share this deck"
+		>
+			<svg
+				aria-hidden="true"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				{#if canNativeShare}
+					<!-- Share/export icon -->
+					<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+					<polyline points="16 6 12 2 8 6" />
+					<line x1="12" y1="2" x2="12" y2="15" />
+				{:else}
+					<!-- Link/copy icon -->
+					<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+					<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+				{/if}
+			</svg>
+			{shareButtonLabel}
+		</button>
 		<a
 			href={resolve('/api/download/[token]', { token: data.token })}
 			download
@@ -335,8 +397,40 @@
 		font-weight: 700;
 	}
 
+	.share-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		border: 1px solid var(--accent);
+		border-radius: 999px;
+		background: linear-gradient(135deg, var(--accent), #00a8b0);
+		color: #fff;
+		text-decoration: none;
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 700;
+		padding: 7px 14px;
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(0, 196, 204, 0.3);
+		transition: box-shadow 180ms ease, transform 180ms ease;
+	}
+
+	.share-cta:hover {
+		box-shadow: 0 4px 14px rgba(0, 196, 204, 0.45);
+		transform: translateY(-1px);
+	}
+
+	.share-cta:active {
+		transform: translateY(0);
+		box-shadow: 0 1px 4px rgba(0, 196, 204, 0.3);
+	}
+
+	.share-cta svg {
+		flex-shrink: 0;
+	}
+
 	.share-actions :global(a),
-	.share-actions :global(button) {
+	.share-actions :global(button:not(.share-cta)) {
 		border: 1px solid #c8d9ff;
 		border-radius: 999px;
 		background: #fff;
@@ -350,7 +444,7 @@
 	}
 
 	.share-actions :global(a:hover),
-	.share-actions :global(button:hover) {
+	.share-actions :global(button:not(.share-cta):hover) {
 		border-color: #9ab4eb;
 		background: #f5f9ff;
 	}

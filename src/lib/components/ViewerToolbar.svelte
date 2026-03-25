@@ -577,7 +577,9 @@
 	}
 
 	.viewer-share-toggle {
-		min-width: 100px;
+		min-width: 118px;
+		min-height: 36px;
+		padding: 0 12px;
 		gap: 7px;
 		border-radius: 10px;
 		background: rgba(255, 255, 255, 0.18);
