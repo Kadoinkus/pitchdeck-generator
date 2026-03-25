@@ -257,6 +257,7 @@
 				id="logo-upload"
 				type="file"
 				accept="image/*"
+				aria-label="Upload logo"
 				class="sr-only"
 				onchange={handleLogoInput}
 			>
@@ -309,8 +310,14 @@
 				onclick={() => handlePresetClick(preset)}
 			>
 				<span class="preset-swatches" aria-hidden="true">
-					<span style:background={preset.theme.primaryColor}></span>
-					<span style:background={preset.theme.accentColor}></span>
+					<span
+						class:brand-target={brandTarget === 'primary'}
+						style:background={preset.theme.primaryColor}
+					></span>
+					<span
+						class:brand-target={brandTarget === 'accent'}
+						style:background={preset.theme.accentColor}
+					></span>
 					<span style:background={preset.theme.secondaryColor}></span>
 					<span style:background={preset.theme.backgroundColor}></span>
 					<span style:background={preset.theme.textColor}></span>
@@ -323,8 +330,16 @@
 	<!-- ═══ Active palette + shuffle ═══ -->
 	<div class="active-palette-row">
 		<div class="active-swatches" aria-label="Current palette">
-			<span style:background={primaryColor} title="Primary"></span>
-			<span style:background={theme.accentColor} title="Accent"></span>
+			<span
+				class:brand-target={brandTarget === 'primary'}
+				style:background={primaryColor}
+				title="Primary"
+			></span>
+			<span
+				class:brand-target={brandTarget === 'accent'}
+				style:background={theme.accentColor}
+				title="Accent"
+			></span>
 			<span style:background={theme.secondaryColor} title="Dark slide"></span>
 			<span style:background={theme.backgroundColor} title="Background"></span>
 			<span style:background={theme.textColor} title="Text"></span>
@@ -346,7 +361,10 @@
 		</p>
 
 		<div class="section-grid five-col">
-			<div class="field color-field palette-field">
+			<div
+				class="field color-field palette-field"
+				class:brand-target-field={brandTarget === 'primary'}
+			>
 				<label for="adv-primaryColor">Primary</label>
 				<input
 					id="adv-primaryColor"
@@ -357,7 +375,10 @@
 					onchange={handleColorChange('primaryColor')}
 				>
 			</div>
-			<div class="field color-field palette-field">
+			<div
+				class="field color-field palette-field"
+				class:brand-target-field={brandTarget === 'accent'}
+			>
 				<label for="adv-accentColor">Accent</label>
 				<input
 					id="adv-accentColor"
@@ -621,6 +642,11 @@
 		border-radius: 4px;
 		border: 1px solid rgba(255, 255, 255, 0.72);
 		box-shadow: inset 0 0 0 1px rgba(11, 28, 44, 0.06);
+		transition: box-shadow 0.16s;
+	}
+
+	.preset-swatches span.brand-target {
+		box-shadow: inset 0 0 0 1px rgba(11, 28, 44, 0.06), 0 0 0 2px #2e77e8;
 	}
 
 	.preset-label {
@@ -648,10 +674,22 @@
 		border-radius: 5px;
 		border: 1px solid rgba(255, 255, 255, 0.72);
 		box-shadow: inset 0 0 0 1px rgba(11, 28, 44, 0.08);
-		transition: background 0.2s;
+		transition: background 0.2s, box-shadow 0.16s;
+	}
+
+	.active-swatches span.brand-target {
+		box-shadow: inset 0 0 0 1px rgba(11, 28, 44, 0.08), 0 0 0 2px #2e77e8;
 	}
 
 	/* ── Zone 3: Advanced ── */
+	.brand-target-field label {
+		color: #2e77e8;
+	}
+
+	.brand-target-field input[type="color"] {
+		box-shadow: 0 0 0 2px #2e77e8;
+	}
+
 	.advanced-section {
 		margin-top: 14px;
 		border: 1px solid rgba(173, 196, 238, 0.3);
