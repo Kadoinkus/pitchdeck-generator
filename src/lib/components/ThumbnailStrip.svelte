@@ -134,17 +134,6 @@
 		pointer-events: none;
 	}
 
-	:global(.slide-viewer.is-resizing) .thumb:not(.active) .thumb-inner {
-		background: linear-gradient(135deg, #f1f5fb 0%, #dfe8f5 100%);
-	}
-
-	:global(.slide-viewer.is-resizing)
-		.thumb:not(.active)
-		.thumb-inner
-		:global(.slide-render) {
-		display: none;
-	}
-
 	/* Hide empty image placeholders — unreadable noise at thumbnail scale */
 	.thumb-inner :global(.image-slot:not(:has(.has-image))) {
 		visibility: hidden;
