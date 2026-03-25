@@ -68,14 +68,14 @@
 		saveDraft(true);
 
 		if (!hasResult) {
-			goto(resolve('/'));
+			goto(resolve('/'), { replaceState: true });
 			return;
 		}
 
 		const result = getDeckResult();
 		const sd = result?.slideData;
 		if (!sd?.slides?.length) {
-			goto(resolve('/'));
+			goto(resolve('/'), { replaceState: true });
 			return;
 		}
 
