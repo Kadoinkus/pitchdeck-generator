@@ -620,9 +620,9 @@
 		min-width: 196px;
 		padding: 8px;
 		border-radius: 12px;
-		border: 1px solid #cddcf5;
-		background: #f9fbff;
-		box-shadow: 0 18px 30px rgba(20, 35, 78, 0.22);
+		border: 1px solid var(--line);
+		background: var(--card);
+		box-shadow: var(--shadow);
 		display: none;
 		z-index: 8;
 	}
@@ -646,15 +646,15 @@
 		font-size: 0.8rem;
 		font-weight: 700;
 		text-decoration: none;
-		color: #1c3f73;
+		color: var(--label-color);
 		background: transparent;
 		cursor: pointer;
 	}
 
 	@media (hover: hover) {
 		.viewer-share-item:hover {
-			background: #e9f2ff;
-			border-color: #c8daf7;
+			background: var(--subtle-bg);
+			border-color: var(--line);
 		}
 	}
 

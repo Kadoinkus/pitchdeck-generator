@@ -2,6 +2,7 @@
 	import { dev } from '$app/environment';
 	import { page } from '$app/state';
 	import Haiku from '$lib/components/Haiku.svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 	import '../app.css';
@@ -59,6 +60,8 @@
 		<Haiku variant="ghost" />
 	</footer>
 {/if}
+
+<ThemeToggle />
 
 <style>
 	.haiku-footer {

@@ -141,13 +141,18 @@
 		--slide-w: 1020px;
 		--slide-h: calc(var(--slide-w) * 9 / 16);
 		--thumb-w: 182px;
+		--viewer-bg: #e9edf3;
 
 		position: fixed;
 		inset: 0;
 		z-index: 1000;
-		background: #e9edf3;
+		background: var(--viewer-bg);
 		display: flex;
 		flex-direction: column;
+	}
+
+	:global([data-theme="dark"]) .slide-viewer {
+		--viewer-bg: #14192a;
 	}
 
 	.viewer-body {
@@ -161,7 +166,7 @@
 		flex-shrink: 0;
 		cursor: col-resize;
 		background: transparent;
-		border-left: 1px solid #d8e0ec;
+		border-left: 1px solid var(--line);
 		transition: background 0.15s ease;
 	}
 

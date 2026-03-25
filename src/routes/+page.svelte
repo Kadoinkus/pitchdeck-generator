@@ -194,7 +194,7 @@
 
 	.hero-card {
 		background: var(--card);
-		border: 1px solid rgba(130, 156, 212, 0.27);
+		border: 1px solid var(--card-border);
 		border-radius: 18px;
 		box-shadow: var(--shadow);
 		padding: 16px 18px;

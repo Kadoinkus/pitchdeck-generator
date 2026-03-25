@@ -100,7 +100,7 @@
 
 <style>
 	.output-section {
-		background: linear-gradient(160deg, #f7fbff, #eef6ff);
+		background: linear-gradient(160deg, var(--card-bg-subtle), var(--card));
 	}
 
 	.output-actions {

@@ -205,7 +205,7 @@
 <style>
 	.card {
 		background: var(--card);
-		border: 1px solid rgba(130, 156, 212, 0.27);
+		border: 1px solid var(--card-border);
 		border-radius: 18px;
 		box-shadow: var(--shadow);
 	}
@@ -222,13 +222,13 @@
 
 	:global(.form-section) {
 		margin: 0;
-		border: 1px solid rgba(173, 196, 238, 0.42);
+		border: 1px solid var(--card-border);
 		border-radius: 14px;
 		padding: 12px;
 		background: linear-gradient(
 			180deg,
-			rgba(248, 252, 255, 0.88),
-			rgba(255, 255, 255, 0.94)
+			var(--card-bg-subtle),
+			var(--card)
 		);
 	}
 
@@ -247,7 +247,7 @@
 
 	:global(.form-section > summary::after) {
 		content: " +";
-		color: #4062a6;
+		color: var(--muted);
 	}
 
 	:global(.form-section[open] > summary::after) {
@@ -296,7 +296,7 @@
 
 	:global(.field label) {
 		font-size: 0.82rem;
-		color: #183569;
+		color: var(--label-color);
 		font-weight: 700;
 	}
 
@@ -304,9 +304,9 @@
 	:global(.field textarea),
 	:global(.field select) {
 		width: 100%;
-		border: 1px solid var(--line);
+		border: 1px solid var(--input-border);
 		border-radius: 10px;
-		background: #fff;
+		background: var(--input-bg);
 		color: var(--text);
 		font: inherit;
 		padding: 9px 10px;
@@ -317,8 +317,8 @@
 	:global(.field input:focus),
 	:global(.field textarea:focus),
 	:global(.field select:focus) {
-		border-color: #8aa8e9;
-		box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.16);
+		border-color: var(--input-focus-border);
+		box-shadow: 0 0 0 3px var(--input-focus-shadow);
 	}
 
 	:global(.field select.is-locked) {
@@ -351,16 +351,16 @@
 
 	:global(.status) {
 		margin: 0;
-		color: #3a5888;
+		color: var(--status-color);
 		font-size: 0.9rem;
 	}
 
 	:global(.status.error) {
-		color: #b32358;
+		color: var(--status-error);
 	}
 
 	:global(.status.warning) {
-		color: #8a6118;
+		color: var(--status-warning);
 	}
 
 	:global(.inline-actions) {
@@ -368,15 +368,15 @@
 	}
 
 	:global(.slide-chip) {
-		border: 1px solid #d2e0ff;
-		background: #f6f9ff;
+		border: 1px solid var(--line);
+		background: var(--card-bg-subtle);
 		border-radius: 10px;
 		padding: 7px 9px;
 		display: grid;
 		grid-template-columns: auto 1fr;
 		gap: 4px 8px;
 		align-items: center;
-		color: #264474;
+		color: var(--label-color);
 	}
 
 	:global(.slide-chip input) {
@@ -390,7 +390,7 @@
 
 	:global(.slide-chip small) {
 		grid-column: 2;
-		color: #5a6e97;
+		color: var(--muted);
 		font-size: 0.71rem;
 	}
 

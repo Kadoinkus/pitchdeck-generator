@@ -344,13 +344,6 @@
 
 <style>
 	:global(:root) {
-		--bg: #edf3ff;
-		--card: #ffffff;
-		--line: #cfddff;
-		--text: #102347;
-		--muted: #4f5f83;
-		--accent: #00c4cc;
-		--secondary: #7d2ae8;
 		--topbar-h: 74px;
 	}
 
@@ -367,18 +360,6 @@
 		margin: 0;
 		font-family: "Plus Jakarta Sans", "DM Sans", "Segoe UI", sans-serif;
 		color: var(--text);
-		background:
-			radial-gradient(
-				circle at 10% 8%,
-				rgba(0, 196, 204, 0.14),
-				transparent 32%
-			),
-			radial-gradient(
-			circle at 92% 14%,
-			rgba(125, 42, 232, 0.14),
-			transparent 24%
-		),
-			var(--bg);
 		overflow: hidden;
 	}
 
@@ -387,7 +368,7 @@
 		position: sticky;
 		top: 0;
 		z-index: 20;
-		background: rgba(255, 255, 255, 0.92);
+		background: var(--overlay-bg);
 		backdrop-filter: blur(10px);
 		border-bottom: 1px solid var(--line);
 		padding: 10px 16px;
@@ -402,7 +383,7 @@
 		font-size: 0.68rem;
 		text-transform: uppercase;
 		letter-spacing: 0.11em;
-		color: #4562a6;
+		color: var(--muted);
 		font-weight: 800;
 	}
 
@@ -432,9 +413,9 @@
 		height: 32px;
 		padding: 0 11px;
 		border-radius: 999px;
-		background: #f4f8ff;
-		border: 1px solid #d0def8;
-		color: #2b4c78;
+		background: var(--card-bg-subtle);
+		border: 1px solid var(--line);
+		color: var(--label-color);
 		font-size: 0.78rem;
 		font-weight: 700;
 	}
@@ -475,10 +456,10 @@
 
 	.share-actions :global(a),
 	.share-actions :global(button:not(.share-cta)) {
-		border: 1px solid #c8d9ff;
+		border: 1px solid var(--ghost-border);
 		border-radius: 999px;
-		background: #fff;
-		color: #184173;
+		background: var(--ghost-bg);
+		color: var(--ghost-color);
 		text-decoration: none;
 		font: inherit;
 		font-size: 0.82rem;
@@ -490,8 +471,8 @@
 	@media (hover: hover) {
 		.share-actions :global(a:hover),
 		.share-actions :global(button:not(.share-cta):hover) {
-			border-color: #9ab4eb;
-			background: #f5f9ff;
+			border-color: var(--input-focus-border);
+			background: var(--card-bg-subtle);
 		}
 	}
 
@@ -524,13 +505,13 @@
 		width: 42px;
 		height: 42px;
 		border-radius: 999px;
-		border: 1px solid #c6d8ff;
-		background: rgba(255, 255, 255, 0.92);
-		color: #2c4f84;
+		border: 1px solid var(--line);
+		background: var(--overlay-bg);
+		color: var(--label-color);
 		font-size: 1.1rem;
 		font-weight: 700;
 		cursor: pointer;
-		box-shadow: 0 8px 18px rgba(11, 31, 77, 0.14);
+		box-shadow: var(--shadow);
 	}
 
 	.share-nav-btn:first-child {
@@ -545,8 +526,8 @@
 
 	@media (hover: hover) {
 		.share-nav-btn:hover {
-			background: #ffffff;
-			border-color: #9ab8ef;
+			background: var(--card);
+			border-color: var(--input-focus-border);
 		}
 	}
 
@@ -597,7 +578,7 @@
 		overflow: hidden;
 		border: 1px solid var(--line);
 		background: var(--card);
-		box-shadow: 0 22px 48px rgba(11, 31, 77, 0.2);
+		box-shadow: var(--shadow);
 		user-select: none;
 	}
 

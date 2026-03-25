@@ -278,8 +278,8 @@
 		aspect-ratio: 16 / 9;
 		overflow: hidden;
 		background: #fff;
-		border: 1px solid #d2dbe9;
-		box-shadow: 0 24px 54px rgba(15, 31, 56, 0.24);
+		border: 1px solid var(--line);
+		box-shadow: var(--shadow);
 		user-select: none;
 	}
 </style>

@@ -88,7 +88,7 @@
 	.card {
 		color: var(--text);
 		background: var(--card);
-		border: 1px solid rgba(130, 156, 212, 0.27);
+		border: 1px solid var(--card-border);
 		border-radius: 12px;
 		box-shadow: var(--shadow);
 		padding: 1.5rem;

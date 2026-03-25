@@ -519,7 +519,7 @@
 	.color-hex {
 		font-size: 0.74rem;
 		font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
-		color: #506791;
+		color: var(--muted);
 		text-align: center;
 	}
 
@@ -531,18 +531,18 @@
 		justify-content: center;
 		gap: 8px;
 		min-height: 80px;
-		border: 2px dashed rgba(126, 151, 205, 0.42);
+		border: 2px dashed var(--card-border);
 		border-radius: 12px;
 		padding: 12px;
-		background: #f8fbff;
+		background: var(--card-bg-subtle);
 		cursor: pointer;
 		transition: border-color 0.16s, background 0.16s;
 	}
 
 	.logo-drop-zone:hover,
 	.logo-drop-zone.drag-over {
-		border-color: #2e77e8;
-		background: #eef4ff;
+		border-color: var(--input-focus-border);
+		background: var(--card);
 	}
 
 	.logo-drop-zone.has-logo {
@@ -565,7 +565,7 @@
 
 	.drop-label {
 		font-size: 0.82rem;
-		color: #506791;
+		color: var(--muted);
 		font-weight: 600;
 	}
 
@@ -574,8 +574,8 @@
 		height: 48px;
 		object-fit: contain;
 		border-radius: 8px;
-		background: #fff;
-		border: 1px solid rgba(126, 151, 205, 0.25);
+		background: var(--input-bg);
+		border: 1px solid var(--card-border);
 	}
 
 	.logo-extract-row {
@@ -587,7 +587,7 @@
 
 	.extract-status {
 		font-size: 0.78rem;
-		color: #506791;
+		color: var(--muted);
 		font-weight: 600;
 	}
 
@@ -595,8 +595,8 @@
 		width: 24px;
 		height: 24px;
 		border-radius: 6px;
-		border: 2px solid #fff;
-		box-shadow: 0 0 0 1px rgba(11, 28, 44, 0.12);
+		border: 2px solid var(--card);
+		box-shadow: 0 0 0 1px var(--card-border);
 		flex-shrink: 0;
 	}
 
@@ -613,22 +613,22 @@
 		gap: 8px;
 		align-content: start;
 		text-align: center;
-		border: 2px solid rgba(126, 151, 205, 0.3);
+		border: 2px solid var(--card-border);
 		border-radius: 12px;
 		padding: 10px 8px 8px;
-		background: linear-gradient(180deg, #ffffff, #f4f8ff);
-		color: #183968;
+		background: linear-gradient(180deg, var(--card), var(--card-bg-subtle));
+		color: var(--label-color);
 		cursor: pointer;
 		transition: border-color 0.16s, box-shadow 0.16s;
 	}
 
 	.preset-card:hover {
-		border-color: #8aa8e9;
+		border-color: var(--input-focus-border);
 	}
 
 	.preset-card.is-active {
-		border-color: #2e77e8;
-		box-shadow: 0 0 0 3px rgba(46, 119, 232, 0.15);
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--input-focus-shadow);
 	}
 
 	.preset-swatches {
@@ -683,19 +683,19 @@
 
 	/* ── Zone 3: Advanced ── */
 	.brand-target-field label {
-		color: #2e77e8;
+		color: var(--accent);
 	}
 
 	.brand-target-field input[type="color"] {
-		box-shadow: 0 0 0 2px #2e77e8;
+		box-shadow: 0 0 0 2px var(--accent);
 	}
 
 	.advanced-section {
 		margin-top: 14px;
-		border: 1px solid rgba(173, 196, 238, 0.3);
+		border: 1px solid var(--card-border);
 		border-radius: 10px;
 		padding: 8px 10px;
-		background: rgba(248, 252, 255, 0.6);
+		background: var(--card-bg-subtle);
 	}
 
 	.advanced-toggle {
@@ -703,7 +703,7 @@
 		cursor: pointer;
 		font-size: 0.82rem;
 		font-weight: 700;
-		color: #44608f;
+		color: var(--muted);
 	}
 
 	.advanced-toggle::-webkit-details-marker {
@@ -712,7 +712,7 @@
 
 	.advanced-toggle::after {
 		content: " +";
-		color: #7a9ad4;
+		color: var(--muted);
 	}
 
 	.advanced-section[open] > .advanced-toggle::after {
@@ -741,14 +741,14 @@
 
 	.toolbar-field label {
 		font-size: 0.74rem;
-		color: #44608f;
+		color: var(--muted);
 		font-weight: 700;
 	}
 
 	.toolbar-field select {
-		border: 1px solid var(--line);
+		border: 1px solid var(--input-border);
 		border-radius: 8px;
-		background: #fff;
+		background: var(--input-bg);
 		color: var(--text);
 		font: inherit;
 		font-size: 0.82rem;
@@ -763,7 +763,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		color: #44608f;
+		color: var(--muted);
 		font-size: 0.76rem;
 		font-weight: 700;
 	}

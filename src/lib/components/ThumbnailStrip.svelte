@@ -84,7 +84,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 9px;
-		background: rgba(247, 249, 252, 0.96);
+		background: var(--card-bg-subtle);
 	}
 
 	.thumb {
@@ -99,16 +99,16 @@
 		border: 2px solid transparent;
 		transition: border-color 0.16s ease;
 		flex-shrink: 0;
-		box-shadow: 0 8px 18px rgba(15, 32, 58, 0.12);
+		box-shadow: var(--shadow);
 	}
 
 	.thumb.active {
-		border-color: #29c492;
+		border-color: var(--accent);
 	}
 
 	@media (hover: hover) {
 		.thumb:hover:not(.active) {
-			border-color: #97abc9;
+			border-color: var(--muted);
 		}
 	}
 
@@ -118,9 +118,9 @@
 		left: 6px;
 		font-size: 10px;
 		font-weight: 700;
-		color: #2a4469;
+		color: var(--label-color);
 		z-index: 1;
-		background: rgba(255, 255, 255, 1);
+		background: var(--card);
 		border-radius: 999px;
 		padding: 2px 6px;
 	}

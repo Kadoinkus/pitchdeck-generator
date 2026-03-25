@@ -194,9 +194,9 @@
 	}
 
 	.asset-card {
-		border: 1px solid #d2e0ff;
+		border: 1px solid var(--line);
 		border-radius: 12px;
-		background: #f9fcff;
+		background: var(--card-bg-subtle);
 		padding: 8px;
 		display: grid;
 		gap: 8px;
@@ -207,8 +207,8 @@
 		aspect-ratio: 4 / 3;
 		object-fit: cover;
 		border-radius: 9px;
-		border: 1px solid #cfdcff;
-		background: #eef4ff;
+		border: 1px solid var(--line);
+		background: var(--card);
 	}
 
 	.asset-meta {
@@ -220,15 +220,15 @@
 		margin: 0;
 		font-size: 0.76rem;
 		line-height: 1.35;
-		color: #1f3f6f;
+		color: var(--label-color);
 		word-break: break-word;
 	}
 
 	.asset-meta select {
 		width: 100%;
-		border: 1px solid #c9dbff;
+		border: 1px solid var(--input-border);
 		border-radius: 8px;
-		background: #fff;
+		background: var(--input-bg);
 		font: inherit;
 		font-size: 0.78rem;
 		padding: 6px 8px;
