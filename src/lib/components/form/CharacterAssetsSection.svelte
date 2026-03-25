@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { persistDetails } from '$lib/persist-details';
 	import {
 		addCharacterAsset,
 		CHARACTER_PLACEMENTS,
@@ -108,7 +109,7 @@
 	}
 </script>
 
-<details class="form-section">
+<details class="form-section" use:persistDetails={'character-assets'}>
 	<summary>Character Design Assets</summary>
 	<div class="section-head compact">
 		<p>

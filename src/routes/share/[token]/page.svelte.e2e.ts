@@ -13,7 +13,7 @@ async function seedShareRecord(): Promise<void> {
 		sharePath,
 		JSON.stringify({
 			token: shareToken,
-			createdAt: new Date('2026-01-01T00:00:00.000Z').toISOString(),
+			createdAt: new Date().toISOString(),
 			slideData: {
 				slides: [{ type: 'cover', title: 'Seeded Share Deck' }],
 				theme: {},
@@ -75,4 +75,26 @@ test('pdf endpoint returns deck pdf', async ({ request }) => {
 
 	const bytes = await response.body();
 	expect(bytes.subarray(0, 4).toString('utf8')).toBe('%PDF');
+});
+
+test('slide counter shows correct count', async ({ page }) => {
+	await page.goto(`/share/${shareToken}`);
+
+	await expect(page.getByText('1 / 1')).toBeVisible();
+});
+
+test('share button triggers share or clipboard', async ({ page }) => {
+	await page.goto(`/share/${shareToken}`);
+
+	const shareBtn = page.locator('.share-cta');
+	await expect(shareBtn).toBeVisible();
+
+	// Click the share CTA — in Playwright's Chromium, navigator.share is
+	// unsupported so it falls back to clipboard.writeText or prompt.
+	// Grant clipboard permissions so the fallback succeeds.
+	await page.context().grantPermissions(['clipboard-write', 'clipboard-read']);
+	await shareBtn.click();
+
+	// The button label should change to "Link copied!" on clipboard fallback
+	await expect(shareBtn).toHaveText(/Link copied!/);
 });

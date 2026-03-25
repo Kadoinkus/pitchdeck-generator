@@ -24,7 +24,7 @@
 body {
 	margin: 0;
 	height: 100%;
-	min-height: 100dvh;
+	min-height: 100vh;
 	font-family: "DM Sans", "Segoe UI", sans-serif;
 	color: var(--text);
 	background:
@@ -37,6 +37,12 @@ body {
 	) fixed,
 		linear-gradient(180deg, var(--bg-top), var(--bg-bottom)) fixed;
 	background-repeat: no-repeat;
+}
+
+@supports (height: 100dvh) {
+	body {
+		min-height: 100dvh;
+	}
 }
 
 .hidden {

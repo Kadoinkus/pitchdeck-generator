@@ -264,242 +264,60 @@ const DEFAULT_VARIANT: HarmonyVariant = {
 
 const HARMONY_VARIANTS: Record<HarmonyMode, HarmonyVariant[]> = {
 	complementary: [
-		{
-			a: 180,
-			b: 160,
-			accentL: 0.5,
-			secondaryL: 0.24,
-			accentS: 0.72,
-			secondaryS: 0.62,
-		},
-		{
-			a: 180,
-			b: 200,
-			accentL: 0.56,
-			secondaryL: 0.28,
-			accentS: 0.78,
-			secondaryS: 0.56,
-		},
-		{
-			a: 170,
-			b: 190,
-			accentL: 0.48,
-			secondaryL: 0.22,
-			accentS: 0.68,
-			secondaryS: 0.66,
-		},
-		{
-			a: 188,
-			b: 152,
-			accentL: 0.54,
-			secondaryL: 0.26,
-			accentS: 0.74,
-			secondaryS: 0.6,
-		},
+		{ a: 180, b: 160, accentL: 0.52, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: 165, b: 210, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: 195, b: 140, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: 175, b: 195, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: 155, b: 175, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: 200, b: 150, accentL: 0.46, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	'split-complementary': [
-		{
-			a: 150,
-			b: 210,
-			accentL: 0.52,
-			secondaryL: 0.25,
-			accentS: 0.74,
-			secondaryS: 0.62,
-		},
-		{
-			a: 145,
-			b: 215,
-			accentL: 0.56,
-			secondaryL: 0.28,
-			accentS: 0.68,
-			secondaryS: 0.56,
-		},
-		{
-			a: 135,
-			b: 225,
-			accentL: 0.49,
-			secondaryL: 0.23,
-			accentS: 0.76,
-			secondaryS: 0.68,
-		},
-		{
-			a: 158,
-			b: 202,
-			accentL: 0.54,
-			secondaryL: 0.27,
-			accentS: 0.72,
-			secondaryS: 0.6,
-		},
+		{ a: 150, b: 210, accentL: 0.54, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: 130, b: 230, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: 160, b: 200, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: 140, b: 220, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: 170, b: 190, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: 120, b: 240, accentL: 0.48, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	analogous: [
-		{
-			a: -28,
-			b: 32,
-			accentL: 0.5,
-			secondaryL: 0.23,
-			accentS: 0.7,
-			secondaryS: 0.62,
-		},
-		{
-			a: -22,
-			b: 38,
-			accentL: 0.56,
-			secondaryL: 0.29,
-			accentS: 0.64,
-			secondaryS: 0.56,
-		},
-		{
-			a: -38,
-			b: 22,
-			accentL: 0.47,
-			secondaryL: 0.22,
-			accentS: 0.76,
-			secondaryS: 0.66,
-		},
-		{
-			a: -18,
-			b: 48,
-			accentL: 0.53,
-			secondaryL: 0.25,
-			accentS: 0.7,
-			secondaryS: 0.58,
-		},
+		{ a: -30, b: 30, accentL: 0.52, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: -15, b: 50, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: -45, b: 15, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: -20, b: 40, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: -50, b: 25, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: -10, b: 55, accentL: 0.46, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	triad: [
-		{
-			a: 120,
-			b: 240,
-			accentL: 0.52,
-			secondaryL: 0.24,
-			accentS: 0.74,
-			secondaryS: 0.64,
-		},
-		{
-			a: 115,
-			b: 235,
-			accentL: 0.56,
-			secondaryL: 0.28,
-			accentS: 0.68,
-			secondaryS: 0.58,
-		},
-		{
-			a: 125,
-			b: 245,
-			accentL: 0.48,
-			secondaryL: 0.22,
-			accentS: 0.76,
-			secondaryS: 0.68,
-		},
-		{
-			a: 105,
-			b: 225,
-			accentL: 0.54,
-			secondaryL: 0.26,
-			accentS: 0.7,
-			secondaryS: 0.6,
-		},
+		{ a: 120, b: 240, accentL: 0.54, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: 110, b: 230, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: 130, b: 250, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: 100, b: 220, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: 140, b: 260, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: 115, b: 235, accentL: 0.48, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	square: [
-		{
-			a: 90,
-			b: 270,
-			accentL: 0.54,
-			secondaryL: 0.24,
-			accentS: 0.74,
-			secondaryS: 0.64,
-		},
-		{
-			a: 84,
-			b: 264,
-			accentL: 0.58,
-			secondaryL: 0.28,
-			accentS: 0.68,
-			secondaryS: 0.56,
-		},
-		{
-			a: 96,
-			b: 276,
-			accentL: 0.49,
-			secondaryL: 0.21,
-			accentS: 0.78,
-			secondaryS: 0.68,
-		},
-		{
-			a: 88,
-			b: 268,
-			accentL: 0.56,
-			secondaryL: 0.26,
-			accentS: 0.72,
-			secondaryS: 0.6,
-		},
+		{ a: 90, b: 270, accentL: 0.54, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: 80, b: 260, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: 100, b: 280, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: 85, b: 265, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: 95, b: 275, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: 75, b: 255, accentL: 0.48, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	tetradic: [
-		{
-			a: 60,
-			b: 180,
-			accentL: 0.56,
-			secondaryL: 0.24,
-			accentS: 0.72,
-			secondaryS: 0.64,
-		},
-		{
-			a: 50,
-			b: 180,
-			accentL: 0.52,
-			secondaryL: 0.26,
-			accentS: 0.78,
-			secondaryS: 0.58,
-		},
-		{
-			a: 70,
-			b: 200,
-			accentL: 0.58,
-			secondaryL: 0.22,
-			accentS: 0.68,
-			secondaryS: 0.66,
-		},
-		{
-			a: 40,
-			b: 220,
-			accentL: 0.5,
-			secondaryL: 0.24,
-			accentS: 0.74,
-			secondaryS: 0.62,
-		},
+		{ a: 60, b: 180, accentL: 0.54, secondaryL: 0.22, accentS: 0.8, secondaryS: 0.7 },
+		{ a: 45, b: 200, accentL: 0.68, secondaryL: 0.30, accentS: 0.6, secondaryS: 0.5 },
+		{ a: 75, b: 160, accentL: 0.42, secondaryL: 0.18, accentS: 0.9, secondaryS: 0.8 },
+		{ a: 50, b: 220, accentL: 0.60, secondaryL: 0.26, accentS: 0.7, secondaryS: 0.6 },
+		{ a: 35, b: 240, accentL: 0.74, secondaryL: 0.34, accentS: 0.5, secondaryS: 0.45 },
+		{ a: 80, b: 170, accentL: 0.48, secondaryL: 0.20, accentS: 0.85, secondaryS: 0.75 },
 	],
 	monochromatic: [
-		{
-			a: 0,
-			b: 0,
-			accentL: 0.52,
-			secondaryL: 0.24,
-			accentS: 0.5,
-			secondaryS: 0.56,
-		},
-		{
-			a: 0,
-			b: 0,
-			accentL: 0.58,
-			secondaryL: 0.29,
-			accentS: 0.44,
-			secondaryS: 0.5,
-		},
-		{
-			a: 0,
-			b: 0,
-			accentL: 0.47,
-			secondaryL: 0.21,
-			accentS: 0.58,
-			secondaryS: 0.62,
-		},
-		{
-			a: 0,
-			b: 0,
-			accentL: 0.55,
-			secondaryL: 0.26,
-			accentS: 0.48,
-			secondaryS: 0.54,
-		},
+		{ a: 0, b: 0, accentL: 0.55, secondaryL: 0.22, accentS: 0.5, secondaryS: 0.6 },
+		{ a: 0, b: 0, accentL: 0.70, secondaryL: 0.32, accentS: 0.35, secondaryS: 0.45 },
+		{ a: 0, b: 0, accentL: 0.42, secondaryL: 0.18, accentS: 0.65, secondaryS: 0.7 },
+		{ a: 0, b: 0, accentL: 0.62, secondaryL: 0.28, accentS: 0.42, secondaryS: 0.52 },
+		{ a: 0, b: 0, accentL: 0.48, secondaryL: 0.24, accentS: 0.58, secondaryS: 0.65 },
+		{ a: 0, b: 0, accentL: 0.75, secondaryL: 0.35, accentS: 0.30, secondaryS: 0.40 },
 	],
 };
 
@@ -514,6 +332,71 @@ function toFinite(value: unknown, fallback: number = 0): number {
 
 function wrapHue(h: number): number {
 	return ((h % 360) + 360) % 360;
+}
+
+// ---------------------------------------------------------------------------
+// Deterministic PRNG — derives all shuffle entropy from a single seed
+// ---------------------------------------------------------------------------
+
+function mulberry32(seed: number): () => number {
+	let s = seed | 0;
+	return () => {
+		s = (s + 0x6D2B79F5) | 0;
+		let t = Math.imul(s ^ (s >>> 15), 1 | s);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
+export interface ShuffleParams {
+	harmonyMode: HarmonyMode;
+	variantIndex: number;
+	accentHueDelta: number;
+	secondaryHueDelta: number;
+	accentLDelta: number;
+	secondaryLDelta: number;
+	accentCDelta: number;
+	secondaryCDelta: number;
+	accentMixDelta: number;
+	secondaryMixDelta: number;
+	/** Background lightness — higher = lighter page. */
+	bgLightness: number;
+	/** Background chroma scale — how much primary hue tints the bg. */
+	bgChromaScale: number;
+	/** How much primary color mixes into the white base. */
+	bgMix: number;
+	/** Text lightness — lower = darker text. */
+	textLightness: number;
+	/** Text chroma — how much color in the text. */
+	textChromaScale: number;
+	/** Text hue shift from primary. */
+	textHueDelta: number;
+}
+
+export function resolveShuffleParams(seed: number): ShuffleParams {
+	const rng = mulberry32(seed);
+	const modeIndex = Math.floor(rng() * HARMONY_MODES.length);
+	const harmonyMode = HARMONY_MODES[modeIndex] ?? 'complementary';
+	const variants = HARMONY_VARIANTS[harmonyMode] ?? HARMONY_VARIANTS.complementary;
+	const variantIndex = Math.floor(rng() * variants.length);
+	return {
+		harmonyMode,
+		variantIndex,
+		accentHueDelta: (rng() - 0.5) * 40,
+		secondaryHueDelta: (rng() - 0.5) * 40,
+		accentLDelta: (rng() - 0.5) * 0.20,
+		secondaryLDelta: (rng() - 0.5) * 0.12,
+		accentCDelta: (rng() - 0.5) * 0.10,
+		secondaryCDelta: (rng() - 0.5) * 0.08,
+		accentMixDelta: (rng() - 0.5) * 0.20,
+		secondaryMixDelta: (rng() - 0.5) * 0.16,
+		bgLightness: 0.92 + rng() * 0.065,
+		bgChromaScale: 0.08 + rng() * 0.18,
+		bgMix: 0.03 + rng() * 0.08,
+		textLightness: 0.14 + rng() * 0.14,
+		textChromaScale: 0.15 + rng() * 0.35,
+		textHueDelta: (rng() - 0.5) * 30,
+	};
 }
 
 export function normalizeHexColor(
@@ -755,10 +638,12 @@ function normalizeHarmonyMode(value: unknown): HarmonyMode {
 function resolveVariant(
 	mode: HarmonyMode,
 	shuffleSeed: unknown,
+	overrideIndex?: number,
 ): { variant: HarmonyVariant; index: number; count: number } {
 	const options = HARMONY_VARIANTS[mode] ?? HARMONY_VARIANTS.complementary ?? [DEFAULT_VARIANT];
-	const seed = Math.abs(Math.floor(toFinite(shuffleSeed, 0)));
-	const index = seed % options.length;
+	const index = overrideIndex !== undefined
+		? clamp(Math.floor(overrideIndex), 0, options.length - 1)
+		: Math.abs(Math.floor(toFinite(shuffleSeed, 0))) % options.length;
 	const variant = options[index] ?? DEFAULT_VARIANT;
 	return {
 		variant,
@@ -771,8 +656,11 @@ function generateHarmonyTheme(
 	primaryColor: string,
 	harmonyMode: string,
 	shuffleSeed: unknown,
+	perturbation?: ShuffleParams,
 ): {
-	theme: Pick<ThemeColors, 'primaryColor' | 'accentColor' | 'secondaryColor'>;
+	theme:
+		& Pick<ThemeColors, 'primaryColor' | 'accentColor' | 'secondaryColor'>
+		& Partial<Pick<ThemeColors, 'backgroundColor' | 'textColor'>>;
 	harmonyMode: HarmonyMode;
 	variantIndex: number;
 	variantCount: number;
@@ -782,30 +670,55 @@ function generateHarmonyTheme(
 		DEFAULT_THEME_COLORS.primaryColor,
 	);
 	const primaryOklch = hexToOklchColor(primary);
-	const mode = normalizeHarmonyMode(harmonyMode);
-	const variantData = resolveVariant(mode, shuffleSeed);
+	const mode = perturbation ? perturbation.harmonyMode : normalizeHarmonyMode(harmonyMode);
+	const variantData = perturbation
+		? resolveVariant(mode, 0, perturbation.variantIndex)
+		: resolveVariant(mode, shuffleSeed);
 	const v = variantData.variant;
+	const p = perturbation;
 
 	const accentTarget = oklchToHex({
-		l: clamp(primaryOklch.l * 0.34 + v.accentL * 0.66, 0.42, 0.79),
-		c: clamp(primaryOklch.c * 0.5 + v.accentS * 0.11, 0.03, 0.27),
-		h: wrapHue(primaryOklch.h + v.a),
+		l: clamp(primaryOklch.l * 0.2 + v.accentL * 0.8 + (p?.accentLDelta ?? 0), 0.38, 0.82),
+		c: clamp(primaryOklch.c * 0.3 + v.accentS * 0.18 + (p?.accentCDelta ?? 0), 0.04, 0.30),
+		h: wrapHue(primaryOklch.h + v.a + (p?.accentHueDelta ?? 0)),
 	});
 
 	const secondaryTarget = oklchToHex({
-		l: clamp(primaryOklch.l * 0.2 + v.secondaryL * 0.8, 0.16, 0.38),
-		c: clamp(primaryOklch.c * 0.46 + v.secondaryS * 0.095, 0.025, 0.24),
-		h: wrapHue(primaryOklch.h + v.b),
+		l: clamp(primaryOklch.l * 0.15 + v.secondaryL * 0.85 + (p?.secondaryLDelta ?? 0), 0.14, 0.40),
+		c: clamp(primaryOklch.c * 0.3 + v.secondaryS * 0.15 + (p?.secondaryCDelta ?? 0), 0.03, 0.26),
+		h: wrapHue(primaryOklch.h + v.b + (p?.secondaryHueDelta ?? 0)),
 	});
 
-	const accentColor = mixHexInOklab(primary, accentTarget, 0.46);
-	const secondaryColor = mixHexInOklab(primary, secondaryTarget, 0.62);
+	const accentMix = clamp(0.65 + (p?.accentMixDelta ?? 0), 0.35, 0.95);
+	const secondaryMix = clamp(0.75 + (p?.secondaryMixDelta ?? 0), 0.40, 0.95);
+	const accentColor = mixHexInOklab(primary, accentTarget, accentMix);
+	const secondaryColor = mixHexInOklab(primary, secondaryTarget, secondaryMix);
+
+	// Generate background + text when PRNG perturbation is active
+	let backgroundColor: string | undefined;
+	let textColor: string | undefined;
+	if (p) {
+		const baseBg = mixHexInOklab('#FFFFFF', primary, p.bgMix);
+		const bgOklch = hexToOklchColor(baseBg);
+		backgroundColor = oklchToHex({
+			l: clamp(p.bgLightness, 0.86, 0.985),
+			c: clamp(bgOklch.c * p.bgChromaScale, 0, 0.06),
+			h: bgOklch.h,
+		});
+		textColor = oklchToHex({
+			l: clamp(p.textLightness, 0.12, 0.28),
+			c: clamp(primaryOklch.c * p.textChromaScale + 0.004, 0.004, 0.06),
+			h: wrapHue(primaryOklch.h + p.textHueDelta),
+		});
+	}
 
 	return {
 		theme: {
 			primaryColor: primary,
 			accentColor,
 			secondaryColor,
+			...(backgroundColor ? { backgroundColor } : {}),
+			...(textColor ? { textColor } : {}),
 		},
 		harmonyMode: mode,
 		variantIndex: variantData.index,
@@ -935,10 +848,12 @@ export function generateThemePalette(input: GenerateThemePaletteInput = {}) {
 	);
 	const harmonyMode = normalizeHarmonyMode(input.harmonyMode);
 	const shuffleSeed = Math.max(0, Math.floor(toFinite(input.shuffleSeed, 0)));
+	const perturbation = shuffleSeed > 0 ? resolveShuffleParams(shuffleSeed) : undefined;
 	const generated = generateHarmonyTheme(
 		primaryColor,
 		harmonyMode,
 		shuffleSeed,
+		perturbation,
 	);
 
 	return {
@@ -965,10 +880,12 @@ export function resolveThemePalette(input: ResolveThemePaletteInput = {}) {
 		textColor: input.manualColors?.textColor,
 	});
 
+	const perturbation = shuffleSeed > 0 ? resolveShuffleParams(shuffleSeed) : undefined;
 	const generated = generateHarmonyTheme(
 		primaryColor,
 		harmonyMode,
 		shuffleSeed,
+		perturbation,
 	);
 	const nextTheme: ThemeColors = {
 		primaryColor,
@@ -978,8 +895,8 @@ export function resolveThemePalette(input: ResolveThemePaletteInput = {}) {
 		secondaryColor: locks.secondaryColor
 			? manualTheme.secondaryColor
 			: generated.theme.secondaryColor,
-		backgroundColor: manualTheme.backgroundColor,
-		textColor: manualTheme.textColor,
+		backgroundColor: generated.theme.backgroundColor ?? manualTheme.backgroundColor,
+		textColor: generated.theme.textColor ?? manualTheme.textColor,
 	};
 
 	const enforced = enforceThemeSafety(nextTheme);

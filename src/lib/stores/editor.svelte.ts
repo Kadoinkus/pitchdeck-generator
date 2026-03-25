@@ -5,7 +5,8 @@
  * getters/functions directly; no writable() stores.
  */
 
-import { DEFAULT_THEME_COLORS, normalizeHexColor, resolveThemePalette } from '$lib/color-palette';
+import { DEFAULT_THEME_COLORS } from '$lib/color-palette';
+import * as brandPalette from '$lib/stores/brand-palette.svelte';
 import { isRecord } from '$lib/utils';
 
 // ---------------------------------------------------------------------------
@@ -173,10 +174,6 @@ let _templates = $state<TemplateEntry[]>([]);
 let _textProviders = $state<ProviderOption[]>([]);
 let _imageProviders = $state<ProviderOption[]>([]);
 let _characterAssets = $state<CharacterAsset[]>([]);
-let _paletteStatus = $state<{ text: string; tone: string }>({
-	text: 'Choose a preset or harmony mode. Shuffle explores safe color variants.',
-	tone: '',
-});
 
 let _autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 let _historyInputTimer: ReturnType<typeof setTimeout> | null = null;
@@ -264,10 +261,6 @@ export function getCharacterAssets(): CharacterAsset[] {
 
 export function getDeckResult(): DeckResult | null {
 	return _deckResult;
-}
-
-export function getPaletteStatus(): { text: string; tone: string } {
-	return _paletteStatus;
 }
 
 // ---------------------------------------------------------------------------
@@ -389,71 +382,22 @@ export function setSaveState(state: typeof _saveState): void {
 }
 
 // ---------------------------------------------------------------------------
-// Palette status
+// Brand palette bridge — delegates to the reactive brand-palette store
 // ---------------------------------------------------------------------------
 
-export function setPaletteStatus(text: string, tone = ''): void {
-	_paletteStatus = { text, tone };
+/** Sync brand palette inputs from the current payload into the reactive store. */
+export function hydrateBrandPalette(): void {
+	brandPalette.hydrate(_payload);
 }
 
-// ---------------------------------------------------------------------------
-// Palette sync
-// ---------------------------------------------------------------------------
-
-export function syncBrandPalette(): void {
-	const p = _payload;
-	const primaryColor = normalizeHexColor(p.primaryColor, DEFAULT_THEME_COLORS.primaryColor);
-	const harmonyMode = typeof p.harmonyMode === 'string' ? p.harmonyMode : 'complementary';
-	const shuffleSeed = Math.max(0, Math.floor(Number.parseInt(String(p.paletteShuffleSeed || '0'), 10) || 0));
-
-	const palette = resolveThemePalette({
-		primaryColor,
-		harmonyMode,
-		shuffleSeed,
-		locks: {
-			accentColor: Boolean(p.lockAccentColor),
-			secondaryColor: Boolean(p.lockSecondaryColor),
-		},
-		manualColors: {
-			primaryColor,
-			accentColor: normalizeHexColor(p.accentColor, DEFAULT_THEME_COLORS.accentColor),
-			secondaryColor: normalizeHexColor(p.secondaryColor, DEFAULT_THEME_COLORS.secondaryColor),
-			backgroundColor: normalizeHexColor(p.backgroundColor, DEFAULT_THEME_COLORS.backgroundColor),
-			textColor: normalizeHexColor(p.textColor, DEFAULT_THEME_COLORS.textColor),
-		},
-	});
-
-	_payload = {
-		..._payload,
-		primaryColor: palette.theme.primaryColor,
-		accentColor: palette.theme.accentColor,
-		secondaryColor: palette.theme.secondaryColor,
-		backgroundColor: palette.theme.backgroundColor,
-		textColor: palette.theme.textColor,
-		harmonyMode: palette.harmonyMode,
-		paletteShuffleSeed: String(palette.shuffleSeed),
-	};
-
-	if (palette.adjustments.length) {
-		setPaletteStatus(
-			`${palette.harmonyMode} harmony \u00b7 variant ${
-				palette.variantIndex + 1
-			}/${palette.variantCount}. Corrected ${palette.adjustments.length} color${
-				palette.adjustments.length === 1 ? '' : 's'
-			} for readability.`,
-			'warning',
-		);
-	} else {
-		setPaletteStatus(
-			`${palette.harmonyMode} harmony \u00b7 variant ${palette.variantIndex + 1}/${palette.variantCount}.`,
-		);
-	}
+/** Merge resolved colors from brand palette store back into the payload. */
+export function snapshotBrandPalette(): void {
+	_payload = { ..._payload, ...brandPalette.snapshot() };
 }
 
 export function shufflePalette(): void {
-	const current = Math.max(0, Math.floor(Number.parseInt(String(_payload.paletteShuffleSeed || '0'), 10) || 0));
-	_payload = { ..._payload, paletteShuffleSeed: String(current + 1) };
-	syncBrandPalette();
+	brandPalette.shuffle();
+	snapshotBrandPalette();
 	pushHistory();
 	markDirty();
 }
@@ -504,7 +448,7 @@ function applyHistoryIndex(nextIndex: number): void {
 	_suspendHistory = true;
 	_payload = { ...entry.payload };
 	parseAssetsFromPayload();
-	syncBrandPalette();
+	hydrateBrandPalette();
 	_suspendHistory = false;
 
 	if (entry.signature === _lastSavedSignature) {
@@ -527,6 +471,7 @@ export function queueHistorySnapshot(): void {
 
 export function saveDraft(quiet = false): void {
 	if (_autosaveTimer !== null) clearTimeout(_autosaveTimer);
+	snapshotBrandPalette();
 	const payload = clonePayload(_payload);
 	const signature = payloadSignature(payload);
 
@@ -575,7 +520,7 @@ export function loadDraft(): boolean {
 		_suspendHistory = true;
 		_payload = { ...DEFAULT_PAYLOAD, ...source };
 		parseAssetsFromPayload();
-		syncBrandPalette();
+		hydrateBrandPalette();
 		_suspendHistory = false;
 
 		_lastSavedSignature = payloadSignature(_payload);

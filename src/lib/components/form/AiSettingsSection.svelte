@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { persistDetails } from '$lib/persist-details';
 	import {
 		getImageProviders,
 		getPayload,
@@ -26,7 +27,7 @@
 	}
 </script>
 
-<details class="form-section">
+<details class="form-section" use:persistDetails={'ai-settings'}>
 	<summary>AI Provider Keys</summary>
 	<div class="section-grid two-col">
 		<div class="field">

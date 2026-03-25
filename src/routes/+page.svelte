@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import {
 		getDeckResult,
+		hydrateBrandPalette,
 		loadAiSettings,
 		loadDraft,
 		parseAssetsFromPayload,
@@ -14,7 +15,6 @@
 		setSaveState,
 		setStatus,
 		setTemplates,
-		syncBrandPalette,
 		undo,
 	} from '$lib/stores/editor.svelte';
 	import { viewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
@@ -83,7 +83,7 @@
 			loadAiSettings();
 			loadDraft();
 			parseAssetsFromPayload();
-			syncBrandPalette();
+			hydrateBrandPalette();
 			restoreDeckResult();
 			pushHistory();
 			saveDraft(true);

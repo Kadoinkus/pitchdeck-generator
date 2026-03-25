@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { persistDetails } from '$lib/persist-details';
 	import {
 		getPayload,
 		markDirty,
@@ -53,7 +54,7 @@
 	}
 </script>
 
-<details class="form-section" open>
+<details class="form-section" open use:persistDetails={'slide-selector'}>
 	<summary>Slide Inclusion</summary>
 	<div class="section-head compact">
 		<p>Uncheck slides to exclude from this version.</p>

@@ -795,14 +795,14 @@
 
 		.toolbar-btn,
 		.history-btn {
-			min-height: 36px;
-			min-width: 36px;
+			min-height: 44px;
+			min-width: 44px;
 			padding: 4px 8px;
 		}
 
 		.viewer-home-btn {
-			width: 36px;
-			height: 36px;
+			width: 44px;
+			height: 44px;
 			padding: 0;
 		}
 
@@ -838,7 +838,7 @@
 
 		.viewer-share-item {
 			padding: 8px;
-			min-height: 36px;
+			min-height: 44px;
 		}
 	}
 
@@ -850,14 +850,14 @@
 		}
 
 		.viewer-home-btn {
-			width: 40px;
-			height: 40px;
+			width: 44px;
+			height: 44px;
 			padding: 0;
 		}
 
 		.toolbar-btn {
-			min-height: 40px;
-			min-width: 40px;
+			min-height: 44px;
+			min-width: 44px;
 			padding: 4px 6px;
 			font-size: 13px;
 		}
@@ -868,7 +868,7 @@
 		}
 
 		.viewer-share-toggle {
-			min-width: 40px;
+			min-width: 44px;
 			padding: 4px 8px;
 			font-size: 11px;
 		}

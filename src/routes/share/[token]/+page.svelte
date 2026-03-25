@@ -491,10 +491,16 @@
 	}
 
 	.share-main {
-		height: calc(100dvh - var(--topbar-h));
+		height: calc(100vh - var(--topbar-h));
 		display: grid;
 		grid-template-columns: 1fr;
 		align-items: center;
+	}
+
+	@supports (height: 100dvh) {
+		.share-main {
+			height: calc(100dvh - var(--topbar-h));
+		}
 	}
 
 	.share-main > * {
@@ -574,10 +580,8 @@
 	}
 
 	.share-slide-frame {
-		--slide-w: 1020px;
-
 		container-type: inline-size;
-		width: min(94vw, calc((100dvh - var(--topbar-h) - 54px) * 1.78));
+		width: min(94vw, calc((100vh - var(--topbar-h) - 54px) * 1.78));
 		aspect-ratio: 16 / 9;
 		border-radius: 16px;
 		overflow: hidden;
@@ -587,10 +591,10 @@
 		user-select: none;
 	}
 
-	.share-slide-frame > :global(.slide-render) {
-		width: var(--slide-w);
-		height: calc(var(--slide-w) * 9 / 16);
-		zoom: tan(atan2(100cqi, var(--slide-w)));
+	@supports (height: 100dvh) {
+		.share-slide-frame {
+			width: min(94vw, calc((100dvh - var(--topbar-h) - 54px) * 1.78));
+		}
 	}
 
 	.share-slide :global(.image-slot:not(:has(.has-image))) {

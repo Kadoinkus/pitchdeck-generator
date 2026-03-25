@@ -446,7 +446,7 @@
 		right: 16px;
 		bottom: 16px;
 		max-width: calc(100vw - 32px);
-		max-height: calc(100dvh - 100px);
+		max-height: calc(100vh - 100px);
 		background: rgba(255, 255, 255, 0.92);
 		backdrop-filter: blur(20px);
 		border: 1px solid rgba(200, 217, 255, 0.5);
@@ -458,6 +458,12 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+	}
+
+	@supports (height: 100dvh) {
+		.panel {
+			max-height: calc(100dvh - 100px);
+		}
 	}
 
 	.panel.is-resizing {
@@ -822,7 +828,7 @@
 			right: 8px;
 			bottom: max(8px, env(safe-area-inset-bottom));
 			width: calc(100vw - 16px);
-			max-height: calc(100dvh - 24px);
+			max-height: calc(100vh - 24px);
 			border-radius: 16px;
 		}
 

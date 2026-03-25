@@ -4,6 +4,7 @@
 	import {
 		getDeckResult,
 		getPayload,
+		hydrateBrandPalette,
 		loadAiSettings,
 		loadDraft,
 		markDirty,
@@ -13,7 +14,6 @@
 		restoreDeckResult,
 		saveDraft,
 		setPayloadField,
-		syncBrandPalette,
 		undo,
 	} from '$lib/stores/editor.svelte';
 	import { viewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
@@ -62,7 +62,7 @@
 		loadAiSettings();
 		loadDraft();
 		parseAssetsFromPayload();
-		syncBrandPalette();
+		hydrateBrandPalette();
 		const hasResult = restoreDeckResult();
 		pushHistory();
 		saveDraft(true);
