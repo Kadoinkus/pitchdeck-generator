@@ -130,3 +130,87 @@ test('viewer share menu routes are token-based', async ({ page }) => {
 		/\/share\/tok123$/,
 	);
 });
+
+/**
+ * Registers a one-shot mock for POST /api/generate. Returns the resolved token
+ * as a successful publish response. Uses `page.route` which must be called
+ * before the request is made.
+ */
+async function mockGenerateOnce(
+	page: Page,
+	token: string,
+	clientName: string,
+): Promise<void> {
+	await page.route('/api/generate', (route) =>
+		route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				success: true,
+				shareToken: token,
+				downloadUrl: `/api/download/${token}`,
+				pdfUrl: `/api/pdf/${token}`,
+				shareUrl: `/share/${token}`,
+				payloadHash: `hash-${token}`,
+				slideData: {
+					slides: [{ type: 'cover', title: clientName }],
+					theme: {},
+					project: { projectTitle: 'AI Mascot Proposal', clientName },
+				},
+			}),
+		}));
+}
+
+test('publish flow: navigates to editor, shows stale after edit, clears on republish', async ({ page }) => {
+	// Start with clean storage and mock the API before navigation
+	await clearEditorStorage(page);
+	await mockGenerateOnce(page, 'tok-flow-1', 'Flow Client');
+
+	await page.goto('/');
+
+	const outputSection = page.locator('section.output-section');
+
+	// Unpublished: default prompt text
+	await expect(outputSection.locator('p')).toContainText(
+		'Publish a deck to unlock links and exports.',
+	);
+
+	// Set clientName and publish
+	const clientNameInput = page.locator('#clientName');
+	await clientNameInput.fill('Flow Client');
+	await clientNameInput.dispatchEvent('input');
+
+	await page.locator('#publish-button').click();
+
+	// handlePublish → onOpenViewer() → goto('/editor')
+	await expect(page).toHaveURL(/\/editor/);
+
+	// Navigate back — result is stored with matching signature: no stale
+	await page.goto('/');
+	await expect(outputSection.locator('p')).toContainText('Deck published.');
+	await expect(outputSection.locator('p')).not.toContainText(
+		'Content changed since last publish.',
+	);
+
+	// Edit clientName — signature diverges → stale
+	await clientNameInput.fill('Edited Client Name');
+	await clientNameInput.dispatchEvent('input');
+
+	await expect(outputSection.locator('p')).toContainText(
+		'Content changed since last publish.',
+	);
+
+	// Republish with updated name
+	await page.unroute('/api/generate');
+	await mockGenerateOnce(page, 'tok-flow-2', 'Edited Client Name');
+
+	await page.locator('#publish-button').click();
+	await expect(page).toHaveURL(/\/editor/);
+
+	// Navigate back — stale indicator must be gone
+	await page.goto('/');
+	await expect(outputSection.locator('p')).toContainText('Deck published.');
+	await expect(outputSection.locator('p')).not.toContainText(
+		'Content changed since last publish.',
+	);
+});
