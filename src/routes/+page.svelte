@@ -2,10 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import {
-		applyDraft,
-		applyImageDraft,
 		getDeckResult,
-		getPayload,
 		loadAiSettings,
 		loadDraft,
 		parseAssetsFromPayload,
@@ -84,7 +81,7 @@
 
 		try {
 			loadAiSettings();
-			const restoredDraft = loadDraft();
+			loadDraft();
 			parseAssetsFromPayload();
 			syncBrandPalette();
 			restoreDeckResult();
@@ -111,10 +108,6 @@
 					providersData.providers.imageProviders || [],
 				);
 			}
-
-			if (!restoredDraft) {
-				await runInitialAutofill();
-			}
 		} catch (error) {
 			console.error(error);
 			setStatus(
@@ -122,25 +115,6 @@
 				true,
 			);
 			setSaveState('is-error');
-		}
-	}
-
-	async function runInitialAutofill() {
-		setStatus('AI is generating all slide text and image prompts...');
-		try {
-			const response = await fetch('/api/ai/autofill', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(getPayload()),
-			});
-			const result = await response.json();
-			if (response.ok && result.success) {
-				applyDraft(result.draft || {});
-				applyImageDraft(result.imageDraft || {});
-				setStatus(`Autofill complete (${result.provider || 'local'}).`);
-			}
-		} catch (error) {
-			console.error(error);
 		}
 	}
 </script>
