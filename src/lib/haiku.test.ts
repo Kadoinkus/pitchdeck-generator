@@ -26,6 +26,20 @@ describe('haiku collection', () => {
 			expect(['nl', 'en']).toContain(h.lang);
 		}
 	});
+
+	it('every haiku has a valid source classification', () => {
+		for (const h of haikus) {
+			expect(['classic', 'free_translation', 'original', 'uncertain']).toContain(h.source);
+		}
+	});
+
+	it('original haiku always include an author', () => {
+		for (const h of haikus) {
+			if (h.source === 'original') {
+				expect(h.author?.trim().length).toBeGreaterThan(0);
+			}
+		}
+	});
 });
 
 describe('randomHaiku', () => {

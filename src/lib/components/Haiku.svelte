@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PUBLIC_FEATURE_HAIKU } from '$env/static/public';
-	import { randomHaiku } from '$lib/haiku';
+	import { type HaikuSource, randomHaiku } from '$lib/haiku';
 
 	interface Props {
 		variant?: 'inline' | 'card' | 'ghost';
@@ -13,6 +13,21 @@
 		|| PUBLIC_FEATURE_HAIKU === '1';
 
 	const haiku = $derived(enabled ? randomHaiku(lang) : undefined);
+
+	const sourceLabels: Record<HaikuSource, { nl: string; en: string }> = {
+		classic: { nl: 'klassiek', en: 'classic' },
+		free_translation: { nl: 'vrije vertaling', en: 'free translation' },
+		original: { nl: 'origineel', en: 'original' },
+		uncertain: { nl: 'onzekere bron', en: 'uncertain source' },
+	};
+
+	function sourceLabel(source: HaikuSource, haikuLang: 'nl' | 'en'): string {
+		return sourceLabels[source][haikuLang];
+	}
+
+	function provenanceLabel(haikuLang: 'nl' | 'en'): string {
+		return haikuLang === 'nl' ? 'Bron' : 'Source';
+	}
 </script>
 
 {#if haiku}
@@ -22,9 +37,13 @@
 				<p>{line}</p>
 			{/each}
 		</blockquote>
-		{#if haiku.author}
-			<figcaption>— {haiku.author}</figcaption>
-		{/if}
+		<figcaption>
+			{#if haiku.author}— {haiku.author}{/if}
+			{#if haiku.author}
+				·
+			{/if}
+			{provenanceLabel(haiku.lang)}: {sourceLabel(haiku.source, haiku.lang)}
+		</figcaption>
 	</figure>
 {/if}
 
