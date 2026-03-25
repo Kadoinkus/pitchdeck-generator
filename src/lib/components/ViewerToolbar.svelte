@@ -48,6 +48,8 @@
 			event.preventDefault();
 			target.blur();
 		} else if (event.key === 'Escape') {
+			event.preventDefault();
+			event.stopPropagation();
 			titleValue = projectName;
 			target.blur();
 		}

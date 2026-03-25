@@ -54,14 +54,13 @@
 		if (!viewer.isOpen) return;
 		if (event.defaultPrevented) return;
 		if (event.ctrlKey || event.metaKey || event.altKey) return;
+		if (isEditableTarget(event.target)) return;
 
 		if (event.key === 'Escape') {
 			event.preventDefault();
 			closeViewer();
 			return;
 		}
-
-		if (isEditableTarget(event.target)) return;
 
 		switch (event.key) {
 			case 'ArrowLeft':

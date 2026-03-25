@@ -287,17 +287,52 @@ test('footer brand is editable and shared across slides', async ({ page }) => {
 	await page.goto('/editor');
 
 	await expect(page.locator('.slide-viewer')).toBeVisible();
+	await expect(page.locator('.slide-counter')).toHaveText('1 / 2');
 
 	const footer = page.locator('.slide-page.is-active .deck-footer').first();
 	await expect(footer).toBeVisible();
 	await footer.click();
-	await page.keyboard.press('Control+A');
+	await expect(footer).toBeFocused();
+	await footer.press('ControlOrMeta+A');
 	await page.keyboard.type('Nova Brand Labs');
-	await page.keyboard.press('Enter');
+	await expect(page.locator('.slide-counter')).toHaveText('1 / 2');
+	await footer.press('Enter');
+	await expect(page.locator('.slide-counter')).toHaveText('1 / 2');
 
 	await expect(footer).toHaveText('Nova Brand Labs');
 
 	await page.getByRole('button', { name: 'Next slide' }).click();
 	const nextFooter = page.locator('.slide-page.is-active .deck-footer').first();
 	await expect(nextFooter).toHaveText('Nova Brand Labs');
+});
+
+test('escape in project title input cancels edit without closing viewer', async ({ page }) => {
+	await seedTwoSlideResult(page);
+	await page.goto('/editor');
+
+	await expect(page.locator('.slide-viewer')).toBeVisible();
+	await expect(page).toHaveURL(/\/editor$/);
+
+	const titleInput = page.getByLabel('Project name');
+	await expect(titleInput).toBeVisible();
+	const original = await titleInput.inputValue();
+
+	await titleInput.click();
+	await titleInput.fill('Temporary title');
+	await titleInput.press('Escape');
+
+	await expect(page.locator('.slide-viewer')).toBeVisible();
+	await expect(page).toHaveURL(/\/editor$/);
+	await expect(titleInput).toHaveValue(original);
+});
+
+test('footer uses text cursor while editable', async ({ page }) => {
+	await seedTwoSlideResult(page);
+	await page.goto('/editor');
+
+	const footer = page.locator('.slide-page.is-active .deck-footer').first();
+	await expect(footer).toBeVisible();
+
+	const cursor = await footer.evaluate((el) => getComputedStyle(el).cursor);
+	expect(cursor).toBe('text');
 });

@@ -237,11 +237,14 @@
 	.slide-page.is-active .slide-frame :global(input),
 	.slide-page.is-active .slide-frame :global(textarea),
 	.slide-page.is-active .slide-frame :global(select),
-	.slide-page.is-active .slide-frame :global(summary),
+	.slide-page.is-active .slide-frame :global(summary) {
+		cursor: pointer;
+	}
+
 	.slide-page.is-active
 		.slide-frame
 		:global([contenteditable]:not([contenteditable="false"])) {
-		cursor: pointer;
+		cursor: text;
 	}
 
 	.slide-stage:global(.is-dragging) .slide-page.is-active .slide-frame {
