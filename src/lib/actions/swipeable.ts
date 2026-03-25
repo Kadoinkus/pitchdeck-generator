@@ -51,7 +51,11 @@ export function swipeable(
 
 	function isInteractiveTarget(target: EventTarget | null): boolean {
 		if (!(target instanceof Element)) return false;
-		return Boolean(target.closest('a,button,input,textarea,select'));
+		return Boolean(
+			target.closest(
+				'a,button,input,textarea,select,summary,[role="button"],[role="link"],[contenteditable]:not([contenteditable="false"]),[data-ai-target]',
+			),
+		);
 	}
 
 	function isPrimaryActivation(event: PointerEvent): boolean {

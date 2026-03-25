@@ -1,7 +1,7 @@
 export interface ResizableOptions {
 	/** Minimum width in px (default: 100). */
 	min?: number;
-	/** Maximum width in px (default: 400). */
+	/** Maximum width in px. Omit for no upper cap. */
 	max?: number;
 	/** CSS custom property name to set (default: '--thumb-w'). */
 	property?: string;
@@ -11,8 +11,8 @@ export interface ResizableOptions {
 
 /**
  * Svelte action for a drag-to-resize handle.
- * Updates a CSS custom property directly on the DOM during drag,
- * bypassing Svelte reactivity for zero-overhead per-frame updates.
+ * Uses a lightweight visual drag preview (handle transform) and commits
+ * the final width once on pointer-up to avoid heavy per-frame re-layout.
  */
 export function resizable(
 	node: HTMLElement,
@@ -25,41 +25,51 @@ export function resizable(
 	let resizeTarget: HTMLElement | null = null;
 	let resizeProperty = '--thumb-w';
 	let rafId: number | null = null;
-	let pendingWidth: number | null = null;
-	let lastWrittenWidth: number | null = null;
+	let previewWidth: number | null = null;
+	let startWidth = 0;
+	let startX = 0;
+
+	function clampWidth(value: number, min: number, max?: number): number {
+		if (typeof max === 'number') {
+			return Math.max(min, Math.min(value, max));
+		}
+		return Math.max(min, value);
+	}
 
 	function resolveTarget(): HTMLElement | null {
 		const sel = opts?.target;
 		return sel ? node.closest<HTMLElement>(sel) : node.parentElement;
 	}
 
-	function flushPendingWidth(): void {
+	function flushPreview(): void {
 		rafId = null;
-		const width = pendingWidth;
-		pendingWidth = null;
+		const width = previewWidth;
 		if (width === null) return;
-		if (width === lastWrittenWidth) return;
-		if (!resizeTarget) return;
-		resizeTarget.style.setProperty(resizeProperty, `${width}px`);
-		lastWrittenWidth = width;
+		const delta = width - startWidth;
+		if (delta === 0) {
+			node.style.removeProperty('transform');
+			return;
+		}
+		node.style.transform = `translate3d(${delta}px, 0, 0)`;
 	}
 
-	function scheduleWidthWrite(width: number): void {
-		pendingWidth = width;
+	function schedulePreview(width: number): void {
+		previewWidth = width;
 		if (rafId !== null) return;
-		rafId = requestAnimationFrame(flushPendingWidth);
+		rafId = requestAnimationFrame(flushPreview);
 	}
 
 	function stopDrag(): void {
 		node.classList.remove('is-dragging');
-		resizeTarget?.classList.remove('is-resizing');
+		node.style.removeProperty('transform');
 
 		if (rafId !== null) {
 			cancelAnimationFrame(rafId);
 			rafId = null;
 		}
-		pendingWidth = null;
-		lastWrittenWidth = null;
+		previewWidth = null;
+		startWidth = 0;
+		startX = 0;
 
 		if (moveHandler) {
 			node.removeEventListener('pointermove', moveHandler);
@@ -98,17 +108,37 @@ export function resizable(
 		node.classList.add('is-dragging');
 
 		const min = opts?.min ?? 100;
-		const max = opts?.max ?? 400;
+		const max = opts?.max;
 		resizeProperty = opts?.property ?? '--thumb-w';
 		resizeTarget = resolveTarget();
-		resizeTarget?.classList.add('is-resizing');
+
+		const fallbackWidth = clampWidth(event.clientX, min, max);
+		const currentWidth = resizeTarget
+			? Number.parseFloat(getComputedStyle(resizeTarget).getPropertyValue(resizeProperty))
+			: Number.NaN;
+		startWidth = Number.isFinite(currentWidth)
+			? clampWidth(currentWidth, min, max)
+			: fallbackWidth;
+		startX = event.clientX;
+		previewWidth = startWidth;
 
 		moveHandler = (e: PointerEvent): void => {
-			const w = Math.max(min, Math.min(e.clientX, max));
-			scheduleWidthWrite(w);
+			const delta = e.clientX - startX;
+			const width = clampWidth(startWidth + delta, min, max);
+			schedulePreview(width);
 		};
 
 		endHandler = (): void => {
+			if (rafId !== null) {
+				cancelAnimationFrame(rafId);
+				rafId = null;
+			}
+
+			const finalWidth = previewWidth ?? startWidth;
+			if (resizeTarget && Number.isFinite(finalWidth)) {
+				resizeTarget.style.setProperty(resizeProperty, `${finalWidth}px`);
+			}
+
 			stopDrag();
 		};
 

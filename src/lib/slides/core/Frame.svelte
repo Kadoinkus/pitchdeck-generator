@@ -23,6 +23,10 @@
 	const slideType = $derived(slide?.type || 'generic');
 	const style = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
+	const footerIsEditable = $derived.by(() => {
+		if (typeof window === 'undefined') return false;
+		return window.location.pathname === '/editor';
+	});
 </script>
 
 <article class="slide-render" {style}>
@@ -30,7 +34,14 @@
 		<section class="deck-content">
 			{@render children()}
 		</section>
-		<footer class="deck-footer">{brandName}</footer>
+		<footer
+			class="deck-footer"
+			data-footer-brand={footerIsEditable ? 'true' : undefined}
+			contenteditable={footerIsEditable ? 'plaintext-only' : 'false'}
+			spellcheck={footerIsEditable ? 'false' : undefined}
+		>
+			{brandName}
+		</footer>
 	</div>
 </article>
 

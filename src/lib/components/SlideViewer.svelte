@@ -40,7 +40,7 @@
 		if (!(target instanceof Element)) return false;
 		return Boolean(
 			target.closest(
-				'input,textarea,select,[contenteditable=""],[contenteditable="true"],[role="textbox"]',
+				'input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]',
 			),
 		);
 	}
@@ -123,7 +123,7 @@
 				role="separator"
 				aria-orientation="vertical"
 				tabindex="-1"
-				use:resizable={{ min: 140, max: 560, target: '.slide-viewer' }}
+				use:resizable={{ min: 140, target: '.slide-viewer' }}
 			>
 			</div>
 

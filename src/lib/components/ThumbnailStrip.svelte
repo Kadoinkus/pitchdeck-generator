@@ -120,7 +120,7 @@
 		font-weight: 700;
 		color: #2a4469;
 		z-index: 1;
-		background: rgba(255, 255, 255, 0.72);
+		background: rgba(255, 255, 255, 1);
 		border-radius: 999px;
 		padding: 2px 6px;
 	}

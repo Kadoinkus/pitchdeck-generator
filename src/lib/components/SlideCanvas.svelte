@@ -2,6 +2,11 @@
 	import { swipeable } from '$lib/actions/swipeable';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
+	import {
+		markDirty,
+		pushHistory,
+		setPayloadField,
+	} from '$lib/stores/editor.svelte';
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { Spring } from 'svelte/motion';
 
@@ -18,6 +23,24 @@
 
 	const SLIDE_GAP = 24;
 	const trackSpring = new Spring(0, { stiffness: 0.14, damping: 0.72 });
+	const DEFAULT_BRAND_NAME = 'Notso AI';
+
+	function normalizeFooterBrand(value: string): string {
+		const compact = value.replace(/\s+/g, ' ').trim();
+		return compact || DEFAULT_BRAND_NAME;
+	}
+
+	function updateFooterBrand(nextBrand: string): void {
+		const currentBrand = normalizeFooterBrand(
+			String(viewer.slideData?.theme?.brandName || DEFAULT_BRAND_NAME),
+		);
+		if (nextBrand === currentBrand) return;
+
+		viewer.updateTheme({ brandName: nextBrand });
+		setPayloadField('brandName', nextBrand);
+		pushHistory();
+		markDirty();
+	}
 
 	function slideBase(): number {
 		return -current * ((deckWidth || 1) + SLIDE_GAP);
@@ -83,31 +106,71 @@
 		if (!deckEl) return;
 		const el = deckEl;
 
-		function resolve(origin: EventTarget | null): void {
-			if (!(origin instanceof HTMLElement)) return;
+		function resolveAiTarget(origin: EventTarget | null): boolean {
+			if (!(origin instanceof HTMLElement)) return false;
 			const hit = origin.closest('[data-ai-target]');
-			if (!hit) return;
+			if (!hit) return false;
 			const aiTarget = hit.getAttribute('data-ai-target');
 			const aiLabel = hit.getAttribute('data-ai-label') ?? aiTarget;
 			if (aiTarget) {
 				viewer.setChatTarget({ target: aiTarget, label: aiLabel ?? aiTarget });
+				return true;
+			}
+			return false;
+		}
+
+		function getFooter(origin: EventTarget | null): HTMLElement | null {
+			if (!(origin instanceof HTMLElement)) return null;
+			return origin.closest<HTMLElement>('[data-footer-brand="true"]');
+		}
+
+		function onFooterKeydown(event: KeyboardEvent): void {
+			const footer = getFooter(event.target);
+			if (!footer) return;
+
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				footer.blur();
+				return;
+			}
+
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				footer.textContent = normalizeFooterBrand(
+					String(viewer.slideData?.theme?.brandName || DEFAULT_BRAND_NAME),
+				);
+				footer.blur();
 			}
 		}
 
+		function onFooterFocusOut(event: FocusEvent): void {
+			const footer = getFooter(event.target);
+			if (!footer) return;
+			const nextBrand = normalizeFooterBrand(footer.textContent ?? '');
+			footer.textContent = nextBrand;
+			updateFooterBrand(nextBrand);
+		}
+
 		function onClick(e: MouseEvent): void {
-			resolve(e.target);
+			resolveAiTarget(e.target);
 		}
 		function onKeydown(e: KeyboardEvent): void {
+			onFooterKeydown(e);
+			if (e.defaultPrevented) return;
+
 			if (e.key !== 'Enter' && e.key !== ' ') return;
-			e.preventDefault();
-			resolve(e.target);
+			if (resolveAiTarget(e.target)) {
+				e.preventDefault();
+			}
 		}
 
 		el.addEventListener('click', onClick);
 		el.addEventListener('keydown', onKeydown);
+		el.addEventListener('focusout', onFooterFocusOut);
 		return () => {
 			el.removeEventListener('click', onClick);
 			el.removeEventListener('keydown', onKeydown);
+			el.removeEventListener('focusout', onFooterFocusOut);
 		};
 	});
 </script>
@@ -149,7 +212,6 @@
 		flex: 1;
 		overflow: hidden;
 		touch-action: pan-y;
-		cursor: grab;
 	}
 
 	.slide-stage.empty {
@@ -159,7 +221,29 @@
 		opacity: 0.5;
 	}
 
-	.slide-stage:global(.is-dragging) {
+	.slide-page.is-active .slide-frame {
+		cursor: grab;
+	}
+
+	.slide-page.is-active .slide-frame :global(.ai-clickable),
+	.slide-page.is-active .slide-frame :global([data-ai-target]) {
+		cursor: crosshair;
+	}
+
+	.slide-page.is-active .slide-frame :global(a),
+	.slide-page.is-active .slide-frame :global(button),
+	.slide-page.is-active .slide-frame :global([role="button"]),
+	.slide-page.is-active .slide-frame :global([role="link"]),
+	.slide-page.is-active .slide-frame :global(input),
+	.slide-page.is-active .slide-frame :global(textarea),
+	.slide-page.is-active .slide-frame :global(select),
+	.slide-page.is-active .slide-frame :global(summary),
+	.slide-page.is-active .slide-frame :global([contenteditable=""]),
+	.slide-page.is-active .slide-frame :global([contenteditable="true"]) {
+		cursor: pointer;
+	}
+
+	.slide-stage:global(.is-dragging) .slide-page.is-active .slide-frame {
 		cursor: grabbing;
 	}
 

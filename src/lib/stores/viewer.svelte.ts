@@ -121,6 +121,15 @@ class ViewerState {
 		};
 	};
 
+	updateTheme = (patch: Partial<ViewerDeckData['theme']>): void => {
+		if (!this.#slideData) return;
+
+		this.#slideData = {
+			...this.#slideData,
+			theme: { ...this.#slideData.theme, ...patch },
+		};
+	};
+
 	hide = (): void => {
 		this.#isOpen = false;
 		this.#chatTarget = null;
