@@ -38,7 +38,7 @@
 			class="deck-footer"
 			data-footer-brand={footerIsEditable ? 'true' : undefined}
 			contenteditable={footerIsEditable ? 'plaintext-only' : 'false'}
-			spellcheck={footerIsEditable ? 'false' : undefined}
+			spellcheck={footerIsEditable ? false : undefined}
 		>
 			{brandName}
 		</footer>

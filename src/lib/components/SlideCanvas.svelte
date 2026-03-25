@@ -238,8 +238,9 @@
 	.slide-page.is-active .slide-frame :global(textarea),
 	.slide-page.is-active .slide-frame :global(select),
 	.slide-page.is-active .slide-frame :global(summary),
-	.slide-page.is-active .slide-frame :global([contenteditable=""]),
-	.slide-page.is-active .slide-frame :global([contenteditable="true"]) {
+	.slide-page.is-active
+		.slide-frame
+		:global([contenteditable]:not([contenteditable="false"])) {
 		cursor: pointer;
 	}
 

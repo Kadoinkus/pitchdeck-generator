@@ -281,3 +281,23 @@ test('viewer keyboard navigation', async ({ page }) => {
 	await page.keyboard.press('ArrowRight');
 	await expect(page.locator('.slide-counter')).toHaveText('2 / 2');
 });
+
+test('footer brand is editable and shared across slides', async ({ page }) => {
+	await seedTwoSlideResult(page);
+	await page.goto('/editor');
+
+	await expect(page.locator('.slide-viewer')).toBeVisible();
+
+	const footer = page.locator('.slide-page.is-active .deck-footer').first();
+	await expect(footer).toBeVisible();
+	await footer.click();
+	await page.keyboard.press('Control+A');
+	await page.keyboard.type('Nova Brand Labs');
+	await page.keyboard.press('Enter');
+
+	await expect(footer).toHaveText('Nova Brand Labs');
+
+	await page.getByRole('button', { name: 'Next slide' }).click();
+	const nextFooter = page.locator('.slide-page.is-active .deck-footer').first();
+	await expect(nextFooter).toHaveText('Nova Brand Labs');
+});
