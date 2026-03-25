@@ -54,8 +54,14 @@ export function swipeable(
 		return Boolean(target.closest('a,button,input,textarea,select'));
 	}
 
+	function isPrimaryActivation(event: PointerEvent): boolean {
+		if (!event.isPrimary) return false;
+		if (event.pointerType === 'mouse') return event.button === 0;
+		return true;
+	}
+
 	function onPointerDown(event: PointerEvent): void {
-		if (event.button !== 0) return;
+		if (!isPrimaryActivation(event)) return;
 		if (isInteractiveTarget(event.target)) return;
 
 		drag.active = true;
@@ -64,7 +70,11 @@ export function swipeable(
 		drag.width = node.clientWidth || 1;
 		drag.moved = false;
 
-		node.setPointerCapture(event.pointerId);
+		try {
+			node.setPointerCapture(event.pointerId);
+		} catch {
+			// Ignore when the browser rejects pointer capture.
+		}
 		node.classList.add('is-dragging');
 
 		node.addEventListener('pointermove', onPointerMove);

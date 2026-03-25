@@ -56,7 +56,9 @@
 
 	$effect(() => {
 		if (!deckEl) return;
-		deckWidth = deckEl.clientWidth;
+		const element = deckEl;
+		deckWidth = element.clientWidth;
+		if (typeof ResizeObserver === 'undefined') return;
 		let resizeTimer: ReturnType<typeof setTimeout>;
 		const ro = new ResizeObserver((entries) => {
 			const entry = entries[0];
@@ -68,7 +70,7 @@
 				isResizing = false;
 			}, 150);
 		});
-		ro.observe(deckEl);
+		ro.observe(element);
 		return () => {
 			ro.disconnect();
 			clearTimeout(resizeTimer);

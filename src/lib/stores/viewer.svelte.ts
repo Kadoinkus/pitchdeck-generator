@@ -3,6 +3,28 @@ import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 const VIEWER_STATE_KEY = 'proposalDeckViewerOpen';
 const VIEWER_SLIDE_KEY = 'proposalDeckViewerSlide';
 
+function readSessionValue(key: string): string | null {
+	if (typeof sessionStorage === 'undefined') return null;
+	try {
+		return sessionStorage.getItem(key);
+	} catch {
+		return null;
+	}
+}
+
+function writeSessionValue(key: string, value: string | null): void {
+	if (typeof sessionStorage === 'undefined') return;
+	try {
+		if (value === null) {
+			sessionStorage.removeItem(key);
+			return;
+		}
+		sessionStorage.setItem(key, value);
+	} catch {
+		// Ignore storage write failures (e.g. privacy mode)
+	}
+}
+
 /** Deck data with the resolved slide array required by the viewer. */
 export interface ViewerDeckData extends DeckData {
 	slides: SlideData[];
@@ -19,11 +41,8 @@ export interface ChatTarget {
 }
 
 // Snapshot saved state before effects can clear it
-const savedOpen = typeof sessionStorage !== 'undefined'
-	&& sessionStorage.getItem(VIEWER_STATE_KEY) === '1';
-const savedSlide = typeof sessionStorage !== 'undefined'
-	? parseInt(sessionStorage.getItem(VIEWER_SLIDE_KEY) ?? '0', 10) || 0
-	: 0;
+const savedOpen = readSessionValue(VIEWER_STATE_KEY) === '1';
+const savedSlide = parseInt(readSessionValue(VIEWER_SLIDE_KEY) ?? '0', 10) || 0;
 
 class ViewerState {
 	#currentSlide = $state(savedSlide);
@@ -118,13 +137,13 @@ export const viewer = new ViewerState();
 $effect.root(() => {
 	$effect(() => {
 		if (viewer.isOpen) {
-			sessionStorage.setItem(VIEWER_STATE_KEY, '1');
+			writeSessionValue(VIEWER_STATE_KEY, '1');
 		} else {
-			sessionStorage.removeItem(VIEWER_STATE_KEY);
+			writeSessionValue(VIEWER_STATE_KEY, null);
 		}
 	});
 	$effect(() => {
-		sessionStorage.setItem(VIEWER_SLIDE_KEY, String(viewer.currentSlide));
+		writeSessionValue(VIEWER_SLIDE_KEY, String(viewer.currentSlide));
 	});
 });
 

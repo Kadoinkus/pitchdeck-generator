@@ -26,9 +26,14 @@ export function resizable(
 	}
 
 	function onPointerDown(event: PointerEvent): void {
-		if (event.button !== 0) return;
+		if (!event.isPrimary) return;
+		if (event.pointerType === 'mouse' && event.button !== 0) return;
 		event.preventDefault();
-		node.setPointerCapture(event.pointerId);
+		try {
+			node.setPointerCapture(event.pointerId);
+		} catch {
+			// Ignore when pointer capture is unsupported/rejected.
+		}
 		node.classList.add('is-dragging');
 
 		const min = opts?.min ?? 100;

@@ -94,7 +94,9 @@
 
 	$effect(() => {
 		if (!deckEl) return;
-		deckWidth = deckEl.clientWidth;
+		const element = deckEl;
+		deckWidth = element.clientWidth;
+		if (typeof ResizeObserver === 'undefined') return;
 		let resizeTimer: ReturnType<typeof setTimeout>;
 		const ro = new ResizeObserver((entries) => {
 			const entry = entries[0];
@@ -106,7 +108,7 @@
 				isResizing = false;
 			}, 150);
 		});
-		ro.observe(deckEl);
+		ro.observe(element);
 		return () => {
 			ro.disconnect();
 			clearTimeout(resizeTimer);
@@ -171,7 +173,11 @@
 			url: window.location.href,
 		};
 
-		if (navigator.share && navigator.canShare(shareData)) {
+		const canUseNativeShare = typeof navigator.share === 'function'
+			&& (typeof navigator.canShare !== 'function'
+				|| navigator.canShare(shareData));
+
+		if (canUseNativeShare) {
 			try {
 				await navigator.share(shareData);
 			} catch (err) {
