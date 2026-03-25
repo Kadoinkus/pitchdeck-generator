@@ -70,7 +70,7 @@
 						hideTitle
 						hideHint
 					/>
-					<h3>{fitText(section.title || '', 30)}</h3>
+					<h2>{fitText(section.title || '', 30)}</h2>
 					<ul>
 						{#each ensureItems(section.bullets, []).slice(0, 3) as bullet (bullet)}
 							<li>{fitText(bullet, 48)}</li>

@@ -54,7 +54,7 @@
 	{#if index === 1}
 		<span class="pricing-badge">Recommended</span>
 	{/if}
-	<h3>{safeName}</h3>
+	<h2>{safeName}</h2>
 	<p class="price">{safePrice}</p>
 	<ul>
 		{#each features as feature (feature)}

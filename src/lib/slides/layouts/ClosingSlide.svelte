@@ -89,7 +89,7 @@
 			>
 				{#each team as item (item)}
 					<article class="panel team-card">
-						<h4>{fitText(item.title || '', 22)}</h4>
+						<h2>{fitText(item.title || '', 22)}</h2>
 						<p>{fitText(item.description || '', 52)}</p>
 					</article>
 				{/each}

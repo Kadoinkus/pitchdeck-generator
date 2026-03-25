@@ -349,7 +349,7 @@
 		gap: clamp(4px, 0.5cqi, 8px);
 	}
 
-	.deck-slide :global(.summary-panel h3) {
+	.deck-slide :global(.summary-panel h2) {
 		margin: 0;
 		font-size: clamp(9px, 0.7cqi, 12px);
 		font-weight: 800;
@@ -406,11 +406,11 @@
 		padding: 4px 7px;
 	}
 
-	/* Panel h3 shared across feature/deliverable/pricing/timeline */
-	.deck-slide :global(.feature-card h3),
-	.deck-slide :global(.deliverable-card h3),
-	.deck-slide :global(.pricing-card h3),
-	.deck-slide :global(.timeline-card h3) {
+	/* Panel h2 shared across feature/deliverable/pricing/timeline */
+	.deck-slide :global(.feature-card h2),
+	.deck-slide :global(.deliverable-card h2),
+	.deck-slide :global(.pricing-card h2),
+	.deck-slide :global(.timeline-card h2) {
 		margin: 0 0 6px;
 		font-family: var(--deck-heading, "Sora", sans-serif);
 		font-size: clamp(17px, 1.25cqi, 24px);
@@ -800,7 +800,7 @@
 		min-height: 0;
 	}
 
-	.deck-slide :global(.team-card h4) {
+	.deck-slide :global(.team-card h2) {
 		margin: 0;
 		font-size: clamp(13px, 1cqi, 16px);
 		line-height: 1.2;
@@ -830,7 +830,7 @@
 		gap: 8px;
 	}
 
-	.deck-slide :global(.panel-card-with-icon h3),
+	.deck-slide :global(.panel-card-with-icon h2),
 	.deck-slide :global(.panel-card-with-icon p) {
 		text-align: center;
 	}

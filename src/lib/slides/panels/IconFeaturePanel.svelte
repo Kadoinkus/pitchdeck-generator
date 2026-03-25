@@ -62,7 +62,7 @@
 		label="{title || 'Feature'} icon"
 	/>
 	{#if showTitle}
-		<h3>{safeTitle}</h3>
+		<h2>{safeTitle}</h2>
 	{/if}
 	{#if showText}
 		<p>{safeText}</p>

@@ -34,6 +34,6 @@
 </script>
 
 <article class={cls} data-ai-target={target} data-ai-label={label}>
-	<h3>{safeTitle}</h3>
+	<h2>{safeTitle}</h2>
 	<p>{safeText}</p>
 </article>
