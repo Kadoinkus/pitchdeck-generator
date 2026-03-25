@@ -441,9 +441,11 @@
 		transition: box-shadow 180ms ease, transform 180ms ease;
 	}
 
-	.share-cta:hover {
-		box-shadow: 0 4px 14px rgba(0, 196, 204, 0.45);
-		transform: translateY(-1px);
+	@media (hover: hover) {
+		.share-cta:hover {
+			box-shadow: 0 4px 14px rgba(0, 196, 204, 0.45);
+			transform: translateY(-1px);
+		}
 	}
 
 	.share-cta:active {
@@ -469,10 +471,12 @@
 		cursor: pointer;
 	}
 
-	.share-actions :global(a:hover),
-	.share-actions :global(button:not(.share-cta):hover) {
-		border-color: #9ab4eb;
-		background: #f5f9ff;
+	@media (hover: hover) {
+		.share-actions :global(a:hover),
+		.share-actions :global(button:not(.share-cta):hover) {
+			border-color: #9ab4eb;
+			background: #f5f9ff;
+		}
 	}
 
 	.share-actions :global(.disabled) {
@@ -481,7 +485,7 @@
 	}
 
 	.share-main {
-		height: calc(100vh - var(--topbar-h));
+		height: calc(100dvh - var(--topbar-h));
 		display: grid;
 		grid-template-columns: 1fr;
 		align-items: center;
@@ -517,9 +521,11 @@
 		margin-right: 16px;
 	}
 
-	.share-nav-btn:hover {
-		background: #ffffff;
-		border-color: #9ab8ef;
+	@media (hover: hover) {
+		.share-nav-btn:hover {
+			background: #ffffff;
+			border-color: #9ab8ef;
+		}
 	}
 
 	.share-nav-btn:disabled {
@@ -565,7 +571,7 @@
 		--slide-w: 1020px;
 
 		container-type: inline-size;
-		width: min(94vw, calc((100vh - var(--topbar-h) - 54px) * 1.78));
+		width: min(94vw, calc((100dvh - var(--topbar-h) - 54px) * 1.78));
 		aspect-ratio: 16 / 9;
 		border-radius: 16px;
 		overflow: hidden;
@@ -589,8 +595,10 @@
 		cursor: default;
 	}
 
-	.share-slide :global(.ai-clickable:hover) {
-		box-shadow: none;
+	@media (hover: hover) {
+		.share-slide :global(.ai-clickable:hover) {
+			box-shadow: none;
+		}
 	}
 
 	:global(.print-mode) .share-nav-btn {

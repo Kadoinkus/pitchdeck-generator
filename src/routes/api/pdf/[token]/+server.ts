@@ -1,5 +1,5 @@
 import { getOutputDir } from '$lib/server/storage';
-import { readShare, updateShare, type ShareRecord } from '$lib/share-store';
+import { readShare, type ShareRecord, updateShare } from '$lib/share-store';
 import { sanitizeFilename } from '$lib/utils';
 import chromium from '@sparticuz/chromium';
 import { json, type RequestHandler } from '@sveltejs/kit';
@@ -116,10 +116,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		return json({ success: false, message: 'Deck share not found.' }, { status: 404 });
 	}
 
-	const cachedPdf =
-		typeof record.pdfBase64 === 'string' && record.pdfBase64 !== ''
-			? Buffer.from(record.pdfBase64, 'base64')
-			: null;
+	const cachedPdf = typeof record.pdfBase64 === 'string' && record.pdfBase64 !== ''
+		? Buffer.from(record.pdfBase64, 'base64')
+		: null;
 
 	if (cachedPdf) {
 		const fileName = getPdfFileName(record, token);

@@ -166,9 +166,14 @@
 		transition: background 0.15s ease;
 	}
 
-	.thumb-resize:hover,
 	.thumb-resize:global(.is-dragging) {
 		background: rgba(41, 196, 146, 0.25);
+	}
+
+	@media (hover: hover) {
+		.thumb-resize:hover {
+			background: rgba(41, 196, 146, 0.25);
+		}
 	}
 
 	@media (max-width: 980px) {

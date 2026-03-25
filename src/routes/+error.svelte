@@ -41,7 +41,9 @@
 		font-weight: 600;
 	}
 
-	a:hover {
-		text-decoration: underline;
+	@media (hover: hover) {
+		a:hover {
+			text-decoration: underline;
+		}
 	}
 </style>

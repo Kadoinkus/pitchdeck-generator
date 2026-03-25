@@ -333,12 +333,14 @@
 		outline-offset: -2px;
 	}
 
-	.deck-slide :global(.ai-clickable:hover) {
-		outline-color: color-mix(
-			in srgb,
-			var(--deck-accent, #30d89e) 55%,
-			transparent
-		);
+	@media (hover: hover) {
+		.deck-slide :global(.ai-clickable:hover) {
+			outline-color: color-mix(
+				in srgb,
+				var(--deck-accent, #30d89e) 55%,
+				transparent
+			);
+		}
 	}
 
 	/* Summary panel — accent callout style */

@@ -430,8 +430,10 @@
 		font-weight: 700;
 	}
 
-	.viewer-project-name-input:hover {
-		background: rgba(255, 255, 255, 0.1);
+	@media (hover: hover) {
+		.viewer-project-name-input:hover {
+			background: rgba(255, 255, 255, 0.1);
+		}
 	}
 
 	.viewer-project-name-input:focus {
@@ -470,9 +472,11 @@
 		font-weight: 700;
 	}
 
-	.toolbar-btn:hover {
-		background: rgba(255, 255, 255, 0.24);
-		transform: none;
+	@media (hover: hover) {
+		.toolbar-btn:hover {
+			background: rgba(255, 255, 255, 0.24);
+			transform: none;
+		}
 	}
 
 	.viewer-home-btn {
@@ -495,10 +499,12 @@
 		line-height: 1;
 	}
 
-	.history-btn:hover {
-		background: rgba(255, 255, 255, 0.24);
-		border-color: rgba(255, 255, 255, 0.58);
-		transform: none;
+	@media (hover: hover) {
+		.history-btn:hover {
+			background: rgba(255, 255, 255, 0.24);
+			border-color: rgba(255, 255, 255, 0.58);
+			transform: none;
+		}
 	}
 
 	.save-indicator {
@@ -561,8 +567,10 @@
 		transition: background 0.12s ease;
 	}
 
-	.nav-pill-btn:hover:not(:disabled) {
-		background: rgba(255, 255, 255, 0.18);
+	@media (hover: hover) {
+		.nav-pill-btn:hover:not(:disabled) {
+			background: rgba(255, 255, 255, 0.18);
+		}
 	}
 
 	.nav-pill-btn:disabled {
@@ -641,9 +649,11 @@
 		cursor: pointer;
 	}
 
-	.viewer-share-item:hover {
-		background: #e9f2ff;
-		border-color: #c8daf7;
+	@media (hover: hover) {
+		.viewer-share-item:hover {
+			background: #e9f2ff;
+			border-color: #c8daf7;
+		}
 	}
 
 	.viewer-share-item.disabled,
@@ -731,6 +741,7 @@
 			display: block;
 			position: fixed;
 			inset: 0;
+			border-radius: 0;
 			background: rgba(0, 0, 0, 0.35);
 			z-index: 7;
 		}

@@ -430,11 +430,13 @@
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
 	}
 
-	.launcher:hover {
-		transform: translateY(-2px) scale(1.05);
-		box-shadow:
-			0 10px 28px rgba(0, 196, 204, 0.4),
-			0 2px 8px rgba(11, 31, 77, 0.15);
+	@media (hover: hover) {
+		.launcher:hover {
+			transform: translateY(-2px) scale(1.05);
+			box-shadow:
+				0 10px 28px rgba(0, 196, 204, 0.4),
+				0 2px 8px rgba(11, 31, 77, 0.15);
+		}
 	}
 
 	/* ── Panel ── */
@@ -444,7 +446,7 @@
 		right: 16px;
 		bottom: 16px;
 		max-width: calc(100vw - 32px);
-		max-height: calc(100vh - 100px);
+		max-height: calc(100dvh - 100px);
 		background: rgba(255, 255, 255, 0.92);
 		backdrop-filter: blur(20px);
 		border: 1px solid rgba(200, 217, 255, 0.5);
@@ -534,10 +536,12 @@
 		transition: background 0.15s ease, color 0.15s ease;
 	}
 
-	.icon-btn:hover {
-		background: rgba(79, 95, 131, 0.15);
-		color: var(--text);
-		transform: none;
+	@media (hover: hover) {
+		.icon-btn:hover {
+			background: rgba(79, 95, 131, 0.15);
+			color: var(--text);
+			transform: none;
+		}
 	}
 
 	.icon-btn.small {
@@ -739,8 +743,10 @@
 		transition: transform 0.15s ease, opacity 0.15s ease;
 	}
 
-	.apply-btn:hover {
-		transform: translateY(-1px);
+	@media (hover: hover) {
+		.apply-btn:hover {
+			transform: translateY(-1px);
+		}
 	}
 
 	/* ── Input row ── */
@@ -797,8 +803,10 @@
 		transition: transform 0.15s ease, opacity 0.15s ease;
 	}
 
-	.send-btn:hover {
-		transform: translateY(-1px);
+	@media (hover: hover) {
+		.send-btn:hover {
+			transform: translateY(-1px);
+		}
 	}
 
 	.send-btn:disabled {
@@ -820,6 +828,26 @@
 
 		.resize-handle {
 			display: none;
+		}
+
+		.icon-btn {
+			width: 44px;
+			height: 44px;
+		}
+
+		.icon-btn.small {
+			width: 32px;
+			height: 32px;
+		}
+
+		.send-btn {
+			width: 44px;
+			height: 44px;
+		}
+
+		.apply-btn {
+			min-height: 44px;
+			padding: 8px 16px;
 		}
 	}
 </style>

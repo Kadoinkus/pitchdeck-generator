@@ -106,8 +106,10 @@
 		border-color: #29c492;
 	}
 
-	.thumb:hover:not(.active) {
-		border-color: #97abc9;
+	@media (hover: hover) {
+		.thumb:hover:not(.active) {
+			border-color: #97abc9;
+		}
 	}
 
 	.thumb-number {
