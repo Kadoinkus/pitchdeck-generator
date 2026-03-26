@@ -591,14 +591,10 @@
 		visibility: hidden;
 	}
 
-	.share-slide :global(.ai-clickable) {
-		cursor: default;
-	}
-
-	@media (hover: hover) {
-		.share-slide :global(.ai-clickable:hover) {
-			box-shadow: none;
-		}
+	/* Share slides are purely visual — no element inside should be
+	 * interactive, AI-clickable, or able to block swipe/drag gestures. */
+	.share-slide-frame :global(*) {
+		pointer-events: none;
 	}
 
 	:global(.print-mode) .share-nav-btn {
