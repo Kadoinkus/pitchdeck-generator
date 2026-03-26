@@ -55,7 +55,7 @@
 
 {@render children()}
 
-{#if page.status < 400}
+{#if page.status < 400 && !page.route.id?.startsWith('/share')}
 	<footer class="haiku-footer">
 		<Haiku variant="ghost" />
 	</footer>
