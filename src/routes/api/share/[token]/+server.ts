@@ -1,3 +1,4 @@
+import { resolveRoute } from '$app/paths';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare, type ShareRecord } from '$lib/share-store';
 import { json } from '@sveltejs/kit';
@@ -25,6 +26,6 @@ export const GET: RequestHandler = async ({ params }) => {
 		token: record.token,
 		createdAt: record.createdAt,
 		slideData: record.slideData || null,
-		downloadUrl: `/api/download/${record.token}`,
+		downloadUrl: resolveRoute('/api/download/[token]', { token: record.token }),
 	});
 };

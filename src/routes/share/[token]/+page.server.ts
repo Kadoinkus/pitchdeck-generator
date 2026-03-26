@@ -1,3 +1,4 @@
+import { resolveRoute } from '$app/paths';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare } from '$lib/share-store';
 import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
@@ -44,6 +45,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		token,
 		slideData: raw,
-		downloadUrl: `/api/download/${token}`,
+		downloadUrl: resolveRoute('/api/download/[token]', { token }),
 	};
 };

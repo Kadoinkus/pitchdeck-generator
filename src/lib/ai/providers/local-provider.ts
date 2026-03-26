@@ -1,6 +1,6 @@
 import type { AutofillResult, ChatRequest, ChatResult } from '$lib/ai/orchestrator';
+import { ChatRequestSchema } from '$lib/ai/schemas';
 import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
-import { isRecord, safeText } from '$lib/utils';
 
 const FIELD_LABELS = new Map(
 	getEditableFieldDefinitions().map((field) => [field.name, field.label]),
@@ -8,13 +8,13 @@ const FIELD_LABELS = new Map(
 
 function domainFromUrl(url: unknown): string {
 	try {
-		const urlStr = String(url || '');
+		const urlStr = typeof url === 'string' && url.trim() ? url.trim() : '';
 		const parsed = new URL(
 			urlStr.startsWith('http') ? urlStr : `https://${urlStr}`,
 		);
 		return parsed.hostname.replace(/^www\./i, '');
 	} catch {
-		return safeText(url, 'client website');
+		return typeof url === 'string' && url.trim() ? url.trim() : 'client website';
 	}
 }
 
@@ -163,45 +163,42 @@ export async function localGenerateAutofill(
 
 function rewriteLines(
 	currentValue: unknown,
-	message: unknown,
+	message: string,
 	fallbackLines: string[],
 ): string {
-	const cleaned = safeText(message, 'improve clarity and conversion focus');
-	const lines = String(currentValue || '')
-		.split('\n')
-		.map((line) => line.trim())
-		.filter(Boolean);
+	const lines = typeof currentValue === 'string'
+		? currentValue.split('\n').map((line) => line.trim()).filter(Boolean)
+		: [];
 
 	const seed = lines.length ? lines : fallbackLines;
 	return seed
 		.slice(0, 6)
-		.map((line, index) => (index === 0 ? `${line} (${cleaned})` : line))
+		.map((line, index) => (index === 0 ? `${line} (${message})` : line))
 		.join('\n');
 }
 
 function defaultFieldValue(
 	fieldName: string,
 	model: DeckModel,
-	message: unknown,
+	message: string,
 ): string {
-	const seed = safeText(message, 'stronger premium positioning');
 	const mascot = model.project.mascotName || 'Sven';
 
 	switch (fieldName) {
 		case 'subtitle':
-			return `Premium animated assistant concept for ${model.project.clientName}, tuned to ${seed}.`;
+			return `Premium animated assistant concept for ${model.project.clientName}, tuned to ${message}.`;
 		case 'coverOneLiner':
-			return `A mascot-first chatbot concept focused on ${seed}.`;
+			return `A mascot-first chatbot concept focused on ${message}.`;
 		case 'closingText':
-			return `Let's build ${mascot} and launch a premium experience focused on ${seed}.`;
+			return `Let's build ${mascot} and launch a premium experience focused on ${message}.`;
 		case 'imagePrompts':
 			return model.slides
 				.map(
-					(slide, index) => `Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${seed}.`,
+					(slide, index) => `Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${message}.`,
 				)
 				.join('\n');
 		default:
-			return `${FIELD_LABELS.get(fieldName) || fieldName} updated for ${seed}.`;
+			return `${FIELD_LABELS.get(fieldName) || fieldName} updated for ${message}.`;
 	}
 }
 
@@ -209,10 +206,8 @@ function getContentField(
 	content: DeckModel['content'],
 	fieldName: string,
 ): unknown {
-	if (isRecord(content) && fieldName in content) {
-		return content[fieldName];
-	}
-	return undefined;
+	// Content has index signature, safe to access by key
+	return (content as Record<string, unknown>)[fieldName];
 }
 
 export async function localChatAssist(
@@ -220,8 +215,7 @@ export async function localChatAssist(
 	chatRequest: ChatRequest = {},
 ): Promise<ChatResult> {
 	const model = buildDeckModel(rawData);
-	const targetField = safeText(chatRequest.targetField, 'global-concept');
-	const message = safeText(chatRequest.message, 'improve premium clarity');
+	const { targetField, message } = ChatRequestSchema.parse(chatRequest);
 
 	if (targetField === 'global-concept') {
 		return {
@@ -255,7 +249,8 @@ export async function localChatAssist(
 		};
 	}
 
-	const currentValue = safeText(rawData[targetField], '');
+	const rawValue = rawData[targetField];
+	const currentValue = typeof rawValue === 'string' ? rawValue.trim() : '';
 	const contentFieldValue = getContentField(model.content, targetField);
 	const fallback: string[] = Array.isArray(contentFieldValue)
 		? contentFieldValue.map((v: unknown) => String(v))

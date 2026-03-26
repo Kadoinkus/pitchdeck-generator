@@ -159,6 +159,8 @@ export interface DeckTheme {
 	paletteShuffleSeed: number;
 	headingFont: string;
 	bodyFont: string;
+	/** Allow additional properties for extensibility and Record<string, unknown> compatibility. */
+	[key: string]: unknown;
 }
 
 /* ------------------------------------------------------------------ */
@@ -202,6 +204,8 @@ export interface Content {
 	teamCards: Pair[];
 	characterAssets: CharacterAsset[];
 	imagePrompts: Partial<Record<string, string>>;
+	/** Allow dynamic field access for AI providers. */
+	[key: string]: unknown;
 }
 
 export interface AvailableSlide extends SlideDefinition {
@@ -229,4 +233,6 @@ export interface DeckModel {
 		locked: boolean;
 	};
 	slides: SlideWithLayout[];
+	/** Allow extensibility for JSON round-trip and Record<string, unknown> compatibility. */
+	[key: string]: unknown;
 }

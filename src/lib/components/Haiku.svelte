@@ -38,9 +38,8 @@
 			{/each}
 		</blockquote>
 		<figcaption>
-			{#if haiku.author}— {haiku.author}{/if}
 			{#if haiku.author}
-				·
+				— {haiku.author} ·
 			{/if}
 			{provenanceLabel(haiku.lang)}: {sourceLabel(haiku.source, haiku.lang)}
 		</figcaption>

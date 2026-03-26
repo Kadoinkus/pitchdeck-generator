@@ -1,25 +1,16 @@
 import { localChatAssist, localGenerateAutofill } from '$lib/ai/providers/local-provider';
 import { openAIAutofill, openAIChatAssist } from '$lib/ai/providers/openai-provider';
+import {
+	type AiConfig,
+	AiConfigSchema,
+	type ImageDraft,
+	type ImagePrompt,
+	type SuggestedChange,
+	SuggestedChangesSchema,
+} from '$lib/ai/schemas';
 import { getEditableFieldDefinitions } from '$lib/deck-model';
-import { isRecord, safeText } from '$lib/utils';
 
-export interface SuggestedChange {
-	field: string;
-	label: string;
-	value: string;
-}
-
-export interface ImagePrompt {
-	slideId: string;
-	slideNumber: number;
-	slideTitle: string;
-	prompt: string;
-}
-
-export interface ImageDraft {
-	prompts: ImagePrompt[];
-	combinedPromptText: string;
-}
+export type { AiConfig, ImageDraft, ImagePrompt, SuggestedChange };
 
 export interface AutofillResult {
 	provider: string;
@@ -36,17 +27,6 @@ export interface ChatResult {
 export interface ChatRequest {
 	targetField?: unknown;
 	message?: unknown;
-}
-
-interface AiConfig {
-	textProvider: string;
-	textModel: string;
-	textApiKey: string;
-	textBaseUrl: string;
-	imageProvider: string;
-	imageModel: string;
-	imageApiKey: string;
-	imageBaseUrl: string;
 }
 
 export interface ProviderConfig {
@@ -70,48 +50,30 @@ const EDITABLE_FIELDS = new Set(
 );
 
 function sanitizeChanges(changes: unknown): SuggestedChange[] {
-	if (!Array.isArray(changes)) return [];
-
-	return changes
-		.map((change: unknown) => {
-			const item = isRecord(change) ? change : null;
-			return {
-				field: safeText(item?.field),
-				label: safeText(item?.label),
-				value: safeText(item?.value),
-			};
-		})
-		.filter(
-			(change): change is SuggestedChange =>
-				change.field !== ''
-				&& EDITABLE_FIELDS.has(change.field)
-				&& change.value !== '',
-		);
+	return SuggestedChangesSchema.parse(changes).filter(
+		(change) => EDITABLE_FIELDS.has(change.field) && change.value !== '',
+	);
 }
 
 function resolveAiConfig(rawData: Record<string, unknown> = {}): AiConfig {
-	return {
-		textProvider: safeText(rawData.aiTextProvider, 'local').toLowerCase(),
-		textModel: safeText(rawData.aiTextModel, 'gpt-4.1-mini'),
-		textApiKey: safeText(
-			rawData.aiTextApiKey,
-			process.env.OPENAI_API_KEY || '',
-		),
-		textBaseUrl: safeText(
-			rawData.aiTextBaseUrl,
-			process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
-		),
+	const base = AiConfigSchema.parse({
+		textProvider: rawData.aiTextProvider,
+		textModel: rawData.aiTextModel,
+		textApiKey: rawData.aiTextApiKey,
+		textBaseUrl: rawData.aiTextBaseUrl,
+		imageProvider: rawData.aiImageProvider,
+		imageModel: rawData.aiImageModel,
+		imageApiKey: rawData.aiImageApiKey,
+		imageBaseUrl: rawData.aiImageBaseUrl,
+	});
 
-		imageProvider: safeText(rawData.aiImageProvider, 'local').toLowerCase(),
-		imageModel: safeText(rawData.aiImageModel, 'gpt-4.1-mini'),
-		imageApiKey: safeText(
-			rawData.aiImageApiKey,
-			process.env.OPENAI_API_KEY || '',
-		),
-		imageBaseUrl: safeText(
-			rawData.aiImageBaseUrl,
-			process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
-		),
+	// Apply env fallbacks
+	return {
+		...base,
+		textApiKey: base.textApiKey || process.env.OPENAI_API_KEY || '',
+		textBaseUrl: base.textBaseUrl || process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+		imageApiKey: base.imageApiKey || process.env.OPENAI_API_KEY || '',
+		imageBaseUrl: base.imageBaseUrl || process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
 	};
 }
 
@@ -190,7 +152,7 @@ export async function runChatAssistant(
 
 	return {
 		provider: response.provider || 'local',
-		reply: safeText(response.reply, 'Suggestions are ready.'),
+		reply: typeof response.reply === 'string' ? response.reply.trim() : 'Suggestions are ready.',
 		suggestedChanges: sanitizeChanges(response.suggestedChanges),
 	};
 }

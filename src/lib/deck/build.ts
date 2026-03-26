@@ -15,7 +15,6 @@ import type {
 	TemplateDefinition,
 } from '$lib/deck/types';
 import { resolveImageModeForSlide, resolveSlotPolicy } from '$lib/slot-policy';
-import { safeText } from '$lib/utils';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -260,9 +259,10 @@ export function buildDeckModel(rawData: unknown = {}): DeckModel {
 		const lockedLayout = layoutPreset.slideLayoutByType[slide.type];
 		const imageRatio = layoutPreset.imageRatioByType[slide.type];
 		const backgroundMode = layoutPreset.backgroundModeByType[slide.type];
+		const fallbackLayout = lockedLayout || slide.type;
 		const layoutKey = d.layoutPresetLock
-			? lockedLayout || slide.type
-			: safeText(d[`layout_${slide.id}`], lockedLayout || slide.type);
+			? fallbackLayout
+			: String(d[`layout_${slide.id}`] ?? fallbackLayout).trim();
 		const slotPolicy = resolveSlotPolicy(slide.type);
 		const imageMode = resolveImageModeForSlide(slide.type, '');
 

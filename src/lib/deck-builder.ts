@@ -1,5 +1,4 @@
 import { buildDeckModel } from '$lib/deck-model';
-import { isRecord } from '$lib/utils';
 import PptxGenJS from 'pptxgenjs';
 
 type DeckModel = ReturnType<typeof buildDeckModel>;
@@ -509,10 +508,7 @@ interface DeliverableSection {
 
 /** Safely extract a dynamic property from a slide's extra fields */
 function getSlideField(slideInfo: DeckSlide, key: string): unknown {
-	if (isRecord(slideInfo) && key in slideInfo) {
-		return slideInfo[key];
-	}
-	return undefined;
+	return key in slideInfo ? slideInfo[key] : undefined;
 }
 
 /** Safely extract a string array from a slide's extra fields */

@@ -62,8 +62,9 @@ AI-first pitch deck generator with fixed premium layouts, automatic content/imag
 - `POST /api/ai/autofill`
 - `POST /api/ai/chat`
 - `POST /api/preview`
-- `POST /api/generate`
 - `GET /api/share/:token`
+- `GET /api/download/:token`
+- `GET /api/pdf/:token`
 
 ## Run
 

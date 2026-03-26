@@ -1,7 +1,24 @@
 import type { CharacterAsset, Deliverable, Pair, ToneSlider, Triple } from '$lib/deck/types';
-import { isRecord, normalizeList, safeText } from '$lib/utils';
+import { z } from 'zod';
 
-export { isRecord };
+const RecordSchema = z.record(z.string(), z.unknown());
+
+function text(value: unknown, fallback = ''): string {
+	return String(value ?? fallback).trim();
+}
+
+function toList(value: unknown, fallback: string[] = []): string[] {
+	if (Array.isArray(value)) {
+		return value.map((item: unknown) => String(item).trim()).filter(Boolean);
+	}
+	if (typeof value === 'string') {
+		return value
+			.split('\n')
+			.map((item) => item.replace(/^[-•]\s*/, '').trim())
+			.filter(Boolean);
+	}
+	return fallback;
+}
 
 export function asBoolean(value: unknown, fallback = true): boolean {
 	if (typeof value === 'boolean') return value;
@@ -16,13 +33,13 @@ export function asBoolean(value: unknown, fallback = true): boolean {
 export function parseExcludedSlides(value: unknown): string[] {
 	if (Array.isArray(value)) {
 		return value
-			.map((item: unknown) => safeText(item).toLowerCase())
+			.map((item: unknown) => text(item).toLowerCase())
 			.filter(Boolean);
 	}
 	if (typeof value === 'string') {
 		return value
 			.split(/[,\n]/g)
-			.map((item) => safeText(item).toLowerCase())
+			.map((item) => text(item).toLowerCase())
 			.filter(Boolean);
 	}
 	return [];
@@ -34,13 +51,13 @@ export function parsePairs(
 	separator = '::',
 	limit = 8,
 ): Pair[] {
-	return normalizeList(value, fallback)
+	return toList(value, fallback)
 		.slice(0, limit)
 		.map((line) => {
 			const [left, ...rest] = String(line).split(separator);
 			return {
-				title: safeText(left, line),
-				description: safeText(rest.join(separator), ''),
+				title: text(left, line),
+				description: text(rest.join(separator), ''),
 			};
 		})
 		.filter((item) => item.title);
@@ -52,16 +69,16 @@ export function parseTriples(
 	separator = '::',
 	limit = 6,
 ): Triple[] {
-	return normalizeList(value, fallback)
+	return toList(value, fallback)
 		.slice(0, limit)
 		.map((line) => {
 			const [a, b, ...rest] = String(line)
 				.split(separator)
-				.map((part) => safeText(part));
+				.map((part) => text(part));
 			return {
 				name: a || 'Tier',
 				price: b || 'On request',
-				description: safeText(
+				description: text(
 					rest.join(' '),
 					'Scope details provided in proposal.',
 				),
@@ -87,7 +104,7 @@ export function parseDeliverables(
 		title: item.title,
 		bullets: item.description
 			.split(/[;,]\s*/)
-			.map((line) => safeText(line))
+			.map((line) => text(line))
 			.filter(Boolean)
 			.slice(0, 4),
 	}));
@@ -109,13 +126,14 @@ export function parseCharacterAssets(value: unknown, limit = 10): CharacterAsset
 	const results: CharacterAsset[] = [];
 
 	for (let index = 0; index < Math.min(list.length, limit); index++) {
-		const item: unknown = list[index];
-		if (!isRecord(item)) continue;
+		const itemResult = RecordSchema.safeParse(list[index]);
+		if (!itemResult.success) continue;
+		const item = itemResult.data;
 
-		const id = safeText(item.id, `asset-${index + 1}`);
-		const name = safeText(item.name, `Character asset ${index + 1}`);
-		const dataUrl = safeText(item.dataUrl || item.url, '');
-		const placement = safeText(item.placement, 'all-mascot').toLowerCase();
+		const id = text(item.id, `asset-${index + 1}`);
+		const name = text(item.name, `Character asset ${index + 1}`);
+		const dataUrl = text(item.dataUrl ?? item.url, '');
+		const placement = text(item.placement, 'all-mascot').toLowerCase();
 
 		if (!dataUrl) continue;
 		if (

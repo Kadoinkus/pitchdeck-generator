@@ -1,11 +1,13 @@
-import { query } from '$app/server';
+import { prerender } from '$app/server';
 import { getAiProviderDefinitions } from '$lib/ai/orchestrator';
 import { getTemplateDefinitions } from '$lib/deck-model';
 
-export const getTemplates = query(() => {
+/** Static template definitions — prerendered at build time. */
+export const getTemplates = prerender(() => {
 	return getTemplateDefinitions();
 });
 
-export const getProviders = query(() => {
+/** Static AI provider definitions — prerendered at build time. */
+export const getProviders = prerender(() => {
 	return getAiProviderDefinitions();
 });

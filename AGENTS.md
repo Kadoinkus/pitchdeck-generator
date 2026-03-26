@@ -20,7 +20,7 @@ pitchdeck-generator/
 │   ├── stores/           # app-level Svelte 5 rune state modules
 │   └── components/       # editor/viewer UI, high interaction density
 ├── src/routes/
-│   ├── api/              # HTTP boundary: generate/share/download/pdf/ai
+│   ├── api/              # HTTP boundary: share/download/pdf/ai (no generate)
 │   ├── editor/           # authoring view (SSR disabled route-locally)
 │   └── share/[token]/    # public viewer + print capture surface
 ├── AGENTS.md
@@ -29,17 +29,17 @@ pitchdeck-generator/
 
 ## WHERE TO LOOK
 
-| Task                              | Location                                     | Notes                                      |
-| --------------------------------- | -------------------------------------------- | ------------------------------------------ |
-| Deck input parse/default          | `src/lib/deck/schema.ts`                     | unknown input -> typed model boundary      |
-| Slide inclusion + defaults        | `src/lib/deck/slide-registry.ts`             | single source of truth for slide specs     |
-| Build deck model                  | `src/lib/deck/build.ts`                      | content normalization + assembly           |
-| Render slide components           | `src/lib/slides/SlideRenderer.svelte`        | dispatcher into layout components          |
-| Generate share + hash/idempotency | `src/routes/api/generate/+server.ts`         | strips secrets before persistence          |
-| Download PPTX                     | `src/routes/api/download/[token]/+server.ts` | cache + in-flight dedupe + fallback render |
-| Render PDF                        | `src/routes/api/pdf/[token]/+server.ts`      | Playwright/Chromium print path             |
-| AI chat/autofill                  | `src/lib/ai/orchestrator.ts`                 | provider resolution + sanitization         |
-| Share persistence                 | `src/lib/share-store.ts`                     | filesystem-backed share record lifecycle   |
+| Task                            | Location                                     | Notes                                      |
+| ------------------------------- | -------------------------------------------- | ------------------------------------------ |
+| Deck input parse/default        | `src/lib/deck/schema.ts`                     | unknown input -> typed model boundary      |
+| Slide inclusion + defaults      | `src/lib/deck/slide-registry.ts`             | single source of truth for slide specs     |
+| Build deck model                | `src/lib/deck/build.ts`                      | content normalization + assembly           |
+| Render slide components         | `src/lib/slides/SlideRenderer.svelte`        | dispatcher into layout components          |
+| Publish deck + hash/idempotency | `src/lib/deck.remote.ts`                     | remote command; strips secrets             |
+| Download PPTX                   | `src/routes/api/download/[token]/+server.ts` | cache + in-flight dedupe + fallback render |
+| Render PDF                      | `src/routes/api/pdf/[token]/+server.ts`      | Playwright/Chromium print path             |
+| AI chat/autofill                | `src/lib/ai/orchestrator.ts`                 | provider resolution + sanitization         |
+| Share persistence               | `src/lib/share-store.ts`                     | filesystem-backed share record lifecycle   |
 
 ## CODE MAP
 

@@ -136,30 +136,32 @@ test('viewer share menu routes are token-based', async ({ page }) => {
 });
 
 /**
- * Registers a one-shot mock for POST /api/generate. Returns the resolved token
- * as a successful publish response. Uses `page.route` which must be called
- * before the request is made.
+ * Registers a one-shot mock for the publishDeck remote command.
+ * SvelteKit remote functions route through `/_app/remote/**`.
  */
-async function mockGenerateOnce(
+async function mockPublishOnce(
 	page: Page,
 	token: string,
 	clientName: string,
 ): Promise<void> {
-	await page.route('/api/generate', (route) =>
+	await page.route('**/_app/remote/**', (route) =>
 		route.fulfill({
 			status: 200,
 			contentType: 'application/json',
 			body: JSON.stringify({
-				success: true,
-				shareToken: token,
-				downloadUrl: `/api/download/${token}`,
-				pdfUrl: `/api/pdf/${token}`,
-				shareUrl: `/share/${token}`,
-				payloadHash: `hash-${token}`,
-				slideData: {
-					slides: [{ type: 'cover', title: clientName }],
-					theme: {},
-					project: { projectTitle: 'AI Mascot Proposal', clientName },
+				type: 'success',
+				data: {
+					success: true,
+					shareToken: token,
+					downloadUrl: `/api/download/${token}`,
+					pdfUrl: `/api/pdf/${token}`,
+					shareUrl: `/share/${token}`,
+					payloadHash: `hash-${token}`,
+					slideData: {
+						slides: [{ type: 'cover', title: clientName }],
+						theme: {},
+						project: { projectTitle: 'AI Mascot Proposal', clientName },
+					},
 				},
 			}),
 		}));
@@ -178,7 +180,7 @@ test.fixme('publish flow: navigates to editor, shows stale after edit, clears on
 		viewerKey: VIEWER_STATE_KEY,
 		slideKey: VIEWER_SLIDE_KEY,
 	});
-	await mockGenerateOnce(page, 'tok-flow-1', 'Flow Client');
+	await mockPublishOnce(page, 'tok-flow-1', 'Flow Client');
 
 	await page.goto('/');
 
@@ -215,8 +217,8 @@ test.fixme('publish flow: navigates to editor, shows stale after edit, clears on
 	);
 
 	// Republish with updated name
-	await page.unroute('/api/generate');
-	await mockGenerateOnce(page, 'tok-flow-2', 'Edited Client Name');
+	await page.unroute('**/_app/remote/**');
+	await mockPublishOnce(page, 'tok-flow-2', 'Edited Client Name');
 
 	await page.locator('#publish-button').click();
 	await expect(page).toHaveURL(/\/editor/);

@@ -1,6 +1,5 @@
 import type { BackgroundMode, LayoutPreset, SlideType } from '$lib/deck/types';
 import { RATIO_16_9, RATIO_1_1, RATIO_4_3 } from '$lib/deck/types';
-import { safeText } from '$lib/utils';
 
 export const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
 
@@ -65,6 +64,6 @@ const LAYOUT_PRESETS: Record<string, LayoutPreset> = {
 };
 
 export function resolveLayoutPreset(rawPresetId: unknown): LayoutPreset {
-	const candidate = safeText(rawPresetId, DEFAULT_LAYOUT_PRESET);
+	const candidate = String(rawPresetId ?? DEFAULT_LAYOUT_PRESET).trim();
 	return LAYOUT_PRESETS[candidate] ?? DEFAULT_PRESET;
 }

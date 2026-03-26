@@ -7,7 +7,14 @@
 
 import { DEFAULT_THEME_COLORS } from '$lib/color-palette';
 import * as brandPalette from '$lib/stores/brand-palette.svelte';
-import { isRecord } from '$lib/utils';
+import {
+	type CharacterAsset,
+	type DeckResult,
+	type DeckResultSlideData,
+	parseCharacterAssets,
+	parseDeckResult,
+	parseDraft,
+} from '$lib/stores/editor-schemas';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,33 +39,7 @@ export interface ProviderOption {
 	label: string;
 }
 
-export interface CharacterAsset {
-	id: string;
-	name: string;
-	size: number;
-	dataUrl: string;
-	placement: string;
-}
-
-export interface DeckResult {
-	slideData?: DeckResultSlideData;
-	shareToken?: string | null;
-	downloadUrl?: string | null;
-	pdfUrl?: string | null;
-	shareUrl?: string | null;
-	/** Server-side SHA-256 hash — used for idempotent dedup, NOT for client comparison. */
-	payloadHash?: string | null;
-	publishedAt?: string | null;
-	/** Client-side payloadSignature snapshot at publish time — used for stale detection. */
-	publishedSignature?: string | null;
-}
-
-export interface DeckResultSlideData {
-	slides: Array<{ type: string; [key: string]: unknown }>;
-	theme: Record<string, unknown>;
-	project?: { projectTitle?: string; clientName?: string };
-	[key: string]: unknown;
-}
+export type { CharacterAsset, DeckResult, DeckResultSlideData };
 
 export interface FormPayload {
 	[key: string]: unknown;
@@ -149,11 +130,11 @@ const DEFAULT_PAYLOAD: FormPayload = {
 	excludedSlides: [],
 	// AI settings
 	aiTextProvider: '',
-	aiTextModel: 'gpt-4.1-mini',
+	aiTextModel: 'gpt-5.4-mini',
 	aiTextApiKey: '',
 	aiTextBaseUrl: 'https://api.openai.com/v1',
 	aiImageProvider: '',
-	aiImageModel: 'gpt-4.1-mini',
+	aiImageModel: 'gpt-5.4-mini',
 	aiImageApiKey: '',
 	aiImageBaseUrl: 'https://api.openai.com/v1',
 };
@@ -191,7 +172,7 @@ const isDirty = $derived(payloadSignature(_payload) !== _lastSavedSignature);
 // ---------------------------------------------------------------------------
 
 function isStringRecord(value: unknown): value is Record<string, string> {
-	if (!isRecord(value)) return false;
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
 	return Object.values(value).every((v) => typeof v === 'string');
 }
 
@@ -341,28 +322,7 @@ export function clearAllAssets(): void {
 }
 
 export function parseAssetsFromPayload(): void {
-	const raw = _payload.characterAssets;
-	if (typeof raw !== 'string' || !raw.trim()) {
-		_characterAssets = [];
-		return;
-	}
-	try {
-		const parsed: unknown = JSON.parse(raw);
-		if (!Array.isArray(parsed)) {
-			_characterAssets = [];
-			return;
-		}
-		_characterAssets = parsed
-			.filter(
-				(item: unknown): item is CharacterAsset =>
-					isRecord(item)
-					&& 'dataUrl' in item
-					&& typeof item.dataUrl === 'string',
-			)
-			.slice(0, 10);
-	} catch {
-		_characterAssets = [];
-	}
+	_characterAssets = parseCharacterAssets(_payload.characterAssets);
 }
 
 // ---------------------------------------------------------------------------
@@ -510,12 +470,8 @@ export function markDirty(): void {
 export function loadDraft(): boolean {
 	try {
 		const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
-		if (!raw) return false;
-
-		const parsed: unknown = JSON.parse(raw);
-		if (!isRecord(parsed)) return false;
-		const source = isRecord(parsed.payload) ? parsed.payload : parsed;
-		if (!isRecord(source)) return false;
+		const source = parseDraft(raw);
+		if (!source) return false;
 
 		_suspendHistory = true;
 		_payload = { ...DEFAULT_PAYLOAD, ...source };
@@ -553,42 +509,10 @@ export function setDeckResult(result: DeckResult | null): void {
 export function restoreDeckResult(): boolean {
 	try {
 		const raw = localStorage.getItem(DECK_RESULT_STORAGE_KEY);
-		if (!raw) return false;
+		const result = parseDeckResult(raw);
+		if (!result) return false;
 
-		const parsed: unknown = JSON.parse(raw);
-		if (!isRecord(parsed)) return false;
-
-		const { downloadUrl, pdfUrl, shareUrl, shareToken, slideData } = parsed;
-		if (!downloadUrl || typeof downloadUrl !== 'string') return false;
-		if (!isRecord(slideData) || !Array.isArray(slideData.slides) || !isRecord(slideData.theme)) return false;
-
-		const slides = slideData.slides.filter(
-			(s: unknown): s is DeckResultSlideData['slides'][number] => isRecord(s) && typeof s.type === 'string',
-		);
-		if (slides.length === 0) return false;
-
-		const project = isRecord(slideData.project) ? slideData.project : undefined;
-
-		_deckResult = {
-			shareToken: typeof shareToken === 'string' ? shareToken : null,
-			downloadUrl,
-			pdfUrl: typeof pdfUrl === 'string' ? pdfUrl : null,
-			shareUrl: typeof shareUrl === 'string' ? shareUrl : null,
-			payloadHash: typeof parsed.payloadHash === 'string' ? parsed.payloadHash : null,
-			publishedAt: typeof parsed.publishedAt === 'string' ? parsed.publishedAt : null,
-			publishedSignature: typeof parsed.publishedSignature === 'string' ? parsed.publishedSignature : null,
-			slideData: {
-				...slideData,
-				slides,
-				theme: slideData.theme,
-				project: project
-					? {
-						projectTitle: typeof project.projectTitle === 'string' ? project.projectTitle : undefined,
-						clientName: typeof project.clientName === 'string' ? project.clientName : undefined,
-					}
-					: undefined,
-			},
-		};
+		_deckResult = result;
 		return true;
 	} catch (error) {
 		console.error(error);

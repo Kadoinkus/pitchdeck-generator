@@ -119,7 +119,7 @@
 
 		try {
 			const result = await chat({
-				targetField: chatTarget?.target ?? null,
+				targetField: chatTarget?.target ?? '',
 				message: text,
 				payload: payload ?? {},
 			});

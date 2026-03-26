@@ -1,13 +1,19 @@
+import { resolveRoute } from '$app/paths';
 import { buildDeck } from '$lib/deck-builder';
 import { buildPptxFromShare } from '$lib/server/pptx-from-share';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare, type ShareRecord, updateShare } from '$lib/share-store';
 import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
-import { isRecord } from '$lib/utils';
 import { json } from '@sveltejs/kit';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { z } from 'zod';
 import type { RequestHandler } from './$types';
+
+const ShareDeckPayloadSchema = z.object({
+	slides: z.array(z.record(z.string(), z.unknown())),
+	theme: z.record(z.string(), z.unknown()),
+});
 
 interface ShareDeckPayload extends DeckData {
 	slides: SlideData[];
@@ -24,8 +30,7 @@ function getFileName(record: ShareRecord, token: string): string {
 }
 
 function isShareDeckPayload(value: unknown): value is ShareDeckPayload {
-	if (!isRecord(value)) return false;
-	return Array.isArray(value.slides) && isRecord(value.theme);
+	return ShareDeckPayloadSchema.safeParse(value).success;
 }
 
 function readCachedPptx(record: ShareRecord): Buffer | null {
@@ -42,13 +47,14 @@ async function renderPptx(
 ): Promise<Buffer> {
 	const fileName = getFileName(record, token);
 	const slideData = record.slideData;
-	const payload = isRecord(record.payload) ? record.payload : null;
+	const payloadResult = z.record(z.string(), z.unknown()).safeParse(record.payload);
+	const payload = payloadResult.success ? payloadResult.data : null;
 	if (!isShareDeckPayload(slideData)) {
 		throw new Error('Deck data missing for download render.');
 	}
 
 	try {
-		const shareUrl = new URL(`/share/${token}?print=1`, requestUrl).toString();
+		const shareUrl = new URL(`${resolveRoute('/share/[token]', { token })}?print=1`, requestUrl).toString();
 		const rendered = await buildPptxFromShare({
 			shareUrl,
 			slideData,

@@ -1,13 +1,6 @@
-import type {
-	AutofillResult,
-	ChatRequest,
-	ChatResult,
-	ImagePrompt,
-	ProviderConfig,
-	SuggestedChange,
-} from '$lib/ai/orchestrator';
+import type { AutofillResult, ChatRequest, ChatResult, ProviderConfig } from '$lib/ai/orchestrator';
+import { AutofillDraftSchema, ChatRequestSchema, ChatResponseSchema, ImagePromptsSchema } from '$lib/ai/schemas';
 import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
-import { isRecord, safeText } from '$lib/utils';
 
 const ALL_FIELDS = getEditableFieldDefinitions().map((field) => field.name);
 const ALLOWED_FIELDS = new Set(ALL_FIELDS);
@@ -90,7 +83,9 @@ function isOpenAIChatResponse(value: unknown): value is OpenAIChatResponse {
 }
 
 function normalizeBaseUrl(baseUrl: unknown): string {
-	const value = safeText(baseUrl, 'https://api.openai.com/v1');
+	const value = typeof baseUrl === 'string' && baseUrl.trim()
+		? baseUrl.trim()
+		: 'https://api.openai.com/v1';
 	return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
@@ -155,37 +150,14 @@ async function callOpenAIChat({
 	return content;
 }
 
-function sanitizeSuggestedChanges(changes: unknown): SuggestedChange[] {
-	if (!Array.isArray(changes)) return [];
-
-	return changes
-		.map((change: unknown) => {
-			const item: Record<string, unknown> | null | undefined = isRecord(change)
-				? change
-				: null;
-			return {
-				field: safeText(item?.field),
-				label: safeText(item?.label),
-				value: safeText(item?.value),
-			};
-		})
-		.filter(
-			(change): change is SuggestedChange =>
-				change.field !== ''
-				&& ALLOWED_FIELDS.has(change.field)
-				&& change.value !== '',
-		);
-}
-
 function sanitizeDraft(draft: unknown): Record<string, string> {
+	const parsed = AutofillDraftSchema.parse(draft);
 	const output: Record<string, string> = {};
-	if (!isRecord(draft)) return output;
-
-	AUTOFILL_FIELDS.forEach((fieldName) => {
-		if (!(fieldName in draft)) return;
-		output[fieldName] = safeText(draft[fieldName]);
-	});
-
+	for (const fieldName of AUTOFILL_FIELDS) {
+		if (fieldName in parsed && parsed[fieldName]) {
+			output[fieldName] = parsed[fieldName];
+		}
+	}
 	return output;
 }
 
@@ -251,40 +223,19 @@ Image prompt rules:
 	});
 
 	const parsed = extractJsonObject(content);
-	const imageDraftRaw = isRecord(parsed.imageDraft)
-		? parsed.imageDraft
-		: undefined;
-	const prompts: unknown[] = Array.isArray(imageDraftRaw?.prompts)
-		? imageDraftRaw.prompts
-		: [];
-
-	const sanitizedPrompts: ImagePrompt[] = prompts
-		.map((item: unknown, index: number) => {
-			const entry = isRecord(item) ? item : null;
-			return {
-				slideId: safeText(
-					entry?.slideId,
-					includedSlides[index] || `slide-${index + 1}`,
-				),
-				slideNumber: index + 1,
-				slideTitle: safeText(
-					entry?.slideTitle,
-					safeText(entry?.slideId, `Slide ${index + 1}`),
-				),
-				prompt: safeText(entry?.prompt),
-			};
-		})
+	const imageDraftRaw = typeof parsed.imageDraft === 'object' && parsed.imageDraft !== null
+		? parsed.imageDraft as Record<string, unknown>
+		: {};
+	const prompts = ImagePromptsSchema.parse(imageDraftRaw.prompts)
 		.filter((item) => item.prompt !== '');
 
 	return {
 		provider: 'openai',
 		draft: sanitizeDraft(parsed.draft),
 		imageDraft: {
-			prompts: sanitizedPrompts,
-			combinedPromptText: sanitizedPrompts
-				.map(
-					(item) => `Slide ${item.slideNumber} (${item.slideId}) :: ${item.prompt}`,
-				)
+			prompts,
+			combinedPromptText: prompts
+				.map((item, index) => `Slide ${index + 1} (${item.slideId}) :: ${item.prompt}`)
 				.join('\n'),
 		},
 	};
@@ -295,17 +246,16 @@ export async function openAIChatAssist(
 	chatRequest: ChatRequest = {},
 	config: ProviderConfig,
 ): Promise<ChatResult> {
-	const targetField = safeText(chatRequest.targetField, 'global-concept');
-	const message = safeText(chatRequest.message, 'Improve this section.');
-
+	const { targetField, message } = ChatRequestSchema.parse(chatRequest);
 	const model = buildDeckModel(rawData);
+	const currentValue = rawData[targetField];
 	const context = {
 		targetField,
 		message,
 		clientName: model.project.clientName,
 		clientUrl: model.project.clientUrl,
 		template: model.template.label,
-		currentValue: safeText(rawData[targetField], ''),
+		currentValue: typeof currentValue === 'string' ? currentValue.trim() : '',
 		allowedFields: CHAT_FIELDS,
 	};
 
@@ -342,10 +292,13 @@ Rules:
 	});
 
 	const parsed = extractJsonObject(content);
+	const response = ChatResponseSchema.parse(parsed);
 
 	return {
 		provider: 'openai',
-		reply: safeText(parsed.reply, 'Draft suggestions prepared.'),
-		suggestedChanges: sanitizeSuggestedChanges(parsed.suggestedChanges),
+		reply: response.reply,
+		suggestedChanges: response.suggestedChanges.filter(
+			(c) => ALLOWED_FIELDS.has(c.field) && c.value !== '',
+		),
 	};
 }

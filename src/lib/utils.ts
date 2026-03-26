@@ -8,29 +8,3 @@ export function sanitizeFilename(input: unknown): string {
 			.slice(0, 60) || 'deck'
 	);
 }
-
-export function normalizeList(
-	value: unknown,
-	fallback: string[] = [],
-): string[] {
-	if (Array.isArray(value)) {
-		return value.map((item: unknown) => String(item).trim()).filter(Boolean);
-	}
-
-	if (typeof value === 'string') {
-		return value
-			.split('\n')
-			.map((item) => item.replace(/^[-•]\s*/, '').trim())
-			.filter(Boolean);
-	}
-
-	return fallback;
-}
-
-export function safeText(value: unknown, fallback: string = ''): string {
-	return String(value ?? fallback).trim();
-}
-
-export function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}

@@ -1,3 +1,4 @@
+import type { DeckModel } from '$lib/deck/types';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -6,9 +7,33 @@ export interface SharePayload {
 	[key: string]: unknown;
 }
 
+/** Base record shape for all shares. */
 export interface ShareRecord extends SharePayload {
 	token: string;
 	createdAt: string;
+}
+
+/** Deck-specific share record with typed fields. */
+export interface DeckShareRecord extends ShareRecord {
+	payload: Record<string, unknown>;
+	slideData: DeckModel;
+	fileName: string;
+	pptxBase64: string;
+	payloadHash: string;
+	publishedAt: string;
+}
+
+/** Type guard for DeckShareRecord. */
+export function isDeckShareRecord(record: ShareRecord): record is DeckShareRecord {
+	return (
+		typeof record.fileName === 'string'
+		&& typeof record.payloadHash === 'string'
+		&& typeof record.publishedAt === 'string'
+		&& record.slideData !== undefined
+		&& typeof record.slideData === 'object'
+		&& record.slideData !== null
+		&& 'slides' in record.slideData
+	);
 }
 
 function shareDir(outputDir: string): string {

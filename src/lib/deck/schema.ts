@@ -1,6 +1,5 @@
 import {
 	asBoolean,
-	isRecord,
 	parseCharacterAssets,
 	parseDeliverables,
 	parseExcludedSlides,
@@ -9,8 +8,32 @@ import {
 	parseTriples,
 } from '$lib/deck/parsers';
 import { SLIDE_SPECS } from '$lib/deck/slide-registry';
-import { normalizeList, safeText } from '$lib/utils';
 import { z } from 'zod';
+
+/* ------------------------------------------------------------------ */
+/*  Zod primitives                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Coerce unknown → trimmed string, falling back to `fallback`. */
+function text(value: unknown, fallback = ''): string {
+	return String(value ?? fallback).trim();
+}
+
+/** Coerce unknown → string[], optionally splitting multiline strings. */
+function toList(value: unknown, fallback: string[] = []): string[] {
+	if (Array.isArray(value)) {
+		return value.map((item: unknown) => String(item).trim()).filter(Boolean);
+	}
+	if (typeof value === 'string') {
+		return value
+			.split('\n')
+			.map((item) => item.replace(/^[-•]\s*/, '').trim())
+			.filter(Boolean);
+	}
+	return fallback;
+}
+
+const RecordSchema = z.record(z.string(), z.unknown());
 
 /* ------------------------------------------------------------------ */
 /*  Reusable field schemas                                             */
@@ -18,7 +41,7 @@ import { z } from 'zod';
 
 /** Coerce unknown → trimmed string, falling back to `fallback`. */
 function textField(fallback: string) {
-	return z.unknown().optional().transform((v) => safeText(v, fallback));
+	return z.unknown().optional().transform((v) => text(v, fallback));
 }
 
 /** Coerce unknown → boolean, falling back to `fallback`. */
@@ -28,7 +51,7 @@ function boolField(fallback: boolean) {
 
 /** Coerce unknown → string[], falling back to empty array. */
 function listField() {
-	return z.unknown().optional().transform((v) => normalizeList(v));
+	return z.unknown().optional().transform((v) => toList(v));
 }
 
 /* ------------------------------------------------------------------ */
@@ -121,7 +144,7 @@ const RawDeckSchema = z.looseObject({
 		)
 	),
 	buddyPersonality: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'Friendly and professional tone',
 			'Emotion-aware replies',
 			'Brand-consistent language',
@@ -137,7 +160,7 @@ const RawDeckSchema = z.looseObject({
 		])
 	),
 	experienceConcept: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'User starts on website, greeted by mascot assistant.',
 			'Assistant routes intent to product, support, or booking path.',
 			'Recommendations adapt to user behavior and preference.',
@@ -145,7 +168,7 @@ const RawDeckSchema = z.looseObject({
 		]).slice(0, 6)
 	),
 	chatFlow: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'Greeting',
 			'Discovery',
 			'Suggestions',
@@ -154,7 +177,7 @@ const RawDeckSchema = z.looseObject({
 		]).slice(0, 6)
 	),
 	interactionExample: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'User: I need help picking the best chair.',
 			'Buddy: Great, do you prefer ergonomic or lounge style?',
 			'User: Ergonomic for long work sessions.',
@@ -162,7 +185,7 @@ const RawDeckSchema = z.looseObject({
 		]).slice(0, 8)
 	),
 	businessImpact: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'Increase conversion rate',
 			'Reduce support load',
 			'Improve engagement',
@@ -173,7 +196,7 @@ const RawDeckSchema = z.looseObject({
 		'Every interaction is tracked and analyzed to improve messaging, product guidance, and conversion outcomes.',
 	),
 	analyticsBullets: z.unknown().optional().transform((v) =>
-		normalizeList(v, [
+		toList(v, [
 			'Live dashboard for conversation and conversion metrics',
 			'Top questions and topic trends',
 			'Interaction volume and dwell-time tracking',
@@ -227,21 +250,22 @@ const RawDeckSchema = z.looseObject({
 	buddyDescription: textField(''),
 	closingText: textField(''),
 	imagePrompts: z.unknown().optional().transform((v): Partial<Record<string, string>> => {
-		if (isRecord(v)) {
+		const recordResult = RecordSchema.safeParse(v);
+		if (recordResult.success) {
 			const result: Record<string, string> = {};
-			for (const [key, val] of Object.entries(v)) {
-				const text = safeText(val);
-				if (text) result[key] = text;
+			for (const [key, val] of Object.entries(recordResult.data)) {
+				const str = text(val, '');
+				if (str) result[key] = str;
 			}
 			return result;
 		}
-		const list = normalizeList(v);
+		const list = toList(v);
 		if (!list.length) return {};
 		const result: Record<string, string> = {};
 		for (let i = 0; i < SLIDE_SPECS.length && i < list.length; i++) {
 			const spec = SLIDE_SPECS[i];
-			const text = list[i];
-			if (spec && text) result[spec.id] = text;
+			const str = list[i];
+			if (spec && str) result[spec.id] = str;
 		}
 		return result;
 	}),

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
 	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
 	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
 	import OutputSection from '$lib/components/form/OutputSection.svelte';
 	import QuickStartSection from '$lib/components/form/QuickStartSection.svelte';
 	import SlideSelector from '$lib/components/form/SlideSelector.svelte';
+	import { publishDeck } from '$lib/deck.remote';
 	import {
 		getPayload,
 		getTemplateById,
@@ -51,34 +51,15 @@
 				throw new Error('Include at least one slide before generating.');
 			}
 
-			const response = await fetch('/api/generate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(p),
-			});
-
-			const result = await response.json();
-			if (!response.ok || !result.success) {
-				throw new Error(result.message || 'Could not generate deck.');
-			}
-
-			const shareUrlAbsolute = result.shareUrl
-				? new URL(result.shareUrl, page.url.origin).toString()
-				: null;
-			const pdfUrlAbsolute = result.pdfUrl
-				? new URL(result.pdfUrl, page.url.origin).toString()
-				: null;
-			const downloadUrlAbsolute = result.downloadUrl
-				? new URL(result.downloadUrl, page.url.origin).toString()
-				: null;
+			const result = await publishDeck(p);
 
 			setDeckResult({
 				slideData: result.slideData,
-				shareToken: result.shareToken ?? null,
-				downloadUrl: downloadUrlAbsolute,
-				pdfUrl: pdfUrlAbsolute,
-				shareUrl: shareUrlAbsolute,
-				payloadHash: result.payloadHash ?? null,
+				shareToken: result.shareToken,
+				downloadUrl: result.downloadUrl,
+				pdfUrl: result.pdfUrl,
+				shareUrl: result.shareUrl,
+				payloadHash: result.payloadHash,
 				publishedAt: new Date().toISOString(),
 				publishedSignature: snapshotPublishSignature(),
 			});
