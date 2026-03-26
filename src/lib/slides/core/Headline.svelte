@@ -68,7 +68,7 @@
 <style>
 	.headline-block {
 		display: grid;
-		gap: clamp(4px, 0.5cqi, 7px);
+		gap: 0.5cqi;
 	}
 
 	.headline-block.is-center {
@@ -77,12 +77,12 @@
 	}
 
 	.headline-block.is-compact {
-		gap: 4px;
+		gap: 0.4cqi;
 	}
 
 	.headline-kicker {
-		margin: 0 0 0 3px;
-		font-size: 11px;
+		margin: 0 0 0 0.3cqi;
+		font-size: 1.08cqi;
 		line-height: 1.4;
 		letter-spacing: 0.11em;
 		text-transform: uppercase;
@@ -93,7 +93,7 @@
 	.headline-title {
 		margin: 0;
 		font-family: var(--deck-heading, "Sora", sans-serif);
-		font-size: clamp(30px, 3.8cqi, 52px);
+		font-size: 3.8cqi;
 		line-height: 0.98;
 		letter-spacing: -0.02em;
 		max-width: 18ch;
@@ -101,7 +101,7 @@
 
 	.headline-subtitle {
 		margin: 0;
-		font-size: clamp(13px, 1.12cqi, 18px);
+		font-size: 1.27cqi;
 		line-height: 1.3;
 		color: var(--muted);
 		max-width: 58ch;

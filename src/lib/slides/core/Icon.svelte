@@ -76,6 +76,6 @@
 
 	:global(.icon-panel) {
 		color: var(--icon-accent, var(--deck-accent, #30d89e));
-		--icon-size: clamp(44px, 4.2cqi, 72px);
+		--icon-size: 4.2cqi;
 	}
 </style>

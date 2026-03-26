@@ -74,14 +74,16 @@
 		background: var(--deck-bg, #f2f4f6);
 		color: var(--deck-text, #0b1d2e);
 		font-family: var(--deck-body, "Inter", sans-serif);
-		padding: clamp(20px, 2.2cqi, 34px) clamp(22px, 2.6cqi, 42px)
-			clamp(18px, 2cqi, 30px);
+		/* Use calc with --ref-w since cqi here references parent, not self */
+		padding: calc(var(--ref-w) * 0.022) calc(var(--ref-w) * 0.026)
+			calc(var(--ref-w) * 0.02);
 		display: grid;
 		grid-template-rows: 1fr auto;
-		gap: clamp(10px, 1.1cqi, 16px);
+		gap: calc(var(--ref-w) * 0.011);
 		width: var(--ref-w);
 		height: var(--ref-h);
 		zoom: calc(100cqi / var(--ref-w));
+		container-type: inline-size;
 	}
 
 	.deck-slide.mode-dark {
@@ -101,7 +103,7 @@
 	.deck-content {
 		min-height: 0;
 		display: grid;
-		gap: clamp(10px, 1.2cqi, 16px);
+		gap: 1.2cqi;
 		align-content: stretch;
 	}
 
@@ -117,8 +119,8 @@
 	/* Panel base + variants (used by many child components) */
 	.deck-slide :global(.panel) {
 		border: 1px solid var(--line);
-		border-radius: clamp(12px, 1.2cqi, 18px);
-		padding: clamp(12px, 1.2cqi, 18px);
+		border-radius: 1.2cqi;
+		padding: 1.2cqi;
 		background: var(--surface);
 		box-shadow: var(--shadow);
 		min-width: 0;
@@ -167,7 +169,7 @@
 	.deck-slide :global(.text-surface) {
 		display: grid;
 		align-content: start;
-		gap: clamp(8px, 0.9cqi, 12px);
+		gap: 0.9cqi;
 		min-width: 0;
 	}
 
@@ -180,20 +182,20 @@
 
 	.deck-slide :global(.paragraph) {
 		margin: 0;
-		font-size: clamp(14px, 1.05cqi, 17px);
+		font-size: 1.37cqi;
 		line-height: 1.36;
 		color: var(--muted);
 	}
 
 	.deck-slide :global(.bullet-list) {
 		margin: 0;
-		padding-left: 1.1rem;
+		padding-left: 1.1cqi;
 		display: grid;
-		gap: clamp(5px, 0.6cqi, 8px);
+		gap: 0.6cqi;
 	}
 
 	.deck-slide :global(.bullet-list li) {
-		font-size: clamp(13px, 0.95cqi, 16px);
+		font-size: 1.27cqi;
 		line-height: 1.34;
 		color: var(--muted);
 		display: -webkit-box;
@@ -213,14 +215,25 @@
 	/* Layout classes */
 	.deck-slide :global(.stack-layout) {
 		display: grid;
-		gap: clamp(10px, 1.2cqi, 15px);
+		gap: 1.2cqi;
+		min-height: 0;
+	}
+
+	/* Stack-layouts with trailing image-slot use flex to fill remaining space */
+	.deck-slide :global(.stack-layout:has(> .image-slot:last-child)) {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.deck-slide :global(.stack-layout > .image-slot:last-child) {
+		flex: 1 1 0;
 		min-height: 0;
 	}
 
 	.deck-slide :global(.split-layout) {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: clamp(10px, 1.2cqi, 15px);
+		gap: 1.2cqi;
 		min-height: 0;
 		align-items: stretch;
 	}
@@ -242,33 +255,33 @@
 	.deck-slide :global(.grid-3) {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: clamp(8px, 0.9cqi, 12px);
+		gap: 0.9cqi;
 	}
 
 	.deck-slide :global(.grid-4) {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: clamp(8px, 0.9cqi, 12px);
+		gap: 0.9cqi;
 	}
 
 	.deck-slide :global(.grid-2x2) {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: clamp(8px, 0.9cqi, 12px);
+		gap: 0.9cqi;
 	}
 
 	/* Cover layout */
 	.deck-slide :global(.cover-layout) {
 		display: grid;
 		grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-		gap: clamp(12px, 1.3cqi, 20px);
+		gap: 1.3cqi;
 		min-height: 0;
 	}
 
 	.deck-slide :global(.cover-copy) {
 		display: grid;
 		align-content: center;
-		gap: clamp(8px, 0.8cqi, 12px);
+		gap: 0.8cqi;
 		min-height: 0;
 	}
 
@@ -367,12 +380,12 @@
 		border-left: 3px solid var(--deck-accent, #30d89e);
 		display: grid;
 		align-content: center;
-		gap: clamp(4px, 0.5cqi, 8px);
+		gap: 0.5cqi;
 	}
 
 	.deck-slide :global(.summary-panel h2) {
 		margin: 0;
-		font-size: clamp(9px, 0.7cqi, 12px);
+		font-size: 0.88cqi;
 		font-weight: 800;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
@@ -382,7 +395,7 @@
 	.deck-slide :global(.summary-panel p) {
 		margin: 0;
 		font-family: var(--deck-heading, "Sora", sans-serif);
-		font-size: clamp(15px, 1.15cqi, 22px);
+		font-size: 1.47cqi;
 		line-height: 1.28;
 		color: var(--text);
 		display: -webkit-box;
@@ -394,7 +407,7 @@
 
 	/* Short card */
 	.deck-slide :global(.short-card) {
-		padding: clamp(10px, 1cqi, 14px);
+		padding: 1cqi;
 	}
 
 	.deck-slide :global(.short-card p),
@@ -403,7 +416,7 @@
 	.deck-slide :global(.timeline-card p),
 	.deck-slide :global(.impact-card p) {
 		margin: 0;
-		font-size: clamp(13px, 0.95cqi, 16px);
+		font-size: 1.27cqi;
 		line-height: 1.32;
 		color: var(--muted);
 		display: -webkit-box;
@@ -432,9 +445,9 @@
 	.deck-slide :global(.deliverable-card h2),
 	.deck-slide :global(.pricing-card h2),
 	.deck-slide :global(.timeline-card h2) {
-		margin: 0 0 6px;
+		margin: 0 0 0.6cqi;
 		font-family: var(--deck-heading, "Sora", sans-serif);
-		font-size: clamp(17px, 1.25cqi, 24px);
+		font-size: 1.67cqi;
 		line-height: 1.1;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -618,28 +631,28 @@
 	}
 
 	.deck-slide :global(.impact-card p) {
-		font-size: clamp(15px, 1.1cqi, 18px);
+		font-size: 1.47cqi;
 		font-weight: 600;
 	}
 
 	/* Deliverable */
 	.deck-slide :global(.deliverable-grid .deliverable-card) {
 		display: grid;
-		gap: 8px;
+		gap: 0.8cqi;
 		align-content: start;
 	}
 
 	.deck-slide :global(.deliverable-card ul),
 	.deck-slide :global(.pricing-card ul) {
 		margin: 0;
-		padding-left: 1rem;
+		padding-left: 1cqi;
 		display: grid;
-		gap: 5px;
+		gap: 0.5cqi;
 	}
 
 	.deck-slide :global(.deliverable-card li),
 	.deck-slide :global(.pricing-card li) {
-		font-size: clamp(12px, 0.9cqi, 14px);
+		font-size: 1.18cqi;
 		line-height: 1.28;
 		color: var(--muted);
 		display: -webkit-box;
@@ -660,9 +673,9 @@
 		display: grid;
 		grid-template-rows: auto auto auto;
 		align-content: start;
-		gap: clamp(6px, 0.6cqi, 10px);
-		padding: clamp(12px, 1.2cqi, 18px);
-		padding-top: clamp(16px, 1.4cqi, 22px);
+		gap: 0.6cqi;
+		padding: 1.2cqi;
+		padding-top: 1.4cqi;
 	}
 
 	.deck-slide :global(.pricing-card .pricing-accent) {
@@ -671,7 +684,7 @@
 		left: 0;
 		right: 0;
 		height: 4px;
-		border-radius: clamp(12px, 1.2cqi, 18px) clamp(12px, 1.2cqi, 18px) 0 0;
+		border-radius: 1.2cqi 1.2cqi 0 0;
 		background: linear-gradient(
 			90deg,
 			var(--deck-accent, #30d89e),
@@ -702,15 +715,15 @@
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: clamp(6px, 0.5cqi, 10px);
+		gap: 0.5cqi;
 	}
 
 	.deck-slide :global(.pricing-badge) {
-		font-size: clamp(8px, 0.6cqi, 10px);
+		font-size: 0.78cqi;
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		padding: 3px 8px;
+		padding: 0.3cqi 0.8cqi;
 		border-radius: 999px;
 		background: linear-gradient(
 			135deg,
@@ -728,11 +741,11 @@
 	.deck-slide :global(.pricing-card .price) {
 		margin: 0;
 		border: 1px solid var(--line);
-		border-radius: 8px;
+		border-radius: 0.8cqi;
 		background: var(--surface-soft);
-		padding: 8px 12px;
+		padding: 0.8cqi 1.2cqi;
 		font-family: var(--deck-heading, "Sora", sans-serif);
-		font-size: clamp(18px, 1.6cqi, 28px);
+		font-size: 1.76cqi;
 		font-weight: 700;
 		line-height: 1.1;
 		letter-spacing: -0.02em;
@@ -767,20 +780,20 @@
 	.deck-slide :global(.pricing-card li) {
 		display: flex;
 		align-items: baseline;
-		gap: clamp(4px, 0.4cqi, 7px);
+		gap: 0.4cqi;
 		list-style: none;
 	}
 
 	.deck-slide :global(.pricing-card ul) {
 		padding-left: 0;
-		gap: clamp(3px, 0.3cqi, 5px);
-		margin-top: clamp(2px, 0.3cqi, 4px);
+		gap: 0.3cqi;
+		margin-top: 0.3cqi;
 	}
 
 	.deck-slide :global(.pricing-card .check-icon) {
 		flex-shrink: 0;
-		width: clamp(11px, 0.85cqi, 14px);
-		height: clamp(11px, 0.85cqi, 14px);
+		width: 1.08cqi;
+		height: 1.08cqi;
 		color: var(--deck-accent, #30d89e);
 	}
 
@@ -827,7 +840,7 @@
 
 	.deck-slide :global(.team-card h2) {
 		margin: 0;
-		font-size: clamp(13px, 1cqi, 16px);
+		font-size: 1.27cqi;
 		line-height: 1.2;
 		font-family: var(--deck-heading, "Sora", sans-serif);
 	}
@@ -852,7 +865,7 @@
 	.deck-slide :global(.panel-card-with-icon) {
 		display: grid;
 		align-content: center;
-		gap: 8px;
+		gap: 0.8cqi;
 	}
 
 	.deck-slide :global(.panel-card-with-icon h2),

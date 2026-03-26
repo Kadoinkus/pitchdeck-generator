@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { asset, resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { swipeable } from '$lib/actions/swipeable';
+	import { createSwipeable } from '$lib/actions/swipeable.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import { onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
@@ -42,6 +42,12 @@
 
 	const SLIDE_GAP = 20;
 	const trackSpring = new Spring(0, { stiffness: 0.14, damping: 0.72 });
+
+	const swipe = createSwipeable(() => ({
+		onPrev: prev,
+		onNext: next,
+		onDrag: handleDrag,
+	}));
 
 	function slideBase(): number {
 		return -currentSlide * ((deckWidth || 1) + SLIDE_GAP);
@@ -298,6 +304,7 @@
 			&#10094;
 		</button>
 
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="share-deck"
 			bind:this={deckEl}
@@ -306,11 +313,13 @@
 			aria-label="{title} — {total} slides"
 			aria-keyshortcuts="ArrowLeft ArrowRight"
 			style:--slide-gap={`${SLIDE_GAP}px`}
-			use:swipeable={{
-				onPrev: prev,
-				onNext: next,
-				onDrag: handleDrag,
-			}}
+			onpointerdown={(e) => deckEl && swipe.handlers.pointerdown(e, deckEl)}
+			onpointermove={swipe.handlers.pointermove}
+			onpointerup={() => deckEl && swipe.handlers.pointerup(deckEl)}
+			onpointercancel={() => deckEl && swipe.handlers.pointerup(deckEl)}
+			onclick={swipe.handlers.click}
+			onwheel={(e) => deckEl && swipe.handlers.wheel(e, deckEl.clientHeight)}
+			ondragstart={swipe.handlers.dragstart}
 		>
 			<div
 				class="share-track"

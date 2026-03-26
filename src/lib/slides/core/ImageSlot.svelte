@@ -84,16 +84,28 @@
 	.image-slot {
 		margin: 0;
 		min-width: 0;
-		align-self: stretch;
 		min-height: 0;
-		display: block;
-		border-radius: clamp(12px, 1.1cqi, 16px);
+		display: grid;
+		place-items: center;
+		border-radius: 1.1cqi;
+		overflow: hidden;
+		container-type: size;
+		pointer-events: none;
+	}
+
+	.image-frame {
+		pointer-events: auto;
 	}
 
 	:global(.split-layout) .image-slot,
 	:global(.cover-layout) .image-slot,
 	:global(.closing-layout) .image-slot {
 		height: 100%;
+	}
+
+	:global(.stack-layout) > .image-slot {
+		justify-self: center;
+		max-height: 100%;
 	}
 
 	:global(.split-layout) .image-frame,
@@ -108,7 +120,7 @@
 	.image-frame {
 		border: 1px dashed
 			color-mix(in srgb, var(--deck-accent, #30d89e) 36%, var(--line));
-		border-radius: clamp(12px, 1.1cqi, 16px);
+		border-radius: 1.1cqi;
 		background: color-mix(in srgb, var(--surface-soft) 84%, #ffffff);
 		display: grid;
 		place-items: center;
@@ -116,7 +128,6 @@
 		text-align: center;
 		padding: 10px;
 		overflow: hidden;
-		height: 100%;
 	}
 
 	:global(.mode-dark) .image-frame {
@@ -161,20 +172,29 @@
 		color: var(--muted);
 	}
 
+	/* Contain behavior: fill available space while maintaining aspect ratio */
 	.image-slot.ratio-16-9 .image-frame {
 		aspect-ratio: 16 / 9;
+		width: min(100cqi, calc(100cqb * 16 / 9));
+		height: auto;
 	}
 
 	.image-slot.ratio-4-3 .image-frame {
 		aspect-ratio: 4 / 3;
+		width: min(100cqi, calc(100cqb * 4 / 3));
+		height: auto;
 	}
 
 	.image-slot.ratio-3-4 .image-frame {
 		aspect-ratio: 3 / 4;
+		width: min(100cqi, calc(100cqb * 3 / 4));
+		height: auto;
 	}
 
 	.image-slot.ratio-1-1 .image-frame {
 		aspect-ratio: 1 / 1;
+		width: min(100cqi, 100cqb);
+		height: auto;
 	}
 
 	.image-slot.is-large .image-frame {

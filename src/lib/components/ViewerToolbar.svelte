@@ -233,7 +233,9 @@
 			{/if}
 		</div>
 
-		<span class="save-indicator is-{saveState}">{saveLabel}</span>
+		{#if saveState !== 'saved'}
+			<span class="save-indicator is-{saveState}">{saveLabel}</span>
+		{/if}
 
 		{#if onUndo || onRedo}
 			<div class="viewer-menu-pills">

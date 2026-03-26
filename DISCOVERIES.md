@@ -69,3 +69,53 @@ A `/api/health` route is pointless on serverless — each invocation is a fresh 
 ### Dead Route Hygiene
 
 Unused API routes (`/api/editable-fields`, `/api/preview`) had zero callers (only referenced in README). Deleted rather than migrated.
+
+---
+
+## Slide Rendering & Container Queries
+
+### The Zoom + CQI Double-Scaling Problem
+
+**Symptom:** Text sizes inside slides changed unpredictably at different viewport zoom levels. Cards overflowed vertically at some zoom levels but not others.
+
+**Root cause:** The slide system uses CSS `zoom` to scale a fixed-size slide (1020×574px) to fit the viewport. Text sizes used `clamp(Xpx, Ycqi, Zpx)` where `cqi` (container query inline-size) referenced the *parent* `.slide-render` wrapper, not the zoomed `.deck-slide`.
+
+This created double-scaling:
+
+- `zoom` scaled the entire slide based on viewport
+- `cqi` values also scaled based on viewport (since they referenced the wrapper)
+- The px min/max bounds in `clamp()` did NOT scale
+
+At large viewport: `cqi` large + zoom large → text hit max px bound early
+At small viewport: `cqi` small + zoom small → text hit min px bound early
+
+Result: text appeared to jump between sizes instead of scaling smoothly.
+
+**Fix:** Add `container-type: inline-size` to `.deck-slide` itself. Now `cqi` units reference the fixed 1020px slide width (so `1cqi` = 10.2px always), and `zoom` handles all viewport scaling uniformly. The px clamps become irrelevant since the `cqi` value is constant.
+
+```css
+.deck-slide {
+	width: var(--ref-w); /* 1020px */
+	height: var(--ref-h);
+	zoom: calc(100cqi / var(--ref-w));
+	container-type: inline-size; /* ← the fix */
+}
+```
+
+### Pointer Events on Stretched Grid Children
+
+**Symptom:** Empty space in text panels blocked drag/wheel events on the slide canvas.
+
+**Root cause:** Grid children with `align-items: stretch` fill their entire cell, including empty space beyond the content. These empty areas captured pointer events.
+
+**Fix:** Add `pointer-events: none` to the stretched container, `pointer-events: auto` to its direct children:
+
+```css
+.split-layout > .text-surface {
+	align-content: center;
+	pointer-events: none;
+}
+.split-layout > .text-surface > * {
+	pointer-events: auto;
+}
+```

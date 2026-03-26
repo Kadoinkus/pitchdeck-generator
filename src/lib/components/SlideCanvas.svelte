@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { swipeable } from '$lib/actions/swipeable';
+	import { createSwipeable } from '$lib/actions/swipeable.svelte';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
 	import {
@@ -24,6 +24,12 @@
 	const SLIDE_GAP = 24;
 	const trackSpring = new Spring(0, { stiffness: 0.14, damping: 0.72 });
 	const DEFAULT_BRAND_NAME = 'Notso AI';
+
+	const swipe = createSwipeable(() => ({
+		onPrev: viewer.prevSlide,
+		onNext: viewer.nextSlide,
+		onDrag: handleDrag,
+	}));
 
 	function normalizeFooterBrand(value: string): string {
 		const compact = value.replace(/\s+/g, ' ').trim();
@@ -175,6 +181,7 @@
 		<Haiku variant="ghost" />
 	</div>
 {:else}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-stage"
 		bind:this={deckEl}
@@ -182,11 +189,13 @@
 		aria-roledescription="carousel"
 		aria-label="Slide deck — {slides.length} slides"
 		aria-keyshortcuts="ArrowLeft ArrowRight"
-		use:swipeable={{
-			onPrev: viewer.prevSlide,
-			onNext: viewer.nextSlide,
-			onDrag: handleDrag,
-		}}
+		onpointerdown={(e) => deckEl && swipe.handlers.pointerdown(e, deckEl)}
+		onpointermove={swipe.handlers.pointermove}
+		onpointerup={() => deckEl && swipe.handlers.pointerup(deckEl)}
+		onpointercancel={() => deckEl && swipe.handlers.pointerup(deckEl)}
+		onclick={swipe.handlers.click}
+		onwheel={(e) => deckEl && swipe.handlers.wheel(e, deckEl.clientHeight)}
+		ondragstart={swipe.handlers.dragstart}
 	>
 		<div
 			class="slide-track"
