@@ -29,7 +29,8 @@
 	let panelWidth = $state(380);
 	let panelHeight = $state(480);
 	let resizeAxis = $state<'left' | 'top' | 'corner' | null>(null);
-	let resizeStart = $state({ x: 0, y: 0, w: 0, h: 0 });
+	/* F6: Not read reactively — plain let suffices. */
+	let resizeStart = { x: 0, y: 0, w: 0, h: 0 };
 
 	const MIN_W = 300;
 	const MAX_W = 700;

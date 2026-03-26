@@ -98,7 +98,27 @@
 		goto(resolve('/'));
 	}
 
-	/* C2: Focus trap — keep Tab cycling within the viewer overlay. */
+	/* C2: Focus trap — keep Tab cycling within the viewer overlay.
+	 * F2+F4: Shared selector covers all interactive elements including
+	 * contenteditable and <summary>. Excludes :disabled and tabindex="-1". */
+	const FOCUSABLE_SELECTOR = [
+		'button:not(:disabled)',
+		'[href]:not([tabindex="-1"])',
+		'input:not(:disabled)',
+		'select:not(:disabled)',
+		'textarea:not(:disabled)',
+		'[contenteditable]:not([contenteditable="false"])',
+		'summary',
+		'[tabindex]:not([tabindex="-1"])',
+	].join(',');
+
+	/** F3: querySelectorAll returns elements inside inert subtrees — filter them. */
+	function queryFocusable(root: HTMLElement): HTMLElement[] {
+		return [...root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
+			(el) => !el.closest('[inert]'),
+		);
+	}
+
 	let viewerEl: HTMLDivElement | undefined = $state();
 
 	$effect(() => {
@@ -106,17 +126,13 @@
 		if (!el) return;
 
 		/* Move focus into the viewer on open. */
-		const first = el.querySelector<HTMLElement>(
-			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-		);
+		const first = queryFocusable(el)[0];
 		first?.focus();
 
 		function trapFocus(this: HTMLDivElement, event: KeyboardEvent): void {
 			if (event.key !== 'Tab') return;
 
-			const focusable = this.querySelectorAll<HTMLElement>(
-				'button:not(:disabled), [href]:not([tabindex="-1"]), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
-			);
+			const focusable = queryFocusable(this);
 			if (focusable.length === 0) return;
 
 			const firstEl = focusable[0];

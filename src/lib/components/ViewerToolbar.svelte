@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import { viewer } from '$lib/stores/viewer.svelte';
+	import { tick } from 'svelte';
 
 	interface Props {
 		projectName?: string;
@@ -88,9 +89,17 @@
 			: 'Error',
 	);
 
-	function toggleShare(): void {
+	async function toggleShare(): Promise<void> {
 		if (!hasAnyShareAction) return;
 		shareOpen = !shareOpen;
+		if (shareOpen) {
+			/* F7: Auto-focus first menu item when opening. */
+			await tick();
+			const first = dropdownEl?.querySelector<HTMLElement>(
+				'[role="menuitem"]:not(:disabled)',
+			);
+			first?.focus();
+		}
 	}
 
 	function closeShare(): void {
@@ -347,6 +356,7 @@
 					<a
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						href={resolve('/api/download/[token]', { token: shareToken })}
 						download
 						onclick={closeShare}
@@ -355,6 +365,7 @@
 					<button
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						type="button"
 						disabled
 					>
@@ -366,6 +377,7 @@
 					<a
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						href={resolve('/api/pdf/[token]', { token: shareToken })}
 						onclick={closeShare}
 					>Download PDF</a>
@@ -373,6 +385,7 @@
 					<button
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						type="button"
 						disabled
 					>
@@ -384,6 +397,7 @@
 					<a
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						href={resolve('/share/[token]', { token: shareToken })}
 						target="_blank"
 						rel="noopener noreferrer"
@@ -393,6 +407,7 @@
 					<button
 						class="viewer-share-item"
 						role="menuitem"
+						tabindex="-1"
 						type="button"
 						disabled
 					>
@@ -402,6 +417,7 @@
 				<button
 					class="viewer-share-item"
 					role="menuitem"
+					tabindex="-1"
 					type="button"
 					disabled={!shareToken}
 					onclick={copyShareLink}
