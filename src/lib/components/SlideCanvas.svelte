@@ -282,4 +282,40 @@
 		box-shadow: var(--shadow);
 		user-select: none;
 	}
+
+	/*
+	 * Landscape mobile: viewport height is small, so the 16:9 slide
+	 * computed from width alone overflows vertically. Constrain width
+	 * to what fits the available height.
+	 *
+	 * Budget: toolbar ~48px + thumbnail strip 72px + slide-page
+	 * padding 36px + safety 4px ≈ 160px overhead. When thumbnails
+	 * are hidden (≤400px height) the overhead drops to ~88px.
+	 */
+	@media (max-width: 680px) and (max-height: 500px) {
+		.slide-frame {
+			width: min(94%, calc((100dvh - 160px) * 16 / 9));
+		}
+	}
+
+	@media (max-width: 680px) and (max-height: 400px) {
+		.slide-frame {
+			width: min(94%, calc((100dvh - 88px) * 16 / 9));
+		}
+	}
+
+	/* dvh fallback for browsers without dynamic viewport units */
+	@supports not (height: 1dvh) {
+		@media (max-width: 680px) and (max-height: 500px) {
+			.slide-frame {
+				width: min(94%, calc((100vh - 160px) * 16 / 9));
+			}
+		}
+
+		@media (max-width: 680px) and (max-height: 400px) {
+			.slide-frame {
+				width: min(94%, calc((100vh - 88px) * 16 / 9));
+			}
+		}
+	}
 </style>

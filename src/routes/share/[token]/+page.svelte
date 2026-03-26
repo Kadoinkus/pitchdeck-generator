@@ -237,116 +237,114 @@
 	<meta name="twitter:image:alt" content={`Preview card for ${pageTitle}`}>
 </svelte:head>
 
-<header class="share-topbar">
-	<div>
-		<p class="share-kicker">Interactive Deck</p>
-		<h1>{title}</h1>
-		<p class="share-subtitle">{subtitle}</p>
-	</div>
-	<div class="share-actions">
-		<span class="share-counter">{currentSlide + 1} / {total}</span>
-		<button
-			type="button"
-			class="share-cta"
-			onclick={handleShare}
-			aria-label="Share this deck"
-		>
-			<svg
-				aria-hidden="true"
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				{#if canNativeShare}
-					<!-- Share/export icon -->
-					<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-					<polyline points="16 6 12 2 8 6" />
-					<line x1="12" y1="2" x2="12" y2="15" />
-				{:else}
-					<!-- Link/copy icon -->
-					<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-					<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-				{/if}
-			</svg>
-			{shareButtonLabel}
-		</button>
-		<a
-			href={resolve('/api/download/[token]', { token: data.token })}
-			download
-			class:disabled={!data.downloadUrl}
-			aria-disabled={!data.downloadUrl}
-		>Download PPTX</a>
-		<a href={resolve('/api/pdf/[token]', { token: data.token })}
-		>Download PDF</a>
-	</div>
-</header>
-
-<main class="share-main">
-	<button
-		class="share-nav-btn"
-		type="button"
-		aria-label="Previous slide"
-		disabled={atStart}
-		onclick={prev}
-	>
-		&#10094;
-	</button>
-
-	<div
-		class="share-deck"
-		bind:this={deckEl}
-		role="region"
-		aria-roledescription="carousel"
-		aria-label="{title} — {total} slides"
-		style:--slide-gap={`${SLIDE_GAP}px`}
-		use:swipeable={{
-			onPrev: prev,
-			onNext: next,
-			onDrag: handleDrag,
-		}}
-	>
-		<div
-			class="share-track"
-			style:transform={trackTransform}
-		>
-			{#each slides as slide, index (index)}
-				<section
-					class="share-slide"
-					class:is-active={index === currentSlide}
-					aria-roledescription="slide"
-					aria-label={`Slide ${index + 1} of ${total}`}
-					aria-hidden={index !== currentSlide}
-					inert={index !== currentSlide ? true : undefined}
-				>
-					<div class="share-slide-frame">
-						<SlideRenderer {slide} {theme} deckData={data.slideData} />
-					</div>
-				</section>
-			{/each}
+<div class="share-layout">
+	<header class="share-topbar">
+		<div>
+			<p class="share-kicker">Interactive Deck</p>
+			<h1>{title}</h1>
+			<p class="share-subtitle">{subtitle}</p>
 		</div>
-	</div>
+		<div class="share-actions">
+			<span class="share-counter">{currentSlide + 1} / {total}</span>
+			<button
+				type="button"
+				class="share-cta"
+				onclick={handleShare}
+				aria-label="Share this deck"
+			>
+				<svg
+					aria-hidden="true"
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					{#if canNativeShare}
+						<!-- Share/export icon -->
+						<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+						<polyline points="16 6 12 2 8 6" />
+						<line x1="12" y1="2" x2="12" y2="15" />
+					{:else}
+						<!-- Link/copy icon -->
+						<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+						<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+					{/if}
+				</svg>
+				{shareButtonLabel}
+			</button>
+			<a
+				href={resolve('/api/download/[token]', { token: data.token })}
+				download
+				class:disabled={!data.downloadUrl}
+				aria-disabled={!data.downloadUrl}
+			>Download PPTX</a>
+			<a href={resolve('/api/pdf/[token]', { token: data.token })}
+			>Download PDF</a>
+		</div>
+	</header>
 
-	<button
-		class="share-nav-btn"
-		type="button"
-		aria-label="Next slide"
-		disabled={atEnd}
-		onclick={next}
-	>
-		&#10095;
-	</button>
-</main>
+	<main class="share-main">
+		<button
+			class="share-nav-btn"
+			type="button"
+			aria-label="Previous slide"
+			disabled={atStart}
+			onclick={prev}
+		>
+			&#10094;
+		</button>
+
+		<div
+			class="share-deck"
+			bind:this={deckEl}
+			role="region"
+			aria-roledescription="carousel"
+			aria-label="{title} — {total} slides"
+			style:--slide-gap={`${SLIDE_GAP}px`}
+			use:swipeable={{
+				onPrev: prev,
+				onNext: next,
+				onDrag: handleDrag,
+			}}
+		>
+			<div
+				class="share-track"
+				style:transform={trackTransform}
+			>
+				{#each slides as slide, index (index)}
+					<section
+						class="share-slide"
+						class:is-active={index === currentSlide}
+						aria-roledescription="slide"
+						aria-label={`Slide ${index + 1} of ${total}`}
+						aria-hidden={index !== currentSlide}
+						inert={index !== currentSlide ? true : undefined}
+					>
+						<div class="share-slide-frame">
+							<SlideRenderer {slide} {theme} deckData={data.slideData} />
+						</div>
+					</section>
+				{/each}
+			</div>
+		</div>
+
+		<button
+			class="share-nav-btn"
+			type="button"
+			aria-label="Next slide"
+			disabled={atEnd}
+			onclick={next}
+		>
+			&#10095;
+		</button>
+	</main>
+</div>
 
 <style>
-	:global(:root) {
-		--topbar-h: 74px;
-	}
-
 	:global(*) {
 		box-sizing: border-box;
 	}
@@ -363,10 +361,16 @@
 		overflow: hidden;
 	}
 
+	.share-layout {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		height: 100dvh;
+		overflow: hidden;
+	}
+
 	.share-topbar {
-		height: var(--topbar-h);
-		position: sticky;
-		top: 0;
+		flex-shrink: 0;
 		z-index: 20;
 		background: var(--overlay-bg);
 		backdrop-filter: blur(10px);
@@ -482,16 +486,11 @@
 	}
 
 	.share-main {
-		height: calc(100vh - var(--topbar-h));
+		flex: 1;
+		min-height: 0;
 		display: grid;
 		grid-template-columns: 1fr;
 		align-items: center;
-	}
-
-	@supports (height: 100dvh) {
-		.share-main {
-			height: calc(100dvh - var(--topbar-h));
-		}
 	}
 
 	.share-main > * {
@@ -556,10 +555,11 @@
 
 	.share-slide {
 		flex: 0 0 100%;
-		min-height: 100%;
+		height: 100%;
 		padding: 18px 8px;
 		display: grid;
 		place-items: center;
+		container-type: size;
 		opacity: 0.93;
 		transform: scale(0.985);
 		transition: transform 320ms ease, opacity 320ms ease;
@@ -572,7 +572,7 @@
 
 	.share-slide-frame {
 		container-type: inline-size;
-		width: min(94vw, calc((100vh - var(--topbar-h) - 54px) * 1.78));
+		width: min(100cqi, calc(100cqb * 16 / 9));
 		aspect-ratio: 16 / 9;
 		border-radius: 16px;
 		overflow: hidden;
@@ -580,12 +580,6 @@
 		background: var(--card);
 		box-shadow: var(--shadow);
 		user-select: none;
-	}
-
-	@supports (height: 100dvh) {
-		.share-slide-frame {
-			width: min(94vw, calc((100dvh - var(--topbar-h) - 54px) * 1.78));
-		}
 	}
 
 	.share-slide :global(.image-slot:not(:has(.has-image))) {
@@ -606,6 +600,11 @@
 		display: none;
 	}
 
+	:global(.print-mode) .share-layout {
+		height: auto;
+		overflow: visible;
+	}
+
 	:global(.print-mode) .share-main {
 		display: block;
 		padding: 0;
@@ -623,7 +622,8 @@
 	}
 
 	:global(.print-mode) .share-slide {
-		min-height: auto;
+		height: auto;
+		container-type: normal;
 		padding: 0 0 12px;
 	}
 
@@ -633,10 +633,6 @@
 	}
 
 	@media (max-width: 980px) {
-		:global(:root) {
-			--topbar-h: 104px;
-		}
-
 		.share-topbar {
 			flex-wrap: wrap;
 			align-items: flex-start;
@@ -654,11 +650,7 @@
 		}
 
 		.share-slide {
-			padding: 8px 0;
-		}
-
-		.share-slide-frame {
-			width: 100%;
+			padding: 8px 4px;
 		}
 	}
 
@@ -666,11 +658,16 @@
 	@media (max-width: 680px) {
 		.share-topbar {
 			padding: 8px 10px;
-			gap: 6px;
+			gap: 4px;
+		}
+
+		.share-kicker {
+			display: none;
 		}
 
 		.share-topbar h1 {
 			font-size: 0.92rem;
+			margin: 0;
 		}
 
 		.share-subtitle {
@@ -681,6 +678,17 @@
 			gap: 4px;
 		}
 
+		.share-actions :global(a),
+		.share-actions :global(button:not(.share-cta)) {
+			font-size: 0.75rem;
+			padding: 5px 10px;
+		}
+
+		.share-cta {
+			font-size: 0.78rem;
+			padding: 7px 12px;
+		}
+
 		.share-counter {
 			display: none;
 		}
@@ -688,11 +696,67 @@
 		.share-main {
 			padding: 4px;
 		}
+
+		.share-slide {
+			padding: 6px 4px;
+		}
+	}
+
+	/* ── Landscape: compact topbar to reclaim height ───── */
+	@media (max-height: 500px) {
+		.share-topbar {
+			padding: 4px 10px;
+			gap: 4px;
+			flex-wrap: nowrap;
+			align-items: center;
+		}
+
+		.share-kicker {
+			display: none;
+		}
+
+		.share-topbar h1 {
+			font-size: 0.82rem;
+			margin: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.share-subtitle {
+			display: none;
+		}
+
+		.share-actions {
+			flex-wrap: nowrap;
+			gap: 4px;
+			flex-shrink: 0;
+		}
+
+		.share-actions :global(a),
+		.share-actions :global(button:not(.share-cta)) {
+			font-size: 0.72rem;
+			padding: 4px 8px;
+		}
+
+		.share-cta {
+			font-size: 0.72rem;
+			padding: 4px 10px;
+		}
+
+		.share-slide {
+			padding: 4px 4px;
+		}
 	}
 
 	@media print {
 		:global(body) {
 			background: #fff;
+			overflow: visible;
+		}
+
+		.share-layout {
+			height: auto;
 			overflow: visible;
 		}
 
@@ -717,7 +781,8 @@
 		}
 
 		.share-slide {
-			min-height: auto;
+			height: auto;
+			container-type: normal;
 			padding: 0;
 			display: block;
 			page-break-after: always;

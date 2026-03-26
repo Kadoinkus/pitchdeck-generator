@@ -156,4 +156,11 @@
 			scroll-snap-align: center;
 		}
 	}
+
+	/* Very short landscape: hide thumbnails to give the slide more room */
+	@media (max-width: 680px) and (max-height: 400px) {
+		.thumbnails {
+			display: none;
+		}
+	}
 </style>
