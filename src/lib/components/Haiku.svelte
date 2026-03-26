@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PUBLIC_FEATURE_HAIKU } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { type HaikuSource, randomHaiku } from '$lib/haiku';
 
 	interface Props {
@@ -9,8 +9,8 @@
 
 	let { variant = 'ghost', lang }: Props = $props();
 
-	const enabled = PUBLIC_FEATURE_HAIKU === 'true'
-		|| PUBLIC_FEATURE_HAIKU === '1';
+	const enabled = env.PUBLIC_FEATURE_HAIKU === 'true'
+		|| env.PUBLIC_FEATURE_HAIKU === '1';
 
 	const haiku = $derived(enabled ? randomHaiku(lang) : undefined);
 

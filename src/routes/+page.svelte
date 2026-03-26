@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { getProviders, getTemplates } from '$lib/data.remote';
 	import {
 		getDeckResult,
 		hydrateBrandPalette,
@@ -88,26 +89,16 @@
 			pushHistory();
 			saveDraft(true);
 
-			const [templatesRes, providersRes] = await Promise.all([
-				fetch('/api/templates'),
-				fetch('/api/ai/providers'),
+			const [templates, providers] = await Promise.all([
+				getTemplates(),
+				getProviders(),
 			]);
 
-			const templatesData = await templatesRes.json();
-			if (
-				templatesRes.ok && templatesData.success
-				&& Array.isArray(templatesData.templates)
-			) {
-				setTemplates(templatesData.templates);
-			}
-
-			const providersData = await providersRes.json();
-			if (providersRes.ok && providersData.success && providersData.providers) {
-				setProviders(
-					providersData.providers.textProviders || [],
-					providersData.providers.imageProviders || [],
-				);
-			}
+			setTemplates(templates);
+			setProviders(
+				providers.textProviders,
+				providers.imageProviders,
+			);
 		} catch (error) {
 			console.error(error);
 			setStatus(

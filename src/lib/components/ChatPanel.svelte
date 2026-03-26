@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { chat } from '$lib/ai.remote';
 	import type { SuggestedChange } from '$lib/ai/orchestrator';
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { tick } from 'svelte';
@@ -127,30 +128,18 @@
 		sending = true;
 
 		try {
-			const response = await fetch('/api/ai/chat', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					targetField: chatTarget?.target ?? null,
-					message: text,
-					payload,
-				}),
+			const result = await chat({
+				targetField: chatTarget?.target ?? null,
+				message: text,
+				payload: payload ?? {},
 			});
 
-			const data: unknown = await response.json();
-			if (isChatResponse(data)) {
-				const assistantMsg: ChatMessage = {
-					role: 'assistant',
-					text: data.reply,
-					suggestions: data.suggestedChanges,
-				};
-				messages = [...messages, assistantMsg];
-			} else {
-				messages = [
-					...messages,
-					{ role: 'assistant', text: 'Sorry, something went wrong.' },
-				];
-			}
+			const assistantMsg: ChatMessage = {
+				role: 'assistant',
+				text: result.reply,
+				suggestions: result.suggestedChanges,
+			};
+			messages = [...messages, assistantMsg];
 		} catch {
 			messages = [
 				...messages,
@@ -184,20 +173,6 @@
 		el.addEventListener('keydown', onEscape, true);
 		return () => el.removeEventListener('keydown', onEscape, true);
 	});
-
-	interface ChatResponse {
-		reply: string;
-		suggestedChanges?: SuggestedChange[];
-	}
-
-	function isChatResponse(value: unknown): value is ChatResponse {
-		return (
-			typeof value === 'object'
-			&& value !== null
-			&& 'reply' in value
-			&& typeof value.reply === 'string'
-		);
-	}
 
 	function applyChange(field: string, value: string): void {
 		onApply?.(field, value);

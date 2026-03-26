@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { autofill } from '$lib/ai.remote';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import {
 		applyDraft,
@@ -56,20 +57,12 @@
 		autofilling = true;
 		setStatus('AI is generating all slide text and image prompts...');
 		try {
-			const response = await fetch('/api/ai/autofill', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload),
-			});
-			const result = await response.json();
-			if (!response.ok || !result.success) {
-				throw new Error(result.message || 'AI autofill failed.');
-			}
-			applyDraft(result.draft || {});
-			applyImageDraft(result.imageDraft || {});
+			const result = await autofill(payload);
+			applyDraft(result.draft);
+			applyImageDraft(result.imageDraft);
 			pushHistory();
 			markDirty();
-			setStatus(`Autofill complete (${result.provider || 'local'}).`);
+			setStatus(`Autofill complete (${result.provider}).`);
 		} catch (error) {
 			console.error(error);
 			setStatus(

@@ -16,6 +16,9 @@ const config: Config = {
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: vercelAdapter({ runtime: 'nodejs24.x' }),
+		experimental: {
+			remoteFunctions: true,
+		},
 		version: {
 			name: (() => {
 				try {
