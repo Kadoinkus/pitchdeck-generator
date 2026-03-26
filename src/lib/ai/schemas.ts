@@ -2,81 +2,57 @@
  * Zod schemas for AI provider response parsing.
  * All external AI responses must be parsed through these schemas.
  */
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 // --- Primitives ---
 
-/** Coerce unknown to trimmed string with fallback. */
-const text = (fallback = '') => z.unknown().transform((v) => String(v ?? fallback).trim());
-
-/** Coerce unknown to string, empty if nullish. */
-const optionalText = () => z.unknown().transform((v) => (v == null ? '' : String(v).trim()));
+/** Coerce unknown → trimmed string, fallback on undefined/null/error. */
+const str = (fallback = '') => z.coerce.string().trim().catch(fallback).default(fallback);
 
 // --- Suggested Changes (chat/autofill responses) ---
 
 export const SuggestedChangeSchema = z.object({
-	field: optionalText(),
-	label: optionalText(),
-	value: optionalText(),
+	field: str(),
+	label: str(),
+	value: str(),
 });
 
 export type SuggestedChange = z.infer<typeof SuggestedChangeSchema>;
 
 export const SuggestedChangesSchema = z
-	.unknown()
-	.transform((v) => (Array.isArray(v) ? v : []))
-	.pipe(z.array(z.unknown()))
-	.transform((arr) =>
-		arr
-			.filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
-			.map((item) => SuggestedChangeSchema.parse(item))
-			.filter((c) => c.field !== '')
-	);
+	.array(SuggestedChangeSchema.passthrough())
+	.catch([])
+	.transform((arr) => arr.filter((c) => c.field !== ''));
 
 // --- Autofill Draft ---
 
 export const AutofillDraftSchema = z
-	.unknown()
-	.transform((v) => typeof v === 'object' && v !== null ? (v as Record<string, unknown>) : {})
-	.transform((obj) => {
-		const result: Record<string, string> = {};
-		for (const [key, value] of Object.entries(obj)) {
-			if (value != null) {
-				result[key] = String(value).trim();
-			}
-		}
-		return result;
-	});
+	.record(z.string(), z.coerce.string().trim())
+	.catch({});
 
 // --- Image Prompts ---
 
 export const ImagePromptSchema = z.object({
-	slideId: optionalText(),
-	slideTitle: optionalText(),
-	prompt: optionalText(),
+	slideId: str(),
+	slideTitle: str(),
+	prompt: str(),
 });
 
 export type ImagePrompt = z.infer<typeof ImagePromptSchema>;
 
 export const ImagePromptsSchema = z
-	.unknown()
-	.transform((v) => (Array.isArray(v) ? v : []))
-	.pipe(z.array(z.unknown()))
+	.array(ImagePromptSchema.passthrough())
+	.catch([])
 	.transform((arr) =>
-		arr
-			.filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
-			.map((item, index) => {
-				const parsed = ImagePromptSchema.parse(item);
-				return {
-					slideId: parsed.slideId || `slide-${index + 1}`,
-					slideTitle: parsed.slideTitle || parsed.slideId || `Slide ${index + 1}`,
-					prompt: parsed.prompt,
-				};
-			})
+		arr.map((item, index) => ({
+			slideId: item.slideId || `slide-${index + 1}`,
+			slideTitle: item.slideTitle || item.slideId || `Slide ${index + 1}`,
+			prompt: item.prompt,
+		}))
 	);
 
 export const ImageDraftSchema = z.object({
-	combinedPromptText: optionalText(),
+	combinedPromptText: str(),
 	prompts: ImagePromptsSchema.default([]),
 });
 
@@ -85,7 +61,7 @@ export type ImageDraft = z.infer<typeof ImageDraftSchema>;
 // --- Chat Response ---
 
 export const ChatResponseSchema = z.object({
-	reply: text('Suggestions are ready.'),
+	reply: str('Suggestions are ready.'),
 	suggestedChanges: SuggestedChangesSchema.default([]),
 });
 
@@ -93,47 +69,47 @@ export const ChatResponseSchema = z.object({
 
 export const AutofillResponseSchema = z.object({
 	draft: AutofillDraftSchema.default({}),
-	imageDraft: z
-		.unknown()
-		.transform((v) =>
-			typeof v === 'object' && v !== null ? ImageDraftSchema.parse(v) : { combinedPromptText: '', prompts: [] }
-		),
+	imageDraft: ImageDraftSchema.catch({ combinedPromptText: '', prompts: [] }),
 });
 
 // --- AI Config (from form payload) ---
 
-export const AiConfigSchema = z.object({
-	textProvider: text('local').transform((s) => s.toLowerCase()),
-	textModel: string().default('gpt-5.4-mini'),
-	textApiKey: text(''),
-	textBaseUrl: text(''),
-	imageProvider: text('local').transform((s) => s.toLowerCase()),
-	imageModel: string().default('gpt-5.4-mini'),
-	imageApiKey: text(''),
-	imageBaseUrl: text(''),
-});
+const provider = z.coerce.string().trim().toLowerCase().catch('local').default('local');
+const model = str('gpt-5.4-mini');
+const optStr = str();
+
+/** Parses raw form data with `ai*` prefixed fields into normalized config. */
+export const AiConfigSchema = z
+	.object({
+		aiTextProvider: provider,
+		aiTextModel: model,
+		aiTextApiKey: optStr,
+		aiTextBaseUrl: optStr,
+		aiImageProvider: provider,
+		aiImageModel: model,
+		aiImageApiKey: optStr,
+		aiImageBaseUrl: optStr,
+		aiApiKey: optStr,
+		aiBaseUrl: optStr,
+	})
+	.transform((d) => ({
+		textProvider: d.aiTextProvider,
+		textModel: d.aiTextModel,
+		textApiKey: d.aiTextApiKey || d.aiApiKey,
+		textBaseUrl: d.aiTextBaseUrl || d.aiBaseUrl,
+		imageProvider: d.aiImageProvider,
+		imageModel: d.aiImageModel,
+		imageApiKey: d.aiImageApiKey || d.aiApiKey,
+		imageBaseUrl: d.aiImageBaseUrl || d.aiBaseUrl,
+	}));
 
 export type AiConfig = z.infer<typeof AiConfigSchema>;
-
-/** Parse AI config from raw form data with field name mapping. */
-export function parseAiConfig(rawData: Record<string, unknown>): AiConfig {
-	return AiConfigSchema.parse({
-		textProvider: rawData.aiTextProvider,
-		textModel: rawData.aiTextModel,
-		textApiKey: rawData.aiTextApiKey ?? rawData.aiApiKey,
-		textBaseUrl: rawData.aiTextBaseUrl ?? rawData.aiBaseUrl,
-		imageProvider: rawData.aiImageProvider,
-		imageModel: rawData.aiImageModel,
-		imageApiKey: rawData.aiImageApiKey ?? rawData.aiApiKey,
-		imageBaseUrl: rawData.aiImageBaseUrl ?? rawData.aiBaseUrl,
-	});
-}
 
 // --- Chat Request ---
 
 export const ChatRequestSchema = z.object({
-	targetField: text('global-concept'),
-	message: text('Improve this section.'),
+	targetField: str('global-concept'),
+	message: str('Improve this section.'),
 });
 
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
