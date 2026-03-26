@@ -304,7 +304,6 @@
 			&#10094;
 		</button>
 
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="share-deck"
 			bind:this={deckEl}
@@ -313,13 +312,7 @@
 			aria-label="{title} — {total} slides"
 			aria-keyshortcuts="ArrowLeft ArrowRight"
 			style:--slide-gap={`${SLIDE_GAP}px`}
-			onpointerdown={(e) => deckEl && swipe.handlers.pointerdown(e, deckEl)}
-			onpointermove={swipe.handlers.pointermove}
-			onpointerup={() => deckEl && swipe.handlers.pointerup(deckEl)}
-			onpointercancel={() => deckEl && swipe.handlers.pointerup(deckEl)}
-			onclick={swipe.handlers.click}
-			onwheel={(e) => deckEl && swipe.handlers.wheel(e, deckEl.clientHeight)}
-			ondragstart={swipe.handlers.dragstart}
+			{@attach swipe.attach}
 		>
 			<div
 				class="share-track"

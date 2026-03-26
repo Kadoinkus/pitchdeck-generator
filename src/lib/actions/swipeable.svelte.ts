@@ -1,7 +1,9 @@
 /**
- * Svelte 5 runes-based swipe/wheel navigation state.
- * Returns event handlers to bind directly to elements.
+ * Svelte 5 attachment for swipe/wheel slide navigation.
+ * Returns an attachment and a reactive handle for isDragging state.
  */
+import type { Attachment } from 'svelte/attachments';
+import { on } from 'svelte/events';
 
 export interface SwipeableOptions {
 	onPrev: () => void;
@@ -12,19 +14,26 @@ export interface SwipeableOptions {
 	wheelCooldownMs?: number;
 }
 
-export function createSwipeable(getOptions: () => SwipeableOptions) {
-	// Drag state
-	let dragActive = $state(false);
-	let dragStartX = $state(0);
-	let dragDeltaX = $state(0);
-	let dragWidth = $state(1);
-	let dragMoved = $state(false);
-	let suppressNextClick = $state(false);
+export interface SwipeableHandle {
+	readonly isDragging: boolean;
+}
 
-	// Wheel state
-	let wheelAccumulated = $state(0);
-	let wheelLastEventAt = $state(0);
-	let wheelLastTriggerAt = $state(0);
+export function createSwipeable(getOptions: () => SwipeableOptions): {
+	attach: Attachment<HTMLElement>;
+	handle: SwipeableHandle;
+} {
+	let dragActive = $state(false);
+
+	// Imperative bookkeeping — not reactive
+	let dragStartX = 0;
+	let dragDeltaX = 0;
+	let dragWidth = 1;
+	let dragMoved = false;
+	let suppressNextClick = false;
+
+	let wheelAccumulated = 0;
+	let wheelLastEventAt = 0;
+	let wheelLastTriggerAt = 0;
 
 	function isInteractiveTarget(target: EventTarget | null): boolean {
 		if (!(target instanceof Element)) return false;
@@ -48,112 +57,137 @@ export function createSwipeable(getOptions: () => SwipeableOptions) {
 		return Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
 	}
 
-	function handlePointerDown(event: PointerEvent, node: HTMLElement): void {
-		if (!isPrimaryActivation(event)) return;
-		if (isInteractiveTarget(event.target)) return;
+	const attach: Attachment<HTMLElement> = (node) => {
+		const handlePointerDown = (event: PointerEvent): void => {
+			if (!isPrimaryActivation(event)) return;
+			if (isInteractiveTarget(event.target)) return;
 
-		dragActive = true;
-		dragStartX = event.clientX;
-		dragDeltaX = 0;
-		dragWidth = node.clientWidth || 1;
-		dragMoved = false;
+			dragActive = true;
+			dragStartX = event.clientX;
+			dragDeltaX = 0;
+			dragWidth = node.clientWidth || 1;
+			dragMoved = false;
 
-		try {
-			node.setPointerCapture(event.pointerId);
-		} catch {
-			// Ignore when browser rejects pointer capture
-		}
-		node.classList.add('is-dragging');
-	}
+			try {
+				node.setPointerCapture(event.pointerId);
+			} catch {
+				// ignore if capture is rejected
+			}
 
-	function handlePointerMove(event: PointerEvent): void {
-		if (!dragActive) return;
-		dragDeltaX = event.clientX - dragStartX;
-		if (Math.abs(dragDeltaX) > 6) dragMoved = true;
+			node.classList.add('is-dragging');
+		};
 
-		getOptions().onDrag?.(dragDeltaX);
-	}
+		const handlePointerMove = (event: PointerEvent): void => {
+			if (!dragActive) return;
 
-	function handlePointerUp(node: HTMLElement): void {
-		if (!dragActive) return;
-		dragActive = false;
+			dragDeltaX = event.clientX - dragStartX;
+			if (Math.abs(dragDeltaX) > 6) dragMoved = true;
 
-		node.classList.remove('is-dragging');
-		getOptions().onDrag?.(0);
+			getOptions().onDrag?.(dragDeltaX);
+		};
 
-		const opts = getOptions();
-		const threshold = Math.max(20, Math.min(opts.threshold ?? 140, dragWidth * 0.16));
+		const finishDrag = (): void => {
+			if (!dragActive) return;
+			dragActive = false;
 
-		if (dragMoved && Math.abs(dragDeltaX) > threshold) {
-			if (dragDeltaX < 0) opts.onNext();
-			else opts.onPrev();
-			suppressNextClick = true;
-		}
-	}
+			node.classList.remove('is-dragging');
+			getOptions().onDrag?.(0);
 
-	function handleClick(event: MouseEvent): void {
-		if (suppressNextClick) {
+			const opts = getOptions();
+			const threshold = Math.max(
+				20,
+				Math.min(opts.threshold ?? 140, dragWidth * 0.16),
+			);
+
+			if (dragMoved && Math.abs(dragDeltaX) > threshold) {
+				if (dragDeltaX < 0) opts.onNext();
+				else opts.onPrev();
+
+				suppressNextClick = true;
+			}
+		};
+
+		const handleClick = (event: MouseEvent): void => {
+			if (!suppressNextClick) return;
+
 			suppressNextClick = false;
-			event.stopPropagation();
 			event.preventDefault();
-		}
-	}
+			event.stopPropagation();
+		};
 
-	function handleWheel(event: WheelEvent, height: number): void {
-		if (dragActive) return;
-		if (event.ctrlKey || event.metaKey || event.altKey) return;
+		const handleWheel = (event: WheelEvent): void => {
+			if (dragActive) return;
+			if (event.ctrlKey || event.metaKey || event.altKey) return;
 
-		const delta = normalizeWheelDelta(event, height);
-		if (Math.abs(delta) < 2) return;
+			const delta = normalizeWheelDelta(event, node.clientHeight || 1);
+			if (Math.abs(delta) < 2) return;
 
-		event.preventDefault();
+			event.preventDefault();
 
-		const opts = getOptions();
-		const now = performance.now();
-		const cooldownMs = opts.wheelCooldownMs ?? 380;
+			const opts = getOptions();
+			const now = performance.now();
+			const cooldownMs = opts.wheelCooldownMs ?? 380;
 
-		if (now - wheelLastTriggerAt < cooldownMs) {
+			if (now - wheelLastTriggerAt < cooldownMs) {
+				wheelLastEventAt = now;
+				return;
+			}
+
+			if (now - wheelLastEventAt > 260) {
+				wheelAccumulated = 0;
+			}
+
+			if (
+				wheelAccumulated !== 0
+				&& Math.sign(wheelAccumulated) !== Math.sign(delta)
+			) {
+				wheelAccumulated = 0;
+			}
+
 			wheelLastEventAt = now;
-			return;
-		}
+			wheelAccumulated += delta;
 
-		if (now - wheelLastEventAt > 260) {
+			const threshold = opts.wheelThreshold ?? 115;
+			if (Math.abs(wheelAccumulated) < threshold) return;
+
+			if (wheelAccumulated > 0) opts.onNext();
+			else opts.onPrev();
+
 			wheelAccumulated = 0;
-		}
+			wheelLastTriggerAt = now;
+		};
 
-		if (Math.sign(wheelAccumulated) !== Math.sign(delta)) {
-			wheelAccumulated = 0;
-		}
+		const handleDragStart = (event: DragEvent): void => {
+			if (dragActive) event.preventDefault();
+		};
 
-		wheelLastEventAt = now;
-		wheelAccumulated += delta;
+		const offPointerDown = on(node, 'pointerdown', handlePointerDown);
+		const offPointerMove = on(node, 'pointermove', handlePointerMove);
+		const offPointerUp = on(node, 'pointerup', finishDrag);
+		const offPointerCancel = on(node, 'pointercancel', finishDrag);
+		const offClick = on(node, 'click', handleClick);
+		const offWheel = on(node, 'wheel', handleWheel, { passive: false });
+		const offDragStart = on(node, 'dragstart', handleDragStart);
 
-		const threshold = opts.wheelThreshold ?? 115;
-		if (Math.abs(wheelAccumulated) < threshold) return;
+		return () => {
+			finishDrag();
+			node.classList.remove('is-dragging');
 
-		if (wheelAccumulated > 0) opts.onNext();
-		else opts.onPrev();
+			offPointerDown();
+			offPointerMove();
+			offPointerUp();
+			offPointerCancel();
+			offClick();
+			offWheel();
+			offDragStart();
+		};
+	};
 
-		wheelAccumulated = 0;
-		wheelLastTriggerAt = now;
-	}
-
-	function handleDragStart(event: Event): void {
-		if (dragActive) event.preventDefault();
-	}
-
-	return {
+	const handle: SwipeableHandle = {
 		get isDragging() {
 			return dragActive;
 		},
-		handlers: {
-			pointerdown: handlePointerDown,
-			pointermove: handlePointerMove,
-			pointerup: handlePointerUp,
-			pointercancel: handlePointerUp,
-			click: handleClick,
-			wheel: handleWheel,
-			dragstart: handleDragStart,
-		},
 	};
+
+	return { attach, handle };
 }

@@ -181,7 +181,6 @@
 		<Haiku variant="ghost" />
 	</div>
 {:else}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="slide-stage"
 		bind:this={deckEl}
@@ -189,13 +188,7 @@
 		aria-roledescription="carousel"
 		aria-label="Slide deck — {slides.length} slides"
 		aria-keyshortcuts="ArrowLeft ArrowRight"
-		onpointerdown={(e) => deckEl && swipe.handlers.pointerdown(e, deckEl)}
-		onpointermove={swipe.handlers.pointermove}
-		onpointerup={() => deckEl && swipe.handlers.pointerup(deckEl)}
-		onpointercancel={() => deckEl && swipe.handlers.pointerup(deckEl)}
-		onclick={swipe.handlers.click}
-		onwheel={(e) => deckEl && swipe.handlers.wheel(e, deckEl.clientHeight)}
-		ondragstart={swipe.handlers.dragstart}
+		{@attach swipe.attach}
 	>
 		<div
 			class="slide-track"
