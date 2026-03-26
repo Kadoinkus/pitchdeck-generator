@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import type { ThemeInput } from '$lib/slides/core/theme';
 	import { themeVars } from '$lib/slides/core/theme';
 	import type { SlideData } from '$lib/slides/core/utils';
@@ -23,10 +24,7 @@
 	const slideType = $derived(slide?.type || 'generic');
 	const style = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
-	const footerIsEditable = $derived.by(() => {
-		if (typeof window === 'undefined') return false;
-		return window.location.pathname === '/editor';
-	});
+	const footerIsEditable = $derived(page.route.id === '/editor');
 </script>
 
 <article class="slide-render" {style}>

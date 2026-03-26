@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { tick } from 'svelte';
@@ -112,7 +113,7 @@
 			const sharePath = resolve('/share/[token]', { token: shareToken });
 			const absoluteShareUrl = toAbsoluteUrl(
 				sharePath,
-				window.location.origin,
+				page.url.origin,
 			);
 			await navigator.clipboard.writeText(absoluteShareUrl);
 			copyLabel = 'Link copied';

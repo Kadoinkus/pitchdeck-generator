@@ -170,7 +170,7 @@
 		const shareData: ShareData = {
 			title: title,
 			text: `Check out this pitch deck: ${title}`,
-			url: window.location.href,
+			url: page.url.href,
 		};
 
 		const canUseNativeShare = typeof navigator.share === 'function'
@@ -189,14 +189,14 @@
 		} else {
 			// Clipboard fallback for unsupported browsers
 			try {
-				await navigator.clipboard.writeText(window.location.href);
+				await navigator.clipboard.writeText(page.url.href);
 				shareButtonLabel = 'Link copied!';
 				setTimeout(() => {
 					shareButtonLabel = 'Share';
 				}, 2000);
 			} catch {
 				// Last resort: prompt the user
-				prompt('Copy this link to share:', window.location.href);
+				prompt('Copy this link to share:', page.url.href);
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
 	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
 	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
@@ -62,13 +63,13 @@
 			}
 
 			const shareUrlAbsolute = result.shareUrl
-				? new URL(result.shareUrl, window.location.origin).toString()
+				? new URL(result.shareUrl, page.url.origin).toString()
 				: null;
 			const pdfUrlAbsolute = result.pdfUrl
-				? new URL(result.pdfUrl, window.location.origin).toString()
+				? new URL(result.pdfUrl, page.url.origin).toString()
 				: null;
 			const downloadUrlAbsolute = result.downloadUrl
-				? new URL(result.downloadUrl, window.location.origin).toString()
+				? new URL(result.downloadUrl, page.url.origin).toString()
 				: null;
 
 			setDeckResult({

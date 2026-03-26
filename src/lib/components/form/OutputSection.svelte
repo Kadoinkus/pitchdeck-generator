@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import {
 		getDeckResult,
@@ -24,7 +25,7 @@
 			const sharePath = resolve('/share/[token]', { token });
 			const absoluteUrl = toAbsoluteUrl(
 				sharePath,
-				window.location.origin,
+				page.url.origin,
 			);
 			await navigator.clipboard.writeText(absoluteUrl);
 			setStatus('Share link copied.');
