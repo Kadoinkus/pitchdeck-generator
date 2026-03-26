@@ -50,6 +50,8 @@ class ViewerState {
 	#slideData = $state.raw<ViewerDeckData | null>(null);
 	#toolbarOptions = $state.raw<ToolbarOptions>({});
 	#chatTarget = $state.raw<ChatTarget | null>(null);
+	/** Element that held focus before the viewer opened (C3: focus restore). */
+	#previousFocus: Element | null = null;
 
 	get currentSlide() {
 		return this.#currentSlide;
@@ -93,6 +95,7 @@ class ViewerState {
 
 	show = (data: ViewerDeckData, options: ToolbarOptions = {}, startSlide?: number): void => {
 		if (!data.slides.length) return;
+		this.#previousFocus = typeof document !== 'undefined' ? document.activeElement : null;
 		this.#slideData = data;
 		this.#toolbarOptions = options;
 		const target = startSlide ?? this.#currentSlide;
@@ -133,6 +136,13 @@ class ViewerState {
 	hide = (): void => {
 		this.#isOpen = false;
 		this.#chatTarget = null;
+		/* C3: Restore focus to the element that was active before the viewer opened. */
+		const el = this.#previousFocus;
+		this.#previousFocus = null;
+		if (el instanceof HTMLElement) {
+			/* Defer so the DOM has time to remove the viewer overlay. */
+			queueMicrotask(() => el.focus());
+		}
 	};
 
 	setChatTarget = (target: ChatTarget | null): void => {

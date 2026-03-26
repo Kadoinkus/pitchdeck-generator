@@ -97,12 +97,62 @@
 		viewer.hide();
 		goto(resolve('/'));
 	}
+
+	/* C2: Focus trap — keep Tab cycling within the viewer overlay. */
+	let viewerEl: HTMLDivElement | undefined = $state();
+
+	$effect(() => {
+		const el = viewerEl;
+		if (!el) return;
+
+		/* Move focus into the viewer on open. */
+		const first = el.querySelector<HTMLElement>(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+		);
+		first?.focus();
+
+		function trapFocus(this: HTMLDivElement, event: KeyboardEvent): void {
+			if (event.key !== 'Tab') return;
+
+			const focusable = this.querySelectorAll<HTMLElement>(
+				'button:not(:disabled), [href]:not([tabindex="-1"]), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+			);
+			if (focusable.length === 0) return;
+
+			const firstEl = focusable[0];
+			const lastEl = focusable[focusable.length - 1];
+			if (!firstEl || !lastEl) return;
+
+			if (event.shiftKey) {
+				if (document.activeElement === firstEl) {
+					event.preventDefault();
+					lastEl.focus();
+				}
+			} else {
+				if (document.activeElement === lastEl) {
+					event.preventDefault();
+					firstEl.focus();
+				}
+			}
+		}
+
+		const handler = trapFocus.bind(el);
+		el.addEventListener('keydown', handler);
+		return () => el.removeEventListener('keydown', handler);
+	});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
 {#if viewer.isOpen}
-	<div class="slide-viewer">
+	<!-- C2: Dialog semantics + focus trap for the fullscreen viewer overlay -->
+	<div
+		class="slide-viewer"
+		role="dialog"
+		aria-modal="true"
+		aria-label="Slide viewer"
+		bind:this={viewerEl}
+	>
 		<ViewerToolbar
 			{projectName}
 			{projectContext}
@@ -119,9 +169,7 @@
 
 			<div
 				class="thumb-resize"
-				role="separator"
-				aria-orientation="vertical"
-				tabindex="-1"
+				aria-hidden="true"
 				use:resizable={{ min: 140, target: '.slide-viewer' }}
 			>
 			</div>
@@ -168,15 +216,27 @@
 		background: transparent;
 		border-left: 1px solid var(--line);
 		transition: background 0.15s ease;
+		/* M9: Subtle dot affordance hints at draggability */
+		background-image: radial-gradient(
+			circle,
+			var(--muted) 1px,
+			transparent 1px
+		);
+		background-size: 2px 8px;
+		background-repeat: repeat-y;
+		background-position: center;
+		opacity: 0.4;
 	}
 
 	.thumb-resize:global(.is-dragging) {
 		background: rgba(41, 196, 146, 0.25);
+		opacity: 1;
 	}
 
 	@media (hover: hover) {
 		.thumb-resize:hover {
 			background: rgba(41, 196, 146, 0.25);
+			opacity: 1;
 		}
 	}
 

@@ -183,6 +183,10 @@
 	<div
 		class="slide-stage"
 		bind:this={deckEl}
+		role="region"
+		aria-roledescription="carousel"
+		aria-label="Slide deck — {slides.length} slides"
+		aria-keyshortcuts="ArrowLeft ArrowRight"
 		use:swipeable={{
 			onPrev: viewer.prevSlide,
 			onNext: viewer.nextSlide,
@@ -197,6 +201,11 @@
 				<section
 					class="slide-page"
 					class:is-active={index === current}
+					class:is-adjacent={Math.abs(index - current) === 1}
+					aria-roledescription="slide"
+					aria-label="Slide {index + 1} of {slides.length}"
+					aria-hidden={index !== current}
+					inert={index !== current ? true : undefined}
 				>
 					<div class="slide-frame" data-slide-index={index}>
 						<SlideRenderer {slide} {theme} {deckData} />
@@ -268,7 +277,8 @@
 		contain-intrinsic-size: auto 100% auto 100%;
 	}
 
-	.slide-page.is-active {
+	.slide-page.is-active,
+	.slide-page.is-adjacent {
 		content-visibility: visible;
 	}
 

@@ -65,6 +65,7 @@
 			class:active={index === viewer.currentSlide}
 			type="button"
 			onclick={() => viewer.goToSlide(index)}
+			aria-label="Go to slide {index + 1}"
 		>
 			<span class="thumb-number">{index + 1}</span>
 			<div class="thumb-inner">
@@ -147,7 +148,8 @@
 			padding: 6px;
 			overflow-x: auto;
 			overflow-y: hidden;
-			scroll-snap-type: x mandatory;
+			scroll-snap-type: x proximity;
+			touch-action: pan-x;
 		}
 
 		.thumb {

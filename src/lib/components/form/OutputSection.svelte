@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
+	import { resolve } from '$app/paths';
+	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import {
 		getDeckResult,
 		isPublishStale,
@@ -16,13 +17,13 @@
 	const token = $derived(result?.shareToken ?? null);
 	const hasResult = $derived(Boolean(token));
 	const stale = $derived(hasResult && isPublishStale());
-	const shareLinks = $derived(token ? getShareLinks(token) : null);
 
 	async function copyShareLink() {
-		if (!shareLinks) return;
+		if (!token) return;
 		try {
+			const sharePath = resolve('/share/[token]', { token });
 			const absoluteUrl = toAbsoluteUrl(
-				shareLinks.sharePath,
+				sharePath,
 				window.location.origin,
 			);
 			await navigator.clipboard.writeText(absoluteUrl);
@@ -59,15 +60,14 @@
 		>
 			Open viewer
 		</button>
-		<!-- eslint-disable svelte/no-navigation-without-resolve -->
-		{#if shareLinks}
-			<a class="ghost-link" href={shareLinks.downloadPath}>
+		{#if token}
+			<a class="ghost-link" href={resolve('/api/download/[token]', { token })}>
 				Download .pptx
 			</a>
 
 			<a
 				class="ghost-link"
-				href={shareLinks.pdfPath}
+				href={resolve('/api/pdf/[token]', { token })}
 				target="_blank"
 				rel="noopener"
 			>
@@ -76,7 +76,7 @@
 
 			<a
 				class="ghost-link"
-				href={shareLinks.sharePath}
+				href={resolve('/share/[token]', { token })}
 				target="_blank"
 				rel="noopener"
 			>
@@ -90,7 +90,7 @@
 		<button
 			type="button"
 			class="ghost"
-			disabled={!shareLinks}
+			disabled={!token}
 			onclick={copyShareLink}
 		>
 			Copy share link

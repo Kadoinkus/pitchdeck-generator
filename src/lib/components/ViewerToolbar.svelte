@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { getShareLinks, toAbsoluteUrl } from '$lib/routing/share-links';
+	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import { viewer } from '$lib/stores/viewer.svelte';
 
 	interface Props {
@@ -68,11 +68,11 @@
 	);
 
 	const shareToken = $derived(viewer.toolbarOptions.shareToken ?? null);
-	const shareLinks = $derived(shareToken ? getShareLinks(shareToken) : null);
-	const hasAnyShareAction = $derived(Boolean(shareLinks));
+	const hasAnyShareAction = $derived(Boolean(shareToken));
 
 	let shareOpen = $state(false);
 	let copyLabel = $state('Copy share link');
+	let dropdownEl: HTMLDivElement | undefined = $state();
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const atStart = $derived(viewer.currentSlide <= 0);
@@ -98,10 +98,11 @@
 	}
 
 	async function copyShareLink(): Promise<void> {
-		if (!shareLinks) return;
+		if (!shareToken) return;
 		try {
+			const sharePath = resolve('/share/[token]', { token: shareToken });
 			const absoluteShareUrl = toAbsoluteUrl(
-				shareLinks.sharePath,
+				sharePath,
 				window.location.origin,
 			);
 			await navigator.clipboard.writeText(absoluteShareUrl);
@@ -125,6 +126,53 @@
 		}
 		closeShare();
 	}
+
+	/** H9: Arrow key navigation + Escape within the share dropdown menu. */
+	$effect(() => {
+		const el = dropdownEl;
+		if (!el) return;
+
+		function onKeydown(this: HTMLDivElement, event: KeyboardEvent): void {
+			if (!shareOpen) return;
+
+			const menu = this.querySelector<HTMLElement>('.viewer-share-menu');
+			if (!menu) return;
+
+			const items = [
+				...menu.querySelectorAll<HTMLElement>(
+					'[role="menuitem"]:not(:disabled)',
+				),
+			];
+			if (items.length === 0) return;
+
+			const active = document.activeElement as HTMLElement | null;
+			const idx = active ? items.indexOf(active) : -1;
+
+			switch (event.key) {
+				case 'ArrowDown': {
+					event.preventDefault();
+					const next = items[(idx + 1) % items.length];
+					next?.focus();
+					break;
+				}
+				case 'ArrowUp': {
+					event.preventDefault();
+					const prev = items[(idx - 1 + items.length) % items.length];
+					prev?.focus();
+					break;
+				}
+				case 'Escape':
+					event.preventDefault();
+					event.stopPropagation();
+					closeShare();
+					break;
+			}
+		}
+
+		const handler = onKeydown.bind(el);
+		el.addEventListener('keydown', handler);
+		return () => el.removeEventListener('keydown', handler);
+	});
 
 	function closeViewer(): void {
 		viewer.hide();
@@ -239,7 +287,9 @@
 					/>
 				</svg>
 			</button>
-			<span class="slide-counter">{counter}</span>
+			<span class="slide-counter" aria-live="polite" aria-atomic="true">{
+				counter
+			}</span>
 			<button
 				class="nav-pill-btn"
 				type="button"
@@ -277,60 +327,83 @@
 			>
 			</button>
 		{/if}
-		<div class="viewer-share-dropdown" class:open={shareOpen}>
+		<div
+			class="viewer-share-dropdown"
+			class:open={shareOpen}
+			bind:this={dropdownEl}
+		>
 			<button
 				class="toolbar-btn viewer-share-toggle"
 				type="button"
 				disabled={!hasAnyShareAction}
 				aria-expanded={shareOpen}
+				aria-haspopup="true"
 				onclick={toggleShare}
 			>
 				Share <span class="share-caret">&#9660;</span>
 			</button>
-			<!-- eslint-disable svelte/no-navigation-without-resolve -->
-			<div class="viewer-share-menu">
-				{#if shareLinks}
+			<div class="viewer-share-menu" role="menu">
+				{#if shareToken}
 					<a
 						class="viewer-share-item"
-						href={shareLinks.downloadPath}
+						role="menuitem"
+						href={resolve('/api/download/[token]', { token: shareToken })}
 						download
 						onclick={closeShare}
 					>Download PPTX</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled>
+					<button
+						class="viewer-share-item"
+						role="menuitem"
+						type="button"
+						disabled
+					>
 						Download PPTX
 					</button>
 				{/if}
 
-				{#if shareLinks}
+				{#if shareToken}
 					<a
 						class="viewer-share-item"
-						href={shareLinks.pdfPath}
+						role="menuitem"
+						href={resolve('/api/pdf/[token]', { token: shareToken })}
 						onclick={closeShare}
 					>Download PDF</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled>
+					<button
+						class="viewer-share-item"
+						role="menuitem"
+						type="button"
+						disabled
+					>
 						Download PDF
 					</button>
 				{/if}
 
-				{#if shareLinks}
+				{#if shareToken}
 					<a
 						class="viewer-share-item"
-						href={shareLinks.sharePath}
+						role="menuitem"
+						href={resolve('/share/[token]', { token: shareToken })}
 						target="_blank"
 						rel="noopener noreferrer"
 						onclick={closeShare}
 					>Open share link</a>
 				{:else}
-					<button class="viewer-share-item" type="button" disabled>
+					<button
+						class="viewer-share-item"
+						role="menuitem"
+						type="button"
+						disabled
+					>
 						Open share link
 					</button>
 				{/if}
 				<button
 					class="viewer-share-item"
+					role="menuitem"
 					type="button"
-					disabled={!shareLinks}
+					disabled={!shareToken}
 					onclick={copyShareLink}
 				>
 					{copyLabel}
@@ -438,7 +511,7 @@
 		}
 	}
 
-	.viewer-project-name-input:focus {
+	.viewer-project-name-input:focus-visible {
 		background: rgba(255, 255, 255, 0.18);
 		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
 	}
@@ -685,6 +758,12 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			display: block;
+		}
+
+		/* H3: Meet 44×44 WCAG touch target minimum on tablets */
+		.nav-pill-btn {
+			min-width: 44px;
+			min-height: 44px;
 		}
 
 		.viewer-share-menu {

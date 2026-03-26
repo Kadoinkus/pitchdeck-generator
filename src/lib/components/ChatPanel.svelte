@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SuggestedChange } from '$lib/ai/orchestrator';
 	import { viewer } from '$lib/stores/viewer.svelte';
+	import { tick } from 'svelte';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */
@@ -20,6 +21,10 @@
 	let isOpen = $state(false);
 	let messages = $state<ChatMessage[]>([]);
 	let inputText = $state('');
+	let chatInputEl: HTMLTextAreaElement | undefined = $state();
+	let panelEl: HTMLDivElement | undefined = $state();
+	/** Element that held focus before the panel opened (M6: focus restore). */
+	let previousFocus: Element | null = null;
 	let sending = $state(false);
 	let panelWidth = $state(380);
 	let panelHeight = $state(480);
@@ -82,11 +87,29 @@
 	}
 
 	function togglePanel(): void {
-		isOpen = !isOpen;
+		if (isOpen) {
+			closePanel();
+		} else {
+			openPanel();
+		}
+	}
+
+	async function openPanel(): Promise<void> {
+		previousFocus = document.activeElement;
+		isOpen = true;
+		/* M6: Focus textarea after DOM update. */
+		await tick();
+		chatInputEl?.focus();
 	}
 
 	function closePanel(): void {
 		isOpen = false;
+		/* M6: Restore focus to whatever was focused before panel opened. */
+		const el = previousFocus;
+		previousFocus = null;
+		if (el instanceof HTMLElement) {
+			queueMicrotask(() => el.focus());
+		}
 	}
 
 	function clearTarget(): void {
@@ -144,6 +167,23 @@
 		}
 	}
 
+	/** M5: Escape closes the chat panel. Capture phase + stopPropagation
+	 *  prevents the viewer's window-level Escape handler from also firing. */
+	$effect(() => {
+		const el = panelEl;
+		if (!el) return;
+
+		function onEscape(event: KeyboardEvent): void {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				event.stopPropagation();
+				closePanel();
+			}
+		}
+		el.addEventListener('keydown', onEscape, true);
+		return () => el.removeEventListener('keydown', onEscape, true);
+	});
+
 	interface ChatResponse {
 		reply: string;
 		suggestedChanges?: SuggestedChange[];
@@ -164,8 +204,19 @@
 </script>
 
 {#if isOpen}
+	{#if isMobile}
+		<button
+			class="chat-backdrop"
+			type="button"
+			aria-label="Close chat"
+			tabindex="-1"
+			onclick={closePanel}
+		>
+		</button>
+	{/if}
 	<div
 		class="panel"
+		bind:this={panelEl}
 		class:is-resizing={resizeAxis !== null}
 		style:width={isMobile ? undefined : `${panelWidth}px`}
 		style:height={isMobile ? undefined : `${panelHeight}px`}
@@ -173,9 +224,7 @@
 		<!-- resize handles -->
 		<div
 			class="resize-handle left"
-			role="separator"
-			aria-orientation="horizontal"
-			tabindex="-1"
+			aria-hidden="true"
 			onpointerdown={(e) => beginResize('left', e)}
 			onpointermove={moveResize}
 			onpointerup={endResize}
@@ -184,9 +233,7 @@
 		</div>
 		<div
 			class="resize-handle top"
-			role="separator"
-			aria-orientation="vertical"
-			tabindex="-1"
+			aria-hidden="true"
 			onpointerdown={(e) => beginResize('top', e)}
 			onpointermove={moveResize}
 			onpointerup={endResize}
@@ -195,8 +242,7 @@
 		</div>
 		<div
 			class="resize-handle corner"
-			role="separator"
-			tabindex="-1"
+			aria-hidden="true"
 			onpointerdown={(e) => beginResize('corner', e)}
 			onpointermove={moveResize}
 			onpointerup={endResize}
@@ -360,6 +406,7 @@
 				class="chat-input"
 				placeholder="Ask the AI to refine this slide…"
 				bind:value={inputText}
+				bind:this={chatInputEl}
 				onkeydown={handleKeydown}
 				disabled={sending}
 				rows="2"
@@ -403,6 +450,12 @@
 {/if}
 
 <style>
+	/* ── Backdrop (mobile tap-to-close) ── */
+
+	.chat-backdrop {
+		display: none;
+	}
+
 	/* ── Launcher ── */
 
 	.launcher {
@@ -785,7 +838,7 @@
 		opacity: 0.6;
 	}
 
-	.chat-input:focus {
+	.chat-input:focus-visible {
 		outline: none;
 		border-color: var(--accent);
 		box-shadow: 0 0 0 3px var(--input-focus-shadow);
@@ -819,15 +872,45 @@
 		transform: none;
 	}
 
+	/* H4: Meet 44px WCAG touch target minimum on tablets */
+	@media (max-width: 980px) {
+		.icon-btn {
+			min-width: 44px;
+			min-height: 44px;
+		}
+
+		.send-btn {
+			min-width: 44px;
+			min-height: 44px;
+		}
+
+		.apply-btn {
+			min-height: 44px;
+		}
+	}
+
 	/* ── Mobile ── */
 
 	@media (max-width: 480px) {
+		.chat-backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			border-radius: 0;
+			background: rgba(0, 0, 0, 0.35);
+			z-index: 0;
+			border: none;
+			padding: 0;
+			cursor: default;
+		}
+
 		.panel {
 			right: 8px;
 			bottom: max(8px, env(safe-area-inset-bottom));
 			width: calc(100vw - 16px);
 			max-height: calc(100vh - 24px);
 			border-radius: 16px;
+			z-index: 1;
 		}
 
 		.resize-handle {

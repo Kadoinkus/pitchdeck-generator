@@ -245,12 +245,14 @@
 			<p class="share-subtitle">{subtitle}</p>
 		</div>
 		<div class="share-actions">
-			<span class="share-counter">{currentSlide + 1} / {total}</span>
+			<span class="share-counter" aria-live="polite" aria-atomic="true">{
+					currentSlide + 1
+				} / {total}</span>
 			<button
 				type="button"
 				class="share-cta"
 				onclick={handleShare}
-				aria-label="Share this deck"
+				aria-label={shareButtonLabel === 'Share' ? 'Share this deck' : shareButtonLabel}
 			>
 				<svg
 					aria-hidden="true"
@@ -276,12 +278,14 @@
 				</svg>
 				{shareButtonLabel}
 			</button>
-			<a
-				href={resolve('/api/download/[token]', { token: data.token })}
-				download
-				class:disabled={!data.downloadUrl}
-				aria-disabled={!data.downloadUrl}
-			>Download PPTX</a>
+			{#if data.downloadUrl}
+				<a
+					href={resolve('/api/download/[token]', { token: data.token })}
+					download
+				>Download PPTX</a>
+			{:else}
+				<span class="disabled" aria-disabled="true">Download PPTX</span>
+			{/if}
 			<a href={resolve('/api/pdf/[token]', { token: data.token })}
 			>Download PDF</a>
 		</div>
@@ -304,6 +308,7 @@
 			role="region"
 			aria-roledescription="carousel"
 			aria-label="{title} — {total} slides"
+			aria-keyshortcuts="ArrowLeft ArrowRight"
 			style:--slide-gap={`${SLIDE_GAP}px`}
 			use:swipeable={{
 				onPrev: prev,
@@ -345,10 +350,6 @@
 </div>
 
 <style>
-	:global(*) {
-		box-sizing: border-box;
-	}
-
 	:global(html),
 	:global(body) {
 		height: 100%;
@@ -358,7 +359,6 @@
 		margin: 0;
 		font-family: "Plus Jakarta Sans", "DM Sans", "Segoe UI", sans-serif;
 		color: var(--text);
-		overflow: hidden;
 	}
 
 	.share-layout {
@@ -501,8 +501,8 @@
 	.share-nav-btn {
 		z-index: 2;
 		align-self: center;
-		width: 42px;
-		height: 42px;
+		width: 44px;
+		height: 44px;
 		border-radius: 999px;
 		border: 1px solid var(--line);
 		background: var(--overlay-bg);
@@ -559,6 +559,11 @@
 		padding: 18px 8px;
 		display: grid;
 		place-items: center;
+		/*
+		 * Must be `size` (not `inline-size`) because the child
+		 * .share-slide-frame uses both cqi and cqb units to fit
+		 * the 16:9 slide within whatever dimensions are available.
+		 */
 		container-type: size;
 		opacity: 0.93;
 		transform: scale(0.985);
@@ -679,14 +684,19 @@
 		}
 
 		.share-actions :global(a),
-		.share-actions :global(button:not(.share-cta)) {
+		.share-actions :global(button:not(.share-cta)),
+		.share-actions :global(.disabled) {
 			font-size: 0.75rem;
 			padding: 5px 10px;
+			min-height: 44px;
+			display: inline-flex;
+			align-items: center;
 		}
 
 		.share-cta {
 			font-size: 0.78rem;
 			padding: 7px 12px;
+			min-height: 44px;
 		}
 
 		.share-counter {

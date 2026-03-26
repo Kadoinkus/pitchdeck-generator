@@ -154,9 +154,12 @@ export function swipeable(
 		node.removeEventListener('pointerup', onPointerUp);
 		node.removeEventListener('pointercancel', onPointerUp);
 
-		const threshold = Math.min(
-			opts.threshold ?? 140,
-			drag.width * 0.16,
+		const threshold = Math.max(
+			20,
+			Math.min(
+				opts.threshold ?? 140,
+				drag.width * 0.16,
+			),
 		);
 
 		if (drag.moved && Math.abs(drag.deltaX) > threshold) {
@@ -164,14 +167,12 @@ export function swipeable(
 			else opts.onPrev();
 
 			suppressNextClick = true;
-			requestAnimationFrame(() => {
-				suppressNextClick = false;
-			});
 		}
 	}
 
 	function onClickCapture(event: MouseEvent): void {
 		if (suppressNextClick) {
+			suppressNextClick = false;
 			event.stopPropagation();
 			event.preventDefault();
 		}

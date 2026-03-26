@@ -121,15 +121,15 @@ test('viewer share menu routes are token-based', async ({ page }) => {
 	const menu = page.locator('.viewer-share-menu');
 	await expect(menu).toBeVisible();
 
-	await expect(menu.getByRole('link', { name: 'Download PPTX' })).toHaveAttribute(
+	await expect(menu.getByRole('menuitem', { name: 'Download PPTX' })).toHaveAttribute(
 		'href',
 		/\/api\/download\/tok123$/,
 	);
-	await expect(menu.getByRole('link', { name: 'Download PDF' })).toHaveAttribute(
+	await expect(menu.getByRole('menuitem', { name: 'Download PDF' })).toHaveAttribute(
 		'href',
 		/\/api\/pdf\/tok123$/,
 	);
-	await expect(menu.getByRole('link', { name: 'Open share link' })).toHaveAttribute(
+	await expect(menu.getByRole('menuitem', { name: 'Open share link' })).toHaveAttribute(
 		'href',
 		/\/share\/tok123$/,
 	);
