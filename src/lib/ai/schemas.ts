@@ -4,17 +4,12 @@
  */
 import { z } from 'zod';
 
-// --- Primitives ---
-
-/** Coerce unknown → trimmed string, fallback on undefined/null/error. */
-const str = (fallback = '') => z.coerce.string().trim().catch(fallback).default(fallback);
-
 // --- Suggested Changes (chat/autofill responses) ---
 
 export const SuggestedChangeSchema = z.object({
-	field: str(),
-	label: str(),
-	value: str(),
+	field: z.coerce.string().trim().catch(''),
+	label: z.coerce.string().trim().catch(''),
+	value: z.coerce.string().trim().catch(''),
 });
 
 export type SuggestedChange = z.infer<typeof SuggestedChangeSchema>;
@@ -26,16 +21,14 @@ export const SuggestedChangesSchema = z
 
 // --- Autofill Draft ---
 
-export const AutofillDraftSchema = z
-	.record(z.string(), z.coerce.string().trim())
-	.catch({});
+export const AutofillDraftSchema = z.record(z.string(), z.coerce.string().trim()).catch({});
 
 // --- Image Prompts ---
 
 export const ImagePromptSchema = z.object({
-	slideId: str(),
-	slideTitle: str(),
-	prompt: str(),
+	slideId: z.coerce.string().trim().catch(''),
+	slideTitle: z.coerce.string().trim().catch(''),
+	prompt: z.coerce.string().trim().catch(''),
 });
 
 export type ImagePrompt = z.infer<typeof ImagePromptSchema>;
@@ -52,7 +45,7 @@ export const ImagePromptsSchema = z
 	);
 
 export const ImageDraftSchema = z.object({
-	combinedPromptText: str(),
+	combinedPromptText: z.coerce.string().trim().catch(''),
 	prompts: ImagePromptsSchema.default([]),
 });
 
@@ -61,7 +54,7 @@ export type ImageDraft = z.infer<typeof ImageDraftSchema>;
 // --- Chat Response ---
 
 export const ChatResponseSchema = z.object({
-	reply: str('Suggestions are ready.'),
+	reply: z.coerce.string().trim().catch('Suggestions are ready.'),
 	suggestedChanges: SuggestedChangesSchema.default([]),
 });
 
@@ -74,23 +67,18 @@ export const AutofillResponseSchema = z.object({
 
 // --- AI Config (from form payload) ---
 
-const provider = z.coerce.string().trim().toLowerCase().catch('local').default('local');
-const model = str('gpt-5.4-mini');
-const optStr = str();
-
-/** Parses raw form data with `ai*` prefixed fields into normalized config. */
 export const AiConfigSchema = z
 	.object({
-		aiTextProvider: provider,
-		aiTextModel: model,
-		aiTextApiKey: optStr,
-		aiTextBaseUrl: optStr,
-		aiImageProvider: provider,
-		aiImageModel: model,
-		aiImageApiKey: optStr,
-		aiImageBaseUrl: optStr,
-		aiApiKey: optStr,
-		aiBaseUrl: optStr,
+		aiTextProvider: z.coerce.string().trim().toLowerCase().default('local'),
+		aiTextModel: z.coerce.string().trim().default('gpt-5.4-mini'),
+		aiTextApiKey: z.coerce.string().trim().default(''),
+		aiTextBaseUrl: z.coerce.string().trim().default(''),
+		aiImageProvider: z.coerce.string().trim().toLowerCase().default('local'),
+		aiImageModel: z.coerce.string().trim().default('gpt-5.4-mini'),
+		aiImageApiKey: z.coerce.string().trim().default(''),
+		aiImageBaseUrl: z.coerce.string().trim().default(''),
+		aiApiKey: z.coerce.string().trim().default(''),
+		aiBaseUrl: z.coerce.string().trim().default(''),
 	})
 	.transform((d) => ({
 		textProvider: d.aiTextProvider,
@@ -108,8 +96,8 @@ export type AiConfig = z.infer<typeof AiConfigSchema>;
 // --- Chat Request ---
 
 export const ChatRequestSchema = z.object({
-	targetField: str('global-concept'),
-	message: str('Improve this section.'),
+	targetField: z.coerce.string().trim().default('global-concept'),
+	message: z.coerce.string().trim().default('Improve this section.'),
 });
 
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
