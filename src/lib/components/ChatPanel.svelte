@@ -3,6 +3,7 @@
 	import type { SuggestedChange } from '$lib/ai/orchestrator';
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { tick } from 'svelte';
+	import { MediaQuery } from 'svelte/reactivity';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */
@@ -37,19 +38,8 @@
 	const MAX_W = 700;
 	const MIN_H = 320;
 	const MAX_H = 800;
-	const MOBILE_QUERY = '(max-width: 480px)';
-
-	let isMobile = $state(false);
-
-	$effect(() => {
-		const mql = window.matchMedia(MOBILE_QUERY);
-		isMobile = mql.matches;
-		function onChange(e: MediaQueryListEvent): void {
-			isMobile = e.matches;
-		}
-		mql.addEventListener('change', onChange);
-		return () => mql.removeEventListener('change', onChange);
-	});
+	const mobile = new MediaQuery('max-width: 480px');
+	const isMobile = $derived(mobile.current);
 
 	const chatTarget = $derived(viewer.chatTarget);
 

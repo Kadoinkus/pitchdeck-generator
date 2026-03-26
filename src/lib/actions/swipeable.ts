@@ -100,7 +100,6 @@ export function swipeable(
 	function onWheel(event: WheelEvent): void {
 		if (drag.active) return;
 		if (event.ctrlKey || event.metaKey || event.altKey) return;
-		if (isInteractiveTarget(event.target)) return;
 
 		const delta = normalizeWheelDelta(event);
 		if (Math.abs(delta) < 2) return;

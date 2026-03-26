@@ -124,38 +124,32 @@
 	$effect(() => {
 		const el = viewerEl;
 		if (!el) return;
-
-		/* Move focus into the viewer on open. */
 		const first = queryFocusable(el)[0];
 		first?.focus();
+	});
 
-		function trapFocus(this: HTMLDivElement, event: KeyboardEvent): void {
-			if (event.key !== 'Tab') return;
+	function trapFocus(event: KeyboardEvent): void {
+		if (event.key !== 'Tab' || !viewerEl) return;
 
-			const focusable = queryFocusable(this);
-			if (focusable.length === 0) return;
+		const focusable = queryFocusable(viewerEl);
+		if (focusable.length === 0) return;
 
-			const firstEl = focusable[0];
-			const lastEl = focusable[focusable.length - 1];
-			if (!firstEl || !lastEl) return;
+		const firstEl = focusable[0];
+		const lastEl = focusable[focusable.length - 1];
+		if (!firstEl || !lastEl) return;
 
-			if (event.shiftKey) {
-				if (document.activeElement === firstEl) {
-					event.preventDefault();
-					lastEl.focus();
-				}
-			} else {
-				if (document.activeElement === lastEl) {
-					event.preventDefault();
-					firstEl.focus();
-				}
+		if (event.shiftKey) {
+			if (document.activeElement === firstEl) {
+				event.preventDefault();
+				lastEl.focus();
+			}
+		} else {
+			if (document.activeElement === lastEl) {
+				event.preventDefault();
+				firstEl.focus();
 			}
 		}
-
-		const handler = trapFocus.bind(el);
-		el.addEventListener('keydown', handler);
-		return () => el.removeEventListener('keydown', handler);
-	});
+	}
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -167,7 +161,9 @@
 		role="dialog"
 		aria-modal="true"
 		aria-label="Slide viewer"
+		tabindex="-1"
 		bind:this={viewerEl}
+		onkeydown={trapFocus}
 	>
 		<ViewerToolbar
 			{projectName}

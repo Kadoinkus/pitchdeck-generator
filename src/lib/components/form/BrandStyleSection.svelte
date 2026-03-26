@@ -26,6 +26,7 @@
 		brandTarget === 'accent' ? theme.accentColor : primaryColor,
 	);
 
+	let logoInputEl: HTMLInputElement | undefined = $state();
 	let logoPreview = $state<string | null>(null);
 	let extractedHex = $state<string | null>(null);
 	let extracting = $state(false);
@@ -246,15 +247,15 @@
 				dragOver = false;
 			}}
 			ondrop={handleLogoDrop}
-			onclick={() => document.getElementById('logo-upload')?.click()}
+			onclick={() => logoInputEl?.click()}
 			onkeydown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
-					document.getElementById('logo-upload')?.click();
+					logoInputEl?.click();
 				}
 			}}
 		>
 			<input
-				id="logo-upload"
+				bind:this={logoInputEl}
 				type="file"
 				accept="image/*"
 				aria-label="Upload logo"

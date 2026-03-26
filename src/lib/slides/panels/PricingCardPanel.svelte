@@ -51,10 +51,12 @@
 	data-ai-label="{tier.name || 'Tier'} pricing card"
 >
 	<div class="pricing-accent"></div>
-	{#if index === 1}
-		<span class="pricing-badge">Recommended</span>
-	{/if}
-	<h2>{safeName}</h2>
+	<h2>
+		{safeName}
+		{#if index === 1}
+			<span class="pricing-badge">Recommended</span>
+		{/if}
+	</h2>
 	<p class="price">{safePrice}</p>
 	<ul>
 		{#each features as feature (feature)}

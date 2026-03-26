@@ -100,11 +100,11 @@
 		};
 	});
 
-	/** Delegate click/keydown on [data-ai-target] children imperatively
-	 *  so the parent div stays non-interactive in the template. */
+	/** Event delegation for [data-ai-target] children and editable footer.
+	 *  Attached imperatively — the container is non-interactive (carousel region). */
 	$effect(() => {
-		if (!deckEl) return;
 		const el = deckEl;
+		if (!el) return;
 
 		function resolveAiTarget(origin: EventTarget | null): boolean {
 			if (!(origin instanceof HTMLElement)) return false;
@@ -124,53 +124,48 @@
 			return origin.closest<HTMLElement>('[data-footer-brand="true"]');
 		}
 
-		function onFooterKeydown(event: KeyboardEvent): void {
-			const footer = getFooter(event.target);
-			if (!footer) return;
-
-			if (event.key === 'Enter') {
-				event.preventDefault();
-				footer.blur();
-				return;
-			}
-
-			if (event.key === 'Escape') {
-				event.preventDefault();
-				footer.textContent = normalizeFooterBrand(
-					String(viewer.slideData?.theme?.brandName || DEFAULT_BRAND_NAME),
-				);
-				footer.blur();
-			}
-		}
-
-		function onFooterFocusOut(event: FocusEvent): void {
-			const footer = getFooter(event.target);
-			if (!footer) return;
-			const nextBrand = normalizeFooterBrand(footer.textContent ?? '');
-			footer.textContent = nextBrand;
-			updateFooterBrand(nextBrand);
-		}
-
 		function onClick(e: MouseEvent): void {
 			resolveAiTarget(e.target);
 		}
-		function onKeydown(e: KeyboardEvent): void {
-			onFooterKeydown(e);
-			if (e.defaultPrevented) return;
 
+		function onKeydown(e: KeyboardEvent): void {
+			const footer = getFooter(e.target);
+			if (footer) {
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					footer.blur();
+					return;
+				}
+				if (e.key === 'Escape') {
+					e.preventDefault();
+					footer.textContent = normalizeFooterBrand(
+						String(viewer.slideData?.theme?.brandName || DEFAULT_BRAND_NAME),
+					);
+					footer.blur();
+					return;
+				}
+			}
 			if (e.key !== 'Enter' && e.key !== ' ') return;
 			if (resolveAiTarget(e.target)) {
 				e.preventDefault();
 			}
 		}
 
+		function onFocusout(e: FocusEvent): void {
+			const footer = getFooter(e.target);
+			if (!footer) return;
+			const nextBrand = normalizeFooterBrand(footer.textContent ?? '');
+			footer.textContent = nextBrand;
+			updateFooterBrand(nextBrand);
+		}
+
 		el.addEventListener('click', onClick);
 		el.addEventListener('keydown', onKeydown);
-		el.addEventListener('focusout', onFooterFocusOut);
+		el.addEventListener('focusout', onFocusout);
 		return () => {
 			el.removeEventListener('click', onClick);
 			el.removeEventListener('keydown', onKeydown);
-			el.removeEventListener('focusout', onFooterFocusOut);
+			el.removeEventListener('focusout', onFocusout);
 		};
 	});
 </script>

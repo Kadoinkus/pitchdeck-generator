@@ -106,4 +106,14 @@ bun run fmt
 - Write ONLY idiomatic svelte code.
 - Always update and maintain this and every other `AGENTS.md` after making changes.
 - When changing svelte code, always use the mcp and read the docs.
-- ALWAYS maintain DISCOVERIES.md when learning new things about the codebase, even if they seem obvious or you think you will remember them. This is crucial for building a shared knowledge base and avoiding information silos.
+- ALWAYS maintain DISCOVERIES.md when learning new things about the codebase,
+  even if they seem obvious or you think you will remember them.\
+  This is crucial for building a shared knowledge base and avoiding information
+  silos.
+- Set an example of good documentation practices by being thorough, clear,
+  and consistent in your updates to this file and any other documentation you
+  contribute to.\
+  Use svelte patterns in favor of more generic JavaScript/TypeScript patterns
+  when writing code, and reflect that in your documentation.\
+  This will help foster a culture of knowledge sharing and continuous learning
+  within the team.

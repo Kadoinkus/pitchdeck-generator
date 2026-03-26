@@ -131,58 +131,45 @@
 		if (!shareOpen) return;
 		const target = event.target;
 		if (target instanceof Node) {
-			const dropdown = document.querySelector('.viewer-share-dropdown');
-			if (dropdown?.contains(target)) return;
+			if (dropdownEl?.contains(target)) return;
 		}
 		closeShare();
 	}
 
 	/** H9: Arrow key navigation + Escape within the share dropdown menu. */
-	$effect(() => {
-		const el = dropdownEl;
-		if (!el) return;
+	function handleDropdownKeydown(event: KeyboardEvent): void {
+		if (!shareOpen || !dropdownEl) return;
 
-		function onKeydown(this: HTMLDivElement, event: KeyboardEvent): void {
-			if (!shareOpen) return;
+		const items = [
+			...dropdownEl.querySelectorAll<HTMLElement>(
+				'[role="menuitem"]:not(:disabled)',
+			),
+		];
+		if (items.length === 0) return;
 
-			const menu = this.querySelector<HTMLElement>('.viewer-share-menu');
-			if (!menu) return;
+		const active = document.activeElement as HTMLElement | null;
+		const idx = active ? items.indexOf(active) : -1;
 
-			const items = [
-				...menu.querySelectorAll<HTMLElement>(
-					'[role="menuitem"]:not(:disabled)',
-				),
-			];
-			if (items.length === 0) return;
-
-			const active = document.activeElement as HTMLElement | null;
-			const idx = active ? items.indexOf(active) : -1;
-
-			switch (event.key) {
-				case 'ArrowDown': {
-					event.preventDefault();
-					const next = items[(idx + 1) % items.length];
-					next?.focus();
-					break;
-				}
-				case 'ArrowUp': {
-					event.preventDefault();
-					const prev = items[(idx - 1 + items.length) % items.length];
-					prev?.focus();
-					break;
-				}
-				case 'Escape':
-					event.preventDefault();
-					event.stopPropagation();
-					closeShare();
-					break;
+		switch (event.key) {
+			case 'ArrowDown': {
+				event.preventDefault();
+				const next = items[(idx + 1) % items.length];
+				next?.focus();
+				break;
 			}
+			case 'ArrowUp': {
+				event.preventDefault();
+				const prev = items[(idx - 1 + items.length) % items.length];
+				prev?.focus();
+				break;
+			}
+			case 'Escape':
+				event.preventDefault();
+				event.stopPropagation();
+				closeShare();
+				break;
 		}
-
-		const handler = onKeydown.bind(el);
-		el.addEventListener('keydown', handler);
-		return () => el.removeEventListener('keydown', handler);
-	});
+	}
 
 	function closeViewer(): void {
 		viewer.hide();
@@ -341,6 +328,9 @@
 			class="viewer-share-dropdown"
 			class:open={shareOpen}
 			bind:this={dropdownEl}
+			role="menu"
+			tabindex="-1"
+			onkeydown={handleDropdownKeydown}
 		>
 			<button
 				class="toolbar-btn viewer-share-toggle"

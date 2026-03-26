@@ -205,17 +205,13 @@
 		canNativeShare = typeof navigator.share === 'function';
 		isPrintMode = page.url.searchParams.get('print') === '1';
 		if (isPrintMode) {
-			document.body.classList.add('print-mode');
 			setTimeout(() => window.print(), 350);
 		}
-
-		return () => {
-			document.body.classList.remove('print-mode');
-		};
 	});
 </script>
 
 <svelte:window onkeydown={handleKey} />
+<svelte:body class:print-mode={isPrintMode} />
 
 <svelte:head>
 	<title>{pageTitle}</title>

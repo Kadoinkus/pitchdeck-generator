@@ -111,6 +111,7 @@
 		text-transform: uppercase;
 		font-weight: 700;
 		color: var(--muted);
+		width: fit-content;
 	}
 
 	/* Panel base + variants (used by many child components) */
@@ -231,6 +232,11 @@
 
 	.deck-slide :global(.split-layout > .text-surface) {
 		align-content: center;
+		pointer-events: none;
+	}
+
+	.deck-slide :global(.split-layout > .text-surface > *) {
+		pointer-events: auto;
 	}
 
 	.deck-slide :global(.grid-3) {
@@ -692,10 +698,14 @@
 		opacity: 0.6;
 	}
 
+	.deck-slide :global(.pricing-card h2) {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: clamp(6px, 0.5cqi, 10px);
+	}
+
 	.deck-slide :global(.pricing-badge) {
-		position: absolute;
-		top: clamp(10px, 1cqi, 14px);
-		right: clamp(10px, 1cqi, 14px);
 		font-size: clamp(8px, 0.6cqi, 10px);
 		font-weight: 700;
 		letter-spacing: 0.06em;
