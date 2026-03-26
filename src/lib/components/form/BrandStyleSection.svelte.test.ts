@@ -1,10 +1,10 @@
 import { DEFAULT_THEME_COLORS } from '$lib/color-palette';
 import * as palette from '$lib/stores/brand-palette.svelte';
 import { hydrateBrandPalette, pushHistory } from '$lib/stores/editor.svelte';
-import { page } from '@vitest/browser/context';
 import { tick } from 'svelte';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from 'vitest-browser-svelte';
+import { page } from 'vitest/browser';
 import BrandStyleSection from './BrandStyleSection.svelte';
 
 function resetAll(): void {

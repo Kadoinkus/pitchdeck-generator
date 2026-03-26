@@ -31,7 +31,7 @@ src/lib/deck/
 
 - Treat `schema.ts` as the only unknown->typed boundary for deck input.
 - Keep `slide-registry.ts` authoritative for required/defaultIncluded semantics.
-- Preserve backward-compat aliases in `types.ts` only when needed; mark deprecated fields explicitly.
+- Keep `deckTheme` as the only deck theme contract in `types.ts`; do not add legacy `theme` alias.
 - Keep `build.ts` deterministic: same parsed input => same model.
 
 ## ANTI-PATTERNS

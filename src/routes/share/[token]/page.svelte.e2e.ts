@@ -16,7 +16,7 @@ async function seedShareRecord(): Promise<void> {
 			createdAt: new Date().toISOString(),
 			slideData: {
 				slides: [{ type: 'cover', title: 'Seeded Share Deck' }],
-				theme: {},
+				deckTheme: {},
 				project: {
 					projectTitle: 'Seeded Share Deck',
 					clientName: 'E2E Client',
@@ -75,6 +75,27 @@ test('pdf endpoint returns deck pdf', async ({ request }) => {
 
 	const bytes = await response.body();
 	expect(bytes.subarray(0, 4).toString('utf8')).toBe('%PDF');
+});
+
+test('share api endpoint returns tokenized download url', async ({ request }) => {
+	const response = await request.get(`/api/share/${shareToken}`);
+	expect(response.status()).toBe(200);
+
+	const payload = await response.json();
+	expect(payload.success).toBe(true);
+	expect(payload.token).toBe(shareToken);
+	expect(payload.downloadUrl).toBe(`/api/download/${shareToken}`);
+});
+
+test('download endpoint returns deck pptx', async ({ request }) => {
+	const response = await request.get(`/api/download/${shareToken}`);
+	expect(response.status()).toBe(200);
+	expect(response.headers()['content-type']).toContain(
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+	);
+
+	const bytes = await response.body();
+	expect(bytes.subarray(0, 2).toString('utf8')).toBe('PK');
 });
 
 test('slide counter shows correct count', async ({ page }) => {

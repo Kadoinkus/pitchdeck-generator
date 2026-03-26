@@ -64,7 +64,7 @@ const ProjectSchema = z.object({
 
 export const SlideDataSchema = z.object({
 	slides: z.array(SlideSchema).min(1),
-	theme: z.record(z.string(), z.unknown()),
+	deckTheme: z.record(z.string(), z.unknown()),
 	project: ProjectSchema.optional(),
 }).passthrough();
 

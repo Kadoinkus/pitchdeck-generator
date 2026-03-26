@@ -1207,7 +1207,7 @@ function renderClosing(
 
 export function buildDeck(data: Record<string, unknown>): PptxPresentation {
 	const model = buildDeckModel(data);
-	const theme = model.deckTheme || model.theme;
+	const theme = model.deckTheme;
 	const { project, slides } = model;
 
 	const pptx = new PptxGenJS();

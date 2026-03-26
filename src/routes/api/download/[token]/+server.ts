@@ -1,4 +1,4 @@
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { buildDeck } from '$lib/deck-builder';
 import { buildPptxFromShare } from '$lib/server/pptx-from-share';
 import { getOutputDir } from '$lib/server/storage';
@@ -12,12 +12,12 @@ import type { RequestHandler } from './$types';
 
 const ShareDeckPayloadSchema = z.object({
 	slides: z.array(z.record(z.string(), z.unknown())),
-	theme: z.record(z.string(), z.unknown()),
+	deckTheme: z.record(z.string(), z.unknown()),
 });
 
 interface ShareDeckPayload extends DeckData {
 	slides: SlideData[];
-	theme: ThemeData;
+	deckTheme: ThemeData;
 }
 
 const inFlightByToken = new Map<string, Promise<Buffer>>();
@@ -54,7 +54,7 @@ async function renderPptx(
 	}
 
 	try {
-		const shareUrl = new URL(`${resolveRoute('/share/[token]', { token })}?print=1`, requestUrl).toString();
+		const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl).toString();
 		const rendered = await buildPptxFromShare({
 			shareUrl,
 			slideData,

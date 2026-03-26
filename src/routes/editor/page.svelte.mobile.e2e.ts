@@ -11,7 +11,7 @@ const SEEDED_RESULT = {
 	shareUrl: '/share/tok-mobile',
 	slideData: {
 		slides: [{ type: 'cover', title: 'Mobile E2E Deck' }],
-		theme: {},
+		deckTheme: {},
 		project: {
 			projectTitle: 'Mobile E2E Deck',
 			clientName: 'Mobile Client',

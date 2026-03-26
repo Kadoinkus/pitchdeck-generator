@@ -225,8 +225,6 @@ export interface DeckModel {
 	content: Content;
 	appTheme: AppTheme;
 	deckTheme: DeckTheme;
-	/** @deprecated Use deckTheme. Alias kept for client-side backward compatibility. */
-	theme: DeckTheme;
 	layout: {
 		presetId: string;
 		presetLabel: string;

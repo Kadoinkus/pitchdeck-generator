@@ -16,7 +16,7 @@ async function seedShareRecord(): Promise<void> {
 			createdAt: new Date().toISOString(),
 			slideData: {
 				slides: [{ type: 'cover', title: 'Mobile Share Deck' }],
-				theme: {},
+				deckTheme: {},
 				project: {
 					projectTitle: 'Mobile Share Deck',
 					clientName: 'Mobile Client',

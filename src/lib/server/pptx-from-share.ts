@@ -44,7 +44,6 @@ function sanitizeName(value: unknown, fallback: string): string {
 
 function resolveTheme(slideData: DeckData): ThemeData {
 	if (slideData.deckTheme) return slideData.deckTheme;
-	if (slideData.theme) return slideData.theme;
 	return {};
 }
 

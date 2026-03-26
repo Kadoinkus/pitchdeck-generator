@@ -119,3 +119,19 @@ Result: text appeared to jump between sizes instead of scaling smoothly.
 	pointer-events: auto;
 }
 ```
+
+---
+
+## Deprecation Sweep (2026-03-26)
+
+### `$app/paths`: `resolveRoute` -> `resolve`
+
+- `resolveRoute(...)` is deprecated in SvelteKit; `resolve(...)` has the same call signature for our usage.
+- Route URL construction now uses `resolve(...)` everywhere in server routes and remote publish code.
+
+### Theme shape hard cut: `theme` removed, `deckTheme` only
+
+- Canonical deck/share theme key is now `deckTheme`.
+- Removed `DeckModel.theme` alias and all runtime fallbacks that read legacy `theme` from deck/share payloads.
+- Editor localStorage schema now requires `slideData.deckTheme`; old persisted `slideData.theme` snapshots are intentionally invalidated.
+- Share payload validation for `/share/[token]` and `/api/download/[token]` now requires `deckTheme`.

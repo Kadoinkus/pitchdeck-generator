@@ -11,7 +11,7 @@ const SEEDED_RESULT = {
 	shareUrl: '/share/tok123',
 	slideData: {
 		slides: [{ type: 'cover', title: 'E2E Deck' }],
-		theme: {},
+		deckTheme: {},
 		project: {
 			projectTitle: 'E2E Deck',
 			clientName: 'E2E Client',
@@ -159,7 +159,7 @@ async function mockPublishOnce(
 					payloadHash: `hash-${token}`,
 					slideData: {
 						slides: [{ type: 'cover', title: clientName }],
-						theme: {},
+						deckTheme: {},
 						project: { projectTitle: 'AI Mascot Proposal', clientName },
 					},
 				},
@@ -241,7 +241,7 @@ const TWO_SLIDE_RESULT = {
 			{ type: 'cover', title: 'Slide One' },
 			{ type: 'problem', title: 'Slide Two' },
 		],
-		theme: {},
+		deckTheme: {},
 		project: {
 			projectTitle: 'Nav Deck',
 			clientName: 'Nav Client',

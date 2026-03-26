@@ -1,4 +1,4 @@
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { command, getRequestEvent } from '$app/server';
 import { hashPayload } from '$lib/payload-hash';
 import { getOutputDir } from '$lib/server/storage';
@@ -54,11 +54,11 @@ export const publishDeck = command(DeckPayloadSchema, async (payload): Promise<P
 			return {
 				success: true,
 				fileName: existing.fileName,
-				downloadUrl: new URL(resolveRoute('/api/download/[token]', { token: existingToken }), url).toString(),
+				downloadUrl: new URL(resolve('/api/download/[token]', { token: existingToken }), url).toString(),
 				slideData: existing.slideData,
 				shareToken: existingToken,
-				shareUrl: new URL(resolveRoute('/share/[token]', { token: existingToken }), url).toString(),
-				pdfUrl: new URL(resolveRoute('/api/pdf/[token]', { token: existingToken }), url).toString(),
+				shareUrl: new URL(resolve('/share/[token]', { token: existingToken }), url).toString(),
+				pdfUrl: new URL(resolve('/api/pdf/[token]', { token: existingToken }), url).toString(),
 				payloadHash,
 			};
 		}
@@ -80,11 +80,11 @@ export const publishDeck = command(DeckPayloadSchema, async (payload): Promise<P
 	return {
 		success: true,
 		fileName,
-		downloadUrl: new URL(resolveRoute('/api/download/[token]', { token: shareToken }), url).toString(),
+		downloadUrl: new URL(resolve('/api/download/[token]', { token: shareToken }), url).toString(),
 		slideData,
 		shareToken,
-		shareUrl: new URL(resolveRoute('/share/[token]', { token: shareToken }), url).toString(),
-		pdfUrl: new URL(resolveRoute('/api/pdf/[token]', { token: shareToken }), url).toString(),
+		shareUrl: new URL(resolve('/share/[token]', { token: shareToken }), url).toString(),
+		pdfUrl: new URL(resolve('/api/pdf/[token]', { token: shareToken }), url).toString(),
 		payloadHash,
 	};
 });

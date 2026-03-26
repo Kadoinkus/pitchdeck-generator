@@ -20,7 +20,7 @@
 	let shareButtonLabel = $state('Share');
 
 	const slides = $derived(data.slideData.slides);
-	const theme = $derived(data.slideData.theme);
+	const theme = $derived(data.slideData.deckTheme);
 	const total = $derived(slides.length);
 	const clientName = $derived(data.slideData.project?.clientName ?? 'Client');
 	const title = $derived(data.slideData.project?.projectTitle ?? 'Pitch Deck');

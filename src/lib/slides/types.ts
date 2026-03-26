@@ -70,5 +70,4 @@ export interface DeckData {
 		characterAssets?: unknown;
 	};
 	deckTheme?: ThemeData;
-	theme?: ThemeData;
 }

@@ -24,6 +24,7 @@ src/lib/server/
 - Keep these modules server-only; no direct import into client-rendered code.
 - Preserve deterministic file path behavior for token/hash artifacts.
 - Keep capture path resilient: timeouts/errors should surface clear failures to API handlers.
+- Treat `deckTheme` as required theme metadata for share capture artifacts (no legacy `theme` fallback).
 
 ## ANTI-PATTERNS
 

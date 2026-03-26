@@ -34,6 +34,7 @@ src/lib/
 - Keep facades thin (`deck-model.ts`, `slide-data.ts`): orchestration only, no duplicate domain logic.
 - Server-only modules stay in `src/lib/server`; do not import in client-facing components.
 - Prefer extending `deck/*` contracts over ad-hoc object shapes in callers.
+- Canonical deck theme key across lib modules is `deckTheme`; do not add `theme` alias fallbacks.
 
 ## ANTI-PATTERNS
 

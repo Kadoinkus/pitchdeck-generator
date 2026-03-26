@@ -1,10 +1,10 @@
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare, type ShareRecord } from '$lib/share-store';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
 	const token: string | undefined = params.token;
 	if (!token) {
 		return json(
@@ -26,6 +26,6 @@ export const GET: RequestHandler = async ({ params }) => {
 		token: record.token,
 		createdAt: record.createdAt,
 		slideData: record.slideData || null,
-		downloadUrl: resolveRoute('/api/download/[token]', { token: record.token }),
+		downloadUrl: new URL(resolve('/api/download/[token]', { token: record.token }), url).pathname,
 	});
 };

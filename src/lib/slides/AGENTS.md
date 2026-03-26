@@ -30,6 +30,7 @@ src/lib/slides/
 - New slide types require explicit dispatcher mapping and layout component.
 - Keep core primitives generic; keep content assumptions in layouts.
 - Favor stable prop contracts in `types.ts`; avoid implicit shape reads in components.
+- `DeckData` theme contract is `deckTheme`; do not add `deckData.theme` fallback reads.
 
 ## ANTI-PATTERNS
 

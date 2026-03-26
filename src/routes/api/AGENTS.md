@@ -38,6 +38,8 @@ src/lib/
 - Keep route handlers thin: parse/validate, call lib modules, shape HTTP response.
 - Maintain consistent JSON error envelope and status semantics across endpoints.
 - Validate token/payload shape at boundary before expensive render/storage operations.
+- Build internal links with `$app/paths.resolve(...)`; do not use deprecated `resolveRoute(...)`.
+- Share/deck payload shape requires `deckTheme`; reject legacy `theme` payloads.
 
 ## ANTI-PATTERNS
 

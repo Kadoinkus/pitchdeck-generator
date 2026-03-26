@@ -33,12 +33,11 @@ export function themeVars(theme: ThemeInput | null | undefined): string {
 
 interface ThemeSource {
 	deckTheme?: ThemeInput;
-	theme?: ThemeInput;
 }
 
 export function resolveTheme(
 	theme: ThemeInput | null | undefined,
 	deckData: ThemeSource | null | undefined,
 ): ThemeInput {
-	return deckData?.deckTheme || theme || deckData?.theme || {};
+	return deckData?.deckTheme || theme || {};
 }

@@ -81,7 +81,11 @@
 
 		const data: ViewerDeckData = {
 			slides: sd.slides.map((s) => ({ ...s })),
-			theme: { ...sd.theme },
+			theme: {
+				...(typeof sd.deckTheme === 'object' && sd.deckTheme !== null
+					? sd.deckTheme
+					: {}),
+			},
 			project: sd.project,
 		};
 

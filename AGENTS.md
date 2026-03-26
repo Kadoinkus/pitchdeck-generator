@@ -62,6 +62,8 @@ pitchdeck-generator/
 - `editor/+layout.ts` sets `ssr = false`; app is not globally CSR.
 - `start` runs preview and `prestart` enforces full build first.
 - Dprint (`bun run fmt`) is formatter; no Prettier config.
+- Route/path generation uses `$app/paths.resolve(...)`; do not use deprecated `resolveRoute(...)`.
+- Canonical deck/share theme key is `deckTheme`; do not reintroduce `theme` alias payloads.
 
 ## ANTI-PATTERNS (THIS PROJECT)
 

@@ -305,7 +305,6 @@ export function buildDeckModel(rawData: unknown = {}): DeckModel {
 		content,
 		appTheme,
 		deckTheme,
-		theme: deckTheme,
 		layout: {
 			presetId: layoutPreset.id,
 			presetLabel: layoutPreset.label,

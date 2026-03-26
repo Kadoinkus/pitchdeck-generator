@@ -1,4 +1,4 @@
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare } from '$lib/share-store';
 import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
@@ -8,7 +8,7 @@ import type { PageServerLoad } from './$types';
 /** Shape of the deck blob persisted inside a share record. */
 interface ShareDeckPayload extends DeckData {
 	slides: SlideData[];
-	theme: ThemeData;
+	deckTheme: ThemeData;
 }
 
 const TTL_DAYS = 30;
@@ -18,14 +18,14 @@ function isShareDeckPayload(value: unknown): value is ShareDeckPayload {
 	if (typeof value !== 'object' || value === null) return false;
 	return (
 		'slides' in value
-		&& 'theme' in value
+		&& 'deckTheme' in value
 		&& Array.isArray(value.slides)
-		&& typeof value.theme === 'object'
-		&& value.theme !== null
+		&& typeof value.deckTheme === 'object'
+		&& value.deckTheme !== null
 	);
 }
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, url }) => {
 	const { token } = params;
 	if (!token) error(404, 'Token required');
 
@@ -45,6 +45,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		token,
 		slideData: raw,
-		downloadUrl: resolveRoute('/api/download/[token]', { token }),
+		downloadUrl: new URL(resolve('/api/download/[token]', { token }), url).pathname,
 	};
 };

@@ -1,4 +1,4 @@
-import { resolveRoute } from '$app/paths';
+import { resolve } from '$app/paths';
 import { getOutputDir } from '$lib/server/storage';
 import { readShare, type ShareRecord, updateShare } from '$lib/share-store';
 import { sanitizeFilename } from '$lib/utils';
@@ -30,7 +30,7 @@ async function waitForRenderedSlides(page: Page): Promise<void> {
 }
 
 async function renderPdf(token: string, requestUrl: URL): Promise<Uint8Array<ArrayBuffer>> {
-	const shareUrl = new URL(`${resolveRoute('/share/[token]', { token })}?print=1`, requestUrl).toString();
+	const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl).toString();
 	const executablePath = await chromium.executablePath();
 
 	let browser: Browser | null = null;
