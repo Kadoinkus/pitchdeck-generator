@@ -117,3 +117,4 @@ bun run fmt
   when writing code, and reflect that in your documentation.\
   This will help foster a culture of knowledge sharing and continuous learning
   within the team.
+- Avoid indirection.

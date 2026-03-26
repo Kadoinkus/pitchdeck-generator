@@ -1,3 +1,7 @@
 {
-	"$schema": "https://svelte.dev/opencode/schema.json"
+	"$schema": "https://svelte.dev/opencode/schema.json",
+	"instructions": { "enabled": true },
+	"mcp": { "enabled": true, "type": "remote" },
+	"skills": { "enabled": true },
+	"subagent": { "agents": {}, "enabled": true }
 }
