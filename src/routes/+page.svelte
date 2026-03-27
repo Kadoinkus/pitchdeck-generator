@@ -99,10 +99,7 @@
 			]);
 
 			setTemplates(templates);
-			setProviders(
-				providers.textProviders,
-				providers.imageProviders,
-			);
+			setProviders(providers, providers);
 		} catch (error) {
 			console.error(error);
 			setStatus(

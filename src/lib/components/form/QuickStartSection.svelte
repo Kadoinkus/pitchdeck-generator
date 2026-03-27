@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { autofill } from '$lib/ai.remote';
+	import { autofill } from '$lib/ai/client';
+	import AiPromptModal from '$lib/components/AiPromptModal.svelte';
 	import Haiku from '$lib/components/Haiku.svelte';
+	import { ai } from '$lib/stores/ai.svelte';
 	import {
 		applyDraft,
 		applyImageDraft,
@@ -14,6 +16,7 @@
 		setStatus,
 		type TemplateEntry,
 	} from '$lib/stores/editor.svelte';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		onTemplateChange: (template: TemplateEntry) => void;
@@ -24,10 +27,13 @@
 
 	let autofilling = $state(false);
 	let generating = $state(false);
+	let showPromptModal = $state(false);
 
 	const payload = $derived(getPayload());
 	const templates = $derived(getTemplates());
 	const status = $derived(getStatus());
+
+	onMount(() => ai.init());
 
 	function handleTemplateSelect(event: Event) {
 		const target = event.target;
@@ -54,15 +60,20 @@
 	}
 
 	async function runAutofill() {
+		if (ai.needsSetup) {
+			showPromptModal = true;
+			return;
+		}
+
 		autofilling = true;
 		setStatus('AI is generating all slide text and image prompts...');
 		try {
-			const result = await autofill(payload);
+			const result = await autofill(ai.config, payload);
 			applyDraft(result.draft);
 			applyImageDraft(result.imageDraft);
 			pushHistory();
 			markDirty();
-			setStatus(`Autofill complete (${result.provider}).`);
+			setStatus('Autofill complete.');
 		} catch (error) {
 			console.error(error);
 			setStatus(
@@ -165,5 +176,8 @@
 	</div>
 	{#if autofilling}
 		<Haiku variant="inline" />
+	{/if}
+	{#if showPromptModal}
+		<AiPromptModal onClose={() => (showPromptModal = false)} />
 	{/if}
 </section>
