@@ -52,7 +52,7 @@
 		<label class="field">
 			<span>Provider</span>
 			<select bind:value={providerId}>
-				{#each PROVIDER_IDS.filter((id) => PROVIDERS[id].requiresKey) as id}
+				{#each PROVIDER_IDS.filter((id) => PROVIDERS[id].requiresKey) as id (id)}
 					<option value={id}>{PROVIDERS[id].label}</option>
 				{/each}
 			</select>

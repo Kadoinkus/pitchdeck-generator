@@ -51,7 +51,7 @@
 	<label class="field">
 		<span>Provider</span>
 		<select bind:value={providerId} onchange={handleProviderChange}>
-			{#each PROVIDER_IDS as id}
+			{#each PROVIDER_IDS as id (id)}
 				<option value={id}>{PROVIDERS[id].label}</option>
 			{/each}
 		</select>
@@ -61,7 +61,7 @@
 		<label class="field">
 			<span>Model</span>
 			<select bind:value={modelId}>
-				{#each models as model}
+				{#each models as model (model)}
 					<option value={model}>{model}</option>
 				{/each}
 				<option value="">Custom...</option>
