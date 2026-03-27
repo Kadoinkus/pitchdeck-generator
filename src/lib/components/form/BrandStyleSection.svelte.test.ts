@@ -71,6 +71,7 @@ describe('BrandStyleSection — real button clicks', () => {
 		await summary.click();
 		await tick();
 
+		// TODO: Use locator API instead of document.querySelectorAll for consistency
 		// Click the second preset card
 		const presetCards = document.querySelectorAll('.preset-card');
 		expect(presetCards.length).toBe(4);
@@ -111,6 +112,7 @@ describe('BrandStyleSection — real button clicks', () => {
 		expect(seen.size).toBeGreaterThanOrEqual(2);
 	});
 
+	// TODO: Test UI interaction, not direct store calls
 	it('color picker change updates the active swatches', async () => {
 		resetAll();
 		await render(BrandStyleSection);

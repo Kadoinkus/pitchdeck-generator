@@ -40,6 +40,9 @@ function createAiStore() {
 
 		setProvider(providerId: ProviderId) {
 			const next = getDefaultConfig(providerId);
+			// Preserves API key when switching between providers that share key formats
+			// (e.g., OpenAI-compatible endpoints). May confuse users switching between
+			// incompatible providers — consider clearing key unless providers are compatible.
 			if (config?.apiKey && PROVIDERS[providerId].requiresKey) {
 				next.apiKey = config.apiKey;
 			}

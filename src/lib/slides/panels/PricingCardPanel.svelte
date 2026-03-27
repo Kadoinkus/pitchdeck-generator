@@ -35,6 +35,7 @@
 	const baseCls = $derived(
 		panelClassName({ variant, className: 'pricing-card' }),
 	);
+	// Index 0: default, Index 1: featured/highlighted, Index 2: dark/enterprise
 	const featuredCls = $derived(index === 1 ? 'is-featured' : '');
 	const darkCls = $derived(index === 2 ? 'is-dark' : '');
 	const cls = $derived(
@@ -59,7 +60,7 @@
 	</h2>
 	<p class="price">{safePrice}</p>
 	<ul>
-		{#each features as feature (feature)}
+		{#each features as feature, i (i)}
 			<li>
 				<svg
 					class="check-icon"

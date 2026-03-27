@@ -151,6 +151,7 @@ export async function extractDominantColor(file: File): Promise<string> {
 
 	// Fallback: if almost everything was filtered, use all pixels
 	if (pixels.length < 10) {
+		pixels.length = 0;
 		for (let i = 0; i < data.length; i += 4) {
 			pixels.push({ r: data[i] ?? 0, g: data[i + 1] ?? 0, b: data[i + 2] ?? 0 });
 		}

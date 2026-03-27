@@ -9,13 +9,17 @@ export function persistDetails(node: HTMLDetailsElement, key: string) {
 	const storageKey = STORAGE_PREFIX + key;
 
 	// Restore
-	const saved = localStorage.getItem(storageKey);
-	if (saved === 'true') node.open = true;
-	else if (saved === 'false') node.open = false;
-	// else: leave the HTML default
+	try {
+		const saved = localStorage.getItem(storageKey);
+		if (saved === 'true') node.open = true;
+		else if (saved === 'false') node.open = false;
+		// else: leave the HTML default
+	} catch { /* Safari private mode / quota exceeded */ }
 
 	function onToggle() {
-		localStorage.setItem(storageKey, String(node.open));
+		try {
+			localStorage.setItem(storageKey, String(node.open));
+		} catch { /* Safari private mode / quota exceeded */ }
 	}
 
 	node.addEventListener('toggle', onToggle);

@@ -25,13 +25,13 @@
 				'Support repeats the same work.',
 				'Automation feels generic.',
 			]),
-			4,
+			3,
 			90,
 		),
 	);
-	const pointCards = $derived(points.slice(0, 3));
+	const pointCards = $derived(points);
 	const hasVisual = $derived(
-		Boolean(findAssetForSlide(slide, deckData)?.dataUrl) || !slide.hideImages,
+		Boolean(findAssetForSlide(slide, deckData)?.dataUrl) && !slide.hideImages,
 	);
 	const bottomLayoutClass = $derived(
 		hasVisual ? 'split-layout' : 'stack-layout',

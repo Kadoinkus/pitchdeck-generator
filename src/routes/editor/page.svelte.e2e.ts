@@ -144,8 +144,9 @@ async function mockPublishOnce(
 	token: string,
 	clientName: string,
 ): Promise<void> {
-	await page.route('**/_app/remote/**', (route) =>
-		route.fulfill({
+	const url = '**/_app/remote/**';
+	const handler = async (route: import('@playwright/test').Route) => {
+		await route.fulfill({
 			status: 200,
 			contentType: 'application/json',
 			body: JSON.stringify({
@@ -164,9 +165,13 @@ async function mockPublishOnce(
 					},
 				},
 			}),
-		}));
+		});
+		await page.unroute(url, handler);
+	};
+	await page.route(url, handler);
 }
 
+// FIXME: Publish flow flaky — needs investigation
 test.fixme('publish flow: navigates to editor, shows stale after edit, clears on republish', async ({ page }) => {
 	// Clear storage once before the first load (not on every navigation)
 	await page.addInitScript(({ resultKey, viewerKey, slideKey }) => {

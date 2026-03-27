@@ -5,6 +5,11 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
+		/**
+		 * Viewer state for shallow routing (history API).
+		 * Present = viewer is open. Omitting = closed.
+		 * Literal `{ open: true }` prevents `{ open: false }` footgun.
+		 */
 		interface PageState {
 			viewer?: { open: true };
 		}

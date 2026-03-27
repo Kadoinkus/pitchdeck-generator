@@ -14,6 +14,8 @@
 	 * padding is always visible around the active thumbnail.
 	 */
 	$effect(() => {
+		// Intentional reactive dependency tracker: reading `viewer.currentSlide`
+		// subscribes this $effect to fine-grained Svelte 5 reactivity. Do not remove.
 		void viewer.currentSlide;
 		if (!thumbsEl) return;
 		const el = thumbsEl.querySelector<HTMLElement>('.thumb.active');

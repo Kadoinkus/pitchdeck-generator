@@ -148,10 +148,13 @@
 			} else {
 				messages = [...messages, { role: 'assistant', text: 'Failed to parse response.' }];
 			}
-		} catch {
+		} catch (error) {
+			const text = error instanceof SyntaxError
+				? 'Failed to parse response.'
+				: 'Network error. Please try again.';
 			messages = [
 				...messages,
-				{ role: 'assistant', text: 'Network error. Please try again.' },
+				{ role: 'assistant', text },
 			];
 		} finally {
 			sending = false;
@@ -305,7 +308,7 @@
 		{/if}
 
 		<div class="messages">
-			{#each messages as msg (msg)}
+			{#each messages as msg, i (i)}
 				<div class="bubble {msg.role}">
 					{#if msg.role === 'assistant'}
 						<svg

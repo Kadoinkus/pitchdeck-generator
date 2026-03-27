@@ -58,6 +58,7 @@ describe('randomHaiku', () => {
 	it('returns a valid haiku for each language', () => {
 		const h = randomHaiku('en');
 		expect(h).toBeDefined();
+		expect(h?.lang).toBe('en');
 		expect(h?.lines).toHaveLength(3);
 	});
 });

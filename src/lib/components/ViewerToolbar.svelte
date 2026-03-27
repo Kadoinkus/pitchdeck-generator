@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { toAbsoluteUrl } from '$lib/routing/share-links';
 	import { viewer } from '$lib/stores/viewer.svelte';
-	import { tick } from 'svelte';
+	import { onDestroy, tick } from 'svelte';
 
 	interface Props {
 		projectName?: string;
@@ -76,6 +76,10 @@
 	let copyLabel = $state('Copy share link');
 	let dropdownEl: HTMLDivElement | undefined = $state();
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
+
+	onDestroy(() => {
+		if (copyTimer !== undefined) clearTimeout(copyTimer);
+	});
 
 	const atStart = $derived(viewer.currentSlide <= 0);
 	const atEnd = $derived(viewer.currentSlide >= viewer.slideCount - 1);
@@ -328,7 +332,6 @@
 			class="viewer-share-dropdown"
 			class:open={shareOpen}
 			bind:this={dropdownEl}
-			role="menu"
 			tabindex="-1"
 			onkeydown={handleDropdownKeydown}
 		>

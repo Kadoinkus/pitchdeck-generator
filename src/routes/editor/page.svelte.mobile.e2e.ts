@@ -126,14 +126,17 @@ test.describe('mobile editor', () => {
 
 		const toolbarBtns = page.locator('.toolbar-btn');
 		const count = await toolbarBtns.count();
+		let visibleCount = 0;
 		for (let i = 0; i < count; i++) {
 			const btn = toolbarBtns.nth(i);
 			if (!(await btn.isVisible())) continue;
+			visibleCount++;
 			const box = await btn.boundingBox();
 			if (!box) continue;
 			expect(box.width).toBeGreaterThanOrEqual(44);
 			expect(box.height).toBeGreaterThanOrEqual(44);
 		}
+		expect(visibleCount).toBeGreaterThan(0);
 	});
 
 	test('share dropdown backdrop covers full viewport', async ({ page }) => {

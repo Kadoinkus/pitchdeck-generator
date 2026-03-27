@@ -1,12 +1,15 @@
-export function panelVariantClass(variant: string = 'solid'): string {
-	const value = String(variant || 'solid')
+const VARIANT_CLASSES: Record<string, string> = {
+	transparent: 'is-transparent',
+	outlined: 'is-outlined',
+	soft: 'is-soft',
+	dark: 'is-dark',
+};
+
+export function panelVariantClass(variant?: string): string {
+	const value = String(variant ?? 'solid')
 		.trim()
 		.toLowerCase();
-	if (value === 'transparent') return 'is-transparent';
-	if (value === 'outlined') return 'is-outlined';
-	if (value === 'soft') return 'is-soft';
-	if (value === 'dark') return 'is-dark';
-	return 'is-solid';
+	return VARIANT_CLASSES[value] ?? 'is-solid';
 }
 
 interface PanelClassNameOptions {

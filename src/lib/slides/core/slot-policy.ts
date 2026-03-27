@@ -25,145 +25,49 @@ const DEFAULT_TEXT_POLICY: TextPolicy = {
 	mode: 'fit',
 };
 
+/** Image optional, default contain, both modes allowed. */
+const IMAGE_OPTIONAL_CONTAIN: ImagePolicy = {
+	required: false,
+	optional: true,
+	defaultMode: 'contain',
+	allowedModes: ['contain', 'cover'],
+};
+
+/** Image required, default cover, both modes allowed. */
+const IMAGE_REQUIRED_COVER: ImagePolicy = {
+	required: true,
+	optional: false,
+	defaultMode: 'cover',
+	allowedModes: ['cover', 'contain'],
+};
+
+/** Image required, default contain, both modes allowed. */
+const IMAGE_REQUIRED_CONTAIN: ImagePolicy = {
+	required: true,
+	optional: false,
+	defaultMode: 'contain',
+	allowedModes: ['contain', 'cover'],
+};
+
 const SLOT_POLICIES: Record<
 	string,
 	{ text?: Partial<TextPolicy>; image?: Partial<ImagePolicy> }
 > = {
-	cover: {
-		text: { mode: 'fit' },
-		image: {
-			required: true,
-			optional: false,
-			defaultMode: 'cover',
-			allowedModes: ['cover', 'contain'],
-		},
-	},
-	problem: {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	opportunity: {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	solution: {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'what-notso-does': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'meet-buddy': {
-		text: { mode: 'fit' },
-		image: {
-			required: true,
-			optional: false,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'experience-concept': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'chat-flow': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'example-interaction': {
-		text: { mode: 'fit' },
-		image: {
-			required: true,
-			optional: false,
-			defaultMode: 'cover',
-			allowedModes: ['cover', 'contain'],
-		},
-	},
-	'business-impact': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'data-analytics': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	'what-you-get': {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	pricing: {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	timeline: {
-		text: { mode: 'fit' },
-		image: {
-			required: false,
-			optional: true,
-			defaultMode: 'contain',
-			allowedModes: ['contain', 'cover'],
-		},
-	},
-	closing: {
-		text: { mode: 'fit' },
-		image: {
-			required: true,
-			optional: false,
-			defaultMode: 'cover',
-			allowedModes: ['cover', 'contain'],
-		},
-	},
+	cover: { image: IMAGE_REQUIRED_COVER },
+	problem: { image: IMAGE_OPTIONAL_CONTAIN },
+	opportunity: { image: IMAGE_OPTIONAL_CONTAIN },
+	solution: { image: IMAGE_OPTIONAL_CONTAIN },
+	'what-notso-does': { image: IMAGE_OPTIONAL_CONTAIN },
+	'meet-buddy': { image: IMAGE_REQUIRED_CONTAIN },
+	'experience-concept': { image: IMAGE_OPTIONAL_CONTAIN },
+	'chat-flow': { image: IMAGE_OPTIONAL_CONTAIN },
+	'example-interaction': { image: IMAGE_REQUIRED_COVER },
+	'business-impact': { image: IMAGE_OPTIONAL_CONTAIN },
+	'data-analytics': { image: IMAGE_OPTIONAL_CONTAIN },
+	'what-you-get': { image: IMAGE_OPTIONAL_CONTAIN },
+	pricing: { image: IMAGE_OPTIONAL_CONTAIN },
+	timeline: { image: IMAGE_OPTIONAL_CONTAIN },
+	closing: { image: IMAGE_REQUIRED_COVER },
 };
 
 function isSlotPolicyLike(value: unknown): value is Partial<SlotPolicy> {

@@ -4,7 +4,7 @@ import { AutofillResponseSchema } from '$lib/ai/schemas';
 import { createProvider, isKnownProvider } from '$lib/ai/server-provider';
 import { buildDeckModel } from '$lib/deck-model';
 import { json } from '@sveltejs/kit';
-import { generateText, Output } from 'ai';
+import { generateText, NoObjectGeneratedError, Output } from 'ai';
 import { z } from 'zod';
 import type { RequestHandler } from './$types';
 
@@ -41,7 +41,15 @@ Output JSON schema:
 }
 
 export const POST: RequestHandler = async ({ request }) => {
-	const body = await request.json();
+	let body: unknown;
+	try {
+		body = await request.json();
+	} catch {
+		return json(
+			{ error: { code: 'PARSE_ERROR', message: 'Invalid JSON body' } } satisfies AiErrorResponse,
+			{ status: 400 },
+		);
+	}
 	const parsed = RequestSchema.safeParse(body);
 
 	if (!parsed.success) {
@@ -73,11 +81,28 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	try {
 		const provider = createProvider({ ...config, providerId });
-		const { output } = await generateText({
-			model: provider(config.modelId),
-			output: Output.object({ schema: AutofillResponseSchema }),
-			prompt: buildAutofillPrompt(deckData),
-		});
+		let output: Awaited<ReturnType<typeof generateText>>['output'];
+		try {
+			({ output } = await generateText({
+				model: provider(config.modelId),
+				output: Output.object({ schema: AutofillResponseSchema }),
+				prompt: buildAutofillPrompt(deckData),
+			}));
+		} catch (genErr) {
+			if (genErr instanceof NoObjectGeneratedError) {
+				console.error('Autofill generation failed:', {
+					finishReason: genErr.finishReason,
+					cause: genErr.cause,
+				});
+				return json(
+					{
+						error: { code: 'GENERATION_ERROR', message: 'Failed to generate autofill response' },
+					} satisfies AiErrorResponse,
+					{ status: 500 },
+				);
+			}
+			throw genErr;
+		}
 
 		return json(output);
 	} catch (err) {

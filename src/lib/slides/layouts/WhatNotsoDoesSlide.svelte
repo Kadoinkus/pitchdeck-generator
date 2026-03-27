@@ -62,7 +62,7 @@
 			data-ai-target={target}
 			data-ai-label="{slide.title} cards"
 		>
-			{#each cards as card (card)}
+			{#each cards as card, i (i)}
 				<IconFeaturePanel
 					slideType={slide.type}
 					sectionKey="cards"

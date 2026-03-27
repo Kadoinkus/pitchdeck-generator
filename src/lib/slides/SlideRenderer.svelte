@@ -49,7 +49,7 @@
 		deckData?: DeckData | null;
 	}
 
-	let { slide = null, theme = undefined, deckData = undefined }: Props = $props();
+	let { slide = undefined, theme = undefined, deckData = undefined }: Props = $props();
 
 	const resolvedTheme = $derived(resolveTheme(theme, deckData));
 
@@ -86,11 +86,7 @@
 {:else}
 	<Frame slide={normalised} theme={resolvedTheme}>
 		<p>
-			{
-				Layout || !normalised
-				? 'Unable to render slide.'
-				: `Unknown slide type: ${normalised.type}`
-			}
+			{#if !normalised}Unable to render slide.{:else}Unknown slide type: {normalised.type}{/if}
 		</p>
 	</Frame>
 {/if}

@@ -46,7 +46,7 @@
 	const safeHelper = $derived(fitText(helper, 80));
 </script>
 
-{#if !(isHidden && !forceVisible)}
+{#if !isHidden || forceVisible}
 	{#if asset?.dataUrl}
 		<figure
 			class="image-slot {cls} ai-clickable"

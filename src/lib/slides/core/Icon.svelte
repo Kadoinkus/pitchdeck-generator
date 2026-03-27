@@ -16,13 +16,13 @@
 
 	const paths = $derived(getIconPaths(name));
 	const px = $derived(resolveIconSize(size));
-	const ariaHidden = $derived(label ? 'false' : 'true');
+	const ariaHidden = $derived(!label);
 </script>
 
 <span
 	class="deck-icon {className}"
 	style:--icon-size="{px}px"
-	aria-hidden={ariaHidden}
+	aria-hidden={ariaHidden || undefined}
 	aria-label={label || undefined}
 	role={label ? 'img' : undefined}
 >
@@ -74,8 +74,10 @@
 		color: var(--icon-accent, var(--deck-accent, #30d89e));
 	}
 
+	/* TODO: Move these :global() rules to app.css — they pollute global namespace */
 	:global(.icon-panel) {
 		color: var(--icon-accent, var(--deck-accent, #30d89e));
+		--icon-size: 24px;
 		--icon-size: 4.2cqi;
 	}
 </style>

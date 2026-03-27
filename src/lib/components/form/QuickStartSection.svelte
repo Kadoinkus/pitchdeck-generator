@@ -20,7 +20,7 @@
 
 	interface Props {
 		onTemplateChange: (template: TemplateEntry) => void;
-		onPublish: () => void;
+		onPublish: () => void | Promise<void>;
 	}
 
 	let { onTemplateChange, onPublish }: Props = $props();
@@ -88,8 +88,11 @@
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		generating = true;
-		onPublish();
-		generating = false;
+		try {
+			await onPublish();
+		} finally {
+			generating = false;
+		}
 	}
 </script>
 

@@ -3,7 +3,7 @@
 	"plugin": ["@sveltejs/opencode"],
 	"formatter": {
 		"dprint": {
-			"command": ["bunx dprint fmt $FILE"],
+			"command": ["bunx", "dprint", "fmt", "$FILE"],
 			"extensions": [".svelte", ".ts", ".json", ".yml", ".html", ".md"]
 		}
 	}

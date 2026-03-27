@@ -60,17 +60,25 @@
 			>
 				{safeText}
 			</p>
-			<div class="contact-lines">
-				<p data-ai-target="contactName" data-ai-label="Contact name">
-					{safeContactName}
-				</p>
-				<p data-ai-target="contactEmail" data-ai-label="Contact email">
-					{safeContactEmail}
-				</p>
-				<p data-ai-target="contactPhone" data-ai-label="Contact phone">
-					{safeContactPhone}
-				</p>
-			</div>
+			{#if safeContactName || safeContactEmail || safeContactPhone}
+				<div class="contact-lines">
+					{#if safeContactName}
+						<p data-ai-target="contactName" data-ai-label="Contact name">
+							{safeContactName}
+						</p>
+					{/if}
+					{#if safeContactEmail}
+						<p data-ai-target="contactEmail" data-ai-label="Contact email">
+							{safeContactEmail}
+						</p>
+					{/if}
+					{#if safeContactPhone}
+						<p data-ai-target="contactPhone" data-ai-label="Contact phone">
+							{safeContactPhone}
+						</p>
+					{/if}
+				</div>
+			{/if}
 		</article>
 		<div class="closing-right">
 			<ImageSlot
@@ -87,7 +95,7 @@
 				data-ai-target="teamCards"
 				data-ai-label="Team cards"
 			>
-				{#each team as item (item)}
+				{#each team as item, i (item.title ?? i)}
 					<article class="panel team-card">
 						<h2>{fitText(item.title || '', 22)}</h2>
 						<p>{fitText(item.description || '', 52)}</p>

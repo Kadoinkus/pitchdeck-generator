@@ -65,7 +65,8 @@ function isSizeKey(value: string): value is SizeKey {
 	return value in SIZE_MAP;
 }
 
-function resolveSize(size: string | number): number {
+/** Resolves a size key or number to pixels. */
+export function resolveIconSize(size: string | number): number {
 	if (typeof size === 'number') return Math.max(14, Math.min(size, 64));
 	if (isSizeKey(size)) return SIZE_MAP[size];
 	return SIZE_MAP.md;
@@ -82,13 +83,8 @@ export function getIconPaths(name: string): readonly string[] {
 	return PATHS[name as keyof typeof PATHS] ?? FALLBACK_PATHS;
 }
 
-/** Resolves a size key or number to pixels. */
-export function resolveIconSize(size: string | number): number {
-	return resolveSize(size);
-}
-
 export function iconByKeyword(keyword = ''): string {
-	const k = String(keyword).toLowerCase();
+	const k = keyword.toLowerCase();
 	if (k.includes('price') || k.includes('cost') || k.includes('budget')) {
 		return 'wallet';
 	}

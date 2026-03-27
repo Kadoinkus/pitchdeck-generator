@@ -46,7 +46,7 @@
 			data-ai-target={target}
 			data-ai-label="{slide.title} impact points"
 		>
-			{#each impacts as impact (impact)}
+			{#each impacts as impact, i (i)}
 				<MetricPanel
 					slideType={slide.type}
 					sectionKey="impacts"

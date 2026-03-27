@@ -1,4 +1,5 @@
-import type { ImageRatio } from '$lib/deck/types';
+import type { CharacterAsset, ImageRatio } from '$lib/deck/types';
+import type { SlotPolicy } from '$lib/slides/core/slot-policy';
 
 export type { ImageRatio };
 
@@ -35,7 +36,7 @@ export interface SlideData {
 	imageMode?: string;
 	hideImages?: boolean;
 	sourceField?: string;
-	slotPolicy?: unknown;
+	slotPolicy?: SlotPolicy;
 	textMode?: string;
 	backgroundMode?: string;
 	imageAsset?: { dataUrl?: string; name?: string };
@@ -64,10 +65,11 @@ export interface DeckData {
 		contactName?: string;
 		contactEmail?: string;
 		contactPhone?: string;
-		characterAssets?: unknown;
+		/** Canonical source; also present in content for legacy compat. */
+		characterAssets?: CharacterAsset[];
 	};
 	content?: {
-		characterAssets?: unknown;
+		characterAssets?: CharacterAsset[];
 	};
 	deckTheme?: ThemeData;
 }

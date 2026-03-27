@@ -58,7 +58,7 @@
 				data-ai-target={target}
 				data-ai-label="{slide.title} bullets"
 			>
-				{#each bullets as bullet (bullet)}
+				{#each bullets as bullet, i (i)}
 					<li>{bullet}</li>
 				{/each}
 			</ul>

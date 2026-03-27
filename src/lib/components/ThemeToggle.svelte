@@ -62,7 +62,7 @@
 		</svg>
 	{/if}
 	{#if pref === 'system'}
-		<span class="badge">A</span>
+		<span class="badge" title="Auto" aria-label="Auto">A</span>
 	{/if}
 </button>
 

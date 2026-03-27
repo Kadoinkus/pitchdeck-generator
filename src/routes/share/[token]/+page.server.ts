@@ -32,11 +32,12 @@ export const load: PageServerLoad = async ({ params, url }) => {
 	const record = await readShare(getOutputDir(), token);
 	if (!record) error(404, 'Share link not found');
 
-	if (typeof record.createdAt === 'string') {
-		const age = Date.now() - new Date(record.createdAt).getTime();
-		if (age > TTL_MS) {
-			error(410, 'This shared deck has expired.');
-		}
+	const createdAtMs = Number(new Date(record.createdAt).getTime());
+	if (Number.isNaN(createdAtMs)) {
+		error(410, 'This shared deck has expired.');
+	}
+	if (Date.now() - createdAtMs > TTL_MS) {
+		error(410, 'This shared deck has expired.');
 	}
 
 	const raw: unknown = record.slideData;

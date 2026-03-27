@@ -1,4 +1,4 @@
-import type { BackgroundMode, LayoutPreset, SlideType } from '$lib/deck/types';
+import type { BackgroundMode, ImageRatio, LayoutPreset, SlideType } from '$lib/deck/types';
 import { RATIO_16_9, RATIO_1_1, RATIO_4_3 } from '$lib/deck/types';
 
 export const DEFAULT_LAYOUT_PRESET = 'notso-premium-v1';
@@ -39,7 +39,7 @@ const DEFAULT_PRESET: LayoutPreset = {
 		'pricing': RATIO_4_3,
 		'timeline': RATIO_16_9,
 		'closing': RATIO_4_3,
-	},
+	} satisfies Record<SlideType, ImageRatio>,
 	backgroundModeByType: {
 		'cover': 'light',
 		'problem': 'light',

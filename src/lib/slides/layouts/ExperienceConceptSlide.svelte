@@ -48,7 +48,7 @@
 				variant="transparent"
 			/>
 			<ul class="bullet-list">
-				{#each points as point (point)}
+				{#each points as point, i (i)}
 					<li>{point}</li>
 				{/each}
 			</ul>

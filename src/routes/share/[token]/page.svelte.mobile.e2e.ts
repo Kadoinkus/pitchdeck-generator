@@ -31,6 +31,7 @@ async function removeShareRecord(): Promise<void> {
 	await fs.rm(sharePath, { force: true });
 }
 
+// TODO: Generate unique shareToken per test for parallel safety
 test.describe('mobile share', () => {
 	test.use({ viewport: { width: 375, height: 812 } });
 

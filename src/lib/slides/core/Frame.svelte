@@ -24,7 +24,7 @@
 	const slideType = $derived(slide?.type || 'generic');
 	const style = $derived(themeVars(theme));
 	const brandName = $derived(theme?.brandName || 'Notso AI');
-	const footerIsEditable = $derived(page.route.id === '/editor');
+	const footerIsEditable = $derived(page.route.id?.startsWith('/editor'));
 </script>
 
 <article class="slide-render" {style}>

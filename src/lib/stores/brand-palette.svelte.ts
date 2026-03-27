@@ -165,9 +165,11 @@ export function setShuffleSeed(seed: number): void {
 
 export function shuffle(): void {
 	let next: number;
+	let attempts = 0;
 	do {
 		next = Math.floor(Math.random() * 1_000_000);
-	} while (next === _s.shuffleSeed);
+		attempts++;
+	} while (next === _s.shuffleSeed && attempts < 10);
 	const params = resolveShuffleParams(next);
 	_s.shuffleSeed = next;
 	_s.harmonyMode = params.harmonyMode;
@@ -252,7 +254,7 @@ export function snapshot(): Record<string, unknown> {
 	return {
 		primaryColor: _s.primaryColor,
 		harmonyMode: _s.harmonyMode,
-		paletteShuffleSeed: String(_s.shuffleSeed),
+		paletteShuffleSeed: _s.shuffleSeed,
 		lockAccentColor: _s.lockAccent,
 		lockSecondaryColor: _s.lockSecondary,
 		brandTarget: _s.brandTarget,

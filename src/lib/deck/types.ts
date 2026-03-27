@@ -49,6 +49,8 @@ export interface SlideDefinition {
 	label: string;
 	type: SlideType;
 	field: string;
+	// TODO: Consolidate required + optional + defaultIncluded into a single
+	// discriminant to prevent invalid states like { required: true, optional: true }
 	required: boolean;
 	optional: boolean;
 	defaultIncluded: boolean;

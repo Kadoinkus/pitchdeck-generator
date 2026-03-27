@@ -32,6 +32,7 @@
 	let extracting = $state(false);
 	let dragOver = $state(false);
 
+	// Tightly coupled to brand-palette.svelte.ts setter names — update both together
 	/** Color setters — update the reactive store, then sync back to editor payload. */
 	const COLOR_SETTERS: Record<string, (hex: string) => void> = {
 		primaryColor: palette.setPrimaryColor,
@@ -113,6 +114,7 @@
 	async function processImageFile(file: File): Promise<void> {
 		if (!file.type.startsWith('image/')) return;
 
+		if (logoPreview) URL.revokeObjectURL(logoPreview);
 		const url = URL.createObjectURL(file);
 		logoPreview = url;
 		extractedHex = null;

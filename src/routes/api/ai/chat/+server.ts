@@ -24,7 +24,15 @@ const RequestSchema = z.object({
 });
 
 export const POST: RequestHandler = async ({ request }) => {
-	const body = await request.json();
+	let body: unknown;
+	try {
+		body = await request.json();
+	} catch {
+		return json(
+			{ error: { code: 'PARSE_ERROR', message: 'Invalid JSON body' } } satisfies AiErrorResponse,
+			{ status: 400 },
+		);
+	}
 	const parsed = RequestSchema.safeParse(body);
 
 	if (!parsed.success) {
@@ -61,6 +69,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			output: Output.object({ schema: ChatResponseSchema }),
 			messages,
 		});
+
+		if (!output) {
+			return json(
+				{
+					error: { code: 'GENERATION_ERROR', message: 'Failed to generate valid response' },
+				} satisfies AiErrorResponse,
+				{ status: 500 },
+			);
+		}
 
 		return json(output);
 	} catch (err) {

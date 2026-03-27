@@ -275,6 +275,8 @@ export const SLIDE_SPEC_BY_ID = new Map(
 /*  Derived helpers                                                    */
 /* ------------------------------------------------------------------ */
 
+// CAUTION: buildContent result is spread after base fields (id, type, title, etc.)
+// If buildContent ever returns those keys, they'll shadow base fields.
 export function buildSlidesFromSpecs(project: Project, content: Content): SlideData[] {
 	return SLIDE_SPECS.map((spec) => ({
 		id: spec.id,

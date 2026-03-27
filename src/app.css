@@ -140,7 +140,7 @@ button,
 		#1395ff 56%,
 		var(--secondary)
 	);
-	color: #fff;
+	color: var(--card);
 	font: inherit;
 	font-size: 0.9rem;
 	font-weight: 700;
@@ -172,6 +172,8 @@ button:disabled,
 
 .toolbar-btn.disabled {
 	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
 	pointer-events: none;
 }
 

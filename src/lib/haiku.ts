@@ -233,12 +233,15 @@ export const haikus: readonly Haiku[] = [
  * Pick a random haiku, optionally filtered by language.
  * Falls back to unfiltered pool if no haiku match the given language.
  */
-export function randomHaiku(lang?: 'nl' | 'en'): Haiku | undefined {
+export function randomHaiku(lang?: 'nl' | 'en'): Haiku {
 	let pool: readonly Haiku[] = haikus;
 	if (lang) {
 		const filtered = haikus.filter((h) => h.lang === lang);
 		if (filtered.length > 0) pool = filtered;
 	}
-	if (pool.length === 0) return undefined;
-	return pool[Math.floor(Math.random() * pool.length)];
+	// pool is always non-empty: defaults to haikus (compile-time non-empty),
+	// filtered only replaces it when filtered.length > 0
+	const pick = pool[Math.floor(Math.random() * pool.length)];
+	if (!pick) throw new Error('Haiku pool unexpectedly empty');
+	return pick;
 }

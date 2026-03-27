@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { createSwipeable } from '$lib/actions/swipeable.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
 	import type { PageProps } from './$types';
 
@@ -18,6 +18,7 @@
 	let isPrintMode = $state(false);
 	let canNativeShare = $state(false);
 	let shareButtonLabel = $state('Share');
+	let shareResetTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const slides = $derived(data.slideData.slides);
 	const theme = $derived(data.slideData.deckTheme);
@@ -197,7 +198,8 @@
 			try {
 				await navigator.clipboard.writeText(page.url.href);
 				shareButtonLabel = 'Link copied!';
-				setTimeout(() => {
+				clearTimeout(shareResetTimer);
+				shareResetTimer = setTimeout(() => {
 					shareButtonLabel = 'Share';
 				}, 2000);
 			} catch {
@@ -214,11 +216,18 @@
 			setTimeout(() => window.print(), 350);
 		}
 	});
+
+	onDestroy(() => {
+		if (shareResetTimer) clearTimeout(shareResetTimer);
+	});
+
+	$effect(() => {
+		document.body.classList.toggle('print-mode', isPrintMode);
+		return () => document.body.classList.remove('print-mode');
+	});
 </script>
 
 <svelte:window onkeydown={handleKey} />
-<svelte:body class:print-mode={isPrintMode} />
-
 <svelte:head>
 	<title>{pageTitle}</title>
 	<meta name="description" content={previewDescription}>

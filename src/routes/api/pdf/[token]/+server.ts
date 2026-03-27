@@ -9,6 +9,16 @@ import { type Browser, chromium as playwrightChromium, type Page } from 'playwri
 const PDF_WIDTH_IN = 16;
 const PDF_HEIGHT_IN = 9;
 
+/** Sanitize a filename for use in Content-Disposition headers. */
+function sanitizeForContentDisposition(name: string): string {
+	return name.replace(/["\\\r\n]/g, '_');
+}
+
+function contentDisposition(fileName: string): string {
+	const safe = sanitizeForContentDisposition(fileName);
+	return `attachment; filename="${safe}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+}
+
 const inFlightPdfByToken = new Map<string, Promise<Uint8Array<ArrayBuffer>>>();
 
 function getPdfFileName(record: ShareRecord, token: string): string {
@@ -22,11 +32,19 @@ function getPdfFileName(record: ShareRecord, token: string): string {
 
 async function waitForRenderedSlides(page: Page): Promise<void> {
 	await page.waitForLoadState('networkidle');
-	await page.waitForFunction(() => document.readyState === 'complete');
-	await page.waitForFunction(() => {
-		return Array.from(document.images).every((image) => image.complete);
+	await page.waitForFunction(() => document.readyState === 'complete', undefined, {
+		timeout: 10_000,
 	});
-	await page.waitForFunction(() => document.fonts.status === 'loaded');
+	await page.waitForFunction(
+		() => {
+			return Array.from(document.images).every((image) => image.complete);
+		},
+		undefined,
+		{ timeout: 15_000 },
+	);
+	await page.waitForFunction(() => document.fonts.status === 'loaded', undefined, {
+		timeout: 10_000,
+	});
 }
 
 async function renderPdf(token: string, requestUrl: URL): Promise<Uint8Array<ArrayBuffer>> {
@@ -128,7 +146,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/pdf',
-				'Content-Disposition': `attachment; filename="${fileName}"`,
+				'Content-Disposition': contentDisposition(fileName),
 				'Cache-Control': 'no-store',
 			},
 		});
@@ -141,7 +159,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/pdf',
-				'Content-Disposition': `attachment; filename="${fileName}"`,
+				'Content-Disposition': contentDisposition(fileName),
 				'Cache-Control': 'no-store',
 			},
 		});

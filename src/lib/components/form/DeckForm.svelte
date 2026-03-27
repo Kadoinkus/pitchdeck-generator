@@ -38,7 +38,11 @@
 		setExcludedSlides([]);
 	}
 
+	let isPublishing = $state(false);
+
 	async function handlePublish() {
+		if (isPublishing) return;
+		isPublishing = true;
 		setStatus('Publishing deck...');
 
 		try {
@@ -72,6 +76,8 @@
 				error instanceof Error ? error.message : 'Could not generate deck.',
 				true,
 			);
+		} finally {
+			isPublishing = false;
 		}
 	}
 </script>
@@ -96,7 +102,11 @@
 
 	<OutputSection {onOpenViewer} />
 
-	<!-- Hidden fields for content payloads (same as vanilla version) -->
+	<!--
+		Hidden fields mirror payload state into the DOM so external tools
+		(e.g. browser extensions, form-scraping scripts) can read current
+		values even though this form never does a traditional submit.
+	-->
 	<div class="hidden">
 		<input name="projectTitle" value={String(payload.projectTitle || '')}>
 		<input name="coverOneLiner" value={String(payload.coverOneLiner || '')}>
@@ -202,6 +212,7 @@
 		max-width: 100%;
 	}
 
+	/* TODO: Move :global() form styles to a shared stylesheet */
 	:global(.form-section) {
 		margin: 0;
 		border: 1px solid var(--card-border);

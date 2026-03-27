@@ -135,6 +135,7 @@ Result: text appeared to jump between sizes instead of scaling smoothly.
 - Removed `DeckModel.theme` alias and all runtime fallbacks that read legacy `theme` from deck/share payloads.
 - Editor localStorage schema now requires `slideData.deckTheme`; old persisted `slideData.theme` snapshots are intentionally invalidated.
 - Share payload validation for `/share/[token]` and `/api/download/[token]` now requires `deckTheme`.
+- No automated migration from `slideData.theme` — users lose draft theme data on upgrade.
 
 ---
 

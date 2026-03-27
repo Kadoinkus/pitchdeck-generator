@@ -71,6 +71,7 @@ export const CHARACTER_PLACEMENTS: ReadonlyArray<{ value: string; label: string 
 // ---------------------------------------------------------------------------
 
 const AI_SETTINGS_KEY = 'proposalDeckAiSettingsV3';
+// TODO: Add migration from 'proposalDeckDraftV3' to avoid losing user drafts on upgrade
 const DRAFT_STORAGE_KEY = 'proposalDeckDraftV4';
 const DECK_RESULT_STORAGE_KEY = 'proposalDeckLastResultV1';
 const HISTORY_LIMIT = 80;
@@ -168,6 +169,23 @@ const canRedo = $derived(_historyIndex < _historyStack.length - 1);
 const isDirty = $derived(payloadSignature(_payload) !== _lastSavedSignature);
 
 // ---------------------------------------------------------------------------
+// AI field keys (used by payloadSignature to exclude sensitive fields)
+// ---------------------------------------------------------------------------
+
+const AI_FIELDS = [
+	'aiTextProvider',
+	'aiTextModel',
+	'aiTextApiKey',
+	'aiTextBaseUrl',
+	'aiImageProvider',
+	'aiImageModel',
+	'aiImageApiKey',
+	'aiImageBaseUrl',
+] as const;
+
+const AI_FIELDS_SET: ReadonlySet<string> = new Set(AI_FIELDS);
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -189,6 +207,7 @@ function payloadSignature(p: FormPayload = {}): string {
 	};
 	const ordered: Record<string, unknown> = {};
 	Object.keys(normalized)
+		.filter((key) => !AI_FIELDS_SET.has(key))
 		.sort()
 		.forEach((key) => {
 			ordered[key] = normalized[key];
@@ -390,6 +409,9 @@ export function pushHistory(): void {
 	_historyIndex = stack.length - 1;
 }
 
+// Truncating at `_historyIndex + 1` before pushing is intentional —
+// new edits after undo discard redo history (standard editor behavior).
+
 export function undo(): void {
 	if (_historyIndex <= 0) return;
 	applyHistoryIndex(_historyIndex - 1);
@@ -554,17 +576,6 @@ export function snapshotPublishSignature(): string {
 // ---------------------------------------------------------------------------
 // AI settings
 // ---------------------------------------------------------------------------
-
-const AI_FIELDS = [
-	'aiTextProvider',
-	'aiTextModel',
-	'aiTextApiKey',
-	'aiTextBaseUrl',
-	'aiImageProvider',
-	'aiImageModel',
-	'aiImageApiKey',
-	'aiImageBaseUrl',
-] as const;
 
 export function saveAiSettings(): void {
 	const settings: Record<string, string> = {};

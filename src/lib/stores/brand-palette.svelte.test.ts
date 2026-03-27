@@ -260,7 +260,7 @@ describe('brand palette store — mutations and derived effects', () => {
 		expect(getHarmonyMode()).toBe('triad');
 		// Theme should use triad, not a PRNG-derived mode
 		const theme = getTheme();
-		expect(theme.accentColor).toMatch(/^#[0-9A-F]{6}$/);
+		expect(theme.accentColor).toMatch(/^#[0-9A-Fa-f]{6}$/);
 	});
 });
 
@@ -281,7 +281,7 @@ describe('editor-level shufflePalette integration', () => {
 
 		// Payload got the snapshot
 		const payloadAfter = editor.getPayload();
-		expect(payloadAfter.paletteShuffleSeed).toBe(String(seedAfter));
+		expect(payloadAfter.paletteShuffleSeed).toBe(seedAfter);
 
 		// At least one color changed in the payload
 		const changed = payloadAfter.accentColor !== payloadBefore.accentColor

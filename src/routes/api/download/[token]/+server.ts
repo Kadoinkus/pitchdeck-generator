@@ -20,6 +20,16 @@ interface ShareDeckPayload extends DeckData {
 	deckTheme: ThemeData;
 }
 
+/** Sanitize a filename for use in Content-Disposition headers. */
+function sanitizeForContentDisposition(name: string): string {
+	return name.replace(/["\\\r\n]/g, '_');
+}
+
+function contentDisposition(fileName: string): string {
+	const safe = sanitizeForContentDisposition(fileName);
+	return `attachment; filename="${safe}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+}
+
 const inFlightByToken = new Map<string, Promise<Buffer>>();
 
 function getFileName(record: ShareRecord, token: string): string {
@@ -154,7 +164,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		status: 200,
 		headers: {
 			'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-			'Content-Disposition': `attachment; filename="${fileName}"`,
+			'Content-Disposition': contentDisposition(fileName),
 			'Cache-Control': 'no-store',
 		},
 	});

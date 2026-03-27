@@ -23,5 +23,5 @@ export function shouldUsePanelIcons({
 	'slideType' | 'sectionKey' | 'panelCount'
 > = {}): boolean {
 	if (panelCount < 3) return false;
-	return ICON_PANEL_SECTIONS.has(`${String(slideType)}:${String(sectionKey)}`);
+	return ICON_PANEL_SECTIONS.has(`${slideType}:${sectionKey}`);
 }

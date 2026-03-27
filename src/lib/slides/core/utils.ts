@@ -1,11 +1,6 @@
-import type { ImageRatio } from '$lib/deck/types';
+import type { CharacterAsset, ImageRatio } from '$lib/deck/types';
 
-export interface CharacterAsset {
-	id: string;
-	name: string;
-	dataUrl: string;
-	placement: string;
-}
+export type { CharacterAsset };
 
 export interface ImageAssetRef {
 	dataUrl?: string;
@@ -61,7 +56,7 @@ export function safeColor(value: unknown, fallback: string): string {
 
 export function safeFont(value: unknown, fallback: string): string {
 	const font = String(value || '').trim();
-	return /^[a-zA-Z0-9\s\-,'"]{1,60}$/.test(font) ? font : fallback;
+	return /^[a-zA-Z0-9\s\-,'"_+.()]{1,100}$/.test(font) ? font : fallback;
 }
 
 export function ensureItems<T>(

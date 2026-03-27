@@ -408,7 +408,10 @@ export function normalizeHexColor(
 		return (raw.startsWith('#') ? raw : `#${raw}`).toUpperCase();
 	}
 	if (raw.length === 0 && fallback) {
-		return normalizeHexColor(fallback, '#004B49');
+		const fb = String(fallback).trim();
+		if (/^#?[0-9a-fA-F]{6}$/.test(fb)) {
+			return (fb.startsWith('#') ? fb : `#${fb}`).toUpperCase();
+		}
 	}
 	return '#004B49';
 }

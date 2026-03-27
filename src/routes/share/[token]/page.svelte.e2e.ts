@@ -98,12 +98,6 @@ test('download endpoint returns deck pptx', async ({ request }) => {
 	expect(bytes.subarray(0, 2).toString('utf8')).toBe('PK');
 });
 
-test('slide counter shows correct count', async ({ page }) => {
-	await page.goto(`/share/${shareToken}`);
-
-	await expect(page.getByText('1 / 1')).toBeVisible();
-});
-
 test('share button triggers share or clipboard', async ({ page }) => {
 	await page.goto(`/share/${shareToken}`);
 

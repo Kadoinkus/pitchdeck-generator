@@ -3,8 +3,7 @@
 		"opensrc": {
 			"type": "stdio",
 			"command": "bunx",
-			"args": ["opensrc-mcp"],
-			"env": {}
+			"args": ["opensrc-mcp"]
 		},
 		"gh_grep": {
 			"type": "http",

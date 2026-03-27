@@ -44,7 +44,7 @@
 			data-ai-target={target}
 			data-ai-label="{slide.title} pillars"
 		>
-			{#each pillars as pillar (pillar)}
+			{#each pillars as pillar, i (pillar.title || i)}
 				<IconFeaturePanel
 					slideType={slide.type}
 					sectionKey="pillars"

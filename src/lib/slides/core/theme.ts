@@ -1,15 +1,7 @@
 import { safeColor, safeFont } from '$lib/slides/core/utils';
+import type { ThemeData } from '$lib/slides/types';
 
-export interface ThemeInput {
-	primaryColor?: string;
-	accentColor?: string;
-	secondaryColor?: string;
-	backgroundColor?: string;
-	textColor?: string;
-	headingFont?: string;
-	bodyFont?: string;
-	brandName?: string;
-}
+export type ThemeInput = ThemeData;
 
 export function themeVars(theme: ThemeInput | null | undefined): string {
 	const primary = safeColor(theme?.primaryColor, '#004B49');
@@ -39,5 +31,5 @@ export function resolveTheme(
 	theme: ThemeInput | null | undefined,
 	deckData: ThemeSource | null | undefined,
 ): ThemeInput {
-	return deckData?.deckTheme || theme || {};
+	return deckData?.deckTheme ?? theme ?? {};
 }

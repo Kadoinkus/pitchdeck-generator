@@ -39,21 +39,7 @@
 	const cls = $derived(panelClassName({ variant, className }));
 </script>
 
-{#if asPanel}
-	<article class={cls}>
-		<Headline
-			{kicker}
-			{title}
-			{accentPhrase}
-			{subtitle}
-			{target}
-			{align}
-			{compact}
-			{maxTitleChars}
-			{maxSubtitleChars}
-		/>
-	</article>
-{:else}
+{#snippet headlineContent()}
 	<Headline
 		{kicker}
 		{title}
@@ -65,4 +51,12 @@
 		{maxTitleChars}
 		{maxSubtitleChars}
 	/>
+{/snippet}
+
+{#if asPanel}
+	<article class={cls}>
+		{@render headlineContent()}
+	</article>
+{:else}
+	{@render headlineContent()}
 {/if}

@@ -83,8 +83,6 @@ export function initTheme(): void {
 		const stored = localStorage.getItem(THEME_STORAGE_KEY);
 		preference = parsePreference(stored);
 	}
-
-	applyToDocument(resolveNow());
 }
 
 $effect(() => {

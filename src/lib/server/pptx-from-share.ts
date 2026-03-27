@@ -69,14 +69,24 @@ function normalizePptxOutput(value: unknown): Buffer {
 
 async function waitForRenderedSlides(page: Page): Promise<void> {
 	await page.waitForLoadState('networkidle');
-	await page.waitForFunction(() => document.readyState === 'complete');
-	await page.waitForFunction(() => {
-		return Array.from(document.images).every((image) => image.complete);
+	await page.waitForFunction(() => document.readyState === 'complete', undefined, {
+		timeout: 10_000,
 	});
-	await page.waitForFunction(() => {
-		if (!('fonts' in document)) return true;
-		return document.fonts.status === 'loaded';
-	});
+	await page.waitForFunction(
+		() => {
+			return Array.from(document.images).every((image) => image.complete);
+		},
+		undefined,
+		{ timeout: 15_000 },
+	);
+	await page.waitForFunction(
+		() => {
+			if (!('fonts' in document)) return true;
+			return document.fonts.status === 'loaded';
+		},
+		undefined,
+		{ timeout: 10_000 },
+	);
 }
 
 async function captureSlides(
@@ -98,7 +108,7 @@ async function captureSlides(
 			window.print = () => undefined;
 		});
 
-		await page.goto(shareUrl, { waitUntil: 'domcontentloaded' });
+		await page.goto(shareUrl, { waitUntil: 'networkidle' });
 		await waitForRenderedSlides(page);
 		await page.emulateMedia({ media: 'print' });
 

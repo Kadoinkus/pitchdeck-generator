@@ -8,6 +8,7 @@ export const AiErrorCodeSchema = z.enum([
 	'PROVIDER_ERROR',
 	'PARSE_ERROR',
 	'NETWORK_ERROR',
+	'GENERATION_ERROR',
 ]);
 
 export type AiErrorCode = z.infer<typeof AiErrorCodeSchema>;

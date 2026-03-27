@@ -51,7 +51,6 @@
 		<button
 			type="button"
 			class="ghost-link"
-			class:disabled={!hasResult}
 			onclick={onOpenViewer}
 			disabled={!hasResult}
 		>

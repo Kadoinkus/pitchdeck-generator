@@ -18,9 +18,12 @@
 	const provider = $derived(PROVIDERS[providerId]);
 	const models = $derived(provider.models);
 	const showCustomModel = $derived(
-		models.length === 0 || !models.includes(modelId as never),
+		models.length === 0 || !(models as readonly string[]).includes(modelId),
 	);
 
+	// Intentionally does NOT preserve apiKey (unlike ai.setProvider) because
+	// the settings panel exposes a dedicated API key field that the user
+	// controls independently per provider.
 	function handleProviderChange() {
 		const defaults = getDefaultConfig(providerId);
 		modelId = defaults.modelId;

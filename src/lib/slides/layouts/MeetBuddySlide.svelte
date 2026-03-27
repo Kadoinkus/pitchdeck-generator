@@ -37,7 +37,7 @@
 		]).slice(0, 4),
 	);
 	const hasVisual = $derived(
-		Boolean(findAssetForSlide(slide, deckData)?.dataUrl) || !slide.hideImages,
+		Boolean(findAssetForSlide(slide, deckData)?.dataUrl) && !slide.hideImages,
 	);
 	const layoutClass = $derived(
 		hasVisual ? 'split-layout buddy-layout' : 'stack-layout buddy-layout',
@@ -72,7 +72,7 @@
 				data-ai-target="buddyPersonality"
 				data-ai-label="{slide.title} traits"
 			>
-				{#each traits as trait (trait)}
+				{#each traits as trait, i (i)}
 					<li>{trait}</li>
 				{/each}
 			</ul>
@@ -81,7 +81,7 @@
 				data-ai-target="toneSliders"
 				data-ai-label="{slide.title} tone"
 			>
-				{#each tone as item (item)}
+				{#each tone as item, i (item.label ?? i)}
 					<div class="tone-row">
 						<span>{item.label || ''}</span>
 						<div class="tone-track">

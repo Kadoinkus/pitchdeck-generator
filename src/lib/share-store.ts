@@ -29,6 +29,7 @@ export function isDeckShareRecord(record: ShareRecord): record is DeckShareRecor
 		typeof record.fileName === 'string'
 		&& typeof record.payloadHash === 'string'
 		&& typeof record.publishedAt === 'string'
+		&& typeof record.pptxBase64 === 'string'
 		&& record.slideData !== undefined
 		&& typeof record.slideData === 'object'
 		&& record.slideData !== null
@@ -40,7 +41,12 @@ function shareDir(outputDir: string): string {
 	return path.join(outputDir, 'shares');
 }
 
+const VALID_TOKEN_RE = /^[A-Za-z0-9_-]+$/;
+
 function sharePath(outputDir: string, token: string): string {
+	if (!VALID_TOKEN_RE.test(token)) {
+		throw new Error(`Invalid share token: ${token}`);
+	}
 	return path.join(shareDir(outputDir), `${token}.json`);
 }
 
@@ -76,7 +82,11 @@ export async function readShare(
 		const content = await fs.readFile(filePath, 'utf8');
 		const parsed: ShareRecord = JSON.parse(content);
 		return parsed;
-	} catch {
+	} catch (error: unknown) {
+		if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT') {
+			return null;
+		}
+		console.error(`Failed to read share record for token "${token}":`, error);
 		return null;
 	}
 }

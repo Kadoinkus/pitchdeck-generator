@@ -72,7 +72,7 @@
 					/>
 					<h2>{fitText(section.title || '', 30)}</h2>
 					<ul>
-						{#each ensureItems(section.bullets, []).slice(0, 3) as bullet (bullet)}
+						{#each ensureItems(section.bullets, []).slice(0, 3) as bullet, i (i)}
 							<li>{fitText(bullet, 48)}</li>
 						{/each}
 					</ul>

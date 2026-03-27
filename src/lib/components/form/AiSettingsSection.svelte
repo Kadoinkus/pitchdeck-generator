@@ -50,7 +50,6 @@
 				name="aiTextModel"
 				value={String(payload.aiTextModel || '')}
 				oninput={handleInput('aiTextModel')}
-				onchange={handleInput('aiTextModel')}
 			>
 		</div>
 		<div class="field">
@@ -62,7 +61,6 @@
 				autocomplete="off"
 				value={String(payload.aiTextApiKey || '')}
 				oninput={handleInput('aiTextApiKey')}
-				onchange={handleInput('aiTextApiKey')}
 			>
 		</div>
 		<div class="field">
@@ -70,9 +68,9 @@
 			<input
 				id="aiTextBaseUrl"
 				name="aiTextBaseUrl"
+				type="url"
 				value={String(payload.aiTextBaseUrl || '')}
 				oninput={handleInput('aiTextBaseUrl')}
-				onchange={handleInput('aiTextBaseUrl')}
 			>
 		</div>
 		<div class="field">
@@ -95,7 +93,6 @@
 				name="aiImageModel"
 				value={String(payload.aiImageModel || '')}
 				oninput={handleInput('aiImageModel')}
-				onchange={handleInput('aiImageModel')}
 			>
 		</div>
 		<div class="field">
@@ -107,7 +104,6 @@
 				autocomplete="off"
 				value={String(payload.aiImageApiKey || '')}
 				oninput={handleInput('aiImageApiKey')}
-				onchange={handleInput('aiImageApiKey')}
 			>
 		</div>
 		<div class="field">
@@ -115,9 +111,9 @@
 			<input
 				id="aiImageBaseUrl"
 				name="aiImageBaseUrl"
+				type="url"
 				value={String(payload.aiImageBaseUrl || '')}
 				oninput={handleInput('aiImageBaseUrl')}
-				onchange={handleInput('aiImageBaseUrl')}
 			>
 		</div>
 	</div>

@@ -34,7 +34,9 @@ export const CharacterAssetsSchema = z
 				typeof item === 'object' && item !== null && 'dataUrl' in item
 				&& typeof item.dataUrl === 'string'
 			)
-			.map((item) => CharacterAssetSchema.parse(item))
+			.map((item) => CharacterAssetSchema.safeParse(item))
+			.filter((result) => result.success)
+			.map((result) => result.data)
 			.slice(0, 10)
 	);
 

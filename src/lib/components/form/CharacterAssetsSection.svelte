@@ -55,6 +55,7 @@
 			room,
 		);
 
+		let added = 0;
 		for (const file of accepted) {
 			if (file.size > maxPerFileBytes) {
 				setStatus(`${file.name} is too large (max 1.5MB).`, true);
@@ -63,12 +64,13 @@
 			try {
 				const dataUrl = await readFileAsDataUrl(file);
 				addCharacterAsset({
-					id: `asset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+					id: crypto.randomUUID(),
 					name: file.name,
 					size: file.size,
 					dataUrl: String(dataUrl),
 					placement: 'all-mascot',
 				});
+				added++;
 			} catch (error) {
 				console.error(error);
 				setStatus(
@@ -81,9 +83,11 @@
 		}
 
 		target.value = '';
-		pushHistory();
-		markDirty();
-		setStatus('Character assets updated.');
+		if (added > 0) {
+			pushHistory();
+			markDirty();
+			setStatus(`${added} character asset${added > 1 ? 's' : ''} added.`);
+		}
 	}
 
 	function handleClear() {

@@ -136,10 +136,12 @@ export function parseCharacterAssets(value: unknown, limit = 10): CharacterAsset
 		const placement = text(item.placement, 'all-mascot').toLowerCase();
 
 		if (!dataUrl) continue;
+		const dataUrlLower = dataUrl.toLowerCase();
+		if (dataUrlLower.startsWith('data:image/svg+xml')) continue;
 		if (
 			!(
-				dataUrl.startsWith('data:image/')
-				|| dataUrl.startsWith('/generated/')
+				dataUrlLower.startsWith('data:image/')
+				|| dataUrlLower.startsWith('/generated/')
 				|| /^https?:\/\//i.test(dataUrl)
 			)
 		) {

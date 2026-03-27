@@ -42,8 +42,8 @@ function toPptColor(hex: unknown, fallback = '0B1D2E'): string {
 	return value.length ? value : fallback;
 }
 
-function fontByDensity(size: number, density: unknown, min = 7): number {
-	void density;
+// TODO: Implement density-based font scaling
+function fontByDensity(size: number, _density: unknown, min = 7): number {
 	return Math.max(min, Math.round(size * 10) / 10);
 }
 
@@ -520,7 +520,7 @@ function getStringArray(slideInfo: DeckSlide, key: string): string[] {
 	return Array.isArray(val) ? val : [];
 }
 
-/** Safely extract a typed array from a slide's extra fields */
+/** Extract an array from a slide's extra fields, cast to T. No runtime type validation — caller must ensure data shape. */
 function getTypedArray<T>(slideInfo: DeckSlide, key: string): T[] {
 	const val = getSlideField(slideInfo, key);
 	return Array.isArray(val) ? val : [];

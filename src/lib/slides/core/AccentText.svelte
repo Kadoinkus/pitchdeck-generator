@@ -36,7 +36,7 @@
 	});
 </script>
 
-{#each segments as seg (seg)}
+{#each segments as seg, i (i)}
 	{#if seg.kind === 'accent'}
 		<span class="accent-text">{seg.value}</span>
 	{:else}

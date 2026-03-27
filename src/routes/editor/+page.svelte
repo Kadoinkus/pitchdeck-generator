@@ -17,6 +17,7 @@
 		undo,
 	} from '$lib/stores/editor.svelte';
 	import { viewer, type ViewerDeckData } from '$lib/stores/viewer.svelte';
+	import { createUndoRedoHandler } from '$lib/utils/keyboard';
 	import { onMount } from 'svelte';
 
 	import SlideViewer from '$lib/components/SlideViewer.svelte';
@@ -32,27 +33,7 @@
 		markDirty();
 	}
 
-	function handleKeyboard(event: KeyboardEvent) {
-		if (!event.metaKey && !event.ctrlKey) return;
-
-		const target = event.target;
-		if (target instanceof HTMLInputElement) return;
-		if (target instanceof HTMLTextAreaElement) return;
-		if (target instanceof HTMLSelectElement) return;
-		if (target instanceof HTMLElement && target.isContentEditable) return;
-
-		const key = event.key.toLowerCase();
-		const wantsUndo = key === 'z' && !event.shiftKey;
-		const wantsRedo = (key === 'z' && event.shiftKey) || key === 'y';
-		if (!wantsUndo && !wantsRedo) return;
-
-		event.preventDefault();
-		if (wantsUndo) {
-			undo();
-		} else {
-			redo();
-		}
-	}
+	const handleKeyboard = createUndoRedoHandler(undo, redo);
 
 	onMount(() => {
 		// If viewer already has data (navigated from form), we're good.

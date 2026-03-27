@@ -112,7 +112,7 @@ export function resizable(
 		resizeProperty = opts?.property ?? '--thumb-w';
 		resizeTarget = resolveTarget();
 
-		const fallbackWidth = clampWidth(event.clientX, min, max);
+		const fallbackWidth = clampWidth(resizeTarget?.offsetWidth ?? min, min, max);
 		const currentWidth = resizeTarget
 			? Number.parseFloat(getComputedStyle(resizeTarget).getPropertyValue(resizeProperty))
 			: Number.NaN;
@@ -150,7 +150,7 @@ export function resizable(
 	node.addEventListener('pointerdown', onPointerDown);
 
 	return {
-		update(newOpts) {
+		update(newOpts?: ResizableOptions) {
 			opts = newOpts;
 		},
 		destroy() {

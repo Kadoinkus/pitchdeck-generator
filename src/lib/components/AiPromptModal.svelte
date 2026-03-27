@@ -14,10 +14,12 @@
 	let apiKey = $state('');
 
 	function handleSave() {
+		const trimmed = apiKey.trim();
+		if (!trimmed) return;
 		const defaults = getDefaultConfig(providerId);
 		ai.update({
 			...defaults,
-			apiKey,
+			apiKey: trimmed,
 		});
 		onClose();
 	}
@@ -32,11 +34,12 @@
 	}
 </script>
 
+<svelte:window onkeydown={(e) => e.key === 'Escape' && handleSkip()} />
+
 <div
 	class="modal-backdrop"
 	role="presentation"
 	onclick={handleSkip}
-	onkeydown={(e) => e.key === 'Escape' && handleSkip()}
 >
 	<dialog
 		class="modal"
@@ -75,7 +78,7 @@
 					type="button"
 					class="primary"
 					onclick={handleSave}
-					disabled={!apiKey}
+					disabled={!apiKey.trim()}
 				>
 					Connect
 				</button>
