@@ -2,34 +2,41 @@
 
 ## OVERVIEW
 
-`src/lib/ai` orchestrates provider selection, prompt wiring, and sanitization of AI outputs before they touch editable deck fields.
+`src/lib/ai` provides multi-provider AI integration via Vercel AI SDK. Supports OpenAI, Anthropic, xAI, Groq, OpenRouter, and local LLMs (Ollama, LM Studio).
 
 ## STRUCTURE
 
 ```text
 src/lib/ai/
-├── orchestrator.ts  # entrypoint for provider resolution + calls
-├── prompts/         # prompt templates and prompt helpers
-└── providers/       # provider adapters (openai/local) + contracts
+├── registry.ts   # Provider definitions, model presets
+├── config.ts     # localStorage schema, load/save
+├── client.ts     # Streaming client, local vs remote routing
+├── errors.ts     # AiError class, error codes
+├── schemas.ts    # Zod schemas for AI responses
+└── providers/
+    └── local-provider.ts  # Template fallback (no LLM)
 ```
 
 ## WHERE TO LOOK
 
-| Task                    | File                                      | Notes                              |
-| ----------------------- | ----------------------------------------- | ---------------------------------- |
-| Provider selection      | `src/lib/ai/orchestrator.ts`              | fallback + capability routing      |
-| Chat/autofill contracts | `src/lib/ai/providers/openai-provider.ts` | parse + filter returned JSON       |
-| Local/offline behavior  | `src/lib/ai/providers/local-provider.ts`  | deterministic/local provider path  |
-| Prompt definitions      | `src/lib/ai/prompts/*`                    | prompt shaping and context control |
+| Task                   | File                     | Notes                                      |
+| ---------------------- | ------------------------ | ------------------------------------------ |
+| Add provider           | `registry.ts`            | Add to PROVIDERS const                     |
+| Modify response schema | `schemas.ts`             | ChatResponseSchema, AutofillResponseSchema |
+| Change routing logic   | `client.ts`              | local vs remote decision                   |
+| Config persistence     | `config.ts`              | localStorage key: `ai-config`              |
+| Streaming endpoint     | `routes/api/ai/chat`     | Uses AI SDK streamText                     |
+| Autofill endpoint      | `routes/api/ai/autofill` | Uses AI SDK generateText                   |
 
 ## CONVENTIONS
 
-- Treat provider output as untrusted; sanitize/whitelist fields before returning.
-- Keep provider-specific HTTP/model details inside `providers/*`.
-- Keep orchestrator focused on routing/error normalization, not prompt prose.
+- Local providers (lmstudio, ollama, custom) call LLM directly from browser
+- Remote providers proxy through server to hide API keys
+- All responses parsed through Zod schemas before returning
+- API keys stored in localStorage, never persisted server-side
 
 ## ANTI-PATTERNS
 
-- Returning raw LLM response objects to routes/components.
-- Expanding editable-field surface without updating allowlist/sanitizers.
-- Leaking API keys into persisted share/deck payloads.
+- Don't store API keys server-side or in share payloads
+- Don't add providers without compile-time model validation where possible
+- Don't bypass the client.ts routing logic
