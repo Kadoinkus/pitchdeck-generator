@@ -65,6 +65,7 @@ pitchdeck-generator/
 - Route/path generation uses `$app/paths.resolve(...)`; do not use deprecated `resolveRoute(...)`.
 - Canonical deck/share theme key is `deckTheme`; do not reintroduce `theme` alias payloads.
 - Theme runtime in `src/lib/stores/theme.svelte.ts` uses `MediaQuery` from `svelte/reactivity` (no manual `matchMedia` listeners).
+- Global favicon/font/default SEO meta live in `src/app.html`; use route/layout `<svelte:head>` for per-page overrides only.
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
