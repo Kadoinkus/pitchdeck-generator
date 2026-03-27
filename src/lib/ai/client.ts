@@ -51,10 +51,10 @@ async function* streamLocalLLM(
 	}
 }
 
-async function* streamRemote(
+async function fetchRemote(
 	config: AiUserConfig,
 	messages: ChatMessage[],
-): AsyncGenerator<string> {
+): Promise<string> {
 	const res = await fetch('/api/ai/chat', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
@@ -66,15 +66,7 @@ async function* streamRemote(
 		throw new AiError(body.error.code, body.error.message);
 	}
 
-	const reader = res.body?.getReader();
-	if (!reader) throw new AiError('NETWORK_ERROR', 'No response body');
-
-	const decoder = new TextDecoder();
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) break;
-		yield decoder.decode(value);
-	}
+	return JSON.stringify(await res.json());
 }
 
 export async function* chat(
@@ -106,7 +98,7 @@ export async function* chat(
 		}
 		yield* streamLocalLLM(config, messages);
 	} else {
-		yield* streamRemote(config, messages);
+		yield await fetchRemote(config, messages);
 	}
 }
 

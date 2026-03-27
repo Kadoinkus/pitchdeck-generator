@@ -28,6 +28,7 @@ function createAiStore() {
 		},
 
 		init() {
+			if (initialized) return;
 			config = loadConfig();
 			initialized = true;
 		},
