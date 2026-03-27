@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { chat } from '$lib/ai.remote';
-	import type { SuggestedChange } from '$lib/ai/orchestrator';
+	import { chat as streamChat, type ChatMessage as AiChatMessage } from '$lib/ai/client';
+	import { ChatResponseSchema } from '$lib/ai/schemas';
+	import { ai } from '$lib/stores/ai.svelte';
 	import { viewer } from '$lib/stores/viewer.svelte';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { MediaQuery } from 'svelte/reactivity';
+	import AiPromptModal from './AiPromptModal.svelte';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */
@@ -17,10 +19,11 @@
 	interface ChatMessage {
 		role: 'user' | 'assistant';
 		text: string;
-		suggestions?: SuggestedChange[];
+		suggestions?: Array<{ field: string; label: string; value: string }>;
 	}
 
 	let isOpen = $state(false);
+	let showPromptModal = $state(false);
 	let messages = $state<ChatMessage[]>([]);
 	let inputText = $state('');
 	let chatInputEl: HTMLTextAreaElement | undefined = $state();
@@ -112,24 +115,39 @@
 		const text = inputText.trim();
 		if (!text || sending) return;
 
+		// Show prompt if no API key configured
+		if (ai.needsSetup) {
+			showPromptModal = true;
+			return;
+		}
+
 		const userMsg: ChatMessage = { role: 'user', text };
 		messages = [...messages, userMsg];
 		inputText = '';
 		sending = true;
 
 		try {
-			const result = await chat({
-				targetField: chatTarget?.target ?? '',
-				message: text,
-				payload: payload ?? {},
-			});
+			const chatMessages: AiChatMessage[] = messages.map((m) => ({
+				role: m.role,
+				content: m.text,
+			}));
 
-			const assistantMsg: ChatMessage = {
-				role: 'assistant',
-				text: result.reply,
-				suggestions: result.suggestedChanges,
-			};
-			messages = [...messages, assistantMsg];
+			let accumulated = '';
+			for await (const chunk of streamChat(ai.config, chatMessages, payload ?? {})) {
+				accumulated += chunk;
+			}
+
+			const parsed = ChatResponseSchema.safeParse(JSON.parse(accumulated));
+			if (parsed.success) {
+				const assistantMsg: ChatMessage = {
+					role: 'assistant',
+					text: parsed.data.reply,
+					suggestions: parsed.data.suggestedChanges,
+				};
+				messages = [...messages, assistantMsg];
+			} else {
+				messages = [...messages, { role: 'assistant', text: 'Failed to parse response.' }];
+			}
 		} catch {
 			messages = [
 				...messages,
@@ -139,6 +157,10 @@
 			sending = false;
 		}
 	}
+
+	onMount(() => {
+		ai.init();
+	});
 
 	function handleKeydown(event: KeyboardEvent): void {
 		if (event.key === 'Enter' && !event.shiftKey) {
@@ -413,6 +435,10 @@
 			<circle cx="15.5" cy="11" r="1.2" fill="#fff" />
 		</svg>
 	</button>
+{/if}
+
+{#if showPromptModal}
+	<AiPromptModal onClose={() => (showPromptModal = false)} />
 {/if}
 
 <style>
