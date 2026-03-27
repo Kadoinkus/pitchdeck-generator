@@ -85,7 +85,16 @@ export const PROVIDERS = {
 export type ProviderId = keyof typeof PROVIDERS;
 export type ProviderDef = (typeof PROVIDERS)[ProviderId];
 
-export const PROVIDER_IDS = Object.keys(PROVIDERS) as ProviderId[];
+export const PROVIDER_IDS = [
+	'openai',
+	'anthropic',
+	'xai',
+	'groq',
+	'openrouter',
+	'lmstudio',
+	'ollama',
+	'custom',
+] as const satisfies readonly ProviderId[];
 
 export const LOCAL_PROVIDERS = new Set<ProviderId>(['lmstudio', 'ollama', 'custom']);
 
