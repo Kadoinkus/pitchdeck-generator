@@ -1,5 +1,24 @@
-import type { AutofillResult, ChatRequest, ChatResult } from '$lib/ai/orchestrator';
 import { ChatRequestSchema } from '$lib/ai/schemas';
+
+export interface AutofillResult {
+	provider: string;
+	draft: Record<string, string>;
+	imageDraft: {
+		prompts: Array<{ slideId: string; slideNumber?: number; slideTitle: string; prompt: string }>;
+		combinedPromptText: string;
+	};
+}
+
+export interface ChatResult {
+	provider: string;
+	reply: string;
+	suggestedChanges: Array<{ field: string; label: string; value: string }>;
+}
+
+export interface ChatRequest {
+	targetField?: unknown;
+	message?: unknown;
+}
 import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
 
 const FIELD_LABELS = new Map(
