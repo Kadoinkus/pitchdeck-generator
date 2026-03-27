@@ -118,8 +118,7 @@
 	}
 
 	.image-frame {
-		border: 1px dashed
-			color-mix(in srgb, var(--deck-accent, #30d89e) 36%, var(--line));
+		border: 1px dashed color-mix(in srgb, var(--deck-accent, #30d89e) 36%, var(--line));
 		border-radius: 1.1cqi;
 		background: color-mix(in srgb, var(--surface-soft) 84%, #ffffff);
 		display: grid;

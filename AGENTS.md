@@ -64,6 +64,7 @@ pitchdeck-generator/
 - Dprint (`bun run fmt`) is formatter; no Prettier config.
 - Route/path generation uses `$app/paths.resolve(...)`; do not use deprecated `resolveRoute(...)`.
 - Canonical deck/share theme key is `deckTheme`; do not reintroduce `theme` alias payloads.
+- Theme runtime in `src/lib/stores/theme.svelte.ts` uses `MediaQuery` from `svelte/reactivity` (no manual `matchMedia` listeners).
 
 ## ANTI-PATTERNS (THIS PROJECT)
 

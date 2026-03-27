@@ -30,7 +30,8 @@ async function waitForRenderedSlides(page: Page): Promise<void> {
 }
 
 async function renderPdf(token: string, requestUrl: URL): Promise<Uint8Array<ArrayBuffer>> {
-	const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl).toString();
+	const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl)
+		.toString();
 	const executablePath = await chromium.executablePath();
 
 	let browser: Browser | null = null;

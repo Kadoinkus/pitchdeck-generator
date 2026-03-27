@@ -44,9 +44,7 @@
 
 	function coreOnly() {
 		const required = new Set(slides.filter((s) => s.required).map((s) => s.id));
-		const nextExcluded = slides.filter((s) => !required.has(s.id)).map((s) =>
-			s.id
-		);
+		const nextExcluded = slides.filter((s) => !required.has(s.id)).map((s) => s.id);
 		setExcludedSlides(nextExcluded);
 		pushHistory();
 		markDirty();

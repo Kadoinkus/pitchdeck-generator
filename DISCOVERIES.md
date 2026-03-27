@@ -135,3 +135,13 @@ Result: text appeared to jump between sizes instead of scaling smoothly.
 - Removed `DeckModel.theme` alias and all runtime fallbacks that read legacy `theme` from deck/share payloads.
 - Editor localStorage schema now requires `slideData.deckTheme`; old persisted `slideData.theme` snapshots are intentionally invalidated.
 - Share payload validation for `/share/[token]` and `/api/download/[token]` now requires `deckTheme`.
+
+---
+
+## Theme Store Reactivity (2026-03-27)
+
+### `MediaQuery` from `svelte/reactivity` in `.svelte.ts` stores
+
+- `src/lib/stores/theme.svelte.ts` now uses `new MediaQuery('(prefers-color-scheme: dark)', false)` instead of manual `window.matchMedia` listener wiring.
+- Resolved theme remains tri-state preference-driven (`system | light | dark` -> `light | dark`), but system mode now reacts via `prefersDark.current`.
+- Document sync still applies both `data-theme` and `dark` class on `<html>`.

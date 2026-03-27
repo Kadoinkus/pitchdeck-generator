@@ -14,14 +14,12 @@
 			{
 				name: 'Basic - Chat',
 				price: 'EUR 2.600,-',
-				description:
-					'3D mascot template;Template rig;Emotion based and gamified',
+				description: '3D mascot template;Template rig;Emotion based and gamified',
 			},
 			{
 				name: 'Premium - Chat',
 				price: 'EUR 24.000,-',
-				description:
-					'Custom designed mascot;40+ animations;Advanced LLM integration',
+				description: 'Custom designed mascot;40+ animations;Advanced LLM integration',
 			},
 			{
 				name: 'Pro - Chat & Voice',

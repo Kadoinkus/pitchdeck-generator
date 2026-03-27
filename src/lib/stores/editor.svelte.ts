@@ -614,7 +614,9 @@ export function applyImageDraft(imageDraft: ImageDraft = {}): void {
 	}
 	if (Array.isArray(imageDraft.prompts)) {
 		const text = imageDraft.prompts
-			.map((prompt, index) => `Slide ${index + 1} (${prompt.slideId || 'slide'}) :: ${prompt.prompt || ''}`)
+			.map((prompt, index) =>
+				`Slide ${index + 1} (${prompt.slideId || 'slide'}) :: ${prompt.prompt || ''}`
+			)
 			.join('\n');
 		_payload = { ..._payload, imagePrompts: text };
 	}

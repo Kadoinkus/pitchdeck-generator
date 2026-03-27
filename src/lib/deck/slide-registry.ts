@@ -39,7 +39,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: (p) => p.projectTitle,
 		subtitle: (p) => p.coverOneLiner,
 		purpose: 'Create immediate emotional impact and context.',
-		defaultImagePrompt: (p) => `Hero composition with ${p.mascotName} overlapping device UI for ${p.clientName}.`,
+		defaultImagePrompt: (p) =>
+			`Hero composition with ${p.mascotName} overlapping device UI for ${p.clientName}.`,
 		buildContent: (p) => ({
 			oneLiner: p.coverOneLiner,
 			proposalDate: p.proposalDate,
@@ -58,7 +59,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'The Problem',
 		subtitle: 'What is blocking growth today.',
 		purpose: 'Create tension and urgency.',
-		defaultImagePrompt: (p) => `Clean problem-state visual showing friction in support journey for ${p.clientName}.`,
+		defaultImagePrompt: (p) =>
+			`Clean problem-state visual showing friction in support journey for ${p.clientName}.`,
 		buildContent: (_p, c) => ({ points: c.problemPoints }),
 	},
 	{
@@ -72,7 +74,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'The Opportunity',
 		subtitle: 'What becomes possible with the right assistant.',
 		purpose: 'Shift from friction to possibility.',
-		defaultImagePrompt: (p) => `Optimistic before/after visual of user support improvement with ${p.mascotName}.`,
+		defaultImagePrompt: (p) =>
+			`Optimistic before/after visual of user support improvement with ${p.mascotName}.`,
 		buildContent: (_p, c) => ({ points: c.opportunityPoints }),
 	},
 	{
@@ -86,7 +89,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'The Solution',
 		subtitle: 'Character + AI + interaction model.',
 		purpose: 'Provide simple clarity of approach.',
-		defaultImagePrompt: 'Three-block solution visual: character, AI intelligence, interaction layer.',
+		defaultImagePrompt:
+			'Three-block solution visual: character, AI intelligence, interaction layer.',
 		buildContent: (_p, c) => ({ pillars: c.solutionPillars }),
 	},
 	{
@@ -100,7 +104,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'What Notso AI Does',
 		subtitle: 'A productized approach to animated AI assistants.',
 		purpose: 'Build credibility with clear capability blocks.',
-		defaultImagePrompt: '2x2 capability card visual with product-style iconography and mascot accents.',
+		defaultImagePrompt:
+			'2x2 capability card visual with product-style iconography and mascot accents.',
 		buildContent: (_p, c) => ({ intro: c.whatNotsoIntro, cards: c.whatNotsoCards }),
 	},
 	{
@@ -114,7 +119,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: (p) => `Meet ${p.mascotName}`,
 		subtitle: 'Personality and tone profile.',
 		purpose: 'Create emotional connection with the mascot.',
-		defaultImagePrompt: (p) => `${p.mascotName} full-body hero render with expressive personality variations.`,
+		defaultImagePrompt: (p) =>
+			`${p.mascotName} full-body hero render with expressive personality variations.`,
 		buildContent: (p, c) => ({
 			mascotName: p.mascotName,
 			description: c.buddyDescription,
@@ -133,7 +139,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'Experience Concept',
 		subtitle: 'How the assistant moves across product moments.',
 		purpose: 'Show interaction concept and visual journey.',
-		defaultImagePrompt: (p) => `Concept diagram with ${p.mascotName} moving between key product moments.`,
+		defaultImagePrompt: (p) =>
+			`Concept diagram with ${p.mascotName} moving between key product moments.`,
 		buildContent: (_p, c) => ({ points: c.experienceConcept }),
 	},
 	{
@@ -175,7 +182,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'Business Impact',
 		subtitle: 'The commercial outcome of this assistant.',
 		purpose: 'Sell business value in one glance.',
-		defaultImagePrompt: 'Bold dark-slide impact icons for conversion, support, engagement, and brand lift.',
+		defaultImagePrompt:
+			'Bold dark-slide impact icons for conversion, support, engagement, and brand lift.',
 		buildContent: (_p, c) => ({ impacts: c.businessImpact }),
 	},
 	{
@@ -217,7 +225,8 @@ export const SLIDE_SPECS: readonly SlideSpec[] = [
 		title: 'Pricing',
 		subtitle: 'Flexible solutions based on ambition and scope.',
 		purpose: 'Make decision-making easy.',
-		defaultImagePrompt: 'Premium SaaS three-tier pricing card visual with highlighted recommended tier.',
+		defaultImagePrompt:
+			'Premium SaaS three-tier pricing card visual with highlighted recommended tier.',
 		buildContent: (_p, c) => ({ packages: c.pricing }),
 	},
 	{

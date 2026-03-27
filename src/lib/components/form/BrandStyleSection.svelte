@@ -295,8 +295,7 @@
 					{/if}
 				</div>
 			{:else}
-				<span class="drop-label"
-				>Drop logo or click to extract brand color</span>
+				<span class="drop-label">Drop logo or click to extract brand color</span>
 			{/if}
 		</div>
 	</div>

@@ -54,7 +54,8 @@ async function renderPptx(
 	}
 
 	try {
-		const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl).toString();
+		const shareUrl = new URL(`${resolve('/share/[token]', { token })}?print=1`, requestUrl)
+			.toString();
 		const rendered = await buildPptxFromShare({
 			shareUrl,
 			slideData,

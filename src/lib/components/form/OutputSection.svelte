@@ -2,11 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { toAbsoluteUrl } from '$lib/routing/share-links';
-	import {
-		getDeckResult,
-		isPublishStale,
-		setStatus,
-	} from '$lib/stores/editor.svelte';
+	import { getDeckResult, isPublishStale, setStatus } from '$lib/stores/editor.svelte';
 
 	interface Props {
 		onOpenViewer: () => void;

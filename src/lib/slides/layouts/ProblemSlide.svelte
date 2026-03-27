@@ -3,11 +3,7 @@
 	import { getTargetField } from '$lib/slides/core/fields';
 	import Frame from '$lib/slides/core/Frame.svelte';
 	import ImageSlot from '$lib/slides/core/ImageSlot.svelte';
-	import {
-		ensureItems,
-		findAssetForSlide,
-		fitList,
-	} from '$lib/slides/core/utils';
+	import { ensureItems, findAssetForSlide, fitList } from '$lib/slides/core/utils';
 	import IconFeaturePanel from '$lib/slides/panels/IconFeaturePanel.svelte';
 	import SummaryPanel from '$lib/slides/panels/SummaryPanel.svelte';
 	import TitlePanel from '$lib/slides/panels/TitlePanel.svelte';

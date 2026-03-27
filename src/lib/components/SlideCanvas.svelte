@@ -2,11 +2,7 @@
 	import { createSwipeable } from '$lib/actions/swipeable.svelte';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import SlideRenderer from '$lib/slides/SlideRenderer.svelte';
-	import {
-		markDirty,
-		pushHistory,
-		setPayloadField,
-	} from '$lib/stores/editor.svelte';
+	import { markDirty, pushHistory, setPayloadField } from '$lib/stores/editor.svelte';
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { Spring } from 'svelte/motion';
 
@@ -247,9 +243,7 @@
 		cursor: pointer;
 	}
 
-	.slide-page.is-active
-		.slide-frame
-		:global([contenteditable]:not([contenteditable="false"])) {
+	.slide-page.is-active .slide-frame :global([contenteditable]:not([contenteditable="false"])) {
 		cursor: text;
 	}
 

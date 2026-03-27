@@ -194,11 +194,12 @@ export function resolveSlotPolicy(slideType: string = ''): SlotPolicy {
 	const rawImage = { ...DEFAULT_IMAGE_POLICY, ...(policy?.image ?? {}) };
 	const text: TextPolicy = { ...DEFAULT_TEXT_POLICY, ...(policy?.text ?? {}) };
 
-	const allowedModes: ImageMode[] = Array.isArray(rawImage.allowedModes) && rawImage.allowedModes.length
-		? rawImage.allowedModes
-			.map((mode) => String(mode || '').toLowerCase())
-			.filter(isImageMode)
-		: DEFAULT_IMAGE_POLICY.allowedModes.slice();
+	const allowedModes: ImageMode[] =
+		Array.isArray(rawImage.allowedModes) && rawImage.allowedModes.length
+			? rawImage.allowedModes
+				.map((mode) => String(mode || '').toLowerCase())
+				.filter(isImageMode)
+			: DEFAULT_IMAGE_POLICY.allowedModes.slice();
 
 	const defaultMode = normalizeImageMode(
 		rawImage.defaultMode,

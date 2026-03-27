@@ -1,14 +1,12 @@
 /**
- * Theme store — manages light/dark mode preference.
+ * Theme store — manages 3-state preference.
  *
- * Resolution order: localStorage > system preference > light.
- * Applies `data-theme` attribute on `<html>` and persists to localStorage.
- *
- * The inline script in app.html handles initial paint to prevent FOUC.
- * This store syncs with that attribute once hydrated.
+ * Preference: `system` | `light` | `dark`.
+ * Resolved: `light` | `dark`.
  */
 
 import { browser } from '$app/environment';
+import { MediaQuery } from 'svelte/reactivity';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -20,19 +18,26 @@ export type ThemePreference = 'light' | 'dark' | 'system';
 /** Resolved effective theme (never "system"). */
 export type ResolvedTheme = 'light' | 'dark';
 
+const THEME_STORAGE_KEY = 'theme';
+const PREFERS_DARK_QUERY = '(prefers-color-scheme: dark)';
+
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
 
 let preference = $state<ThemePreference>('system');
-let systemDark = $state(false);
+let initialized = false;
+
+const prefersDark = new MediaQuery(PREFERS_DARK_QUERY, false);
 
 // ---------------------------------------------------------------------------
 // Derived
 // ---------------------------------------------------------------------------
 
+const systemTheme: ResolvedTheme = $derived(prefersDark.current ? 'dark' : 'light');
+
 const resolved: ResolvedTheme = $derived(
-	preference === 'system' ? (systemDark ? 'dark' : 'light') : preference,
+	preference === 'system' ? systemTheme : preference,
 );
 
 // ---------------------------------------------------------------------------
@@ -41,52 +46,53 @@ const resolved: ResolvedTheme = $derived(
 
 function applyToDocument(theme: ResolvedTheme): void {
 	if (!browser) return;
-	document.documentElement.setAttribute('data-theme', theme);
+	const root = document.documentElement;
+	root.setAttribute('data-theme', theme);
+	root.classList.toggle('dark', theme === 'dark');
 }
 
 /** Resolve theme without relying on `$derived` outside reactive context. */
 function resolveNow(): ResolvedTheme {
-	return preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
+	return preference === 'system'
+		? prefersDark.current
+			? 'dark'
+			: 'light'
+		: preference;
 }
 
 function persist(pref: ThemePreference): void {
 	if (!browser) return;
-	if (pref === 'system') {
-		localStorage.removeItem('theme');
-	} else {
-		localStorage.setItem('theme', pref);
-	}
+	localStorage.setItem(THEME_STORAGE_KEY, pref);
+}
+
+function parsePreference(value: string | null): ThemePreference {
+	if (value === 'light' || value === 'dark' || value === 'system') return value;
+	return 'system';
 }
 
 // ---------------------------------------------------------------------------
-// Init (runs once on module load in browser)
+// Init (explicit, idempotent)
 // ---------------------------------------------------------------------------
 
-if (browser) {
-	// Read persisted preference
-	const stored = localStorage.getItem('theme');
-	if (stored === 'light' || stored === 'dark') {
-		preference = stored;
+export function initTheme(): void {
+	if (!browser) return;
+
+	if (!initialized) {
+		initialized = true;
+
+		const stored = localStorage.getItem(THEME_STORAGE_KEY);
+		preference = parsePreference(stored);
 	}
 
-	// Read system preference
-	const mql = window.matchMedia('(prefers-color-scheme: dark)');
-	systemDark = mql.matches;
-	mql.addEventListener('change', (e) => {
-		systemDark = e.matches;
-		applyToDocument(resolveNow());
-	});
-
-	// Initial apply (sync with inline script's work)
 	applyToDocument(resolveNow());
-
-	// React to future changes via $derived
-	$effect.root(() => {
-		$effect(() => {
-			applyToDocument(resolved);
-		});
-	});
 }
+
+$effect(() => {
+	if (!browser || !initialized) return;
+	const root = document.documentElement;
+	root.setAttribute('data-theme', resolved);
+	root.classList.toggle('dark', resolved === 'dark');
+});
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -106,8 +112,12 @@ export function setTheme(pref: ThemePreference): void {
 	applyToDocument(resolveNow());
 }
 
-/** Cycle: system -> light -> dark -> system */
+/** Cycle: system -> light -> dark -> system. */
 export function toggleTheme(): void {
-	const next: ThemePreference = preference === 'system' ? 'light' : preference === 'light' ? 'dark' : 'system';
+	const next: ThemePreference = preference === 'system'
+		? 'light'
+		: preference === 'light'
+		? 'dark'
+		: 'system';
 	setTheme(next);
 }

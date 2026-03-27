@@ -2,21 +2,28 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, viewport-fit=cover"
-		>
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg">
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<meta name="color-scheme" content="dark light">
 		<script>
 			// FOUC prevention: apply theme before first paint
 			(function() {
-				var t = localStorage.getItem('theme');
-				if (t === 'light' || t === 'dark') {
-					document.documentElement.setAttribute('data-theme', t);
-				} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					document.documentElement.setAttribute('data-theme', 'dark');
-				} else {
-					document.documentElement.setAttribute('data-theme', 'light');
+				var saved;
+				try {
+					saved = localStorage.getItem('theme');
+				} catch {
+					saved = null;
 				}
+
+				var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				var resolved = saved === 'light' || saved === 'dark'
+					? saved
+					: systemDark
+					? 'dark'
+					: 'light';
+
+				document.documentElement.setAttribute('data-theme', resolved);
+				document.documentElement.classList.toggle('dark', resolved === 'dark');
 			})();
 		</script>
 		%sveltekit.head%

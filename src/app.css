@@ -97,8 +97,7 @@ body {
 	font-family: "DM Sans", "Segoe UI", sans-serif;
 	color: var(--text);
 	background:
-		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%)
-		fixed,
+		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.16), transparent 32%) fixed,
 		radial-gradient(
 		circle at 91% 12%,
 		rgba(125, 42, 232, 0.14),
@@ -111,8 +110,7 @@ body {
 
 [data-theme="dark"] body {
 	background:
-		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.1), transparent 32%)
-		fixed,
+		radial-gradient(circle at 12% 8%, rgba(0, 196, 204, 0.1), transparent 32%) fixed,
 		radial-gradient(
 		circle at 91% 12%,
 		rgba(125, 42, 232, 0.08),

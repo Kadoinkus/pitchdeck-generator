@@ -117,8 +117,7 @@
 		</p>
 	</div>
 	<div class="asset-tools">
-		<label class="ghost-link upload-btn" for="character-assets-input"
-		>Upload images</label>
+		<label class="ghost-link upload-btn" for="character-assets-input">Upload images</label>
 		<input
 			id="character-assets-input"
 			type="file"
@@ -148,9 +147,7 @@
 					>
 					<div class="asset-meta">
 						<p class="asset-name">
-							{asset.name || `Asset ${index + 1}`} ({
-								formatBytes(asset.size || 0)
-							})
+							{asset.name || `Asset ${index + 1}`} ({formatBytes(asset.size || 0)})
 						</p>
 						<select
 							value={asset.placement || 'all-mascot'}

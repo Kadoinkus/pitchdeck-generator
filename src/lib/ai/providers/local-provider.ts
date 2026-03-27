@@ -194,7 +194,8 @@ function defaultFieldValue(
 		case 'imagePrompts':
 			return model.slides
 				.map(
-					(slide, index) => `Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${message}.`,
+					(slide, index) =>
+						`Slide ${index + 1} (${slide.id}) :: ${slide.title} visual updated for ${message}.`,
 				)
 				.join('\n');
 		default:

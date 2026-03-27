@@ -4,10 +4,7 @@
 	 */
 	import { RATIO_4_3 } from '$lib/deck/types';
 	import Frame from '$lib/slides/core/Frame.svelte';
-	import {
-		resolveImageMode,
-		resolveSlotPolicy,
-	} from '$lib/slides/core/slot-policy';
+	import { resolveImageMode, resolveSlotPolicy } from '$lib/slides/core/slot-policy';
 	import { resolveTheme } from '$lib/slides/core/theme';
 	import BusinessImpactSlide from '$lib/slides/layouts/BusinessImpactSlide.svelte';
 	import ChatFlowSlide from '$lib/slides/layouts/ChatFlowSlide.svelte';
@@ -52,8 +49,7 @@
 		deckData?: DeckData | null;
 	}
 
-	let { slide = null, theme = undefined, deckData = undefined }: Props =
-		$props();
+	let { slide = null, theme = undefined, deckData = undefined }: Props = $props();
 
 	const resolvedTheme = $derived(resolveTheme(theme, deckData));
 

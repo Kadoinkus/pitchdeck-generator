@@ -35,6 +35,7 @@ src/lib/
 - Server-only modules stay in `src/lib/server`; do not import in client-facing components.
 - Prefer extending `deck/*` contracts over ad-hoc object shapes in callers.
 - Canonical deck theme key across lib modules is `deckTheme`; do not add `theme` alias fallbacks.
+- Theme preference runtime (`src/lib/stores/theme.svelte.ts`) uses `MediaQuery` from `svelte/reactivity` instead of manual `matchMedia` listeners.
 
 ## ANTI-PATTERNS
 

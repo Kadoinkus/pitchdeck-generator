@@ -75,8 +75,7 @@
 		color: var(--deck-text, #0b1d2e);
 		font-family: var(--deck-body, "Inter", sans-serif);
 		/* Use calc with --ref-w since cqi here references parent, not self */
-		padding: calc(var(--ref-w) * 0.022) calc(var(--ref-w) * 0.026)
-			calc(var(--ref-w) * 0.02);
+		padding: calc(var(--ref-w) * 0.022) calc(var(--ref-w) * 0.026) calc(var(--ref-w) * 0.02);
 		display: grid;
 		grid-template-rows: 1fr auto;
 		gap: calc(var(--ref-w) * 0.011);

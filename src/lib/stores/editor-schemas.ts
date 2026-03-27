@@ -31,7 +31,8 @@ export const CharacterAssetsSchema = z
 	.transform((arr) =>
 		arr
 			.filter((item): item is Record<string, unknown> =>
-				typeof item === 'object' && item !== null && 'dataUrl' in item && typeof item.dataUrl === 'string'
+				typeof item === 'object' && item !== null && 'dataUrl' in item
+				&& typeof item.dataUrl === 'string'
 			)
 			.map((item) => CharacterAssetSchema.parse(item))
 			.slice(0, 10)

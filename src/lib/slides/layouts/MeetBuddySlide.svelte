@@ -3,12 +3,7 @@
 	import { getTargetField } from '$lib/slides/core/fields';
 	import Frame from '$lib/slides/core/Frame.svelte';
 	import ImageSlot from '$lib/slides/core/ImageSlot.svelte';
-	import {
-		ensureItems,
-		findAssetForSlide,
-		fitList,
-		fitText,
-	} from '$lib/slides/core/utils';
+	import { ensureItems, findAssetForSlide, fitList, fitText } from '$lib/slides/core/utils';
 	import TitlePanel from '$lib/slides/panels/TitlePanel.svelte';
 	import type { DeckData, SlideData, ThemeData } from '$lib/slides/types';
 
@@ -90,9 +85,7 @@
 					<div class="tone-row">
 						<span>{item.label || ''}</span>
 						<div class="tone-track">
-							<i
-								style:width="{Math.max(10, Math.min(100, Number(item.value) || 70))}%"
-							></i>
+							<i style:width="{Math.max(10, Math.min(100, Number(item.value) || 70))}%"></i>
 						</div>
 					</div>
 				{/each}

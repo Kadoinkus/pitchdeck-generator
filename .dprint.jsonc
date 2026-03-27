@@ -1,4 +1,5 @@
 {
+	"lineWidth": 100,
 	"extends": "https://raw.githubusercontent.com/kjanat/kjanat/refs/heads/master/configs/dprint.remote.json",
 	"excludes": ["**/dist", "**/node_modules", "bun.lock"],
 	"exec": {

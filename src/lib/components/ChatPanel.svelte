@@ -439,9 +439,7 @@
 		);
 		border-radius: 50%;
 		padding: 0;
-		box-shadow:
-			0 6px 20px rgba(0, 196, 204, 0.35),
-			0 2px 6px rgba(11, 31, 77, 0.12);
+		box-shadow: 0 6px 20px rgba(0, 196, 204, 0.35), 0 2px 6px rgba(11, 31, 77, 0.12);
 		cursor: pointer;
 		display: inline-flex;
 		align-items: center;
@@ -452,9 +450,7 @@
 	@media (hover: hover) {
 		.launcher:hover {
 			transform: translateY(-2px) scale(1.05);
-			box-shadow:
-				0 10px 28px rgba(0, 196, 204, 0.4),
-				0 2px 8px rgba(11, 31, 77, 0.15);
+			box-shadow: 0 10px 28px rgba(0, 196, 204, 0.4), 0 2px 8px rgba(11, 31, 77, 0.15);
 		}
 	}
 

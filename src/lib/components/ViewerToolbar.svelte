@@ -286,9 +286,7 @@
 					/>
 				</svg>
 			</button>
-			<span class="slide-counter" aria-live="polite" aria-atomic="true">{
-				counter
-			}</span>
+			<span class="slide-counter" aria-live="polite" aria-atomic="true">{counter}</span>
 			<button
 				class="nav-pill-btn"
 				type="button"
@@ -428,8 +426,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 14px;
-		padding: 8px max(12px, env(safe-area-inset-right)) 8px
-			max(12px, env(safe-area-inset-left));
+		padding: 8px max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
 		background: linear-gradient(
 			96deg,
 			#0fa7c9 0%,

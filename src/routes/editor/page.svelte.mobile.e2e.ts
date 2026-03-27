@@ -142,7 +142,9 @@ test.describe('mobile editor', () => {
 
 		await expect(page.locator('.slide-viewer')).toBeVisible();
 
-		const shareToggle = page.locator('.viewer-share-dropdown').getByRole('button', { name: /Share/ });
+		const shareToggle = page.locator('.viewer-share-dropdown').getByRole('button', {
+			name: /Share/,
+		});
 		await shareToggle.click();
 
 		const backdrop = page.locator('.share-backdrop');

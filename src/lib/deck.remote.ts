@@ -54,7 +54,8 @@ export const publishDeck = command(DeckPayloadSchema, async (payload): Promise<P
 			return {
 				success: true,
 				fileName: existing.fileName,
-				downloadUrl: new URL(resolve('/api/download/[token]', { token: existingToken }), url).toString(),
+				downloadUrl: new URL(resolve('/api/download/[token]', { token: existingToken }), url)
+					.toString(),
 				slideData: existing.slideData,
 				shareToken: existingToken,
 				shareUrl: new URL(resolve('/share/[token]', { token: existingToken }), url).toString(),

@@ -3,12 +3,17 @@
 	import { page } from '$app/state';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { initTheme } from '$lib/stores/theme.svelte';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+	import { onMount } from 'svelte';
 	import '../app.css';
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 	injectSpeedInsights();
+	onMount(() => {
+		initTheme();
+	});
 
 	let { children } = $props();
 </script>
@@ -22,9 +27,7 @@
 		href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Pacifico&display=swap"
 		rel="stylesheet"
 	>
-	<!--
-		Default OG / Twitter meta — pages can override via their own <svelte:head>
-	-->
+	<!-- Default OG / Twitter meta — pages can override via their own <svelte:head> -->
 	<meta
 		name="description"
 		content="AI-powered pitch deck generator — set client name + URL, let AI fill the deck, export to PowerPoint, PDF, or shareable link."

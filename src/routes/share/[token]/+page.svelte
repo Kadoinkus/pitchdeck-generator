@@ -247,9 +247,9 @@
 			<p class="share-subtitle">{subtitle}</p>
 		</div>
 		<div class="share-actions">
-			<span class="share-counter" aria-live="polite" aria-atomic="true">{
-					currentSlide + 1
-				} / {total}</span>
+			<span class="share-counter" aria-live="polite" aria-atomic="true">{currentSlide + 1} / {
+					total
+				}</span>
 			<button
 				type="button"
 				class="share-cta"
@@ -288,8 +288,7 @@
 			{:else}
 				<span class="disabled" aria-disabled="true">Download PPTX</span>
 			{/if}
-			<a href={resolve('/api/pdf/[token]', { token: data.token })}
-			>Download PDF</a>
+			<a href={resolve('/api/pdf/[token]', { token: data.token })}>Download PDF</a>
 		</div>
 	</header>
 

@@ -44,8 +44,8 @@
 				variant="transparent"
 			/>
 			<p class="paragraph">
-				Every conversation follows a clear structure to reduce friction and move
-				users to the right next action.
+				Every conversation follows a clear structure to reduce friction and move users to the right
+				next action.
 			</p>
 			<ul class="bullet-list">
 				<li>Intent routing with context memory</li>

@@ -51,7 +51,9 @@ function bg(slide: PptxSlide, color: unknown): void {
 	slide.background = { color: toPptColor(color, 'F2F4F6') };
 }
 
-function toPptImageSource(asset: DeckSlide['imageAsset'] | null | undefined): PptxImageSource | null {
+function toPptImageSource(
+	asset: DeckSlide['imageAsset'] | null | undefined,
+): PptxImageSource | null {
 	if (!asset || typeof asset.dataUrl !== 'string') return null;
 
 	const rawSource = asset.dataUrl.trim();
@@ -167,9 +169,10 @@ function imagePlaceholder(
 
 	const hideImages = Boolean(slideInfo?.hideImages);
 	if (hideImages && optional) return;
-	const activeMode: 'contain' | 'cover' = String(slideInfo?.imageMode || mode || 'cover').toLowerCase() === 'contain'
-		? 'contain'
-		: 'cover';
+	const activeMode: 'contain' | 'cover' =
+		String(slideInfo?.imageMode || mode || 'cover').toLowerCase() === 'contain'
+			? 'contain'
+			: 'cover';
 	const imageSource = toPptImageSource(slideInfo?.imageAsset);
 
 	if (imageSource) {

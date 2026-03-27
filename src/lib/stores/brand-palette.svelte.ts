@@ -234,8 +234,14 @@ export function hydrate(payload: Record<string, unknown>): void {
 	_s.lockAccent = Boolean(payload.lockAccentColor);
 	_s.lockSecondary = Boolean(payload.lockSecondaryColor);
 	_s.manualAccent = normalizeHexColor(payload.accentColor, DEFAULT_THEME_COLORS.accentColor);
-	_s.manualSecondary = normalizeHexColor(payload.secondaryColor, DEFAULT_THEME_COLORS.secondaryColor);
-	_s.manualBackground = normalizeHexColor(payload.backgroundColor, DEFAULT_THEME_COLORS.backgroundColor);
+	_s.manualSecondary = normalizeHexColor(
+		payload.secondaryColor,
+		DEFAULT_THEME_COLORS.secondaryColor,
+	);
+	_s.manualBackground = normalizeHexColor(
+		payload.backgroundColor,
+		DEFAULT_THEME_COLORS.backgroundColor,
+	);
 	_s.manualText = normalizeHexColor(payload.textColor, DEFAULT_THEME_COLORS.textColor);
 	_s.brandTarget = payload.brandTarget === 'accent' ? 'accent' : 'primary';
 	_s.statusOverride = null;

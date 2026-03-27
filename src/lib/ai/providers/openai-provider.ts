@@ -1,5 +1,10 @@
 import type { AutofillResult, ChatRequest, ChatResult, ProviderConfig } from '$lib/ai/orchestrator';
-import { AutofillDraftSchema, ChatRequestSchema, ChatResponseSchema, ImagePromptsSchema } from '$lib/ai/schemas';
+import {
+	AutofillDraftSchema,
+	ChatRequestSchema,
+	ChatResponseSchema,
+	ImagePromptsSchema,
+} from '$lib/ai/schemas';
 import { buildDeckModel, getEditableFieldDefinitions } from '$lib/deck-model';
 
 const ALL_FIELDS = getEditableFieldDefinitions().map((field) => field.name);

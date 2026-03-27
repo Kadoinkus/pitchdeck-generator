@@ -45,7 +45,9 @@ test.describe('mobile share', () => {
 	test('.share-main height is greater than zero', async ({ page }) => {
 		await page.goto(`/share/${shareToken}`);
 
-		const height = await page.locator('.share-main').evaluate((el) => el.getBoundingClientRect().height);
+		const height = await page.locator('.share-main').evaluate((el) =>
+			el.getBoundingClientRect().height
+		);
 		expect(height).toBeGreaterThan(0);
 	});
 
