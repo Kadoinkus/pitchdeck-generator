@@ -333,6 +333,7 @@
 			class:open={shareOpen}
 			bind:this={dropdownEl}
 			tabindex="-1"
+			role="menu"
 			onkeydown={handleDropdownKeydown}
 		>
 			<button

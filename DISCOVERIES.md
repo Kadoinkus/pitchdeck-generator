@@ -147,6 +147,35 @@ Result: text appeared to jump between sizes instead of scaling smoothly.
 - Resolved theme remains tri-state preference-driven (`system | light | dark` -> `light | dark`), but system mode now reacts via `prefersDark.current`.
 - Document sync still applies both `data-theme` and `dark` class on `<html>`.
 
+### `$effect` Cannot Be Used at Module Level
+
+- In Svelte 5, `$effect()` must be inside a component or wrapped in `$effect.root()`.
+- Module-level `$effect()` in `.svelte.ts` files throws `effect_orphan` at runtime.
+- **Fix pattern:** Use explicit event listeners in `init()` functions, or wrap with `$effect.root()` if reactive tracking is truly needed.
+- Theme store was fixed by adding `matchMedia.addEventListener('change', ...)` in `initTheme()` instead of relying on `$effect`.
+
+---
+
+## Vercel AI SDK Integration (2026-03-27)
+
+### Provider Type Guards
+
+- SDK model ID types aren't directly exported; extract via `Parameters<Provider['chat']>[0]`.
+- Use `satisfies readonly KnownModelId[]` for compile-time validation of model lists.
+- Create explicit type guards (`isKnownProvider`) instead of type assertions.
+
+### Structured Output
+
+- `generateText()` with `Output.object({ schema })` produces complete JSON.
+- `streamText()` with `Output.object()` produces SSE deltas, not parseable JSON — use `generateText()` for structured output.
+
+### BYOK Architecture
+
+- `ai-config` localStorage key stores single-provider config: `{ providerId, modelId, baseURL, apiKey }`.
+- Local providers (Ollama, LM Studio, custom) call LLM directly from browser.
+- Remote providers proxy through `/api/ai/chat` to hide API keys.
+- `isLocalProvider()` + `isLocalURL()` determine routing.
+
 ---
 
 ## Global Head Ownership (2026-03-27)

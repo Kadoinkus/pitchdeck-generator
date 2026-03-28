@@ -82,15 +82,17 @@ export function initTheme(): void {
 
 		const stored = localStorage.getItem(THEME_STORAGE_KEY);
 		preference = parsePreference(stored);
+		applyToDocument(resolveNow());
+
+		// Listen for system theme changes when preference is "system"
+		const mq = window.matchMedia(PREFERS_DARK_QUERY);
+		mq.addEventListener('change', () => {
+			if (preference === 'system') {
+				applyToDocument(resolveNow());
+			}
+		});
 	}
 }
-
-$effect(() => {
-	if (!browser || !initialized) return;
-	const root = document.documentElement;
-	root.setAttribute('data-theme', resolved);
-	root.classList.toggle('dark', resolved === 'dark');
-});
 
 // ---------------------------------------------------------------------------
 // Public API

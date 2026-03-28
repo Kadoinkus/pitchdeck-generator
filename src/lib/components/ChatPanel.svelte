@@ -6,6 +6,7 @@
 	import { onMount, tick } from 'svelte';
 	import { MediaQuery } from 'svelte/reactivity';
 	import AiPromptModal from './AiPromptModal.svelte';
+	import AiSettingsPanel from './AiSettingsPanel.svelte';
 
 	interface Props {
 		/** Current form payload to send with chat requests. */
@@ -24,6 +25,7 @@
 
 	let isOpen = $state(false);
 	let showPromptModal = $state(false);
+	let showSettingsPanel = $state(false);
 	let messages = $state<ChatMessage[]>([]);
 	let inputText = $state('');
 	let chatInputEl: HTMLTextAreaElement | undefined = $state();
@@ -268,22 +270,50 @@
 				</svg>
 				<span>AI Copilot</span>
 			</div>
-			<button
-				class="icon-btn"
-				type="button"
-				onclick={closePanel}
-				aria-label="Close chat"
-			>
-				<svg viewBox="0 0 16 16" fill="none" width="14" height="14">
-					<path
-						d="M4 4l8 8M12 4l-8 8"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-					/>
-				</svg>
-			</button>
+			<div class="head-actions">
+				<button
+					class="icon-btn"
+					type="button"
+					onclick={() => (showSettingsPanel = !showSettingsPanel)}
+					aria-label="AI settings"
+					aria-expanded={showSettingsPanel}
+				>
+					<svg viewBox="0 0 16 16" fill="none" width="14" height="14">
+						<path
+							d="M8 10a2 2 0 100-4 2 2 0 000 4z"
+							stroke="currentColor"
+							stroke-width="1.3"
+						/>
+						<path
+							d="M13.3 6.5l-.7-.4a5.5 5.5 0 00-.5-.9l.2-.8a.5.5 0 00-.2-.5l-1-1a.5.5 0 00-.5-.2l-.8.2a5 5 0 00-.9-.5l-.4-.7a.5.5 0 00-.5-.2h-1a.5.5 0 00-.5.2l-.4.7-.9.5-.8-.2a.5.5 0 00-.5.2l-1 1a.5.5 0 00-.2.5l.2.8a5 5 0 00-.5.9l-.7.4a.5.5 0 00-.2.5v1a.5.5 0 00.2.5l.7.4c.1.3.3.6.5.9l-.2.8a.5.5 0 00.2.5l1 1a.5.5 0 00.5.2l.8-.2.9.5.4.7a.5.5 0 00.5.2h1a.5.5 0 00.5-.2l.4-.7.9-.5.8.2a.5.5 0 00.5-.2l1-1a.5.5 0 00.2-.5l-.2-.8c.2-.3.4-.6.5-.9l.7-.4a.5.5 0 00.2-.5v-1a.5.5 0 00-.2-.5z"
+							stroke="currentColor"
+							stroke-width="1.3"
+						/>
+					</svg>
+				</button>
+				<button
+					class="icon-btn"
+					type="button"
+					onclick={closePanel}
+					aria-label="Close chat"
+				>
+					<svg viewBox="0 0 16 16" fill="none" width="14" height="14">
+						<path
+							d="M4 4l8 8M12 4l-8 8"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</button>
+			</div>
 		</header>
+
+		{#if showSettingsPanel}
+			<div class="settings-dropdown">
+				<AiSettingsPanel onClose={() => (showSettingsPanel = false)} />
+			</div>
+		{/if}
 
 		{#if chatTarget}
 			<div class="target-pill">
@@ -441,7 +471,10 @@
 {/if}
 
 {#if showPromptModal}
-	<AiPromptModal onClose={() => (showPromptModal = false)} />
+	<AiPromptModal
+		onClose={() => (showPromptModal = false)}
+		onOpenSettings={() => (showSettingsPanel = true)}
+	/>
 {/if}
 
 <style>
@@ -596,6 +629,21 @@
 		width: 20px;
 		height: 20px;
 		border-radius: 6px;
+	}
+
+	/* ── Header actions ── */
+
+	.head-actions {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	/* ── Settings dropdown ── */
+
+	.settings-dropdown {
+		border-bottom: 1px solid var(--card-border);
+		background: var(--subtle-bg);
 	}
 
 	/* ── Target pill ── */

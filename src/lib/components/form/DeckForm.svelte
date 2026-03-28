@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AiSettingsSection from '$lib/components/form/AiSettingsSection.svelte';
 	import BrandStyleSection from '$lib/components/form/BrandStyleSection.svelte';
 	import CharacterAssetsSection from '$lib/components/form/CharacterAssetsSection.svelte';
 	import OutputSection from '$lib/components/form/OutputSection.svelte';
@@ -95,8 +94,6 @@
 	<SlideSelector slides={currentSlides} />
 
 	<BrandStyleSection />
-
-	<AiSettingsSection />
 
 	<CharacterAssetsSection />
 

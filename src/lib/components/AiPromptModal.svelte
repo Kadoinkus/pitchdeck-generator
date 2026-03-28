@@ -63,6 +63,7 @@
 
 		<label class="field">
 			<span>API Key</span>
+			<!-- svelte-ignore a11y_autofocus -->
 			<input type="password" bind:value={apiKey} placeholder="sk-..." autofocus>
 		</label>
 

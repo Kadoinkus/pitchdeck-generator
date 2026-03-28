@@ -245,3 +245,4 @@ vite.config.ts.timestamp-*
 /*.png
 /*.webp
 /docs/superpowers/
+test-results/

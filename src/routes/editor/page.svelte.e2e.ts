@@ -343,3 +343,45 @@ test('footer uses text cursor while editable', async ({ page }) => {
 	const cursor = await footer.evaluate((el) => getComputedStyle(el).cursor);
 	expect(cursor).toBe('text');
 });
+
+test('chat panel opens via launcher button', async ({ page }) => {
+	await seedDeckResult(page);
+	await page.goto('/editor');
+
+	const launcher = page.getByRole('button', { name: 'Open AI chat' });
+	await expect(launcher).toBeVisible();
+
+	await launcher.click();
+
+	// Use text content to identify the chat panel specifically
+	const chatPanel = page.locator('div.panel').filter({ hasText: 'AI Copilot' });
+	await expect(chatPanel).toBeVisible();
+	await expect(chatPanel.locator('.head-title')).toContainText('AI Copilot');
+});
+
+test('chat panel settings button toggles settings dropdown', async ({ page }) => {
+	await seedDeckResult(page);
+	await page.goto('/editor');
+
+	// Open chat panel
+	await page.getByRole('button', { name: 'Open AI chat' }).click();
+	const chatPanel = page.locator('div.panel').filter({ hasText: 'AI Copilot' });
+	await expect(chatPanel).toBeVisible();
+
+	// Settings dropdown initially hidden
+	const settingsDropdown = chatPanel.locator('.settings-dropdown');
+	await expect(settingsDropdown).not.toBeVisible();
+
+	// Click settings gear
+	const settingsBtn = chatPanel.getByRole('button', { name: 'AI settings' });
+	await expect(settingsBtn).toBeVisible();
+	await settingsBtn.click();
+
+	// Settings dropdown visible
+	await expect(settingsDropdown).toBeVisible();
+	await expect(settingsDropdown.locator('h3')).toContainText('AI Settings');
+
+	// Click again to close
+	await settingsBtn.click();
+	await expect(settingsDropdown).not.toBeVisible();
+});
