@@ -20,6 +20,7 @@ export const PROVIDERS = {
 			'gpt-4o-mini',
 		] as const satisfies readonly KnownOpenAI[],
 		requiresKey: true,
+		keyPlaceholder: 'sk-...',
 		compatible: false,
 	},
 	anthropic: {
@@ -31,6 +32,7 @@ export const PROVIDERS = {
 			'claude-haiku-4-5',
 		] as const satisfies readonly KnownAnthropic[],
 		requiresKey: true,
+		keyPlaceholder: 'sk-ant-...',
 		compatible: false,
 	},
 	xai: {
@@ -43,6 +45,7 @@ export const PROVIDERS = {
 			'grok-3-mini',
 		] as const satisfies readonly KnownXai[],
 		requiresKey: true,
+		keyPlaceholder: 'xai-...',
 		compatible: false,
 	},
 	groq: {
@@ -50,6 +53,7 @@ export const PROVIDERS = {
 		defaultBaseURL: 'https://api.groq.com/openai/v1',
 		models: ['llama-3.2-70b-versatile', 'mixtral-8x7b-32768'] as const,
 		requiresKey: true,
+		keyPlaceholder: 'gsk_...',
 		compatible: true,
 	},
 	openrouter: {
@@ -57,6 +61,7 @@ export const PROVIDERS = {
 		defaultBaseURL: 'https://openrouter.ai/api/v1',
 		models: [] as const,
 		requiresKey: true,
+		keyPlaceholder: 'sk-or-...',
 		compatible: true,
 	},
 	lmstudio: {
@@ -64,6 +69,7 @@ export const PROVIDERS = {
 		defaultBaseURL: 'http://localhost:1234/v1',
 		models: [] as const,
 		requiresKey: false,
+		keyPlaceholder: '',
 		compatible: true,
 	},
 	ollama: {
@@ -71,6 +77,7 @@ export const PROVIDERS = {
 		defaultBaseURL: 'http://localhost:11434/v1',
 		models: [] as const,
 		requiresKey: false,
+		keyPlaceholder: '',
 		compatible: true,
 	},
 	custom: {
@@ -78,6 +85,7 @@ export const PROVIDERS = {
 		defaultBaseURL: '',
 		models: [] as const,
 		requiresKey: false,
+		keyPlaceholder: '',
 		compatible: true,
 	},
 } as const;

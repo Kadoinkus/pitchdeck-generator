@@ -5,7 +5,6 @@
 	import { viewer } from '$lib/stores/viewer.svelte';
 	import { onMount, tick } from 'svelte';
 	import { MediaQuery } from 'svelte/reactivity';
-	import AiPromptModal from './AiPromptModal.svelte';
 	import AiSettingsPanel from './AiSettingsPanel.svelte';
 
 	interface Props {
@@ -24,8 +23,8 @@
 	}
 
 	let isOpen = $state(false);
-	let showPromptModal = $state(false);
 	let showSettingsPanel = $state(false);
+	let showSettingsModal = $state(false);
 	let messages = $state<ChatMessage[]>([]);
 	let inputText = $state('');
 	let chatInputEl: HTMLTextAreaElement | undefined = $state();
@@ -117,9 +116,9 @@
 		const text = inputText.trim();
 		if (!text || sending) return;
 
-		// Show prompt if no API key configured
+		// Show settings if no API key configured
 		if (ai.needsSetup) {
-			showPromptModal = true;
+			showSettingsModal = true;
 			return;
 		}
 
@@ -470,11 +469,17 @@
 	</button>
 {/if}
 
-{#if showPromptModal}
-	<AiPromptModal
-		onClose={() => (showPromptModal = false)}
-		onOpenSettings={() => (showSettingsPanel = true)}
-	/>
+{#if showSettingsModal}
+	<button
+		type="button"
+		class="modal-backdrop"
+		aria-label="Close settings"
+		onclick={() => (showSettingsModal = false)}
+	>
+	</button>
+	<div class="settings-modal">
+		<AiSettingsPanel onClose={() => (showSettingsModal = false)} />
+	</div>
 {/if}
 
 <style>
@@ -644,6 +649,31 @@
 	.settings-dropdown {
 		border-bottom: 1px solid var(--card-border);
 		background: var(--subtle-bg);
+	}
+
+	/* ── Settings modal ── */
+
+	.modal-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1000;
+		border: none;
+		border-radius: 0;
+		cursor: default;
+	}
+
+	.settings-modal {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: var(--card);
+		border-radius: 16px;
+		width: 90%;
+		max-width: 400px;
+		box-shadow: var(--shadow);
+		z-index: 1001;
 	}
 
 	/* ── Target pill ── */

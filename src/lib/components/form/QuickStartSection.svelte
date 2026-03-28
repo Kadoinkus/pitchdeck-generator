@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { autofill } from '$lib/ai/client';
-	import AiPromptModal from '$lib/components/AiPromptModal.svelte';
+	import AiSettingsPanel from '$lib/components/AiSettingsPanel.svelte';
 	import Haiku from '$lib/components/Haiku.svelte';
 	import { ai } from '$lib/stores/ai.svelte';
 	import {
@@ -27,7 +27,7 @@
 
 	let autofilling = $state(false);
 	let generating = $state(false);
-	let showPromptModal = $state(false);
+	let showSettingsModal = $state(false);
 
 	const payload = $derived(getPayload());
 	const templates = $derived(getTemplates());
@@ -61,7 +61,7 @@
 
 	async function runAutofill() {
 		if (ai.needsSetup) {
-			showPromptModal = true;
+			showSettingsModal = true;
 			return;
 		}
 
@@ -180,7 +180,41 @@
 	{#if autofilling}
 		<Haiku variant="inline" />
 	{/if}
-	{#if showPromptModal}
-		<AiPromptModal onClose={() => (showPromptModal = false)} />
+	{#if showSettingsModal}
+		<button
+			type="button"
+			class="modal-backdrop"
+			aria-label="Close settings"
+			onclick={() => (showSettingsModal = false)}
+		>
+		</button>
+		<div class="settings-modal">
+			<AiSettingsPanel onClose={() => (showSettingsModal = false)} />
+		</div>
 	{/if}
 </section>
+
+<style>
+	.modal-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1000;
+		border: none;
+		border-radius: 0;
+		cursor: default;
+	}
+
+	.settings-modal {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: var(--card);
+		border-radius: 16px;
+		width: 90%;
+		max-width: 400px;
+		box-shadow: var(--shadow);
+		z-index: 1001;
+	}
+</style>

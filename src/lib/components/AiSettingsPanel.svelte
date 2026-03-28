@@ -95,7 +95,7 @@
 	{#if provider.requiresKey}
 		<label class="field">
 			<span>API Key</span>
-			<input type="password" bind:value={apiKey} placeholder="sk-...">
+			<input type="password" bind:value={apiKey} placeholder={provider.keyPlaceholder}>
 		</label>
 	{/if}
 
